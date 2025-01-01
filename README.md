@@ -146,5 +146,5 @@ export default Button;
 
 This folder houses all the pages for dashboards, landing pages, and other UI components. Separate folders have been created for each major section.
 
-####Feel free to ask any questions regarding folder usage or implementation!
+#### Feel free to ask any questions regarding folder usage or implementation!
 
