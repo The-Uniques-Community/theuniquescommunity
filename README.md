@@ -2,14 +2,13 @@
 
 ## import rule 
 1. You do not need to import a component located in other folder in src like this
-   ```
+```
    import component from '../../../view/component'
-   ```
-   you should import it like the following  by using '@/' this will target the src folder then you can navigate similarly using '/'
-   ```
-   import component from '@/view/component'
-   ```
-
+ ```
+you should import it like the following  by using '@/' this will target the src folder then you can navigate similarly using '/'
+```
+import component from '@/view/component'
+```
 3. The import of the components in routes folder should be done in the following way , you import how ever you want in the view but in th routes where you are writing route for specific please use the following way
 
 ```
