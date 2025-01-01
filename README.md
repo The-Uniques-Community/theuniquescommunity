@@ -45,34 +45,6 @@ const STUDENT_NAVIGATION = [
     icon: <AssignmentTurnedInIcon />,
   },
 ];
-
-
-### Redux
-
-A centralized store is already set up in the `redux` folder. Use this for managing global state instead of creating independent state management solutions.
-
-**Example:**
-
-```javascript
-// Importing and using Redux store
-import { useDispatch, useSelector } from 'react-redux';
-import { updateUser } from './redux/userSlice';
-
-const ExampleComponent = () => {
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);
-
-  const updateUserDetails = () => {
-    dispatch(updateUser({ name: 'John Doe', age: 30 }));
-  };
-
-  return (
-    <div>
-      <h1>Hello, {user.name}</h1>
-      <button onClick={updateUserDetails}>Update User</button>
-    </div>
-  );
-};
 ```
 
 ### Routes
