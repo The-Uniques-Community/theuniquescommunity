@@ -96,110 +96,194 @@ export const allRoutes = [
   // Add other route imports here
 ];
 ```
-
 # Theme Palette Configuration
 
-This project provides two predefined palettes for light and dark themes, designed to enhance UI consistency and visual appeal. Each palette contains carefully chosen colors for primary elements, backgrounds, text, dividers, and actions.
+This project provides two predefined palettes for light and dark themes, designed to enhance UI consistency and visual appeal. Each palette includes carefully selected colors for primary elements, backgrounds, text, dividers, and actions.
 
-## Light Palette
+## Light Palette Configuration
 
-The light palette is intended for a bright, clean design and focuses on using vibrant colors with subtle contrasts.
+### Explanation of Light Palette Colors
 
+- **Primary Colors**
+  - **`primary.main` (`#ca0019`)**: Use this bold red color for prominent elements like headings, active tabs, and selected buttons.
+  - **`primary.light` (`#fefefe`)**: A lighter white for hover highlights and subtle background effects on interactive elements.
+  - **`primary.dark` (`#0d0d0d`)**: A royal shiny black ideal for sidebars, navigation bars, and component containers.
+
+- **Background Colors**
+  - **`background.default` (`#ffffff`)**: Set this white as the primary background color for the main application body.
+  - **`background.paper` (`#f4f4f4`)**: Use this off-white color for card components, modals, or sections needing separation.
+  - **`background.drawer` (`#0d0d0d`)**: Apply this dark color to side navigation drawers or similar components.
+
+- **Text Colors**
+  - **`text.primary` (`#000000`)**: Standard black for primary text to ensure high readability.
+  - **`text.secondary` (`#555555`)**: Slightly lighter black for subtitles, secondary information, or less emphasized text.
+  - **`text.subtext` (`#888888`)**: Medium gray for placeholder text, hints, or descriptions.
+  - **`text.disabled` (`#aaaaaa`)**: A light gray for disabled text, such as inactive buttons or inputs.
+  - **`text.link` (`#ca0019`)**: Bold red for clickable links and underlined text to grab attention.
+
+- **Action Colors**
+  - **`action.hover` (`#f4f4f4`)**: Use this for hover effects on interactive items, like buttons or list items.
+  - **`action.selected` (`#f5f5f5`)**: Apply this subtle background to indicate selected states in menus or lists.
+  - **`action.disabled` (`#d3d3d3`)**: Use this for disabled buttons or interactive elements to visually differentiate inactive states.
+  - **`action.focus` (`#ffebee`)**: A soft highlight for focused elements such as form fields.
+
+### Code Example (Light Palette)
 ```javascript
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
 export const lightPalette = {
   mode: "light",
   primary: {
-    main: "#ca0019", // Red for headings
-    light: "#fefefe", // Lighter white for hover highlights
-    dark: "#0d0d0d", // Royal shiny black for sidebar and components
+    main: "#ca0019",
+    light: "#fefefe",
+    dark: "#0d0d0d",
   },
   background: {
-    default: "#ffffff", // White body background
-    paper: "#f4f4f4", // Off-white for cards
-    appBar: "#ffffff", // Match body for app bars
-    drawer: "#0d0d0d", // Royal shiny black for the sidebar
+    default: "#ffffff",
+    paper: "#f4f4f4",
+    drawer: "#0d0d0d",
   },
   text: {
-    primary: "#000000", // Black for simple text
-    secondary: "#555555", // Slightly lighter black for subtext
-    subtext: "#888888", // Gray for hints or less emphasis
-    disabled: "#aaaaaa", // Disabled text
-    link: "#ca0019", // Red for links
+    primary: "#000000",
+    secondary: "#555555",
+    subtext: "#888888",
+    disabled: "#aaaaaa",
+    link: "#ca0019",
   },
-  divider: "#e0e0e0", // Divider lines
+  divider: "#e0e0e0",
   action: {
-    hover: "#f4f4f4", // Off-white background with black text on hover
-    selected: "#f5f5f5", // Selected item background
-    disabled: "#d3d3d3", // Disabled component background
-    focus: "#ffebee", // Focused element highlight
+    hover: "#f4f4f4",
+    selected: "#f5f5f5",
+    disabled: "#d3d3d3",
+    focus: "#ffebee",
   },
 };
+
+const theme = createTheme({
+  palette: lightPalette,
+});
+
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <div style={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }}>
+        <h1 style={{ color: theme.palette.primary.main }}>Welcome to Light Theme</h1>
+        <p style={{ color: theme.palette.text.secondary }}>This is a sample application with a light theme.</p>
+      </div>
+    </ThemeProvider>
+  );
+}
+
+export default App;
 ```
 
-### Highlights:
+## Dark Palette Configuration
 
-- **Primary Color:** A bold red (#ca0019) for headings and links to emphasize important elements.
-- **Backgrounds:** Use a clean white (#ffffff) for the main body and a subtle off-white (#f4f4f4) for cards.
-- **Text:** High contrast black for primary text with lighter variations for secondary, subtext, and disabled states.
-- **Actions:** Subtle hover and focus effects for interactivity.
+### Explanation of Dark Palette Colors
 
-## Dark Palette
+- **Primary Colors**
+  - **`primary.main` (`#cccccc`)**: Use this light gray for prominent elements like headings and active tabs.
+  - **`primary.light` (`#fefefe`)**: A very light gray for hover highlights and subtle effects.
+  - **`primary.dark` (`#fefefe`)**: A medium gray suitable for component containers or subtle details.
 
-The dark palette is optimized for low-light environments, offering softer tones and reduced eye strain.
+- **Background Colors**
+  - **`background.default` (`#121212`)**: Set this deep black as the primary background color for the main application body.
+  - **`background.paper` (`#1a1a1a`)**: Use this dark gray for cards and modals.
+  - **`background.drawer` (`#1a1a1a`)**: Apply this to side navigation drawers or similar dark containers.
 
+- **Text Colors**
+  - **`text.primary` (`#d3d3d3`)**: Use this light gray for primary text to ensure readability.
+  - **`text.secondary` (`#888888`)**: Medium gray for subtitles or secondary information.
+  - **`text.subtext` (`#aaaaaa`)**: Slightly lighter gray for placeholders, hints, or descriptions.
+  - **`text.disabled` (`#555555`)**: A dark gray for disabled text, such as inactive buttons or inputs.
+  - **`text.link` (`#ff5252`)**: Vibrant red for clickable links to stand out against the dark background.
+
+- **Action Colors**
+  - **`action.hover` (`#444444`)**: Darker background for hover effects on interactive items.
+  - **`action.selected` (`#555555`)**: Use this subtle background to indicate selected states in menus or lists.
+  - **`action.disabled` (`#2e2e2e`)**: Apply this for disabled components or buttons.
+  - **`action.focus` (`#661111`)**: A focused component highlight, providing clear visual feedback.
+
+### Code Example (Dark Palette)
 ```javascript
 export const darkPalette = {
   mode: "dark",
   primary: {
-    main: "#cccccc", // Light gray for headings
-    light: "#fefefe", // Lighter gray for hover or highlights
-    dark: "#fefefe", // Medium gray for other elements
+    main: "#cccccc",
+    light: "#fefefe",
+    dark: "#fefefe",
   },
   background: {
-    default: "#121212", // Black body background
-    paper: "#1a1a1a", // Dark gray for cards
-    appBar: "#1a1a1a", // Match body for app bars
-    drawer: "#1a1a1a", // Darker gray for the sidebar
+    default: "#121212",
+    paper: "#1a1a1a",
+    drawer: "#1a1a1a",
   },
   text: {
-    primary: "#d3d3d3", // Light gray for simple text
-    secondary: "#888888", // Medium gray for subtext
-    subtext: "#aaaaaa", // Slightly lighter gray for hints or less emphasis
-    disabled: "#555555", // Disabled text
-    link: "#ff5252", // Bright red for links
+    primary: "#d3d3d3",
+    secondary: "#888888",
+    subtext: "#aaaaaa",
+    disabled: "#555555",
+    link: "#ff5252",
   },
-  divider: "#333333", // Divider lines
+  divider: "#333333",
   action: {
-    hover: "#444444", // Darker background with lighter text on hover
-    selected: "#555555", // Selected item background
-    disabled: "#2e2e2e", // Disabled component background
-    focus: "#661111", // Focused component highlight
+    hover: "#444444",
+    selected: "#555555",
+    disabled: "#2e2e2e",
+    focus: "#661111",
   },
 };
-```
-
-### Highlights:
-
-- **Primary Color:** A soft light gray (#cccccc) for headings with a vibrant red (#ff5252) for links.
-- **Backgrounds:** Deep blacks and grays provide a sleek, modern feel.
-- **Text:** Light gray tones maintain readability without excessive brightness.
-- **Actions:** Subtle hover and focus effects ensure usability while maintaining the dark aesthetic.
-
-## Usage
-
-To use these palettes, import them into your project's theme configuration and apply them using a theme provider or similar mechanism.
-
-```javascript
-import { lightPalette, darkPalette } from "./path-to-palettes";
 
 const theme = createTheme({
-  palette: lightPalette, // Switch to darkPalette for dark mode
+  palette: darkPalette,
 });
 
-<ThemeProvider theme={theme}>
-  <App />
-</ThemeProvider>;
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <div style={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }}>
+        <h1 style={{ color: theme.palette.primary.main }}>Welcome to Dark Theme</h1>
+        <p style={{ color: theme.palette.text.secondary }}>This is a sample application with a dark theme.</p>
+      </div>
+    </ThemeProvider>
+  );
+}
+  ```
+
+## Applying Themes Dynamically
+
+To toggle between the light and dark themes dynamically, use a state variable to manage the theme mode and pass the corresponding palette to the `ThemeProvider`.
+
+### Example
+```javascript
+import React, { useState } from "react";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { lightPalette, darkPalette } from "./path-to-palettes";
+
+function App() {
+  const [darkMode, setDarkMode] = useState(false);
+  const theme = createTheme({ palette: darkMode ? darkPalette : lightPalette });
+
+  return (
+    <ThemeProvider theme={theme}>
+      <div style={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }}>
+        <button onClick={() => setDarkMode(!darkMode)}>
+          Toggle {darkMode ? "Light" : "Dark"} Mode
+        </button>
+        <h1 style={{ color: theme.palette.primary.main }}>
+          {darkMode ? "Dark Mode Active" : "Light Mode Active"}
+        </h1>
+      </div>
+    </ThemeProvider>
+  );
+}
+
+export default App;
 ```
+
+
+
+
 
 ### Utils
 
