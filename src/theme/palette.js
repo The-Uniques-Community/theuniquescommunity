@@ -1,36 +1,27 @@
 export const lightPalette = {
   mode: "light",
   primary: {
-    main: "#ca0019", // Vibrant red
-    light: "#f5f5f5", // Lighter red for hover states or highlights
-    dark: "#910012", // Darker shade for hover states or emphasis
-    200: "#ffe5e8", // Light pinkish red for subtle elements
-    800: "#6b000e", // Deeper red for strong contrast
-  },
-  secondary: {
-    main: "#808080", // Neutral gray
-    light: "#cfcfcf", // Lighter gray for hover or highlights
-    dark: "#4d4d4d", // Darker gray for hover or emphasis
-    200: "#eaeaea", // Subtle gray for borders/backgrounds
-    800: "#333333", // Strong gray for headings/contrast
+    main: "#ca0019", // Red for headings
+    light: "#fefefe", // Lighter white for hover highlights
+    dark: "#0d0d0d", // Royal shiny black for sidebar and components
   },
   background: {
-    default: "#f4f4f4", // Light gray background
-    paper: "#ffffff", // Pure white for cards
-    appBar: "#f9f9f9", // Slightly off-white for app bars
-    drawer: "#fefefe", // Background for drawers
+    default: "#ffffff", // White body background
+    paper: "#f4f4f4", // Off-white for cards
+    appBar: "#ffffff", // Match body for app bars
+    drawer: "#0d0d0d", // Royal shiny black for the sidebar
   },
   text: {
-    primary: "#000000", // Main text color
-    secondary: "#555555", // Subtle text
-    subtext: "#777777", // Hints or less important info
+    primary: "#000000", // Black for simple text
+    secondary: "#555555", // Slightly lighter black for subtext
+    subtext: "#888888", // Gray for hints or less emphasis
     disabled: "#aaaaaa", // Disabled text
-    link: "#ca0019", // Primary link color
+    link: "#ca0019", // Red for links
   },
   divider: "#e0e0e0", // Divider lines
   action: {
-    hover: "#f5f5f5", // Hover state background
-    selected: "#e0e0e0", // Selected item background
+    hover: "#f4f4f4", // Off-white background with black text on hover
+    selected: "#f5f5f5", // Selected item background
     disabled: "#d3d3d3", // Disabled component background
     focus: "#ffebee", // Focused element highlight
   },
@@ -39,36 +30,27 @@ export const lightPalette = {
 export const darkPalette = {
   mode: "dark",
   primary: {
-    main: "#fdfdfd", // Vibrant red
-    light: "#ffffff", // Lighter red for hover or highlights
-    dark: "#910012", // Darker red for hover or emphasis
-    200: "#ffccd4", // Light pinkish red for subtle UI elements
-    800: "#6b000e", // Deep red for strong contrast
-  },
-  secondary: {
-    main: "#808080", // Neutral gray
-    light: "#9e9e9e", // Lighter gray for hover or highlights
-    dark: "#4d4d4d", // Darker gray for hover or emphasis
-    200: "#bdbdbd", // Subtle gray for borders/backgrounds
-    800: "#2b2b2b", // Strong gray for headings/contrast
+    main: "#cccccc", // Light gray for headings
+    light: "#fefefe", // Lighter gray for hover or highlights
+    dark: "#fefefe", // Medium gray for other elements
   },
   background: {
-    default: "#121212", // Dark gray background
-    paper: "#1e1e1e", // Slightly lighter dark gray for cards
-    appBar: "#1a1a1a", // AppBar background
-    drawer: "#1f1f1f", // Drawer background
+    default: "#121212", // Black body background
+    paper: "#1a1a1a", // Dark gray for cards
+    appBar: "#1a1a1a", // Match body for app bars
+    drawer: "#1a1a1a", // Darker gray for the sidebar
   },
   text: {
-    primary: "#ffffff", // Main text color
-    secondary: "#aaaaaa", // Subtle text
-    subtext: "#888888", // Less important info
+    primary: "#d3d3d3", // Light gray for simple text
+    secondary: "#888888", // Medium gray for subtext
+    subtext: "#aaaaaa", // Slightly lighter gray for hints or less emphasis
     disabled: "#555555", // Disabled text
-    link: "#ff5252", // Link color
+    link: "#ff5252", // Bright red for links
   },
   divider: "#333333", // Divider lines
   action: {
-    hover: "#333333", // Hover state background
-    selected: "#444444", // Selected item background
+    hover: "#444444", // Darker background with lighter text on hover
+    selected: "#555555", // Selected item background
     disabled: "#2e2e2e", // Disabled component background
     focus: "#661111", // Focused component highlight
   },

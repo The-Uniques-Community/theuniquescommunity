@@ -41,10 +41,11 @@ const STUDENT_NAVIGATION = [
 ];
 
 function Branding() {
+  const { isDarkMode } = useThemeContext()
   return (
     <Box
       component="img"
-      src={logo}
+      src={isDarkMode ? uniques_white : logo}
       alt="Placera Logo"
       sx={{ width: 120, mr: 2 }}
     />
@@ -107,14 +108,14 @@ function DashboardLayoutAppBar() {
         sx={{
           width: isMobile ? "auto" : drawerOpen ? 240 : 75,
           flexShrink: 0,
-		  zIndex: '2000',
+          zIndex: '2000',
           ml: 2, // Adds margin-left to create space
           "& .MuiDrawer-paper": {
             width: isMobile ? "auto" : drawerOpen ? 240 : 75,
             height: "96vh",
             marginTop: "16px",
             marginLeft: "16px", // Adds spacing between the drawer and the edge
-            backgroundColor: theme.palette.primary.dark,
+            backgroundColor: theme.palette.background.drawer,
             borderRadius: "8px",
             overflowX: "hidden",
             transition: "width 0.3s",
@@ -158,13 +159,13 @@ function DashboardLayoutAppBar() {
                 onClick={() => handleNavigation(item.segment, item.title)}
                 sx={{
                   backgroundColor: isActive
-                    ? theme.palette.primary.light
+                    ? theme.palette.action.hover
                     : "inherit",
                   color: isActive
-                    ? theme.palette.primary.dark
+                    ? theme.palette.primary.light
                     : theme.palette.primary.light,
                   "&:hover": {
-                    backgroundColor: theme.palette.primary.light,
+                    backgroundColor: theme.palette.action.hover,
                     color: theme.palette.primary.dark,
                   },
                   padding: "10px",
@@ -200,7 +201,7 @@ function DashboardLayoutAppBar() {
               backgroundColor: "inherit",
               color: theme.palette.primary.light,
               "&:hover": {
-                backgroundColor: theme.palette.primary.light,
+                backgroundColor: theme.palette.action.hover,
                 color: theme.palette.primary.dark,
               },
               padding: "10px",
@@ -211,7 +212,7 @@ function DashboardLayoutAppBar() {
             <ListItemIcon
               sx={{
                 color: "inherit",
-				minWidth: "40px !important",
+                minWidth: "40px !important",
               }}
             >
               {isDarkMode ? <Brightness7Icon /> : <Brightness4Icon />}
@@ -234,7 +235,7 @@ function DashboardLayoutAppBar() {
               backgroundColor: "inherit",
               color: theme.palette.primary.light,
               "&:hover": {
-                backgroundColor: theme.palette.primary.light,
+                backgroundColor: theme.palette.action.hover,
                 color: theme.palette.primary.dark,
               },
               padding: "10px",
@@ -265,8 +266,8 @@ function DashboardLayoutAppBar() {
       <AppBar
         position="fixed"
         sx={{
-          backgroundColor: "transparent", // Transparent background
-          boxShadow: "none", // Removes shadow
+          backgroundColor: theme.palette.background.appBar,
+          boxShadow: "none !important",
           height: 56,
           zIndex: (theme) => theme.zIndex.drawer + 1,
           left: isMobile ? 0 : drawerOpen ? 256 : 91,
