@@ -10,7 +10,9 @@ const MemberCard = ({ linkedin, instagram, twitter, fullName, batch, position, p
   return (
     <div className={`bg-white hover:shadow-lg duration-75 px-2 py-3 border-t-[1px] shadow-md max-w-64 relative`}>
       {/* Profile Image */}
-      <img src={profileImg} className="custom-clip rounded-t-lg rounded-l-lg" alt={`${fullName}'s Profile`} />
+      <div className='overflow-hidden rounded-lg'>
+        <img src={profileImg} className="hover:scale-105 duration-150  custom-clip rounded-t-lg rounded-l-lg" alt={`${fullName}'s Profile`} />
+      </div>
       
       {/* Social Media Links */}
       <div className="flex flex-col gap-y-4 absolute right-2 top-0 bottom-0 items-center justify-start py-5 bg-black w-12">
