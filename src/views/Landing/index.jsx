@@ -2,6 +2,9 @@ import React from "react";
 import Button from "../../utils/Buttons/Button";
 import { useTheme } from "@mui/material/styles";
 import MemberCard from "@/utils/Card/MemberCard";
+import Footer from "@/utils/Footer/Footer";
+import Navbar from "@/utils/NavBar/Navbar";
+import Container from "@/utils/Container/Container";
 const index = () => {
   const members = [
     {
@@ -33,30 +36,26 @@ const index = () => {
   const theme = useTheme();
   return (
     <div>
+      <Navbar/>
+      <Container>
+        lol
+      </Container>
       <Button
         path="/lol"
         color={theme.palette.primary.light}
-        bgColor={theme.palette.secondary.dark}
-		iconColor={theme.palette.primary.light}
+        bgColor={theme.palette.primary.main}
+        border={4}
+        borderColor={theme.palette.primary.dark}
+		iconColor={"black"}
       >
         <span>Click Here</span>
       </Button>
-      <br />
-      <br />
-
-      <a
-        href="#_"
-        class="relative rounded px-5 py-2.5 overflow-hidden group bg-green-500 hover:bg-gradient-to-r hover:from-green-500 hover:to-green-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-green-400 transition-all ease-out duration-300"
-      >
-        <span class="absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
-        <span class="relative">Button Text</span>
-      </a>
+      
 
       <div className="flex flex-wrap gap-8 justify-center">
-        
           <MemberCard />
-        
       </div>
+      <Footer/>
     </div>
   );
 };
