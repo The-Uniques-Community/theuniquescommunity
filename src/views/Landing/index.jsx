@@ -16,7 +16,7 @@ const index = () => {
   return (
     <div>
       <Navbar/>
-      <Container>
+      <Container bgColor={theme.palette.primary.dark} color={theme.palette.primary.contrastText} className="text-center">
         lol
       </Container>
       <Button

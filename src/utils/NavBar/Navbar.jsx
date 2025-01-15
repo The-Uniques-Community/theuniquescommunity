@@ -63,15 +63,21 @@ const Navbar = () => {
             <img src={logo} className="w-40 object-contain object-left" alt="Logo" />
           </div>
           <div className="col-span-1"></div>
+          <Link to="/batches">
           <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
-            <Link to="/batches"><span>BATCHES</span></Link>
+            <span>BATCHES</span>
           </div>
+            </Link>
+          <Link to="/community">
           <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
-            <Link to="/community"><span>COMMUNITY</span></Link>
+            <span>COMMUNITY</span>
           </div>
+            </Link>
+            <Link to="/events">
           <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
-            <Link to="/events"><span>EVENTS</span></Link>
+            <span>EVENTS</span>
           </div>
+            </Link>
         </div>
       </div>
       <div>
