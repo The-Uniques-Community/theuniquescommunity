@@ -61,7 +61,7 @@ const STUDENT_NAVIGATION = [
     icon: <AssignmentTurnedInIcon />,
   },
 ];
-```
+````
 
 ### Routes
 
