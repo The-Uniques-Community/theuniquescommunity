@@ -1,40 +1,458 @@
 import React from "react";
-import Button from "../../utils/Buttons/Button";
 import { useTheme } from "@mui/material/styles";
-import MemberCard from "@/utils/Card/MemberCard";
 import Footer from "@/utils/Footer/Footer";
 import Navbar from "@/utils/NavBar/Navbar";
-import myPic from '../../assets/img/myphoto.jpg'
-import Container from "@/utils/Container/Container";
+import { reviews } from "@/assets/dummyData/reviewData";
+import tu from "@/assets/logos/theuniquesCommunity.png";
+import CallToAction from "./homComponents/CallToAction";
+import LandingStats from "./homComponents/LandingStats";
+import AboutSection from "./homComponents/AboutSection";
+import TrainingTabs from "./homComponents/TrainingTabs";
+import ReviewCard from "@/utils/Card/ReviewCard";
 const index = () => {
-  
-  
-  
-
-  
   const theme = useTheme();
   return (
     <div>
-      <Navbar/>
-      <Container bgColor={theme.palette.primary.dark} color={theme.palette.primary.contrastText} className="text-center">
-        lol
-      </Container>
-      <Button
-        path="/lol"
-        color={theme.palette.primary.light}
-        bgColor={theme.palette.primary.main}
-        border={4}
-        borderColor={theme.palette.primary.dark}
-		iconColor={"black"}
-      >
-        <span>Click Here</span>
-      </Button>
-      
-
-      <div className="flex flex-wrap gap-8 justify-center">
-          <MemberCard profileImg={myPic} batch="The Uniques 2.0" fullName={"Kumar Sujal"} position={"Full Stack Developer"} linkedin={"."} instagram={"."} twitter={"."}  />
+      <Navbar />
+      <section>
+        <div class="">
+          <section class="relative lg:h-screen bg-gray-50">
+            <div class="px-4 py-12 sm:py-16 sm:px-6 lg:px-0 lg:max-w-7xl lg:mx-auto lg:py-24 xl:py-36 lg:grid lg:grid-cols-2">
+              <div class="lg:pr-8">
+                <div class="max-w-md mx-auto sm:max-w-lg lg:mx-0">
+                  <img src={tu} className="mb-5 w-full object-center" alt="" />
+                  <h1 class="text-xl font-medium text-gray-900 sm:text-xl lg:text-xl">
+                    Community of designers{" "}
+                    <span class="inline">
+                      <img
+                        class="inline w-auto h-5 sm:h-7 lg:h-8"
+                        src="https://landingfoliocom.imgix.net/store/collection/clarity-blog/images/hero/4/shape-1.svg"
+                        alt="shape-1"
+                      />
+                    </span>{" "}
+                    made by designers
+                    <span class="inline">
+                      <img
+                        class="inline w-auto h-5 sm:h-7 lg:h-8"
+                        src="https://landingfoliocom.imgix.net/store/collection/clarity-blog/images/hero/4/shape-2.svg"
+                        alt="shape-2"
+                      />
+                    </span>
+                  </h1>
+                  <p class="mt-6 text-base font-normal leading-7 text-gray-900">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Vehicula massa in enim luctus. Rutrum arcu.
+                  </p>
+                  <svg
+                    class="w-auto h-4 mt-8 text-gray-300"
+                    viewbox="0 0 172 16"
+                    fill="none"
+                    stroke="currentColor"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 11 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 46 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 81 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 116 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 151 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 18 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 53 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 88 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 123 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 158 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 25 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 60 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 95 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 130 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 165 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 32 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 67 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 102 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 137 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 172 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 39 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 74 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 109 1)"
+                    ></line>
+                    <line
+                      y1="-0.5"
+                      x2="18.0278"
+                      y2="-0.5"
+                      transform="matrix(-0.5547 0.83205 0.83205 0.5547 144 1)"
+                    ></line>
+                  </svg>
+                  <p class="mt-8 text-base font-bold text-gray-900">
+                    Join to get free updates every week
+                  </p>
+                  <form action="#" method="post" class="relative mt-4">
+                    <div class="absolute transitiona-all duration-1000 opacity-30 inset-0 bg-gradient-to-r from-black via-[#FF44EC] to-[#ca0019] rounded-xl blur-lg filter group-hover:opacity-100 group-hover:duration-200"></div>
+                    <div class="relative space-y-4 sm:flex sm:space-y-0 sm:items-end">
+                      <div class="flex-1">
+                        <label for="" class="sr-only">
+                          Email address
+                        </label>
+                        <div>
+                          <input
+                            type="email"
+                            name=""
+                            id=""
+                            class="block w-full px-4 py-3 sm:py-3.5 text-base font-medium text-gray-900 placeholder-gray-500 border border-gray-300 rounded-lg sm:rounded-l-lg sm:rounded-r-none sm:text-sm focus:ring-gray-900 focus:border-gray-900"
+                            placeholder="Enter email address"
+                          />
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        class="inline-flex items-center justify-center w-full sm:w-auto px-8 py-3 sm:text-sm text-base sm:py-3.5 font-semibold text-white transition-all duration-200 bg-gray-900 border border-transparent rounded-lg sm:rounded-r-lg sm:rounded-l-none hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                      >
+                        Join Now
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="">
+              <div className="flex flex-col items-center justify-center overflow-hidden lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
+                <div
+                  className="flex justify-start w-full gap-6 pb-8 overflow-x-auto [&::-webkit-scrollbar]:h-1
+  [&::-webkit-scrollbar-track]:bg-gray-100
+  [&::-webkit-scrollbar-thumb]:bg-gray-300
+  dark:[&::-webkit-scrollbar-track]:bg-neutral-200
+  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-400 snap-x"
+                >
+                  <div className="relative snap-start scroll-ml-6 shrink-0 first:pl-6 last:pr-6">
+                    <div className="relative flex flex-col overflow-hidden transition-all duration-200 transform bg-white border border-gray-100 shadow w-60 md:w-80 group rounded-xl hover:shadow-lg hover:-translate-y-1">
+                      <a
+                        href="#"
+                        title=""
+                        className="flex shrink-0 aspect-w-4 aspect-h-3"
+                      >
+                        <img
+                          className="object-cover w-full h-full transition-all duration-200 transform group-hover:scale-110"
+                          src="https://landingfoliocom.imgix.net/store/collection/clarity-blog/images/hero/4/thumbnail-1.png"
+                          alt="thumbnail-1"
+                        />
+                      </a>
+                      <div className="flex-1 px-4 py-5 sm:p-6">
+                        <a href="#" title="" className="">
+                          <p className="text-lg font-bold text-gray-900">
+                            How to write content about your photographs
+                          </p>
+                          <p className="mt-3 text-sm font-normal leading-6 text-gray-500 line-clamp-3">
+                            Lorem ipsum dolor sit amet, consec tetur adipiscing
+                            elit. Sit quis auctor odio arcu et dolor.
+                          </p>
+                        </a>
+                      </div>
+                      <div className="px-4 py-5 mt-auto border-t border-gray-100 sm:px-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <p className="text-sm font-medium text-gray-900">
+                              <a href="#" title="" className="">
+                                Growth
+                              </a>
+                            </p>
+                            <span className="text-sm font-medium text-gray-900">
+                              •
+                            </span>
+                            <p className="text-sm font-medium text-gray-900">
+                              7 Mins Read
+                            </p>
+                          </div>
+                          <a href="#" title="" className="" role="button">
+                            <svg
+                              className="w-5 h-5 text-gray-300 transition-all duration-200 group-hover:text-gray-900"
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewbox="0 0 24 24"
+                              stroke-width="2"
+                              stroke="currentColor"
+                              fill="none"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            >
+                              <path
+                                stroke="none"
+                                d="M0 0h24v24H0z"
+                                fill="none"
+                              ></path>
+                              <line x1="17" y1="7" x2="7" y2="17"></line>
+                              <polyline points="8 7 17 7 17 16"></polyline>
+                            </svg>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="relative snap-start scroll-ml-6 shrink-0 first:pl-6 last:pr-6">
+                    <div className="relative flex flex-col overflow-hidden transition-all duration-200 transform bg-white border border-gray-100 shadow w-60 md:w-80 group rounded-xl hover:shadow-lg hover:-translate-y-1">
+                      <a
+                        href="#"
+                        title=""
+                        className="flex shrink-0 aspect-w-4 aspect-h-3"
+                      >
+                        <img
+                          className="object-cover w-full h-full transition-all duration-200 transform group-hover:scale-110"
+                          src="https://landingfoliocom.imgix.net/store/collection/clarity-blog/images/hero/4/thumbnail-2.png"
+                          alt="thumbnail-2"
+                        />
+                      </a>
+                      <div className="flex-1 px-4 py-5 sm:p-6">
+                        <a href="#" title="" className="">
+                          <p className="text-lg font-bold text-gray-900">
+                            How to write content about your photographs
+                          </p>
+                          <p className="mt-3 text-sm font-normal leading-6 text-gray-500 line-clamp-3">
+                            Lorem ipsum dolor sit amet, consec tetur adipiscing
+                            elit. Sit quis auctor odio arcu et dolor.
+                          </p>
+                        </a>
+                      </div>
+                      <div className="px-4 py-5 mt-auto border-t border-gray-100 sm:px-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <p className="text-sm font-medium text-gray-900">
+                              <a href="#" title="" className="">
+                                Growth
+                              </a>
+                            </p>
+                            <span className="text-sm font-medium text-gray-900">
+                              •
+                            </span>
+                            <p className="text-sm font-medium text-gray-900">
+                              7 Mins Read
+                            </p>
+                          </div>
+                          <a href="#" title="" className="" role="button">
+                            <svg
+                              className="w-5 h-5 text-gray-300 transition-all duration-200 group-hover:text-gray-900"
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewbox="0 0 24 24"
+                              stroke-width="2"
+                              stroke="currentColor"
+                              fill="none"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            >
+                              <path
+                                stroke="none"
+                                d="M0 0h24v24H0z"
+                                fill="none"
+                              ></path>
+                              <line x1="17" y1="7" x2="7" y2="17"></line>
+                              <polyline points="8 7 17 7 17 16"></polyline>
+                            </svg>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="relative snap-start scroll-ml-6 shrink-0 first:pl-6 last:pr-6">
+                    <div className="relative flex flex-col overflow-hidden transition-all duration-200 transform bg-white border border-gray-100 shadow w-60 md:w-80 group rounded-xl hover:shadow-lg hover:-translate-y-1">
+                      <a
+                        href="#"
+                        title=""
+                        className="flex shrink-0 aspect-w-4 aspect-h-3"
+                      >
+                        <img
+                          className="object-cover w-full h-full transition-all duration-200 transform group-hover:scale-110"
+                          src="https://landingfoliocom.imgix.net/store/collection/clarity-blog/images/hero/4/thumbnail-3.png"
+                          alt="thumbnail-3"
+                        />
+                      </a>
+                      <div className="flex-1 px-4 py-5 sm:p-6">
+                        <a href="#" title="" className="">
+                          <p className="text-lg font-bold text-gray-900">
+                            How to write content about your photographs
+                          </p>
+                          <p className="mt-3 text-sm font-normal leading-6 text-gray-500 line-clamp-3">
+                            Lorem ipsum dolor sit amet, consec tetur adipiscing
+                            elit. Sit quis auctor odio arcu et dolor.
+                          </p>
+                        </a>
+                      </div>
+                      <div className="px-4 py-5 mt-auto border-t border-gray-100 sm:px-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <p className="text-sm font-medium text-gray-900">
+                              <a href="#" title="" className="">
+                                Growth
+                              </a>
+                            </p>
+                            <span className="text-sm font-medium text-gray-900">
+                              •
+                            </span>
+                            <p className="text-sm font-medium text-gray-900">
+                              7 Mins Read
+                            </p>
+                          </div>
+                          <a href="#" title="" className="" role="button">
+                            <svg
+                              className="w-5 h-5 text-gray-300 transition-all duration-200 group-hover:text-gray-900"
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewbox="0 0 24 24"
+                              stroke-width="2"
+                              stroke="currentColor"
+                              fill="none"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            >
+                              <path
+                                stroke="none"
+                                d="M0 0h24v24H0z"
+                                fill="none"
+                              ></path>
+                              <line x1="17" y1="7" x2="7" y2="17"></line>
+                              <polyline points="8 7 17 7 17 16"></polyline>
+                            </svg>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+      <div className="spacer py-10"></div>
+      <section>
+        <AboutSection/>
+      </section>
+      <div className="spacer py-10"></div>
+      <section>
+        <LandingStats />
+      </section>
+      <div className="spacer py-10"></div>
+      <section>
+        <TrainingTabs/>
+      </section>
+      <div className="spacer py-10"></div>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center gap-6 lg:px-16 px-6 py-4 lg:py-8'>
+      {reviews.map((review, index) => (
+        <ReviewCard key={index} {...review} />
+      ))}
+    </div>
+      <div className="spacer py-10"></div>
+      <div className="my-6">
+        <CallToAction />
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 };
