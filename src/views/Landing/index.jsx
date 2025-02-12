@@ -432,7 +432,7 @@ const index = () => {
       </section>
       <div className="spacer py-10"></div>
       <section>
-        <AboutSection/>
+        <AboutSection />
       </section>
       <div className="spacer py-10"></div>
       <section>
@@ -440,14 +440,25 @@ const index = () => {
       </section>
       <div className="spacer py-10"></div>
       <section>
-        <TrainingTabs/>
+        <TrainingTabs />
       </section>
       <div className="spacer py-10"></div>
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center gap-6 lg:px-16 px-6 py-4 lg:py-8'>
-      {reviews.map((review, index) => (
-        <ReviewCard key={index} {...review} />
-      ))}
-    </div>
+      <div>
+        <div className="lg:ps-16 px-6">
+          <h4 className="text-sm uppercase text-center text-gray-600 mb-2">
+            About Our training
+          </h4>
+          <h2 className="text-3xl text-center lg:text-4xl font-bold mb-8">
+            A new way to manage your
+            <br />online money.
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center gap-6 lg:px-16 px-6 py-4 lg:py-8">
+          {reviews.map((review, index) => (
+            <ReviewCard key={index} {...review} />
+          ))}
+        </div>
+      </div>
       <div className="spacer py-10"></div>
       <div className="my-6">
         <CallToAction />
