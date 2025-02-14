@@ -9,6 +9,7 @@ import InceptionTab from "./InceptionTab";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import WebDevTab from "./WebDevTab";
 import MernTab from "./MernTab";
+import AndroidTab from "./AndroidTab";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -119,7 +120,7 @@ export default function TrainingTabs() {
           <MernTab/>
         </TabPanel>
         <TabPanel value={value} index={3}>
-          Item Four
+          <AndroidTab/>
         </TabPanel>
       </Box>
     </div>
