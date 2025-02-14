@@ -5,28 +5,30 @@ import AdminRoutes from "@/routes/Admin/AdminRoutes";
 import CommunityRoutes from "@/routes/Community/CommunityRoutes";
 import CoordinatorRoutes from "@/routes/Uniques/CoordinatorRoute";
 import MemberRoutes from "@/routes/Uniques/MemberRoutes";
+import LandingLayout from "@/layout/Landing/index";
 import About from "@/views/Landing/About/index"
 import HowItStarted from "@/views/Landing/HowItStarted/index"
 
-const Landing = Loader(lazy(() => import("@/views/Landing")));
+const Landing = Loader(lazy(() => import("@/views/Landing/index")));
 
-const LandingRoutes = [
-  {
-    path: "/",
-    element: <Landing />,
-  },
-  {
-    path: "/about",
-    element: <About />,
-  },
-  // {
-  //   path: "/howItStarted",
-  //   element: <HowItStarted />,
-  // },
-];
+const LandingRoutes = {
+  path: "/",
+  element: <LandingLayout />, // Wrap all pages inside LandingLayout
+  children: [
+    { index: true, element: <Landing /> }, // Default route ("/")
+    { path: "about", element: <About /> },
+    { path: "contact", element: <div>Contact</div> },
+    { path: "events", element: <div>Events</div> },
+    { path: "blog", element: <div>Blog</div> },
+    { path: "community-page", element: <div>Community Page</div> },
+    { path: "training", element: <div>Training</div> },
+    { path: "login", element: <div>Login</div> },
+    { path: "batches", element: <div>Batches</div> },
+  ],
+};
 
 const router = createBrowserRouter([
-  ...LandingRoutes,
+  LandingRoutes,  // ✅ Fix: Use object directly, no spread operator
   AdminRoutes,
   CommunityRoutes,
   CoordinatorRoutes,
