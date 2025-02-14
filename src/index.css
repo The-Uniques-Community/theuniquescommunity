@@ -7,5 +7,32 @@
     .custom-clip {
         clip-path: polygon(0 82%, 58% 82%, 63% 74%, 86% 74%, 86% 0, 0% 0%)
     }
+    
 }
+
+@layer utilities{
+    .cta-clip{
+      clip-path: polygon(0% 0%, 21% 0%, 24% 13%, 100% 13%, 100% 100%, 77% 100%, 74% 88%, 0 88%);
+    }
+}
+@layer utilities{
+    .corporate-clip{
+      clip-path: polygon(0 26%, 0 7%, 4% 0, 14% 0%, 17% 7%, 54% 7%, 58% 0%, 91% 0%, 94% 9%, 100% 9%, 100% 100%, 14% 100%, 11% 94%, 0% 94%);
+    }
+}
+
+@keyframes expand {
+    0% {
+      width: 0%;
+    }
+    100% {
+      width: 100%;
+    }
+  }
+  
+  @layer utilities {
+    .animate-expand {
+      animation: expand 1.5s ease-in-out infinite alternate;
+    }
+  }
  
