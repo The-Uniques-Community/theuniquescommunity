@@ -6,6 +6,7 @@ import CommunityRoutes from "@/routes/Community/CommunityRoutes";
 import CoordinatorRoutes from "@/routes/Uniques/CoordinatorRoute";
 import MemberRoutes from "@/routes/Uniques/MemberRoutes";
 import LandingLayout from "@/layout/Landing/index";
+import About from "@/views/Landing/About/index"
 
 const Landing = Loader(lazy(() => import("@/views/Landing/index")));
 
