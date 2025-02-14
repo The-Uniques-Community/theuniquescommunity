@@ -6,7 +6,6 @@ import {
   Grid,
   Paper,
   Box,
- 
 } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsers, faStar } from "@fortawesome/free-solid-svg-icons";
@@ -14,10 +13,11 @@ import Button from "@/utils/Buttons/Button";
 import { useTheme } from "@mui/material";
 
 const CultureOfInnovation = () => {
-    const theme = useTheme();
+  const theme = useTheme();
+
   return (
     <Container maxWidth="xl" className="py-16 px-4 md:px-16">
-      <Stack spacing={6} className="">
+      <Stack spacing={6} className="text-center">
         <Typography variant="h2" className="text-gray-900 font-bold">
           Culture of Innovation
         </Typography>
@@ -73,13 +73,12 @@ const CultureOfInnovation = () => {
               Our culture prioritizes continuous learning, encouraging personal and professional development.
             </Typography>
             <Button
-                bgColor={theme.palette.primary.main}
-                borderColor={theme.palette.primary.dark}
-                textColor={theme.palette.primary.light}
-                
-              >
-                Know More
-              </Button>
+              bgColor={theme.palette.primary.main}
+              borderColor={theme.palette.primary.dark}
+              textColor={theme.palette.primary.light}
+            >
+              Know More
+            </Button>
           </Stack>
         </Grid>
 
