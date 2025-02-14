@@ -7,6 +7,8 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import Box from "@mui/material/Box";
 import InceptionTab from "./InceptionTab";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import WebDevTab from "./WebDevTab";
+import MernTab from "./MernTab";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -111,10 +113,10 @@ export default function TrainingTabs() {
           <InceptionTab />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          Item Two
+          <WebDevTab/>
         </TabPanel>
         <TabPanel value={value} index={2}>
-          Item Three
+          <MernTab/>
         </TabPanel>
         <TabPanel value={value} index={3}>
           Item Four
