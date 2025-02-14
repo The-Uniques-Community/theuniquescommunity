@@ -15,7 +15,7 @@ const LandingRoutes = {
   element: <LandingLayout />, // Wrap all pages inside LandingLayout
   children: [
     { index: true, element: <Landing /> }, // Default route ("/")
-    { path: "about", element: <div>About</div> },
+    { path: "about", element: <About /> },
     { path: "contact", element: <div>Contact</div> },
     { path: "events", element: <div>Events</div> },
     { path: "blog", element: <div>Blog</div> },
