@@ -57,21 +57,28 @@ const Navbar = () => {
 
   return (
     <div className="lg:px-12 py-4 md:px-12 sm:px-8 px-5 flex justify-between items-center shadow-sm">
+      {/* <div className='w-full h-full bg-transparent blur-lg absolute'></div> */}
       <div>
         <div className="grid grid-cols-6 gap-x-5">
           <div className="lg:col-span-2 md:col-span-2 sm:col-span-4 col-span-5">
             <img src={logo} className="w-40 object-contain object-left" alt="Logo" />
           </div>
           <div className="col-span-1"></div>
-          <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
-            <Link to="/batches"><span>BATCHES</span></Link>
-          </div>
-          <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
-            <Link to="/community"><span>COMMUNITY</span></Link>
-          </div>
-          <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
-            <Link to="/events"><span>EVENTS</span></Link>
-          </div>
+          <Link to="/batches">
+            <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
+              <span>BATCHES</span>
+            </div>
+          </Link>
+          <Link to="/community">
+            <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
+              <span>COMMUNITY</span>
+            </div>
+          </Link>
+          <Link to="/events">
+            <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
+              <span>EVENTS</span>
+            </div>
+          </Link>
         </div>
       </div>
       <div>
