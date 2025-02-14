@@ -292,7 +292,7 @@ const index = () => {
       <div className="my-6">
         <CallToAction />
       </div>
-      <Footer />
+      
     </div>
   );
 };
