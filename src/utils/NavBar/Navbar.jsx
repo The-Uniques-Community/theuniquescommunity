@@ -38,7 +38,7 @@ const Navbar = () => {
         {[
           { text: 'Home', icon: <HomeIcon />, link: '/' },
           { text: 'About Us', icon: <InfoIcon />, link: '/about' },
-          { text: 'Services', icon: <WorkIcon />, link: '/services' },
+          { text: 'How it started', icon: <WorkIcon />, link: '/howitstarted' },
           { text: 'Contact', icon: <ContactMailIcon />, link: '/contact' },
           { text: 'Batches', icon: <SchoolIcon />, link: '/batches' },
           { text: 'Community', icon: <GroupsIcon />, link: '/community' },
