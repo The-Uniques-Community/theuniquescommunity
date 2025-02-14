@@ -48,6 +48,11 @@ const FeaturesSection = () => {
       title: "Third feature",
       description: "Neque Dolor, fugiat non cum doloribus aperiam voluptates nostrum.",
     },
+    {
+        image: "https://cdn-icons-png.flaticon.com/512/4341/4341160.png",
+        title: "Third feature",
+        description: "Neque Dolor, fugiat non cum doloribus aperiam voluptates nostrum.",
+      },
   ];
 
   return (
