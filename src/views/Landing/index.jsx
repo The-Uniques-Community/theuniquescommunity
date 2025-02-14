@@ -9,6 +9,8 @@ import LandingStats from "./homComponents/LandingStats";
 import AboutSection from "./homComponents/AboutSection";
 import TrainingTabs from "./homComponents/TrainingTabs";
 import ReviewCard from "@/utils/Card/ReviewCard";
+import ShapedCard from "@/utils/Card/ShapedCard";
+import CorporateCultureSection from "./homComponents/CorporateCultureSection";
 const index = () => {
   const theme = useTheme();
   return (
@@ -433,6 +435,10 @@ const index = () => {
       <div className="spacer py-10"></div>
       <section>
         <AboutSection />
+      </section>
+      <div className="spacer py-10"></div>
+      <section>
+        <CorporateCultureSection/>
       </section>
       <div className="spacer py-10"></div>
       <section>

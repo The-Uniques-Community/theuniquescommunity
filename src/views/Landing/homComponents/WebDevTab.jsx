@@ -1,32 +1,32 @@
-import { Brush, Movie, Campaign, Work } from "@mui/icons-material";
-import inception from "@/assets/img/inception.png";
+import img from '@/assets/img/web-dev-training.png';
+import { Code, Web, Palette, Layers } from "@mui/icons-material";
 import model from "@/assets/img/trainingMethod.png";
 
-const InceptionTab = () => {
+const WebDevTab = () => {
   const features = [
     {
-      icon: <Brush fontSize="large" style={{ color: "white" }} />,
-      title: "Graphic Design Basics",
+      icon: <Code fontSize="large" style={{ color: "white" }} />,
+      title: "HTML, CSS, & JavaScript",
       description:
-        "Introduction to Adobe Photoshop, Illustrator, and Canva for social media marketing, engagement posts, and printables.",
+        "Students start by learning HTML, CSS, and JavaScript to build responsive, interactive websites from scratch.",
     },
     {
-      icon: <Movie fontSize="large" style={{ color: "white" }} />,
-      title: "Video Editing Fundamentals",
+      icon: <Web fontSize="large" style={{ color: "white" }} />,
+      title: "Responsive Design",
       description:
-        "Learning After Effects, CapCut, and Canva for creating professional and engaging video content.",
+        "Focused on creating websites that adapt seamlessly to all screen sizes using competitive development techniques.",
     },
     {
-      icon: <Campaign fontSize="large" style={{ color: "white" }} />,
-      title: "Marketing & Engagement",
+      icon: <Palette fontSize="large" style={{ color: "white" }} />,
+      title: "Frameworks & Tools",
       description:
-        "Understanding how to design content that boosts brand awareness and audience engagement on digital platforms.",
+        "Introduction to frameworks like Bootstrap, Tailwind, and the use of CDNs for faster website development.",
     },
     {
-      icon: <Work fontSize="large" style={{ color: "white" }} />,
-      title: "Real-World Application",
+      icon: <Layers fontSize="large" style={{ color: "white" }} />,
+      title: "Client-Ready Projects",
       description:
-        "Students are encouraged to find clients on digital platforms, applying their skills in practical, real-world scenarios.",
+        "The goal is to prepare students for real-world projects, making them market-ready to offer their services.",
     },
   ];
 
@@ -36,9 +36,9 @@ const InceptionTab = () => {
         {/* Left Section - Image */}
         <div className="lg:col-span-1">
           <img
-            src={inception}
+            src={img}
             className="object-center object-contain w-full min-w-80 max-w-xs mx-auto"
-            alt="Inception Training"
+            alt="Web Development Training"
           />
         </div>
 
@@ -46,7 +46,7 @@ const InceptionTab = () => {
         <div className="lg:p-4 md:p-4 p-2 self-center lg:col-span-2">
           <div>
             <h4 className="text-3xl lg:text-4xl font-bold mb-10 text-center lg:text-left">
-              Foundation of Design & Editing
+              Web Development Training Model
             </h4>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-6">
@@ -78,4 +78,4 @@ const InceptionTab = () => {
   );
 };
 
-export default InceptionTab;
+export default WebDevTab;
