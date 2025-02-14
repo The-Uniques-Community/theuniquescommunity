@@ -6,6 +6,7 @@ import CommunityRoutes from "@/routes/Community/CommunityRoutes";
 import CoordinatorRoutes from "@/routes/Uniques/CoordinatorRoute";
 import MemberRoutes from "@/routes/Uniques/MemberRoutes";
 import About from "@/views/Landing/About/index"
+import HowItStarted from "@/views/Landing/HowItStarted/index"
 
 const Landing = Loader(lazy(() => import("@/views/Landing")));
 
@@ -18,6 +19,10 @@ const LandingRoutes = [
     path: "/about",
     element: <About />,
   },
+  // {
+  //   path: "/howItStarted",
+  //   element: <HowItStarted />,
+  // },
 ];
 
 const router = createBrowserRouter([
