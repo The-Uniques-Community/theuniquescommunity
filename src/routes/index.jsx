@@ -8,6 +8,7 @@ import MemberRoutes from "@/routes/Uniques/MemberRoutes";
 import LandingLayout from "@/layout/Landing/index";
 import About from "@/views/Landing/About/index"
 
+
 const Landing = Loader(lazy(() => import("@/views/Landing/index")));
 
 const LandingRoutes = {
