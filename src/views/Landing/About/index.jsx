@@ -5,6 +5,7 @@ import Third from "./componants/Third"
 import Fourth from "./componants/Fourth"
 import Fifth from "./componants/Fifth"
 import Mentor from "./componants/Mentor"
+import TrainingTabs from './componants/TraningModel'
 
 const index = () => {
   return (
@@ -14,7 +15,9 @@ const index = () => {
 {/* <Third/> */}
 <Fourth/>
 <Fifth/>
+<TrainingTabs/>
 <Mentor/>
+
 </div>
   )
 }

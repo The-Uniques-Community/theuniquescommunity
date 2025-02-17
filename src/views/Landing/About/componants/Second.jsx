@@ -232,7 +232,8 @@ const BatchProfile = () => {
                     bgColor={theme.palette.primary.main}
                     borderColor={theme.palette.primary.dark}
                     textColor={theme.palette.primary.light}
-                    iconColor={theme.palette.primary.light}
+                    iconColor={theme.palette.primary.dark}
+                    color={theme.palette.primary.light}
                   >
                     Know More
                   </Button>
