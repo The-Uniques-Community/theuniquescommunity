@@ -14,14 +14,14 @@ const stats = [
 const LandingStats = () => {
     const theme = useTheme();
   return (
-    <div className="bg-black grid lg:grid-cols-2 my-5 md:grid-cols-1 grid-cols-1 gap-6 lg:gap-10 text-white py-10 px-5 md:px-20">
+    <div className="bg-black/20 grid lg:grid-cols-2 my-5 md:grid-cols-1 grid-cols-1 gap-6 lg:gap-10 text-white  py-10 px-5 md:px-20">
       <div>
         <img src={project} className="w-full object-cover object-center h-full rounded-tr-full" alt="" />
       </div>
       <div className="max-w-screen-lg mx-auto self-center">
         {/* Title Section */}
         <div className="mb-10">
-          <h1 className="lg:text-4xl md:text-3xl text-3xl font-bold mb-2 leading-tight">
+          <h1 className="lg:text-4xl text-slate-800 md:text-3xl text-3xl font-bold mb-2 leading-tight">
             Make beautiful landing pages using Rareblocks.
           </h1>
           

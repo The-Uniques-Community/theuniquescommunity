@@ -56,9 +56,11 @@ export default function TrainingTabs() {
     <div>
       <div className="lg:ps-16 px-6">
       <h4 className="text-sm uppercase text-gray-600 mb-2">About Our training</h4>
+      <div>
           <h2 className="text-3xl lg:text-4xl font-bold mb-8">
             A new way to manage your<br /> online money.
           </h2>
+      </div>
       </div>
       <Box
         sx={{
@@ -111,16 +113,24 @@ export default function TrainingTabs() {
           />
         </Tabs>
         <TabPanel value={value} index={0}>
-          <InceptionTab />
+          <Box>
+            <InceptionTab />
+          </Box>
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <WebDevTab/>
+          <Box>
+            <WebDevTab/>
+          </Box>
         </TabPanel>
         <TabPanel value={value} index={2}>
-          <MernTab/>
+          <Box>
+            <MernTab/>
+          </Box>
         </TabPanel>
         <TabPanel value={value} index={3}>
-          <AndroidTab/>
+          <Box>
+            <AndroidTab/>
+          </Box>
         </TabPanel>
       </Box>
     </div>
