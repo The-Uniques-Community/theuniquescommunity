@@ -10,6 +10,7 @@ import About from "@/views/Landing/About/index"
 
 
 const Landing = Loader(lazy(() => import("@/views/Landing/index")));
+const MemberLogin = Loader(lazy(() => import("@/views/Landing/MemberLogin/index")));
 
 const LandingRoutes = {
   path: "/",
@@ -24,6 +25,7 @@ const LandingRoutes = {
     { path: "training", element: <div>Training</div> },
     { path: "login", element: <div>Login</div> },
     { path: "batches", element: <div>Batches</div> },
+    {path: "member-login", element: <MemberLogin/>},
   ],
 };
 

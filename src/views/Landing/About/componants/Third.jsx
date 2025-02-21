@@ -73,9 +73,11 @@ const CultureOfInnovation = () => {
               Our culture prioritizes continuous learning, encouraging personal and professional development.
             </Typography>
             <Button
-              bgColor={theme.palette.primary.main}
-              borderColor={theme.palette.primary.dark}
-              textColor={theme.palette.primary.light}
+              color={"white"}
+              bgColor={"#ca0019"}
+              border={4}
+              borderColor={"#ca0019"}
+              iconColor={"black"}
             >
               Know More
             </Button>
