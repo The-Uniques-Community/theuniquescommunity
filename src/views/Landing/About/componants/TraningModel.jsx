@@ -78,34 +78,35 @@ export default function TrainingTabs() {
               justifyContent: "center",
               alignItems: "center",
               gap: 2,
+         
             }}
           >
             <Tab
               icon={<SettingsIcon sx={{ fontSize: 18 }} />}
               iconPosition="start"
               label={<span className="text-xs">Round-I</span>}
-              sx={{ minWidth: "150px", textAlign: "center" }}
+              sx={{ minWidth: "150px", textAlign: "center", borderRadius:10 }}
               {...a11yProps(0)}
             />
             <Tab
               icon={<SettingsIcon sx={{ fontSize: 18 }} />}
               iconPosition="start"
               label={<span className="text-xs">Round-II</span>}
-              sx={{ minWidth: "150px", textAlign: "center" }}
+              sx={{ minWidth: "150px", textAlign: "center", borderRadius:10  }}
               {...a11yProps(1)}
             />
             <Tab
               icon={<SettingsIcon sx={{ fontSize: 18 }} />}
               iconPosition="start"
               label={<span className="text-xs">Round-III</span>}
-              sx={{ minWidth: "150px", textAlign: "center" }}
+              sx={{ minWidth: "150px", textAlign: "center", borderRadius:10  }}
               {...a11yProps(2)}
             />
             <Tab
               icon={<SettingsIcon sx={{ fontSize: 18 }} />}
               iconPosition="start"
               label={<span className="text-xs">Round-IV</span>}
-              sx={{ minWidth: "150px", textAlign: "center" }}
+              sx={{ minWidth: "150px", textAlign: "center", borderRadius:10  }}
               {...a11yProps(3)}
             />
           </Tabs>
