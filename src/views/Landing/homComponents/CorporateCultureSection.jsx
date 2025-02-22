@@ -33,7 +33,7 @@ const CorporateCultureSection = () => {
                   <img
                     alt="gallery"
                     className="block h-full w-full rounded-lg object-cover object-center"
-                    src="https://tecdn.b-cdn.net/img/Photos/Horizontal/Nature/4-col/img%20(73).webp"
+                    src="https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1r3HHIkfTI4UXpNAM59VHStWu1E7iPx60mfLaJ"
                   />
                 </div>
               </div>
@@ -42,7 +42,7 @@ const CorporateCultureSection = () => {
                   <img
                     alt="gallery"
                     className="block h-full w-full rounded-lg object-cover object-center"
-                    src="https://tecdn.b-cdn.net/img/Photos/Horizontal/Nature/4-col/img%20(74).webp"
+                    src="https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1reUQxhoyYLfOJra4m9kHCwZc8ne7y6BzUh1V5"
                   />
                 </div>
                 <div className="w-1/2 p-1 md:p-2">
