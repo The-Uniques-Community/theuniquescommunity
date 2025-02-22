@@ -48,7 +48,7 @@ const index = () => {
                   </p>
                   <svg
                     className="w-auto h-4 mt-8 text-gray-300"
-                    viewbox="0 0 172 16"
+                    viewBox="0 0 172 16"
                     fill="none"
                     stroke="currentColor"
                     xmlns="http://www.w3.org/2000/svg"
@@ -205,7 +205,7 @@ const index = () => {
                     <div className="absolute transitiona-all duration-1000 opacity-30 inset-0 bg-gradient-to-r from-black via-[#FF44EC] to-[#ca0019] rounded-xl blur-lg filter group-hover:opacity-100 group-hover:duration-200"></div>
                     <div className="relative space-y-4 sm:flex sm:space-y-0 sm:items-end">
                       <div className="flex-1">
-                        <label for="" className="sr-only">
+                        <label htmlFor="" className="sr-only">
                           Email address
                         </label>
                         <div>

@@ -5,13 +5,11 @@ import Footer from "@/utils/Footer/Footer";
 const LandingLayout = () => {
   return (
     <div>
-      {/* Navbar at the top */}
       <Navbar />
-      
-      {/* Main content (switches based on the route) */}
-      <main className="">
+
+      <div className="">
         <Outlet />
-      </main>
+      </div>
       <Footer/>
     </div>
   );

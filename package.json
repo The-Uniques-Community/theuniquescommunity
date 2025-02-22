@@ -10,8 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@babel/compat-data": "7.19.4",
+    "@babel/core": "7.19.6",
+    "@babel/generator": "7.19.6",
+    "@babel/helper-compilation-targets": "7.19.3",
+    "@babel/helper-create-class-features-plugin": "7.19.0",
+    "@babel/helper-module-transforms": "7.19.6",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@mui/icons-material": "^6.3.0",
