@@ -35,6 +35,10 @@ const memberSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    whatsappContact:{
+        type: String,
+        required: true
+    },
     address: {
         type: String,
         required: true
@@ -58,6 +62,11 @@ const memberSchema = new mongoose.Schema({
     isSuspended: {
         type: Boolean,
         default: false
+    },
+    profileStatus:{
+        type: String,
+        default: "inactive",
+        enum: ["inactive", "active", "blocked"]
     },
     fineStatus:{
         type: String,
