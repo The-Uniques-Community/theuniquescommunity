@@ -6,6 +6,7 @@ import Fourth from "./componants/Fourth"
 import Fifth from "./componants/Fifth"
 import Mentor from "./componants/Mentor"
 import TrainingTabs from './componants/TraningModel'
+import VisionMission from './componants/Vision'
 
 const index = () => {
   return (
@@ -17,6 +18,7 @@ const index = () => {
 <Fifth/>
 <TrainingTabs/>
 <Mentor/>
+<VisionMission/>
 
 </div>
   )
