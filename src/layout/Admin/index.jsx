@@ -11,10 +11,10 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import PublishIcon from "@mui/icons-material/Publish";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import EventIcon from "@mui/icons-material/Event";
+import VisibilityIcon from "@mui/icons-material/Visibility"
 import GroupIcon from "@mui/icons-material/Group";
-import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
+
 import LogoutIcon from "@mui/icons-material/Logout";
 import { toast } from "react-toastify";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -30,14 +30,9 @@ import Brightness7Icon from "@mui/icons-material/Brightness7"; // Light Mode Ico
 // Navigation items with full paths
 const STUDENT_NAVIGATION = [
   { segment: "", title: "Dashboard", icon: <DashboardIcon /> },
-  { segment: "JobPosting", title: "Post Job", icon: <PublishIcon /> },
-  { segment: "profile", title: "Profile", icon: <AccountCircleIcon /> },
-  { segment: "applicants", title: "Applicants", icon: <GroupIcon /> },
-  {
-    segment: "joboffers",
-    title: "Manage Offers",
-    icon: <AssignmentTurnedInIcon />,
-  },
+  { segment: "members-overview", title: "Members", icon: <GroupIcon /> },
+  { segment: "events-overview", title: "Events", icon: <EventIcon /> },
+  { segment: "community-overview", title: "Community", icon: <VisibilityIcon /> },
 ];
 
 function Branding() {

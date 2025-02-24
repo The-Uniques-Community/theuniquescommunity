@@ -1,11 +1,12 @@
-import {getProfile, login, register, editProfile, logout} from '../../controller/member/memberController'
+import express from 'express';
+import { register, login, logout, editProfile, getProfile } from '../../controller/member/memberController.js';
 
-const memberRouter = require('express').Router();
+const memberRoute = express.Router()
 
-router.post('/register', register);
-router.post('/login', login);
-router.post('/logout', logout);
-router.post('/editProfile', editProfile);
-router.post('/getProfile', getProfile);
+memberRoute.post('/register', register);
+memberRoute.post('/login', login);
+memberRoute.post('/logout', logout);
+memberRoute.post('/editProfile', editProfile);
+memberRoute.post('/getProfile', getProfile);
 
-module.exports = memberRouter;
+export default memberRoute;

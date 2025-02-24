@@ -1,29 +1,29 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const cors = require("cors");
-const dbconnect = require("./config/dbConfig");
-const cookieParser = require('cookie-parser');
-const memberRoute = require('./routes/member/memberRoute');
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import dbconnect from "./config/dbConfig.js";
+import cookieParser from "cookie-parser";
+import memberRoute from "./routes/member/memberRoute.js";
+import adminRoute from "./routes/admin/adminRoute.js";
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors(
-  {
+app.use(
+  cors({
     origin: true,
     credentials: true,
-  }
-));
+  })
+);
 
-
-
-app.get('/', (req, res) => {
-	res.send('hello its working');
+app.get("/", (req, res) => {
+  res.send("hello its working");
 });
 
-app.use('/member', memberRoute);
+app.use("/api/member", memberRoute);
+app.use("/api/admin", adminRoute);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);

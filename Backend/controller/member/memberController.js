@@ -1,12 +1,14 @@
-const Member = require('../../models/member/memberModel');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv');
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import Member from "../../models/member/memberModel.js";
+import { sendPendingApprovalEmail } from "../../services/members/sendPendingApprovalEmail.js";
+
 dotenv.config();
 
 
 
-const register = async (req, res) => {
+export const register = async (req, res) => {
     try {
         const { name, email, password, city, state, course,whatsappContact, batch, admnNo, address, contact } = req.body;
         const member = await Member.findOne({ email });
@@ -27,10 +29,12 @@ const register = async (req, res) => {
             address,
             contact,
             whatsappContact,
-            profileStatus:"inactive"
+            profileStatus:"pending"
         });
 
         await newMember.save();
+
+        await sendPendingApprovalEmail(email, name);
         const jwtToken = jwt.sign(
             { id: newMember._id, role: "member" }, 
             process.env.JWT_SECRET,
@@ -52,12 +56,19 @@ const register = async (req, res) => {
 
 }
 
-const login = async (req, res) => {
+export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         const member = await Member.findOne({ email });
         if (!member) {
             return res.status(400).json({ message: "Invalid credentials" });
+        }
+        if(member.profileStatus === "pending" && member.isVerified === false){
+            return res.status(400).json({ message: "Your profile is pending approval" });
+        }
+
+        if(member.profileStatus === "blocked" && member.isVerified === false){
+            return res.status(400).json({ message: "Your profile is blocked" });
         }
 
         const isPasswordCorrect = await bcrypt.compare(password, member.password);
@@ -86,12 +97,12 @@ const login = async (req, res) => {
 }
 
 
-const logout = (req, res) => {
+export const logout = (req, res) => {
     res.clearCookie("token");
     res.status(200).json({ message: "User logged out successfully" });
 }
 
-const editProfile = async (req, res) => {
+export const editProfile = async (req, res) => {
     try {
         const { name, email, password, city, state, course, batch, admnNo, address, contact } = req.body;
         const member = await Member.findOne({ email });
@@ -124,7 +135,7 @@ const editProfile = async (req, res) => {
 }
 
 
-const getProfile = async (req, res) => {
+export const getProfile = async (req, res) => {
     try {
         const { email } = req.body;
         const member = await Member.findOne({
@@ -139,5 +150,3 @@ const getProfile = async (req, res) => {
         res.status(500).json({ message: "Something went wrong" });
     }
 }
-
-module.exports = { register, login, logout, editProfile, getProfile };
