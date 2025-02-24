@@ -11,7 +11,7 @@ import About from "@/views/Landing/About/index"
 
 const Landing = Loader(lazy(() => import("@/views/Landing/index")));
 const MemberLogin = Loader(lazy(() => import("@/views/Landing/MemberLogin/index")));
-
+const MemberRegister = Loader(lazy(() => import("@/views/Landing/MemberRegister/index")));
 const LandingRoutes = {
   path: "/",
   element: <LandingLayout />, // Wrap all pages inside LandingLayout
@@ -26,6 +26,7 @@ const LandingRoutes = {
     { path: "login", element: <div>Login</div> },
     { path: "batches", element: <div>Batches</div> },
     {path: "member-login", element: <MemberLogin/>},
+    {path: "member-register", element: <MemberRegister/>},
   ],
 };
 
