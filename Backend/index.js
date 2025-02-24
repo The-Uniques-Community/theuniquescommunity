@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const dbconnect = require("./config/dbConfig");
 const cookieParser = require('cookie-parser');
+const memberRoute = require('./routes/member/memberRoute');
 
 dotenv.config();
 
@@ -21,6 +22,8 @@ app.use(cors(
 app.get('/', (req, res) => {
 	res.send('hello its working');
 });
+
+app.use('/member', memberRoute);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
