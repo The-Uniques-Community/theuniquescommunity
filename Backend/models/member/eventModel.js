@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 const eventSchema = new mongoose.Schema({
     eventName:{
@@ -8,6 +8,10 @@ const eventSchema = new mongoose.Schema({
     eventDescription:{
         type: String,
         required: true
+    },
+    eventBanner:{
+        type: String,
+        
     },
     eventDate:{
         type: Date,
@@ -41,6 +45,12 @@ const eventSchema = new mongoose.Schema({
         multiple: true,
         enum:["Workshop","Seminar","Webinar","Hackathon","Competition","Conference","Fest","Cultural","Ideathon","Sports","Talk Show","Meetup","Others"]
     },
+    eventStatus:{
+        type: String,
+        default: "upcoming",
+        enum:["upcoming","ongoing","completed"]
+    }
 });
 
-module.exports = mongoose.model('Event', eventSchema)
+const Event = mongoose.model('Event', eventSchema)
+export default Event;

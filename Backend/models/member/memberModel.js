@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-const File = require('./fileModel');
-const Event = require('./eventModel');
+import mongoose from 'mongoose'
+import File from './fileModel.js'
+// import Event from './member/eventModel.js'
 
 const memberSchema = new mongoose.Schema({
     fullName: {
@@ -66,13 +66,20 @@ const memberSchema = new mongoose.Schema({
     profileStatus:{
         type: String,
         default: "inactive",
-        enum: ["inactive", "active", "blocked"]
+        enum: ["inactive", "active","pending", "blocked"]
     },
     fineStatus:{
         type: String,
         default: "0",
     },
-    certifications: [File],
+    certifications: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'File'  // Reference the File model
+    }],
+    profilePic: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'File'
+    },
     skills: {
         type: Array,
         default: []
@@ -97,7 +104,6 @@ const memberSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    profilePic: File,
 
     // Storing event references using ObjectId
     event_participation: [{
@@ -118,4 +124,5 @@ const memberSchema = new mongoose.Schema({
 
 });
 
-module.exports = mongoose.model('Member', memberSchema);
+const Member = mongoose.model('Member', memberSchema);
+export default Member;
