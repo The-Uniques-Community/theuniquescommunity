@@ -28,7 +28,7 @@ const FeatureCard = ({ image, title, description }) => {
         </a>
       </div>
     </div>
-  );
+  ); 
 };
 
 const FeaturesSection = () => {
