@@ -21,7 +21,7 @@ const index = () => {
         ></div>
         <div className="lg:w-3/4 w-[85%] mx-auto h-80 bg-black absolute top-1/2 left-0 right-0 transform z-10 rounded-lg"></div>
       </div>
-      <div className="lg:max-w-7xl max-w-5xl mx-auto py-12 my-20">
+      <div className="lg:max-w-7xl max-w-5xl mx-auto py-12 mt-20">
         <h1 className="text-3xl font-bold text-center text-gray-800 my-8">
           Latest Blogs
         </h1>
