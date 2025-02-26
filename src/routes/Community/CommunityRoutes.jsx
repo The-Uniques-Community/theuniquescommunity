@@ -5,6 +5,7 @@ import ProtectedRoute from "@/routes/ProtectedRoute";
 const CommunityLayout = Loader(lazy(() => import("@/layout/Community")));
 const CommunityDashboard = Loader(lazy(() => import("@/views/Community")));
 
+
 const CommunityRoutes = {
   path: "/community",
   element: <ProtectedRoute isAllowed={true} element={<CommunityLayout />} />,
