@@ -96,9 +96,21 @@ const memberSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
-    socialLinks: {
-        type: Array,
-        default: []
+    linkedinProfile:{
+        type: String,
+        default: ""
+    },
+    instagramProfile:{
+        type: String,
+        default: ""
+    },
+    twitterProfile:{
+        type: String,
+        default: ""
+    },
+    githubProfile:{
+        type: String,
+        default: ""
     },
     bio: {
         type: String,
@@ -122,7 +134,7 @@ const memberSchema = new mongoose.Schema({
         enum: ["B.Tech CSE", "CSD"]
     }
 
-});
+}, { timestamps: true });
 
 const Member = mongoose.model('Member', memberSchema);
 export default Member;

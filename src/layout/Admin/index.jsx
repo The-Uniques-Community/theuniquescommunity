@@ -12,7 +12,7 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import EventIcon from "@mui/icons-material/Event";
-import VisibilityIcon from "@mui/icons-material/Visibility"
+import Groups3Icon from '@mui/icons-material/Groups3';
 import GroupIcon from "@mui/icons-material/Group";
 
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -24,15 +24,17 @@ import { useThemeContext } from "@/theme/ThemeProvider";
 import ConfirmationModal from "@/utils/Modal/ConfirmationModal";
 import logo from "@/assets/logos/theuniquesCommunity.png";
 import uniques_white from "@/assets/logos/uniqueswhite.png";
+import { AccountBalance } from "@mui/icons-material";
 import Brightness4Icon from "@mui/icons-material/Brightness4"; // Dark Mode Icon
 import Brightness7Icon from "@mui/icons-material/Brightness7"; // Light Mode Icon
 
 // Navigation items with full paths
-const STUDENT_NAVIGATION = [
+const ADMIN_NAVIGATION = [
   { segment: "", title: "Dashboard", icon: <DashboardIcon /> },
   { segment: "members-overview", title: "Members", icon: <GroupIcon /> },
   { segment: "events-overview", title: "Events", icon: <EventIcon /> },
-  { segment: "community-overview", title: "Community", icon: <VisibilityIcon /> },
+  { segment: "community-overview", title: "Community", icon: <Groups3Icon /> },
+  { segment: "accounts", title: "Accounts", icon: <AccountBalance/> },
 ];
 
 function Branding() {
@@ -144,7 +146,7 @@ function DashboardLayoutAppBar() {
         </Box>
 
         <List sx={{ padding: 2 }}>
-          {STUDENT_NAVIGATION.map((item) => {
+          {ADMIN_NAVIGATION.map((item) => {
             const isActive = activeItem === item.title;
 
             return (

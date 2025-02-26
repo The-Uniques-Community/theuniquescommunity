@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTheme } from "@mui/material/styles";
-import Footer from "@/utils/Footer/Footer";
+import { Modal, Box, IconButton, Chip } from "@mui/material";
 import BlogCard from "@/utils/Card/BlogCard";
 import { blogData } from "@/assets/dummyData/blogData";
+import CloseIcon from "@mui/icons-material/Close";
 import { reviews } from "@/assets/dummyData/reviewData";
 import tu from "@/assets/logos/theuniquesCommunity.png";
 import CallToAction from "./homComponents/CallToAction";
@@ -14,6 +15,7 @@ import ReviewCard from "@/utils/Card/ReviewCard";
 import CorporateCultureSection from "./homComponents/CorporateCultureSection";
 const index = () => {
   const theme = useTheme();
+  const [selectedBlog, setSelectedBlog] = useState(null);
   return (
     <div>
       {/* <Navbar /> */}
@@ -241,11 +243,8 @@ const index = () => {
                   {blogData.slice(0, 3).map((blog, index) => (
                     <BlogCard
                       key={index}
-                      title={blog.title}
-                      description={blog.description}
-                      category={blog.category}
-                      readTime={blog.readTime}
-                      image={blog.image}
+                      {...blog}
+                      onClick={() => setSelectedBlog(blog)}
                     />
                   ))}
                 </div>
@@ -254,6 +253,68 @@ const index = () => {
           </section>
         </div>
       </section>
+      <Modal
+        open={!!selectedBlog}
+        onClose={() => setSelectedBlog(null)}
+        aria-labelledby="blog-title"
+        aria-describedby="blog-content"
+      >
+        <Box className="fixed inset-0 bg-white overflow-auto">
+          {selectedBlog && (
+            <div className="max-w-6xl mx-auto p-6">
+              {/* Close Button */}
+              <div className="flex justify-between items-center">
+                <h2
+                  id="blog-title"
+                  className="text-4xl font-bold text-gray-800"
+                >
+                  {selectedBlog.title}
+                </h2>
+                <IconButton onClick={() => setSelectedBlog(null)}>
+                  <CloseIcon className="text-gray-600" />
+                </IconButton>
+              </div>
+
+              {/* Blog Meta Info */}
+              <p className="text-gray-600 text-lg mt-2">
+                {selectedBlog.category} • {selectedBlog.readTime} Mins Read
+              </p>
+
+              {/* Blog Tags */}
+              <div className="flex flex-wrap gap-2 mt-4">
+                {selectedBlog.tags.map((tag, index) => (
+                  <Chip key={index} label={tag} className="bg-gray-200" />
+                ))}
+              </div>
+
+              {/* Blog Image */}
+              <img
+                src={selectedBlog.image}
+                alt={selectedBlog.title}
+                className="w-full h-[400px] object-cover rounded-lg mt-6"
+              />
+
+              {/* Blog Content Sections */}
+              <div
+                id="blog-content"
+                className="mt-6 text-gray-700 text-lg leading-7 space-y-6"
+              >
+                {selectedBlog.subContents.map((section, index) => (
+                  <div key={index}>
+                    {section.heading && (
+                      <h3 className="text-2xl font-semibold text-gray-800">
+                        {section.heading}
+                      </h3>
+                    )}
+                    <p className="mt-2">{section.paragraph}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </Box>
+      </Modal>
+
       <div className="spacer py-10"></div>
       <section>
         <AboutSection />
@@ -292,7 +353,6 @@ const index = () => {
       <div className="my-6">
         <CallToAction />
       </div>
-      
     </div>
   );
 };
