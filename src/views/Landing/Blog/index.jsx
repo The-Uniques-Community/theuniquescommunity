@@ -17,7 +17,7 @@ const index = () => {
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
           }}
-          className="h-[70vh] w-full bg-cover bg-center bg-no-repeat"
+          className="h-[60vh] w-full bg-cover bg-center bg-no-repeat"
         ></div>
         <div className="lg:w-3/4 w-[85%] mx-auto h-80 bg-black absolute top-1/2 left-0 right-0 transform z-10 rounded-lg"></div>
       </div>
