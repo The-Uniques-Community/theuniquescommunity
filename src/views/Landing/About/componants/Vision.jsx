@@ -33,7 +33,7 @@ const MissionVission = () => {
           </p>
         </div>
         <div className="w-full md:w-1/2 h-96 hidden md:block">
-          <img className="w-[80%] h-[80%] object-contain opacity-35" src={visionImage} alt="Vision" />
+          <img className="w-[80%] h-[80%] object-contain opacity-5" src={visionImage} alt="Vision" />
         </div>
       </div>
 
