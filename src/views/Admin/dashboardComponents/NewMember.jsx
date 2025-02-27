@@ -6,7 +6,7 @@ import PushPinIcon from '@mui/icons-material/PushPin';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import tu from '@/assets/logos/tu.png'
 import CallIcon from '@mui/icons-material/Call';
-export const PendingUserCard = ({ user }) => {
+export const NewMember = ({ user }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -19,8 +19,8 @@ export const PendingUserCard = ({ user }) => {
           <div>
                 <img src={tu} alt="The Uniques" className="w-5 inline h-5 object-contain object-center" /> {user.batch}
             </div>
-            <span className="bg-yellow-400 text-yellow-800 text-sm px-3 py-1 rounded-full">
-              Pending
+            <span className="bg-green-500 text-white text-sm px-3 py-1 rounded-full">
+              New
             </span>
           </div>
 
@@ -33,12 +33,12 @@ export const PendingUserCard = ({ user }) => {
             </div>
           </div>
           <div className="flex justify-between gap-x-2 mt-3">
-            <Button variant="outlined" style={{border: '1px solid #22c55e'}} startIcon={<FaCheck className="group-hover:text-white text-green-400 " />} className="hover:text-white group text-green-500 w-1/2 hover:bg-green-600">
+            {/* <Button variant="outlined" style={{border: '1px solid #22c55e'}} startIcon={<FaCheck className="group-hover:text-white text-green-400 " />} className="hover:text-white group text-green-500 w-1/2 hover:bg-green-600">
               <span className="text-green-500 group-hover:text-white">Approve</span>
             </Button>
             <Button variant="outlined" startIcon={<FaTimes />} className="border-red-500 w-1/2 text-red-500 hover:bg-red-100">
               Reject
-            </Button>
+            </Button> */}
           </div>
           <div className="mt-3 text-center">
             <Button variant="contained" startIcon={<FaEye />} className=" text-white w-full hover:bg-black" onClick={() => setOpen(true)}>
@@ -101,8 +101,8 @@ export const PendingUserCard = ({ user }) => {
           <div className="mt-6 flex justify-between items-center">
             <Button variant="outlined" className="border-red-500 text-red-500 hover:bg-red-100">Block</Button>
             <div className="flex gap-3">
-              <Button variant="outlined" className="border-gray-500 text-gray-700 hover:bg-gray-100" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button variant="contained" className="bg-[#ca0019] text-white hover:bg-black">Approve</Button>
+              <Button variant="contained" className="border-gray-500 text-gray-700 hover:bg-gray-100" onClick={() => setOpen(false)}>Cancel</Button>
+              {/* <Button variant="contained" className="bg-[#ca0019] text-white hover:bg-black">Approve</Button> */}
             </div>
           </div>
         </Box>
