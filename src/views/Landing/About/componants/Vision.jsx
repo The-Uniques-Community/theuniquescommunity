@@ -3,17 +3,17 @@ import visionImage from '/src/assets/img/About/VISION.png'; // Adjust if needed
 
 const MissionVission = () => {
   const MissionData = [
-    { number: '1', title: 'Empowering Students', description: 'Our mission is to inspire and empower students to reach for the stars, guiding them towards academic excellence and personal growth.' },
-    { number: '2', title: 'Driving Positive Change', description: 'We strive to be a catalyst for positive change in society, fostering innovation and leadership among our students.' },
-    { number: '3', title: 'Fostering Community Engagement', description: 'We are committed to fostering community engagement, encouraging our students to become active participants in creating a better world.' },
-    { number: '4', title: 'Promoting Diversity and Inclusion', description: 'Our mission includes promoting diversity and inclusion, ensuring that every student feels valued and respected.' }
+    { number: '1', title: 'Mastering Technology', description: 'Our mission is to cultivate a deep understanding of cutting-edge technologies, empowering students to innovate beyond traditional academics.' },
+    { number: '2', title: 'Building Future Innovators', description: 'We aim to nurture a community of problem-solvers and tech enthusiasts who challenge norms and drive technological advancements.' },
+    { number: '3', title: 'Entrepreneurial Mindset', description: 'Encouraging students to think beyond jobs and explore the world of startups, turning ideas into real-world solutions.' },
+    { number: '4', title: 'Collaboration & Growth', description: 'Fostering an ecosystem where like-minded individuals connect, collaborate, and grow in their technical journey together.' }
   ];
 
   const VisionData = [
-    { number: '1', title: 'Pursuing Excellence', description: 'Our vision is to create a world-class educational institution that nurtures talent and fosters a culture of excellence.' },
-    { number: '2', title: 'Building Leaders', description: 'We envision a future where our graduates are leaders and innovators, making a positive impact on the world.' },
-    { number: '3', title: 'Global Impact', description: 'Our vision includes making a global impact, collaborating with partners worldwide to address pressing challenges.' },
-    { number: '4', title: 'Sustainable Future', description: 'We are committed to creating a sustainable future, integrating environmental responsibility into everything we do.' }
+    { number: '1', title: 'Tech-Driven Excellence', description: 'Our vision is to create a community where technical expertise is valued above rote academics, driving innovation and impact.' },
+    { number: '2', title: 'Startup Culture', description: 'We envision a future where our members launch groundbreaking startups, disrupting industries with technological advancements.' },
+    { number: '3', title: 'Global Tech Impact', description: 'Our vision extends beyond boundaries, aiming to make a mark in the global tech ecosystem through collaboration and innovation.' },
+    { number: '4', title: 'Continuous Learning', description: 'We believe in an ever-evolving learning journey, where adapting to new technologies and frameworks is the norm.' }
   ];
 
   return (
@@ -26,10 +26,10 @@ const MissionVission = () => {
             <h1 className="text-lg font-bold">OUR PHILOSOPHY</h1>
           </div>
           <h1 className="text-lg md:text-3xl font-semibold mb-8">
-            Our principles and <span className="text-[#ca2c2c] text-4xl md:text-7xl md:py-3 block">convictions</span>
+            Our principles and <span className="text-[#ca2c2c] text-4xl md:text-7xl md:py-3 block">beliefs</span>
           </h1>
           <p className="text-justify">
-            To become a leading global educational institution, SVGOI is committed to revolutionizing education, nurturing luminaries and innovators, and advancing knowledge for society and industry. Our goal is to create extraordinary talent across various disciplines, shaping the leaders of tomorrow.
+            Batch Uniques is a special community where technical growth takes priority over traditional academics. We are committed to fostering innovation, pushing boundaries, and creating a future filled with tech-driven startups and groundbreaking solutions.
           </p>
         </div>
         <div className="w-full md:w-1/2 h-96 hidden md:block">

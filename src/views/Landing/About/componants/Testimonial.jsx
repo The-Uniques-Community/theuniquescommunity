@@ -1,11 +1,5 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFacebookF,
-  faLinkedinIn,
-  faTwitter,
-  faBehance,
-} from "@fortawesome/free-brands-svg-icons";
+import { Facebook, LinkedIn, Twitter, Brush } from "@mui/icons-material";
 
 const teamMembers = [
   {
@@ -14,10 +8,10 @@ const teamMembers = [
     designation: "Founder / CEO",
     bio: "Subscribe Easy Tutorials Youtube Channel watch more videos",
     socialLinks: [
-      { icon: faFacebookF, href: "#" },
-      { icon: faLinkedinIn, href: "#" },
-      { icon: faTwitter, href: "#" },
-      { icon: faBehance, href: "#" },
+      { icon: <Facebook />, href: "#" },
+      { icon: <LinkedIn />, href: "#" },
+      { icon: <Twitter />, href: "#" },
+      { icon: <Brush />, href: "#" },
     ],
   },
   {
@@ -26,10 +20,11 @@ const teamMembers = [
     designation: "Business Head",
     bio: "Subscribe Easy Tutorials Youtube Channel watch more videos",
     socialLinks: [
-      { icon: faFacebookF, href: "#" },
-      { icon: faLinkedinIn, href: "#" },
-      { icon: faTwitter, href: "#" },
-      { icon: faBehance, href: "#" },
+      { icon: <Facebook />, href: "#" },
+
+      { icon: <LinkedIn />, href: "#" },
+      { icon: <Twitter />, href: "#" },
+      { icon: <Brush />, href: "#" },
     ],
   },
   {
@@ -38,13 +33,12 @@ const teamMembers = [
     designation: "Founder / CEO",
     bio: "Subscribe Easy Tutorials Youtube Channel watch more videos",
     socialLinks: [
-      { icon: faFacebookF, href: "#" },
-      { icon: faLinkedinIn, href: "#" },
-      { icon: faTwitter, href: "#" },
-      { icon: faBehance, href: "#" },
+      { icon: <Facebook />, href: "#" },
+      { icon: <LinkedIn />, href: "#" },
+      { icon: <Twitter />, href: "#" },
+      { icon: <Brush />, href: "#" },
     ],
   },
-  
 ];
 
 const TeamMemberItem = ({ member }) => (
@@ -61,7 +55,7 @@ const TeamMemberItem = ({ member }) => (
       <div className="flex space-x-3 mt-2">
         {member.socialLinks.map((item, i) => (
           <a href={item.href} key={i} className="text-gray-400 hover:text-gray-600">
-            <FontAwesomeIcon icon={item.icon} />
+            {item.icon}
           </a>
         ))}
       </div>
