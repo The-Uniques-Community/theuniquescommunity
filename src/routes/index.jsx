@@ -14,12 +14,13 @@ import Event from "@/views/Landing/Event/Index"
 
 
 const Landing = Loader(lazy(() => import("@/views/Landing/index")));
-// const MemberLogin = Loader(lazy(() => import("@/views/Landing/MemberLogin/index")));
-// const MemberRegister = Loader(lazy(() => import("@/views/Landing/MemberRegister/index")));
+
+
 
 
 const BlogPage = Loader(lazy(() => import("@/views/Landing/Blog/index")));
 const Contact = Loader(lazy(() => import("@/views/Landing/Contact/index")));
+const Training = Loader(lazy(() => import("@/views/Landing/Training-model/Training")));
 const LandingRoutes = {
   path: "/",
   element: <LandingLayout />, // Wrap all pages inside LandingLayout
@@ -29,11 +30,11 @@ const LandingRoutes = {
     { path: "howitstarted", element: <div><HowItStarted /></div> },
     { path: "events", element: <Event/> },
     { path: "community-page", element: <div>Community Page</div> },
-    { path: "training", element: <div>Training</div> },
+    { path: "training", element: <Training /> },
     // { path: "login", element: <div>Login</div> },
-    { path: "batches", element: <></>},
-    // { path: "member-login", element: <MemberLogin /> },      all login will be in login router with diffrent layout please find the folder in routes
-    // { path: "member-register", element: <MemberRegister /> },
+    { path: "batches", element: <div>Batches</div> },
+    //      all login will be in login router with diffrent layout please find the folder in routes
+ 
     { path: "blogs", element: <BlogPage /> },
     { path: "contact", element: <Contact /> },
   ],
