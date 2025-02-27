@@ -68,11 +68,13 @@ const Navbar = () => {
       <div>
         <div className="grid grid-cols-6 gap-x-5">
           <div className="lg:col-span-2 md:col-span-2 sm:col-span-4 col-span-5">
-            <img
-              src={logo}
-              className="w-40 object-contain object-left"
-              alt="Logo"
-            />
+            <Link to={"/"}>
+              <img
+                src={logo}
+                className="w-40 object-contain object-left"
+                alt="Logo"
+              />
+            </Link>
           </div>
           <div className="col-span-1"></div>
           <Link to="/about">
