@@ -29,7 +29,7 @@ export const register = async (req, res) => {
             address,
             contact,
             whatsappContact,
-            profileStatus:"pending"
+            profileStatus:"active"
         });
 
         await newMember.save();
@@ -104,35 +104,54 @@ export const logout = (req, res) => {
 
 export const editProfile = async (req, res) => {
     try {
-        const { name, email, password, city, state, course, batch, admnNo, address, contact } = req.body;
+        const { 
+            name, email, password, city, state, course, batch, 
+            admnNo, address, contact, githubProfile, linkedinProfile, 
+            skills, bio, instagramProfile, certifications 
+        } = req.body;
+
         const member = await Member.findOne({ email });
+
         if (!member) {
             return res.status(400).json({ message: "User does not exist" });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 12);
-        await
-            Member.updateOne(
-                { email },
-                {
-                    name,
-                    email,
-                    password: hashedPassword,
-                    city,
-                    state,
-                    course,
-                    batch,
-                    admnNo,
-                    address,
-                    contact
+        // Hash the new password if provided
+        let hashedPassword = member.password;
+        if (password) {
+            hashedPassword = await bcrypt.hash(password, 12);
+        }
+
+        await Member.updateOne(
+            { email },
+            {
+                name,
+                email,
+                password: hashedPassword,
+                city,
+                state,
+                course,
+                batch,
+                admnNo,
+                address,
+                contact,
+                githubProfile,
+                linkedinProfile,
+                bio,
+                instagramProfile,
+                $addToSet: { 
+                    skills: { $each: skills || [] }, 
+                    certifications: { $each: certifications || [] } 
                 }
-            );
+            }
+        );
+
         res.status(200).json({ message: "User profile updated successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Something went wrong", error });
     }
-    catch (error) {
-        res.status(500).json({ message: "Something went wrong" });
-    }
-}
+};
+
 
 
 export const getProfile = async (req, res) => {

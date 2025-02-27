@@ -38,10 +38,10 @@ const Navbar = () => {
         {[
           { text: 'Home', icon: <HomeIcon />, link: '/' },
           { text: 'About Us', icon: <InfoIcon />, link: '/about' },
-          { text: 'Services', icon: <WorkIcon />, link: '/services' },
+          { text: 'How it started', icon: <WorkIcon />, link: '/howitstarted' },
           { text: 'Contact', icon: <ContactMailIcon />, link: '/contact' },
           { text: 'Batches', icon: <SchoolIcon />, link: '/batches' },
-          { text: 'Community', icon: <GroupsIcon />, link: '/community-page' },
+          { text: 'Community', icon: <GroupsIcon />, link: '/community' },
           { text: 'Events', icon: <EventIcon />, link: '/events' },
         ].map((item) => (
           <ListItem key={item.text} disablePadding>
@@ -61,26 +61,24 @@ const Navbar = () => {
       <div>
         <div className="grid grid-cols-6 gap-x-5">
           <div className="lg:col-span-2 md:col-span-2 sm:col-span-4 col-span-5">
-            <Link to="/">
             <img src={logo} className="w-40 object-contain object-left" alt="Logo" />
-            </Link>
           </div>
           <div className="col-span-1"></div>
           <Link to="/batches">
-          <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
-            <span>BATCHES</span>
-          </div>
-            </Link>
-          <Link to="/community-page">
-          <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
-            <span>COMMUNITY</span>
-          </div>
-            </Link>
-            <Link to="/events">
-          <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
-            <span>EVENTS</span>
-          </div>
-            </Link>
+            <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
+              <span>BATCHES</span>
+            </div>
+          </Link>
+          <Link to="/community">
+            <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
+              <span>COMMUNITY</span>
+            </div>
+          </Link>
+          <Link to="/events">
+            <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
+              <span>EVENTS</span>
+            </div>
+          </Link>
         </div>
       </div>
       <div>
