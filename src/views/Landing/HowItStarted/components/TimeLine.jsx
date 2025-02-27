@@ -6,6 +6,8 @@ import UniquesFormation from "@/assets/img/HowItStarted/1.jpg";
 import FirstBatch from "@/assets/img/HowItStarted/2.jpg";
 import Naveen from "@/assets/img/HowItStarted/3.jpeg";
 import Praveen from "@/assets/img/HowItStarted/3-1.jpeg";
+import Uniques2 from '@/assets/img/HowItStarted/4.jpeg'
+import ICTA from "@/assets/img/HowItStarted/5.jpeg";
 
 export function cn(...inputs) {
     return twMerge(clsx(inputs));
@@ -36,15 +38,14 @@ export const Timeline = ({ data }) => {
             className="w-full bg-white  font-sans md:px-10"
             ref={containerRef}
         >
-            <div className="max-w-7xl mx-auto py-20 px-4 md:px-8 lg:px-10">
-                <h2 className="text-lg md:text-4xl mb-4 text-black  max-w-4xl">
-                    Changelog from my journey
+            {/* <div className="max-w-7xl mx-auto py-20 px-4 md:px-8 lg:px-10">
+                <h2 className="text-lg md:text-4xl font-semibold mb-4 text-black  max-w-4xl">
+                    Sparking Success: The Uniques’ Odyssey from Idea to Impact
                 </h2>
                 <p className="text-neutral-700  text-sm md:text-base max-w-sm">
-                    I&apos;ve been working on Aceternity for the past 2 years. Here&apos;s
-                    a timeline of my journey.
+
                 </p>
-            </div>
+            </div> */}
 
             <div ref={ref} className="relative max-w-7xl mx-auto pb-20">
                 {data.map((item, index) => (
@@ -130,14 +131,38 @@ const dummyData = [
     },
     {
         title: "2023",
-        subtitle: "Internship and Product Launch",
+        subtitle: "The Uniques 2.0 – Expansion of the Community",
         content: (
             <>
-                Completed an internship as a frontend developer and started working on my own SaaS product to enhance developer collaboration.
+                In January 2023, The Uniques 2.0 batch was formed, selecting 25 students from the Batch of 2022-2026. The selection process was rigorous, evaluating candidates through an aptitude test, technical test, and personal interview (PI) round. This expansion marked a new phase for The Uniques, bringing in fresh talent and ideas to strengthen the community further.
                 <div className="flex flex-wrap gap-10">
-                    <img src={UniquesFormation} alt="Coding journey" className="mt-4 rounded-lg w-full md:w-[400px] lg:w-[350px] sm:w-[400px] " />
-                    <img src={UniquesFormation} alt="Coding journey" className="mt-4 rounded-lg w-full md:w-[400px] lg:w-[350px] sm:w-[400px] " />
-                    <img src={UniquesFormation} alt="Coding journey" className="mt-4 rounded-lg w-full md:w-[400px] lg:w-[350px] sm:w-[400px] " />
+                    <img src={Uniques2} alt="Coding journey" className="mt-4 rounded-lg w-full md:w-[400px] lg:w-[350px] sm:w-[400px] " />
+
+                </div>
+            </>
+        ),
+    },
+    {
+        title: "2023",
+        subtitle: "International Conference on Technological Advancements 2023",
+        content: (
+            <>
+                Three Uniques 1.0 members—Naveen, Praveen, and Ronit—contributed to the International Conference on Technological Advancements 2023 with their dedication and expertise. Their efforts played a significant role in making the event a success, showcasing innovation and technical excellence.
+                <div className="flex flex-wrap gap-10">
+                    <img src={ICTA} alt="Coding journey" className="mt-4 rounded-lg w-full md:w-[400px] lg:w-[350px] sm:w-[400px] " />
+
+                </div>
+            </>
+        ),
+    },
+    {
+        title: "2023",
+        subtitle: "International Conference on Technological Advancements 2023",
+        content: (
+            <>
+                Three Uniques 1.0 members—Naveen, Praveen, and Ronit—contributed to the International Conference on Technological Advancements 2023 with their dedication and expertise. Their efforts played a significant role in making the event a success, showcasing innovation and technical excellence.
+                <div className="flex flex-wrap gap-10">
+                    <img src={ICTA} alt="Coding journey" className="mt-4 rounded-lg w-full md:w-[400px] lg:w-[350px] sm:w-[400px] " />
 
                 </div>
             </>
