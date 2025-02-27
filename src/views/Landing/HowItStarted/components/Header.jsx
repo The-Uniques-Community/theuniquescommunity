@@ -3,7 +3,7 @@ import Person2OutlinedIcon from "@mui/icons-material/Person2Outlined";
 import { Box, Container, Stack, Chip, Typography } from "@mui/material";
 
 const CelebrationComponent = ({
-    title = "More Than a Community → The Uniques ✦",
+    title = "Uniques’ Odyssey → Idea to Impact ✦",
     subtitle = "Over 200+",
     chipLabel = "Design Blocks",
     backgroundColor = "#f1f4f9",
