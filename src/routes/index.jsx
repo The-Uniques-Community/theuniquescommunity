@@ -6,13 +6,16 @@ import CommunityRoutes from "@/routes/Community/CommunityRoutes";
 import CoordinatorRoutes from "@/routes/Uniques/CoordinatorRoute";
 import MemberRoutes from "@/routes/Uniques/MemberRoutes";
 import LandingLayout from "@/layout/Landing/index";
+import Auth from "@/routes/Authentication/Auth";
 import About from "@/views/Landing/About/index"
 import HowItStarted from "@/views/Landing/HowItStarted/index"
 
 
 const Landing = Loader(lazy(() => import("@/views/Landing/index")));
-const MemberLogin = Loader(lazy(() => import("@/views/Landing/MemberLogin/index")));
-const MemberRegister = Loader(lazy(() => import("@/views/Landing/MemberRegister/index")));
+// const MemberLogin = Loader(lazy(() => import("@/views/Landing/MemberLogin/index")));
+// const MemberRegister = Loader(lazy(() => import("@/views/Landing/MemberRegister/index")));
+
+
 const BlogPage = Loader(lazy(() => import("@/views/Landing/Blog/index")));
 const Contact = Loader(lazy(() => import("@/views/Landing/Contact/index")));
 const LandingRoutes = {
@@ -25,21 +28,23 @@ const LandingRoutes = {
     { path: "events", element: <div>Events</div> },
     { path: "community-page", element: <div>Community Page</div> },
     { path: "training", element: <div>Training</div> },
-    { path: "login", element: <div>Login</div> },
+    // { path: "login", element: <div>Login</div> },
     { path: "batches", element: <div>Batches</div> },
-    { path: "member-login", element: <MemberLogin /> },
-    { path: "member-register", element: <MemberRegister /> },
+    // { path: "member-login", element: <MemberLogin /> },      all login will be in login router with diffrent layout please find the folder in routes
+    // { path: "member-register", element: <MemberRegister /> },
     { path: "blogs", element: <BlogPage /> },
     { path: "contact", element: <Contact /> },
   ],
 };
 
 const router = createBrowserRouter([
+  
   LandingRoutes,  // ✅ Fix: Use object directly, no spread operator
   AdminRoutes,
   CommunityRoutes,
   CoordinatorRoutes,
   MemberRoutes,
+  Auth
 ]);
 
 export default router;
