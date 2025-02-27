@@ -7,6 +7,7 @@ import CoordinatorRoutes from "@/routes/Uniques/CoordinatorRoute";
 import MemberRoutes from "@/routes/Uniques/MemberRoutes";
 import LandingLayout from "@/layout/Landing/index";
 import About from "@/views/Landing/About/index"
+import HowItStarted from "@/views/Landing/HowItStarted/index"
 
 
 const Landing = Loader(lazy(() => import("@/views/Landing/index")));
@@ -20,15 +21,16 @@ const LandingRoutes = {
   children: [
     { index: true, element: <Landing /> }, // Default route ("/")
     { path: "about", element: <About /> },
+    { path: "howitstarted", element: <div><HowItStarted /></div> },
     { path: "events", element: <div>Events</div> },
     { path: "community-page", element: <div>Community Page</div> },
     { path: "training", element: <div>Training</div> },
     { path: "login", element: <div>Login</div> },
     { path: "batches", element: <div>Batches</div> },
-    {path: "member-login", element: <MemberLogin/>},
-    {path: "member-register", element: <MemberRegister/>},
-    {path: "blogs", element: <BlogPage/>},
-    {path: "contact", element: <Contact/>},
+    { path: "member-login", element: <MemberLogin /> },
+    { path: "member-register", element: <MemberRegister /> },
+    { path: "blogs", element: <BlogPage /> },
+    { path: "contact", element: <Contact /> },
   ],
 };
 
