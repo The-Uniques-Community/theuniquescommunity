@@ -7,6 +7,8 @@ const AdminLayout = Loader(lazy(() => import("@/layout/Admin")));
 const AdminDashboard = Loader(lazy(() => import("@/views/Admin")));
 const Member = Loader(lazy(() => import('@/views/Admin/Members')))
 const Event = Loader(lazy(() => import('@/views/Admin/Events')))
+const Account = Loader(lazy(() => import('@/views/Admin/Accounts')))
+
 const AdminRoutes = {
   path: "/admin",
   element: <ProtectedRoute isAllowed={true} element={<AdminLayout />} />,
@@ -22,6 +24,10 @@ const AdminRoutes = {
     {
       path: "/admin/events-overview",
       element: <Event/>
+    },
+    {
+      path: "/admin/accounts",
+      element: <Account/>
     }
   ],
 };
