@@ -9,6 +9,7 @@ import TrainingTabs from './componants/TraningModel'
 import VisionMission from './componants/Vision'
 import Testimonial from "./componants/Testimonial"
 import Faq from "./componants/Faq"
+import CallToAction from '../homComponents/CallToAction'
 
 
 
@@ -25,6 +26,8 @@ const index = () => {
 <Mentor/>
 <Testimonial/>
 <Faq/>
+<CallToAction/>
+
 
 
 
