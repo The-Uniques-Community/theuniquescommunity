@@ -10,6 +10,8 @@ import Auth from "@/routes/Authentication/Auth";
 import About from "@/views/Landing/About/index"
 import HowItStarted from "@/views/Landing/HowItStarted/index"
 
+import Event from "@/views/Landing/Event/Index"
+
 
 const Landing = Loader(lazy(() => import("@/views/Landing/index")));
 
@@ -26,7 +28,7 @@ const LandingRoutes = {
     { index: true, element: <Landing /> }, // Default route ("/")
     { path: "about", element: <About /> },
     { path: "howitstarted", element: <div><HowItStarted /></div> },
-    { path: "events", element: <div>Events</div> },
+    { path: "events", element: <Event/> },
     { path: "community-page", element: <div>Community Page</div> },
     { path: "training", element: <Training /> },
     // { path: "login", element: <div>Login</div> },
