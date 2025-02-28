@@ -5,8 +5,8 @@ import { Link } from "react-router";
 
 const ContactForm = () => {
   return (
-    <div className="grid place-items-center min-h-screen bg-gray-100 p-6">
-      <div className=" lg:p-8 md:p-8 p-3 max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-12">
+    <div className="grid place-items-center min-h-screen p-6">
+      <div className=" lg:p-8 md:p-8 p-3 max-w-9xl w-full grid grid-cols-1 md:grid-cols-2 gap-16">
         {/* Left Side - Form */}
         <div>
           <h2 className="text-3xl font-bold mb-2">Contact our team</h2>
