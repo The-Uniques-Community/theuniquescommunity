@@ -63,7 +63,7 @@ const Navbar = () => {
   );
 
   return (
-    <div className="lg:px-12 py-4 md:px-12 sm:px-8 px-5 flex justify-between items-center shadow-sm">
+    <div className="lg:px-12 py-4 md:px-12 sm:px-8 px-5 flex justify-between sticky top-0 z-[100] bg-white items-center shadow-sm">
       {/* <div className='w-full h-full bg-transparent blur-lg absolute'></div> */}
       <div>
         <div className="grid grid-cols-6 gap-x-5">

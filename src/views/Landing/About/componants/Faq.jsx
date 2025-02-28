@@ -45,7 +45,7 @@ const FaqItem = ({ faq }) => {
 				<FontAwesomeIcon icon={isOpen ? faChevronUp : faChevronDown} />
 			</a>
 			{isOpen && (
-				<div className="p-4 lg:p-6 bg-white shadow dark:shadow-none dark:bg-[#1E2735] rounded-xl">
+				<div className="p-4 lg:p-6 bg-white shadow dark:shadow-none  rounded-xl">
 					<p className="opacity-50">{faq.answer}</p>
 				</div>
 			)}
@@ -55,7 +55,7 @@ const FaqItem = ({ faq }) => {
 
 const Faq8 = () => {
 	return (
-		<section className="ezy__faq8 light py-14 md:py-24 bg-white dark:bg-[#0b1727] text-zinc-900 dark:text-white">
+		<section className="ezy__faq8 light py-14 md:py-24 bg-white   text-zinc-900  ">
 			<div className="container px-16 md:px-8 lg:px-28">
 				<div className="grid grid-cols-12 justify-between gap-6">
 					<div className="col-span-12 md:col-span-5">
