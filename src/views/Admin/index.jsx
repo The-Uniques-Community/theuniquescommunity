@@ -7,6 +7,7 @@ import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import LocationCityIcon from "@mui/icons-material/LocationCity";
 import Calender from "./dashboardComponents/Calender";
 import Banner from "./dashboardComponents/Banner";
+import EventOverView from "./dashboardComponents/EventOverView";
 const index = () => {
   const pendingUser = {
     fullName: "Ralph Edwards",
@@ -23,20 +24,10 @@ const index = () => {
     leaveType: "Sick Leave",
   };
   return (
-    <div>
+    <div className="w-full">
       <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-1 gap-3 lg:px-5 md:px-3 px-1 py-5 mb-5">
         <div className="col-span-4">
-          {/* <div className="h-1/2 mb-4 flex items-center p-5 rounded-lg bg-[#ca0019] relative">
-            <img
-              src="https://png.pngtree.com/thumb_back/fh260/background/20210812/pngtree-business-technology-modern-abstract-art-white-dots-perspective-background-image_760034.jpg"
-              className="absolute left-0 right-0 top-0 bottom-0 w-full h-full object-cover opacity-30"
-              alt=""
-            />
-            <h2 className="text-white absolute z-10  text-start font-bold lg:text-7xl h-max my-auto">
-              DASHBOARD
-            </h2>
-          </div> */}
-          <Banner/>
+          <Banner />
           <div className="grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 grid-cols-1 gap-4">
             <StatCard
               icon={<Groups2 fontSize="large" />}
@@ -62,19 +53,27 @@ const index = () => {
               value={1}
             />
           </div>
+
+          <div className=" px-1 py-5 my-5">
+            <h2 className="text-2xl font-bold text-slate-800 mb-5">
+              Newly Added Members
+            </h2>
+            <div className="flex flex-wrap items-center justify-start gap-3">
+              <NewMember user={pendingUser} />
+              <NewMember user={pendingUser} />
+              <NewMember user={pendingUser} />
+            </div>
+          </div>
         </div>
 
         <div>
           <Calender />
-        </div>
-      </div>
-      <div className="lg:px-5 md:px-3 px-1 py-5 mb-5">
-        <h2 className="text-2xl font-bold text-slate-800 mb-5">Newly Added Members</h2>
-        <div className="flex flex-wrap items-center justify-start gap-3">
-          <NewMember user={pendingUser} />
-          <NewMember user={pendingUser} />
-          <NewMember user={pendingUser} />
-          
+          {
+            
+          }
+          <EventOverView eventStatus={"upcoming"}/>
+          <EventOverView eventStatus={"completed"}/>
+          <EventOverView eventStatus={"upcoming"}/>
         </div>
       </div>
     </div>
