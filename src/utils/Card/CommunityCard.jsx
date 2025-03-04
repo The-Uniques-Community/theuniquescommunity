@@ -12,7 +12,7 @@ const CommunityCard = () => {
         style={{ backgroundImage: `url(${hc})`,backgroundSize:'cover', backgroundRepeat:'no-repeat' }}
         className="top-sectionn"
       >
-        <div className="absolute z-10 text-xs font-medium text-[#ca0019] top-1 left-1">Event Type Here</div>
+        <div className="absolute z-10 text-xs font-medium text-[#ca0019] top-1 left-1">Event Type Here </div>
       </div>
       <div className="">
         <p className="text-xl pt-3 pb-1 px-3 font-medium">Event Name Here</p>
