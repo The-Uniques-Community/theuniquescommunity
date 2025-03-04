@@ -4,6 +4,7 @@ import SchoolIcon from "@mui/icons-material/School";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 
+
 const FeatureCard = ({ image, title, description }) => {
   return (
     <div className="group relative bg-white transition hover:z-[1] hover:shadow-lg hover:shadow-gray-300">
@@ -23,33 +24,33 @@ const FeatureCard = ({ image, title, description }) => {
 const Trainingculture = () => {
   const features = [
     {
-      image: <PersonOutlineIcon fontSize="large"  />,
+      image: <PersonOutlineIcon fontSize="large" className="transition group-hover:scale-110   group-hover:text-[#ca0019]"  />,
       title: "Professional Trainer (Mentor Lead)",
       description:
-        "Neque Dolor, fugiat non cum doloribus aperiam voluptates nostrum.",
+        "Experienced mentors guiding the next generation of learners.",
     },
     {
-      image: <SchoolIcon fontSize="large" />,
+      image: <SchoolIcon fontSize="large" className="transition group-hover:scale-110  group-hover:text-[#ca0019]" />,
       title: "Uniques 1.0 - The Pioneers",
       description:
-        "Neque Dolor, fugiat non cum doloribus aperiam voluptates nostrum.",
+        "The first batch, setting the foundation for knowledge sharing.",
     },
     {
-      image: <MenuBookIcon fontSize="large"/>,
+      image: <MenuBookIcon fontSize="large" className="transition group-hover:scale-110  group-hover:text-[#ca0019]" />,
       title: "Uniques 2.0 - The Bridge",
       description:
-        "Neque Dolor, fugiat non cum doloribus aperiam voluptates nostrum.",
+        "Learning from pioneers and mentoring the next generation.",
     },
     {
-      image: <AutoStoriesIcon fontSize="large" />,
+      image: <AutoStoriesIcon fontSize="large" className="transition group-hover:scale-110  group-hover:text-[#ca0019]" />,
       title: "Uniques 3.0 & So-On - The Future Leaders",
       description:
-        "Neque Dolor, fugiat non cum doloribus aperiam voluptates nostrum.",
+        "Carrying forward the culture of mentorship and innovation.",
     },
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 xl:px-6" id="features">
+    <div className="max-w-7xl mx-auto px-6 md:px-12 xl:px-6"  id="features">
       <div className="md:w-3/3 mx-auto text-center lg:w-2/2">
         <h2 className="my-8 text-5xl font-bold text-gray-900 md:text-5xl">
           Technical Training Culture
