@@ -1,5 +1,6 @@
 .card2 {
-    max-width: 320px;
+  min-width: 320px;
+  max-width: 350px;
     margin: 10px;
     border-radius: 20px;
     padding: 8px;
