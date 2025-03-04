@@ -99,9 +99,9 @@ export const NewMember = ({ user }) => {
             </div>
           </div>
           <div className="mt-6 flex justify-between items-center">
-            <Button variant="outlined" className="border-red-500 text-red-500 hover:bg-red-100">Block</Button>
+            <Button variant="contained" className="">Block</Button>
             <div className="flex gap-3">
-              <Button variant="contained" className="border-gray-500 text-gray-700 hover:bg-gray-100" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button variant="outlined" className="border-gray-500 " onClick={() => setOpen(false)}>Cancel</Button>
               {/* <Button variant="contained" className="bg-[#ca0019] text-white hover:bg-black">Approve</Button> */}
             </div>
           </div>

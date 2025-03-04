@@ -65,7 +65,7 @@ const TeamMemberItem = ({ member }) => (
 
 const Testimonial = () => {
   return (
-    <section className="py-14 bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+    <section className="py-14 bg-white text-gray-900 ">
       <div className="w-[85%] mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold">Our Experts Team</h2>
