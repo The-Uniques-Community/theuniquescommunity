@@ -6,7 +6,7 @@ import CommunityCard from '@/utils/Card/CommunityCard'
 const Index = () => {
   return (
   <>
- <CommunityCard/>
+<Event />
   </>
   )
 }
