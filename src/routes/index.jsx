@@ -9,6 +9,7 @@ import LandingLayout from "@/layout/Landing/index";
 import Auth from "@/routes/Authentication/Auth";
 import About from "@/views/Landing/About/index"
 import HowItStarted from "@/views/Landing/HowItStarted/index"
+import Community from "@/views/Community/index"
 
 import Event from "@/views/Landing/Event/Index"
 
@@ -29,21 +30,21 @@ const LandingRoutes = {
   children: [
     { index: true, element: <Landing /> }, // Default route ("/")
     { path: "about", element: <About /> },
-    { path: "howitstarted", element: <div><HowItStarted /></div> },
-    { path: "events", element: <Event/> },
-    { path: "community-page", element: <div>Community Page</div> },
+    { path: "howitstarted", element: <HowItStarted /> },
+    { path: "events", element: <Event /> },
+    { path: "community-page", element: <Community /> },
     { path: "training", element: <Training /> },
     // { path: "login", element: <div>Login</div> },
     { path: "batches", element: <div>Batches</div> },
     //      all login will be in login router with diffrent layout please find the folder in routes
-    {path: "*", element: <NotFound />},
+    { path: "*", element: <NotFound /> },
     { path: "blogs", element: <BlogPage /> },
     { path: "contact", element: <Contact /> },
   ],
 };
 
 const router = createBrowserRouter([
-  
+
   LandingRoutes,  // ✅ Fix: Use object directly, no spread operator
   AdminRoutes,
   CommunityRoutes,
