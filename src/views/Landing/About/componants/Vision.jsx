@@ -53,11 +53,11 @@ const MissionVission = () => {
                     <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
                       <div className="h-full w-1 bg-gray-300 pointer-events-none"></div>
                     </div>
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full mt-10 sm:mt-0 inline-flex items-center justify-center bg-[#ff362f] text-white relative z-10 font-medium text-sm">
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full mt-10 sm:mt-0 inline-flex items-center justify-center bg-[#ca0019] text-white relative z-10 font-medium text-sm">
                       {item.number}
                     </div>
                     <div className="flex-grow md:pl-8 pl-6 flex sm:items-center items-start flex-col sm:flex-row">
-                      <div className="flex-shrink-0 w-10 h-10 text-[#d73822] bg-gray-300 rounded-full inline-flex items-center justify-center">
+                      <div className="flex-shrink-0 w-10 h-10 text-[#ca0019] bg-gray-300 rounded-full inline-flex items-center justify-center">
                         <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-5 h-5" viewBox="0 0 24 24">
                           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                         </svg>
