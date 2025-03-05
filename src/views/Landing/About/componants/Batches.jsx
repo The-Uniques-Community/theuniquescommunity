@@ -43,7 +43,7 @@ const BatchProfile = () => {
     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%", padding: "2rem 0" }}>
       <Container sx={{ width: "85%", maxWidth: "1200px", textAlign: "left" }}>
         {/* Header Section */}
-        <Stack spacing={2} sx={{ marginBottom: "2rem" }}>
+        <Stack spacing={2} sx={{ marginBottom: "2rem", textAlign: "center" }}>
           <Typography variant="h2" sx={{ fontWeight: "bold", fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" }, color: theme.palette.primary.dark }}>
             Batch Profiles
           </Typography>

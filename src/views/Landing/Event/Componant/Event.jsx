@@ -1,18 +1,14 @@
 import { useState } from 'react';
-import { Users, Calendar, Trophy, User, Hash, MessageSquare, Share2 } from 'lucide-react';
+import { Users, X } from 'lucide-react';
 import Button from "@/utils/Buttons/Button";
+import { Tabs, Tab } from '@mui/material';
 
-export default function KotlinUserGroup() {
+export default function KotlinUserGroup({ onClose }) {
   const [activeTab, setActiveTab] = useState("about");
 
-  const tabs = [
-    { name: "About", key: "about" },
-    { name: "Events", key: "events" },
-    { name: "Hackathons", key: "hackathons" },
-    { name: "Members", key: "members" },
-    { name: "Channels", key: "channels" },
-    { name: "Forums", key: "forums" }
-  ];
+  const handleChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
 
   const events = {
     about: {
@@ -42,11 +38,17 @@ export default function KotlinUserGroup() {
   };
 
   return (
-    <div className='container mx-auto'>
-      <div className="bg-white text-black min-h-screen">
+    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50 mt-12  ">
+      <div className="bg-white w-full  h-[90vh] overflow-auto rounded-xl shadow-lg relative p-6">
+        
+        {/* Close Button */}
+        <button onClick={onClose} className="absolute top-4 right-4 bg-red-500 text-white p-2 rounded-full hover:bg-red-700">
+          <X size={20} />
+        </button>
+
         {/* Header Banner */}
-        <div className="w-full h-96 border-b border-gray-300"> 
-          <img src="https://marketplace.canva.com/EAFluVdXLok/2/0/1600w/canva-blue-professional-webinar-facebook-event-cover-wp0XR0lqPgc.jpg" className='w-full h-full object-cover' />
+        <div className="w-full h-96 border-b border-gray-300 rounded-xl"> 
+          <img src="https://marketplace.canva.com/EAFluVdXLok/2/0/1600w/canva-blue-professional-webinar-facebook-event-cover-wp0XR0lqPgc.jpg" className="w-full h-full object-cover rounded-xl" />
         </div>
         
         {/* Profile Section */}
@@ -63,23 +65,17 @@ export default function KotlinUserGroup() {
             </div>
           </div>
           <div className="flex space-x-3">
-            <Button color={"white"} bgColor={"#ca0019"} border={4} borderColor={"#ca0019"} iconColor={"black"}>Share</Button>
-            <Button color={"white"} bgColor={"#ca0019"} border={4} borderColor={"#ca0019"} iconColor={"black"}>+ Join</Button>
+            <Button color="white" bgColor="#ca0019" border={4} borderColor="#ca0019" iconColor="black">Share</Button>
+            <Button color="white" bgColor="#ca0019" border={4} borderColor="#ca0019" iconColor="black">+ Join</Button>
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="border-gray-300 px-6 flex space-x-6 py-3 text-gray-600">
-          {tabs.map(tab => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`pb-2 ${activeTab === tab.key ? "text-[#ca0019] border-b-2 border-[#ca0019]" : "hover:text-black"}`}
-            > 
-              {tab.name}
-            </button>
+        {/* MUI Tabs */}
+        <Tabs value={activeTab} onChange={handleChange} textColor="primary" indicatorColor="primary" className="px-6">
+          {Object.keys(events).map(key => (
+            <Tab key={key} value={key} label={key.charAt(0).toUpperCase() + key.slice(1)} />
           ))}
-        </div>
+        </Tabs>
 
         {/* Main Content */}
         <div className="grid grid-cols-3 gap-6 p-6">
@@ -98,11 +94,11 @@ export default function KotlinUserGroup() {
                   <div className="flex items-center">
                     <img src="https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg" className="rounded-full w-12 h-12 border border-gray-300" />
                     <div className="ml-3">
-                      <h3 className="font-medium">{leader}</h3>
+                      <h3 className="font-medium">{leader}</h3> 
                       <p className="text-sm text-gray-500">@{leader.toLowerCase().replace(/ /g, "_")}</p>
                     </div>
                   </div>
-                  <Button color={"white"} bgColor={"#ca0019"} border={4} borderColor={"#ca0019"} iconColor={"black"} className="text-blue-600 border border-blue-600 px-3 py-1">+ Follow</Button>
+                  <Button color="white" bgColor="#ca0019" border={4} borderColor="#ca0019" iconColor="black" className="text-blue-600 border border-blue-600 px-3 py-1">+ Follow</Button>
                 </div>
               ))}
             </div>
