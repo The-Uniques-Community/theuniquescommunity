@@ -1,21 +1,23 @@
 import React from "react";
 import { Lock, Storage, Layers, SyncAlt } from "@mui/icons-material";
-import android from "@/assets/img/android-training.png";
-import web from "@/assets/img/web-dev-training.png";
-import mern from "@/assets/img/mern-training.png";
+import sv from "@/assets/trainingmodel/sv.png";
+import Filter3Icon from "@mui/icons-material/Filter3";
+import Filter2Icon from "@mui/icons-material/Filter2";
+import Filter1Icon from "@mui/icons-material/Filter1";
+import Filter4Icon from "@mui/icons-material/Filter4";
 
 const FourPhase = () => {
   return (
     <div className="bg-white text-gray-900 py-10 lg:px-8 px-8 lg:py-20">
-      <div className="max-w-screen-xl mx-auto grid lg:grid-cols-3 my-5 md:grid-cols-1 grid-cols-1 gap-6 lg:gap-16">
+      <div className="max-w-screen-xl mx-auto  my-5">
         {/* Left Section */}
-        <div className="">
+        {/* <div className="">
           <div className="flex flex-wrap  items-center justify-between -mx-4">
             <div className="w-full px-4">
               <div className=" items-center -mx-3 sm:-mx-4">
                 <div className="w-full px-3 sm:px-4  xl:w-9/12">
                   <div className="py-3 sm:py-4">
-                    {/* <img src={web} alt="" className="w-full rounded-2xl" /> */}
+                    <img src={web} alt="" className="w-full rounded-2xl" /> 
                   </div>
                   <div className="py-3 sm:py-4">
                     <img src={android} alt="" className="w-full rounded-2xl" />
@@ -599,8 +601,16 @@ const FourPhase = () => {
               </div>
             </div>
           </div>
-        </div>
-        <div className="lg:ps-8 col-span-2">
+        </div> */}
+        <div
+          className="lg:ps-8 col-span-2 "
+          style={{
+            backgroundImage: `url(${sv})`,
+            backgroundSize: 200,
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "bottom right",
+          }}
+        >
           <h4 className="text-sm uppercase text-gray-600 mb-2">
             Training Model
           </h4>
@@ -614,42 +624,53 @@ const FourPhase = () => {
             and emerging technologies, we ensure a holistic learning journey.
           </div>
           <div className="my-8">
-            <h4 className="text-3xl lg:text-4xl font-bold my-8">
+            <h4 className="text-3xl mb-20 lg:text-4xl font-bold my-8">
               Program Structure
             </h4>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 mt-6">
             {[
               {
                 title: "First Year - Technical & Soft Skills",
+                icon: (
+                  <Filter1Icon fontSize="large" style={{ color: "white" }} />
+                ),
                 description:
                   "Master advanced image editing, responsive front-end development, digital marketing, and UI/UX design while developing communication and interview skills.",
               },
               {
                 title: "Second Year - Programming & Data Management",
+                icon: (
+                  <Filter2Icon fontSize="large" style={{ color: "white" }} />
+                ),
                 description:
                   "Develop robust backend logic, manage databases, and explore data structures. Specialize in Digital Marketing or Java programming in the third semester.",
               },
               {
                 title: "Third Year - Cutting-Edge Technologies",
+                icon: (
+                  <Filter3Icon fontSize="large" style={{ color: "white" }} />
+                ),
                 description:
                   "Gain hands-on experience in designing scalable applications, real-world problem-solving, and collaborative development projects.",
               },
               {
                 title: "Fourth Year - Professional Readiness",
+                icon: (
+                  <Filter4Icon fontSize="large" style={{ color: "white" }} />
+                ),
                 description:
                   "Prepare for careers with mock interviews, aptitude tests, and personality development. Explore Blockchain, DApps, and emerging technologies.",
               },
               {
                 title: "L&T Courses",
+                icon: <Lock fontSize="large" style={{ color: "white" }} />,
                 description:
                   "Specialized training in Machine Learning, Java & Spring, Blockchain Legal Consulting, and Microsoft Power BI to enhance career prospects.",
               },
             ].map((feature, index) => (
               <div key={index} className="flex items-start gap-4">
-                <div className="p-3 rounded-full bg-black">
-                  <Layers fontSize="large" style={{ color: "white" }} />
-                </div>
+                <div className="p-3 rounded-full bg-[#ca0019]">{feature.icon}</div>
                 <div>
                   <h3 className="text-lg font-semibold">{feature.title}</h3>
                   <p className="text-sm text-gray-600">{feature.description}</p>

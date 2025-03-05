@@ -23,16 +23,16 @@ const BlogPage = Loader(lazy(() => import("@/views/Landing/Blog/index")));
 const Contact = Loader(lazy(() => import("@/views/Landing/Contact/index")));
 const Training = Loader(lazy(() => import("@/views/Landing/Training-model/Training")));
 const NotFound = Loader(lazy(() => import("@/views/Landing/NotFound/index")));
-
+const CommunityPage = Loader(lazy(() => import("@/views/Landing/Community/index")));
 const LandingRoutes = {
   path: "/",
   element: <LandingLayout />, // Wrap all pages inside LandingLayout
   children: [
     { index: true, element: <Landing /> }, // Default route ("/")
     { path: "about", element: <About /> },
-    { path: "howitstarted", element: <HowItStarted /> },
+    { path: "howitstarted", element: <div><HowItStarted /></div> },
     { path: "events", element: <Event /> },
-    { path: "community-page", element: <Community /> },
+    { path: "community-page", element: <div>Community Page</div> },
     { path: "training", element: <Training /> },
     // { path: "login", element: <div>Login</div> },
     { path: "batches", element: <div>Batches</div> },

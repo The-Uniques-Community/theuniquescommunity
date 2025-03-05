@@ -13,6 +13,7 @@ import TrainingTabs from "./homComponents/TrainingTabs";
 import ReviewCard from "@/utils/Card/ReviewCard";
 // import ShapedCard from "@/utils/Card/ShapedCard";
 import CorporateCultureSection from "./homComponents/CorporateCultureSection";
+
 const index = () => {
   const theme = useTheme();
   const [selectedBlog, setSelectedBlog] = useState(null);
@@ -349,6 +350,7 @@ const index = () => {
           ))}
         </div>
       </div>
+      <div className="spacer py-10"></div>
       <div className="spacer py-10"></div>
       <div className="my-6">
         <CallToAction />
