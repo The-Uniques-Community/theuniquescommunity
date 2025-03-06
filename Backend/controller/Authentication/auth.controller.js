@@ -67,19 +67,19 @@ export const emailLogin = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials." });
     }
     const token = generateToken(member);
-    // Set the HTTP‑only cookie with similar options to the Google callback
+    // Set the HTTP‑only cookie with similar options as Google callback
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // set to true in production
       sameSite: "lax", // adjust as needed
       // domain: '.example.com',  // uncomment if you need to share across subdomains
     });
-    return res.json({ message: "Logged in successfully." });
+    // Send back the role as well as a success message
+    return res.json({ message: "Logged in successfully.", role: member.role });
   } catch (error) {
     return res.status(500).json({ message: "Server error" });
   }
 };
-
 
 export const getCurrentUser = (req, res) => {
   if (!req.user) {
@@ -87,7 +87,6 @@ export const getCurrentUser = (req, res) => {
   }
   res.status(200).json(req.user);
 };
-
 
 // controllers/auth.controller.js
 export const logout = (req, res) => {
