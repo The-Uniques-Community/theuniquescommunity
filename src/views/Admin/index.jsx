@@ -8,6 +8,7 @@ import LocationCityIcon from "@mui/icons-material/LocationCity";
 import Calender from "./dashboardComponents/Calender";
 import Banner from "./dashboardComponents/Banner";
 import EventOverView from "./dashboardComponents/EventOverView";
+
 const index = () => {
   const pendingUser = {
     fullName: "Ralph Edwards",
@@ -25,7 +26,7 @@ const index = () => {
   };
   return (
     <div className="w-full">
-      <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-1 gap-3 lg:px-5 md:px-3 px-1 py-5 mb-5">
+      <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-1 gap-3 md:px-3 px-1 py-5 mb-5">
         <div className="col-span-4">
           <Banner />
           <div className="grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 grid-cols-1 gap-4">
@@ -65,16 +66,28 @@ const index = () => {
             </div>
           </div>
         </div>
-
         <div>
-          <Calender />
-          {
-            
-          }
-          <EventOverView eventStatus={"upcoming"}/>
-          <EventOverView eventStatus={"completed"}/>
-          <EventOverView eventStatus={"upcoming"}/>
+          <div className="mb-5">
+            <Calender />
+          </div>
+          <div className="mb-5">
+            <EventOverView
+              eventStatus={"upcoming"}
+              eventName={"Bharat Tech Xperience 2.0"}
+            />
+            <EventOverView
+              eventStatus={"completed"}
+              eventName={"Bharat Tech Xperience 2.0"}
+            />
+            <EventOverView
+              eventStatus={"upcoming"}
+              eventName={"Bharat Tech Xperience 2.0"}
+            />
+          </div>
         </div>
+      </div>
+      <div>
+        
       </div>
     </div>
   );
