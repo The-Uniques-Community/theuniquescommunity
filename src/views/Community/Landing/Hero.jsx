@@ -17,7 +17,7 @@ const Hero = () => {
 
             <div className="svg-shaped-div flex flex-col md:flex-row items-center justify-between p-6">
                 <div className="text-content z-0 p-5">
-                    <h1 className="text-black max-w-5xl w-full pt-10 pb-10 md:pt-32 md:text-6xl text-2xl font-semibold">
+                    <h1 className="text-black max-w-5xl w-full pt-6 pb-6 md:pt-32 md:text-6xl text-2xl font-semibold">
                         Connecting you to the community you love
                     </h1>
                     <p className="text-black py-5 text-lg max-w-lg">
