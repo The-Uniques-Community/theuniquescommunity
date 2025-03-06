@@ -1,6 +1,9 @@
 import React from "react";
 import { TextField, Button, Checkbox, FormControlLabel } from "@mui/material";
-import { Mail, Phone, Place, Chat } from "@mui/icons-material";
+import tu from "@/assets/logos/theuniquesCommunity.png";
+import InstagramIcon from '@mui/icons-material/Instagram';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import { Link } from "react-router";
 
 const ContactForm = () => {
@@ -53,37 +56,30 @@ const ContactForm = () => {
 
         {/* Right Side - Contact Info */}
         <div>
-          <h3 className="text-2xl font-semibold mb-4">Chat with us</h3>
-          <p className="text-gray-600 mb-2">
+        <img className="h-12 object-contain mb-6" src={tu} alt="" />
+          <h3 className="text-2xl font-semibold mb-2">Chat with us</h3>
+          <p className="text-gray-600 mb-3">
             Speak to our friendly team via live chat.
           </p>
           <div className="flex-col">
-            <Link to="" className="underline inline-block my-4 font-semibold">
+            <Link to="" className=" inline-block my-4 font-semibold">
               <div>
-                <Chat /> Start a live chat
+                <InstagramIcon /> <span className="underline">Our Instagram</span>
               </div>
             </Link>
             <Link to="" className="underline font-semibold">
               <div>
-                <Chat /> Start a live chat
+                <LinkedInIcon /> <span className="underline">Our LinkedIn</span>
               </div>
             </Link>
             <Link to="" className="underline inline-block my-4 font-semibold">
               <div>
-                <Chat /> Start a live chat
+                <WhatsAppIcon /> <span className="underline">Our WhatsApp</span>
               </div>
             </Link>
           </div>
 
-          <h3 className="text-2xl font-semibold mt-8 mb-2">Call us</h3>
-          <p className="text-gray-600 mb-2">Mon-Fri from 8am to 5pm.</p>
-          <Button
-            startIcon={<Phone />}
-            className="justify-start text-black normal-case"
-            style={{ fontSize: "1rem", textTransform: "none" }}
-          >
-            +1 (555) 000-0000
-          </Button>
+          
 
           <h3 className="text-2xl font-semibold mt-8 mb-2">Visit us</h3>
           <p className="text-gray-600 mb-2">SVIET, Banur, Punjab-140601</p>
