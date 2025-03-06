@@ -9,14 +9,11 @@ import { Link } from "react-router";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
-import { ArrowUpRight, Award, FileText, Briefcase, Globe, X } from 'lucide-react';
-
+import {ArrowUpRight,Award} from "lucide-react";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import BusinessIcon from "@mui/icons-material/Business";
 import PropTypes from "prop-types";
-import { LineChart } from "@mui/x-charts/LineChart";
-import { dataset } from "@/assets/dummyData/gdpData";
 import LabelIcon from "@mui/icons-material/Label";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -24,9 +21,9 @@ import Box from "@mui/material/Box";
 import LoginIcon from "@mui/icons-material/Login";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
+
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
-
   return (
     <div
       role="tabpanel"
@@ -63,14 +60,13 @@ const ProfileModal = ({ open, handleClose, user }) => {
       <div className="h-screen overflow-y-scroll bg-white p-4">
         <div className="flex justify-end py-2 mb-3">
           <Tooltip title="Close" arrow>
-
-          <div
-            onClick={() => handleClose}
-            className="p-3 w-12 h-12 rounded-full cursor-pointer flex items-center justify-center hover:bg-slate-200"
+            <div
+              onClick={handleClose}
+              className="p-3 w-12 h-12 rounded-full cursor-pointer flex items-center justify-center hover:bg-slate-200"
             >
-            <CloseIcon fontSize="large" />
-          </div>
-            </Tooltip>
+              <CloseIcon fontSize="large" />
+            </div>
+          </Tooltip>
         </div>
         <div className="grid xl:grid-cols-4 lg:grid-cols-3 col-span-1 mb-7 gap-x-6 gap-y-5">
           <div className="xl:col-span-1 lg:col-span-1 col-span-1 flex gap-x-5 items-center">
@@ -205,10 +201,7 @@ const ProfileModal = ({ open, handleClose, user }) => {
                     </p>
                   </div>
                   <div className="flex items-start mb-2 gap-x-3">
-                    <LocationOnIcon
-                      fontSize="small"
-                      className="text-slate-500"
-                    />
+                    <LocationOnIcon fontSize="small" className="text-slate-500"/>
                     <p className="text-slate-500 text-sm">
                       {user.address} | {user.city}, {user.state}
                     </p>
@@ -224,10 +217,7 @@ const ProfileModal = ({ open, handleClose, user }) => {
                 <div className="py-3 bg-slate-50 border border-slate-200 rounded-b-md">
                   {user.skills.map((skill, index) => {
                     return (
-                      <span
-                        key={index}
-                        className="bg-slate-200 text-xs my-1 inline-block mx-1 p-1 px-2 rounded-full"
-                      >
+                      <span key={index} className="bg-slate-200 text-xs my-1 inline-block mx-1 p-1 px-2 rounded-full">
                         {skill}
                       </span>
                     );
@@ -243,7 +233,7 @@ const ProfileModal = ({ open, handleClose, user }) => {
                   value={value}
                   onChange={handleChange}
                   variant="scrollable"
-                  scrollButtons="auto"  
+                  scrollButtons="auto"
                 >
                   <Tab label="Statistics" {...a11yProps(0)} />
                   <Tab label="Achievements" {...a11yProps(1)} />
@@ -253,80 +243,109 @@ const ProfileModal = ({ open, handleClose, user }) => {
                 </Tabs>
               </Box>
               <CustomTabPanel value={value} index={0}>
-                {/* <LineChart
-                  dataset={dataset}
-                  xAxis={[
-                    {
-                      id: "Years",
-                      dataKey: "date",
-                      scaleType: "time",
-                      valueFormatter: (date) => date.getFullYear().toString(),
-                    },
-                  ]}
-                  series={[
-                    {
-                      id: "France",
-                      label: "French GDP per capita",
-                      dataKey: "fr",
-                      stack: "total",
-                      area: true,
-                      showMark: false,
-                    },
-                    {
-                      id: "Germany",
-                      label: "German GDP per capita",
-                      dataKey: "dl",
-                      stack: "total",
-                      area: true,
-                      showMark: false,
-                    },
-                    {
-                      id: "United Kingdom",
-                      label: "UK GDP per capita",
-                      dataKey: "gb",
-                      stack: "total",
-                      area: true,
-                      showMark: false,
-                    },
-                  ]}
-                  width={600}
-                  height={400}
-                  margin={{ left: 70 }}
-                /> */}
                 Stats
               </CustomTabPanel>
               <CustomTabPanel value={value} index={1}>
-                Achievements
+                {user.achievements.length > 0 && (
+                  <div className="mb-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {user.achievements.map((achievement) => (
+                        <div key={achievement.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+                          <div className="flex items-start gap-3">
+                            <div className={`text-white p-2 rounded-full flex items-center justify-center ${achievement.color}`}>
+                              {achievement.icon || (
+                                <Award className="w-10 h-10 text-slate-500" />
+                              )}
+                            </div>
+                            <div>
+                              <h5 className="font-medium text-gray-900">
+                                {achievement.title}
+                              </h5>
+                              <p className="text-sm text-gray-600 mt-1">
+                                {achievement.description}
+                              </p>
+                              {achievement.date && (
+                                <p className="text-xs text-gray-500 mt-1.5">
+                                  {achievement.date||"------"}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </CustomTabPanel>
               <CustomTabPanel value={value} index={2}>
-              <div>
-                  
+                <div>
                   <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-3 gap-5">
                     {user.certifications.map((certificate) => (
-                      <div
-                        key={certificate.id}
-                        className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-                      >
+                      <div key={certificate.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                         <div className="aspect-[16/9] overflow-hidden bg-gray-50 flex items-center justify-center">
                           <img
-                            src={certificate.imageUrl || "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"}
+                            src={
+                              certificate.imageUrl ||
+                              "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+                            }
                             alt={certificate.title}
                             className="w-full h-full object-contain"
                           />
                         </div>
                         <div className="p-4">
-                          <h5 className="font-medium text-gray-900">{certificate.title}</h5>
-                          <p className="text-sm text-gray-600 mt-1">{certificate.issuer}</p>
-                          <p className="text-xs text-gray-500 mt-1.5">{certificate.date}</p>
+                          <h5 className="font-medium text-gray-900">
+                            {certificate.title}
+                          </h5>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {certificate.issuer}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1.5">
+                            {certificate.date}
+                          </p>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
-
               </CustomTabPanel>
               <CustomTabPanel value={value} index={3}>
-                Projects
+              <div>
+                  <div className="space-y-6 grid grid-cols-1 xl:grid-cols-2 lg:grid-cols-2 gap-5">
+                    {user.projects.map((project) => (
+                      <div key={project.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                        {project.imageUrl && (
+                          <div className="aspect-[21/9] overflow-hidden bg-gray-50">
+                            <img
+                              src={project.imageUrl || "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"}
+                              alt={project.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                        <div className="p-5">
+                          <h5 className="font-medium text-lg text-gray-900">{project.title}</h5>
+                          <p className="text-gray-700 my-3 leading-relaxed">{project.description}</p>
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {project.technologies.map((tech, index) => (
+                              <span key={index} className="text-xs bg-gray-100 px-2.5 py-1 rounded-full">
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
+                          {project.link && (
+                            <a
+                              href={project.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sm text-[#ca0019] hover:underline flex items-center gap-1 font-medium">
+                              View Project <ArrowUpRight size={14} />
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </CustomTabPanel>
               <CustomTabPanel value={value} index={4}>
                 Events

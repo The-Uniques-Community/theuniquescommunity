@@ -42,7 +42,30 @@ export const members = [
       ], // MongoDB ObjectIds
       profilePic: "https://randomuser.me/api/portraits/men/1.jpg",
       skills: ["React", "Node.js", "MongoDB", "Tailwind CSS"],
-      projects: ["Portfolio Website", "E-commerce App"],
+      projects: [ {
+        id: "proj1",
+        title: "E-commerce Dashboard",
+        description: "A responsive dashboard for e-commerce analytics",
+        technologies: ["React", "TypeScript", "Tailwind CSS", "Chart.js"],
+        link: "https://github.com/ralphedwards/ecommerce-dashboard",
+        imageUrl: "/placeholder.svg?height=150&width=300",
+      },
+      {
+        id: "proj1",
+        title: "E-commerce Dashboard",
+        description: "A responsive dashboard for e-commerce analytics",
+        technologies: ["React", "TypeScript", "Tailwind CSS", "Chart.js"],
+        link: "https://github.com/ralphedwards/ecommerce-dashboard",
+        imageUrl: "/placeholder.svg?height=150&width=300",
+      },
+      {
+        id: "proj1",
+        title: "E-commerce Dashboard",
+        description: "A responsive dashboard for e-commerce analytics",
+        technologies: ["React", "TypeScript", "Tailwind CSS", "Chart.js"],
+        link: ""
+      }
+],
       internships: ["Google Internship - Software Engineer"],
       achievements: [
         {
@@ -90,12 +113,68 @@ export const members = [
       isSuspended: false,
       profileStatus: "active",
       fineStatus: "500",
-      certifications: ["65a2f30b5b8a3d001c8a7be1"],
+      certifications: [
+        {
+          id: "cert1",
+          title: "Advanced React Development",
+          issuer: "Frontend Masters",
+          date: "2023-02-10",
+          imageUrl: "/placeholder.svg?height=200&width=300",
+        },
+        {
+          id: "cert2",
+          title: "JavaScript Algorithms and Data Structures",
+          issuer: "freeCodeCamp",
+          date: "2022-11-05",
+          imageUrl: "/placeholder.svg?height=200&width=300",
+        },
+        {
+          id: "cert3",
+          title: "Responsive Web Design",
+          issuer: "freeCodeCamp",
+          date: "2022-08-15",
+          imageUrl: "/placeholder.svg?height=200&width=300",
+        },
+      ],
       profilePic: "https://randomuser.me/api/portraits/women/2.jpg",
       skills: ["Python", "Machine Learning", "Data Science", "React", "Node.js", "MongoDB", "Tailwind CSS"],
-      projects: ["Deepfake Detection System", "Stock Prediction Model"],
+      projects: [
+        {
+          id: "proj1",
+          title: "E-commerce Dashboard",
+          description: "A responsive dashboard for e-commerce analytics",
+          technologies: ["React", "TypeScript", "Tailwind CSS", "Chart.js"],
+          link: "https://github.com/ralphedwards/ecommerce-dashboard",
+          imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWj8L0GAvnQ8sB9ybE7eSkkrG7W6T47VPHWQ&s",
+        },
+        {
+          id: "proj2",
+          title: "Social Media App",
+          description: "A full-stack social media app",
+          technologies: ["React", "Node.js", "MongoDB", "Tailwind CSS"],
+          link: "https://github.com/ralphedwards/ecommerce-dashboard",
+          imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWj8L0GAvnQ8sB9ybE7eSkkrG7W6T47VPHWQ&s",
+
+        },
+      ],
       internships: ["Microsoft AI Research Intern"],
-      achievements: ["Best Paper Award - AI Conference"],
+      achievements: [
+        {
+          id: "ach1",
+          title: "Hackathon",
+          description: "First place in the 2023 Web Innovation Hackathon",
+          date: "2023-05-15",
+          // icon: <Trophy className="h-5 w-5" />,
+          // color: "bg-amber-500",
+        },
+        {
+          id: "ach2",
+          title: "Community",
+          description: "Contributed to 5+ open source projects",
+          // icon: <Heart className="h-5 w-5" />,
+          // color: "bg-red-500",
+        },
+      ],
       linkedinProfile: "https://linkedin.com/in/janesmith",
       instagramProfile: "https://instagram.com/janesmith",
       twitterProfile: "https://twitter.com/janesmith",
