@@ -10,6 +10,8 @@ import VisionMission from "./componants/Vision";
 import Testimonial from "./componants/Testimonial";
 import Faq from "./componants/Faq";
 import CallToAction from "../homComponents/CallToAction";
+import Hover from "./componants/Ankur";
+
 
 const index = () => {
   return (
@@ -22,9 +24,12 @@ const index = () => {
       <TrainingTabs />
       <VisionMission />
       <Mentor />
+      <Hover/>
       <Testimonial />
       <Faq />
       <CallToAction />
+
+      
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { Box, Typography, Grid, Card, Stack, Chip, Container } from "@mui/materi
 import Button from "@/utils/Buttons/Button";
 import { useTheme } from "@mui/material";
 import uniques1 from "../../../../assets/img/About/uniques1.jpg";
+import { useNavigate } from "react-router-dom";
 
 const BatchProfile = () => {
   const [value, setValue] = React.useState(0);
@@ -11,6 +12,7 @@ const BatchProfile = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  const navigate = useNavigate();
 
   const batchData = [
     {
@@ -110,6 +112,7 @@ const BatchProfile = () => {
                 textColor={theme.palette.primary.light}
                 iconColor={theme.palette.primary.dark}
                 color={theme.palette.primary.light}
+                onClick={() => navigate("/batches")}
               >
                 Know More
               </Button>
