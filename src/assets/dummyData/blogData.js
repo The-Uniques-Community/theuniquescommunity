@@ -25,7 +25,7 @@ export const blogData = [
         paragraph: "By understanding JSX, state, props, and the component lifecycle, developers can efficiently create dynamic web applications.",
       },
     ],
-    tags: ["React", "JavaScript", "Frontend"],
+    tags: ["React", "JavaScript", "Frontend", "Technical"],
   },
   {
     title: "The Ultimate Guide to Successful Event Management",
@@ -53,7 +53,7 @@ export const blogData = [
         paragraph: "Post-event success should be measured through feedback and analytics to ensure continuous improvement.",
       },
     ],
-    tags: ["Event Planning", "Logistics", "Engagement"],
+    tags: ["Event Planning", "Logistics", "Engagement", "Non-Tech"],
   },
   {
     title: "Setting Up a Scalable React App: Best Practices",
@@ -81,7 +81,7 @@ export const blogData = [
         paragraph: "Ensure proper optimization by minifying assets, caching, and using CDNs for faster delivery.",
       },
     ],
-    tags: ["React", "Best Practices", "Frontend Development"],
+    tags: ["React", "Best Practices", "Frontend Development", "Technical"],
   },
   {
     title: "Event Management & Planning: The Key to Success",

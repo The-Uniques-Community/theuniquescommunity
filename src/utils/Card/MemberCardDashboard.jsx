@@ -383,7 +383,7 @@ export const MemberCardDashboard = ({ user }) => {
       </Card>
 
       {/* Fullscreen Modal */}
-      <ProfileModal handleClose={handleClose} open={open} user={user}/>
+      <ProfileModal handleClose={()=>setOpen(false)} open={open} user={user}/>
     </>
   );
 };
