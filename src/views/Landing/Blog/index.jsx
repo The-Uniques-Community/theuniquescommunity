@@ -2,39 +2,91 @@ import React, { useState } from "react";
 import { Modal, Box, IconButton, Chip } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import BlogCard from "@/utils/Card/BlogCard";
-import ContainerFull from "@/utils/Container/ContainerFull";
+import CelebrationComponent from "@/utils/Header";
+import CallToAction from "../homComponents/CallToAction";
 import { blogData } from "@/assets/dummyData/blogData";
-import office from "@/assets/img/office.jpg";
-const index = () => {
+
+const BlogPage = () => {
   const [selectedBlog, setSelectedBlog] = useState(null);
+  const [categoryFilter, setCategoryFilter] = useState("All");
+  const [tagFilter, setTagFilter] = useState(null);
+
+  // Extract unique categories from blogData
+  const categories = ["All", ...new Set(blogData.map((blog) => blog.category))];
+
+  // Extract unique tags from blogData
+  const tags = [
+    "All",
+    ...new Set(blogData.flatMap((blog) => blog.tags)),
+  ];
+
+  // Filtering logic
+  const filteredBlogs = blogData.filter((blog) => {
+    const matchesCategory =
+      categoryFilter === "All" || blog.category === categoryFilter;
+    const matchesTag = !tagFilter || blog.tags.includes(tagFilter);
+
+    return matchesCategory && matchesTag;
+  });
 
   return (
-    <div className=" bg-gray-100 min-h-screen">
-      <div className="relative">
-        <div
-          style={{
-            backgroundImage: office ? `url(${office})` : "none",
-            backgroundSize: "cover",
-            backgroundRepeat: "no-repeat",
-          }}
-          className="h-[60vh] w-full bg-cover bg-center bg-no-repeat"
-        ></div>
-        <div className="lg:w-3/4 w-[85%] mx-auto h-80 bg-black absolute top-1/2 left-0 right-0 transform z-10 rounded-lg"></div>
-      </div>
-      <div className="lg:max-w-7xl max-w-5xl mx-auto py-12 mt-20">
-        <h1 className="text-3xl font-bold text-center text-gray-800 my-8">
+    <div className="min-h-screen">
+      <CelebrationComponent title="Shaping Perspectives → Read & Grow ✦" />
+
+      <div className="lg:max-w-7xl max-w-5xl mx-auto py-12 mt-5">
+        <h1 className="lg:text-5xl text-3xl font-bold text-center text-gray-800 my-8">
           Latest Blogs
         </h1>
-        <div className="grid lg:grid-cols-3 md:grid-cols- grid-cols-1 gap-6 snap-x scroll-p-6 place-items-center p-6">
-          {blogData.map((blog, index) => (
-            <BlogCard
-              key={index}
-              {...blog}
-              onClick={() => setSelectedBlog(blog)}
-            />
+
+        {/* Filters Section */}
+        <div className="flex flex-wrap justify-center space-x-4 mb-6">
+          {/* Category Filter */}
+          {/* {categories.map((category) => (
+            <button
+              key={category}
+              className={`px-4 py-2 rounded-md font-medium transition-all ${
+                categoryFilter === category
+                  ? "bg-[#CA0019] text-white"
+                  : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+              }`}
+              onClick={() => {
+                setCategoryFilter(category);
+                setTagFilter(null); // Reset tag filter on category change
+              }}
+            >
+              {category}
+            </button>
+          ))} */}
+        </div>
+
+        {/* Tags Filter */}
+        <div className="flex flex-wrap justify-center space-x-2 mb-8">
+          {tags.map((tag) => (
+            <button
+              style={{borderRadius:12}}
+              key={tag}
+              className={`cursor-pointer px-3 m-2 py-1 ${
+                tagFilter === tag ? "bg-[#ca0019] text-white" : "bg-gray-200"
+              }`}
+              onClick={() => setTagFilter(tag === "All" ? null : tag)}
+            >
+              {tag}
+            </button>
           ))}
         </div>
+
+        {/* Blog Grid */}
+        <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 snap-x scroll-p-6 place-items-center p-6">
+          {filteredBlogs.map((blog, index) => (
+            <BlogCard key={index} {...blog} onClick={() => setSelectedBlog(blog)} />
+          ))}
+        </div>
+
+        <div className="py-8"></div>
       </div>
+
+      <CallToAction />
+      <div className="py-8"></div>
 
       {/* Blog Modal - Full Page */}
       <Modal
@@ -48,10 +100,7 @@ const index = () => {
             <div className="max-w-6xl mx-auto p-6">
               {/* Close Button */}
               <div className="flex justify-between items-center">
-                <h2
-                  id="blog-title"
-                  className="text-4xl font-bold text-gray-800"
-                >
+                <h2 id="blog-title" className="text-4xl font-bold text-gray-800">
                   {selectedBlog.title}
                 </h2>
                 <IconButton onClick={() => setSelectedBlog(null)}>
@@ -102,4 +151,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default BlogPage;

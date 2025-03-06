@@ -3,7 +3,7 @@ import WeirdCard from "@/utils/Card/WeirdCard";
 
 const index = () => {
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="">
         <WeirdCard/>
         <CommunityCard/>
     </div>
