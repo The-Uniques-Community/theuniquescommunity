@@ -12,6 +12,7 @@ const MemberRoutes = {
     {
       path: "/member",
       element: <MemberDashboard />,
+      
     },
   ],
 };
