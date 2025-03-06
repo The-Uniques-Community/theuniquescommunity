@@ -2,12 +2,12 @@ import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { useScroll, useTransform, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
-import UniquesFormation from "@/assets/img/HowItStarted/1.jpg";
-import FirstBatch from "@/assets/img/HowItStarted/2.jpg";
-import Naveen from "@/assets/img/HowItStarted/3.jpeg";
-import Praveen from "@/assets/img/HowItStarted/3-1.jpeg";
-import Uniques2 from "@/assets/img/HowItStarted/4.jpeg";
-import ICTA from "@/assets/img/HowItStarted/5.jpeg";
+// import UniquesFormation from "@/assets/img/HowItStarted/1.jpg";
+// import FirstBatch from "@/assets/img/HowItStarted/2.jpg";
+// import Naveen from "@/assets/img/HowItStarted/3.jpeg";
+// import Praveen from "@/assets/img/HowItStarted/3-1.jpeg";
+// import Uniques2 from "@/assets/img/HowItStarted/4.jpeg";
+// import ICTA from "@/assets/img/HowItStarted/5.jpeg";
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
