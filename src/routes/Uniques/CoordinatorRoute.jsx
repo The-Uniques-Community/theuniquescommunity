@@ -7,7 +7,7 @@ const CoordinatorDashboard = Loader(lazy(() => import("@/views/Uniques/Coordinat
 
 const CoordinatorRoute = {
   path: "/coordinator",
-  element: <ProtectedRoute isAllowed={true} element={<CoordinatorLayout />} />,
+  element: <ProtectedRoute role={'coordinator'} element={<CoordinatorLayout />} />,
   children: [
     {
       path: "/coordinator",
