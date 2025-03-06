@@ -31,7 +31,6 @@ const Login = () => {
   const handleClickShowPassword = () => setShowPassword((prev) => !prev);
   const handleMouseDownPassword = (event) => event.preventDefault();
 
-
   // Listen for the message from the popup. The backend sends only the role.
   useEffect(() => {
     const receiveMessage = (event) => {
@@ -54,7 +53,6 @@ const Login = () => {
           default:
             navigate("/");
         }
-   
       }
     };
 
@@ -155,7 +153,7 @@ const Login = () => {
           })}
           onSubmit={async (values, { setErrors, setSubmitting }) => {
             try {
-              const res = await fetch("http://localhost:5000/auth/login", {
+              const res = await fetch("http://localhost:5000/auth/emaillogin", {
                 method: "POST",
                 credentials: "include", // include cookie with the request
                 headers: { "Content-Type": "application/json" },
@@ -164,8 +162,23 @@ const Login = () => {
               const data = await res.json();
               if (res.ok) {
                 toast.success("Logged in successfully");
-                // After email login, fetch user details to determine redirection.
-                fetchUser();
+                // Use the role from the response to navigate accordingly
+                switch (data.role) {
+                  case "member":
+                    navigate("/member");
+                    break;
+                  case "coordinator":
+                    navigate("/coordinator");
+                    break;
+                  case "communityadmin":
+                    navigate("/community");
+                    break;
+                  case "admin":
+                    navigate("/admin");
+                    break;
+                  default:
+                    navigate("/");
+                }
               } else {
                 setErrors({ submit: data.message || "Login failed" });
               }
