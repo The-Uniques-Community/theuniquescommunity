@@ -2,6 +2,8 @@
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
 import Member from "../models/member/memberModel.js";
+import Coordinator from "../models/coordinator/coordinatorModel.js";
+import Admin from "../models/admin/adminModel.js";
 import File from "../models/member/fileModel.js";
 import dotenv from "dotenv";
 dotenv.config();
@@ -28,6 +30,12 @@ passport.use(
       try {
         const email = profile.emails[0].value;
         let member = await Member.findOne({ email });
+        if (!member) {
+          member = await Coordinator.findOne({ email });
+        }
+        if (!member) {
+          member = await Admin.findOne({ email });
+        }
 
         if (!member) {
           console.log("⚠️ Member not found in DB");
