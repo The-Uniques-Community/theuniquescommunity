@@ -10,7 +10,8 @@ dotenv.config();
 
 export const register = async (req, res) => {
     try {
-        const { name, email, password, city, state, course,whatsappContact, batch, admnNo, address, contact } = req.body;
+        const {  email, password} = req.body;
+    
         const member = await Member.findOne({ email });
         if (member) {
             return res.status(400).json({ message: "User already exists" });
@@ -18,29 +19,29 @@ export const register = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 12);
         const newMember = new Member({
-            name,
+            // name,
             email,
             password: hashedPassword,
-            city,
-            state,
-            course,
-            batch,
-            admnNo,
-            address,
-            contact,
-            whatsappContact,
+            // city,
+            // state,
+            // course,
+            // batch,
+            // admnNo,
+            // address,
+            // contact,
+            // whatsappContact,
             profileStatus:"active"
         });
-
+        console.log(newMember);
         await newMember.save();
-
-        await sendPendingApprovalEmail(email, name);
+        console.log(newMember)
+        // await sendPendingApprovalEmail(email, name);
         const jwtToken = jwt.sign(
             { id: newMember._id, role: "member" }, 
             process.env.JWT_SECRET,
             { expiresIn: "1h" }
           );
-      
+          console.log(jwtToken);
           // Set token as HTTP-only cookie
           res.cookie("token", jwtToken, {
             httpOnly: true,
@@ -48,6 +49,7 @@ export const register = async (req, res) => {
             sameSite: 'None', // Important for cross-origin
             maxAge: 3600000, // 1 hour
           });
+          
         res.status(201).json({ message: "User registered successfully" });
     }
     catch (error) {
