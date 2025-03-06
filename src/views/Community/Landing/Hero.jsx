@@ -5,7 +5,7 @@ import Button from "@/utils/Buttons/Button";
 
 const Hero = () => {
     return (
-        <div className="relative container mx-auto">
+        <div className="relative container  mx-auto">
             {/* Hidden SVG clipPath definition */}
             <svg width="0" height="0" style={{ position: "absolute" }}>
                 <defs>
@@ -16,8 +16,8 @@ const Hero = () => {
             </svg>
 
             <div className="svg-shaped-div flex flex-col md:flex-row items-center justify-between p-6">
-                <div className="text-content z-10 p-5">
-                    <h1 className="text-black max-w-6xl w-full pt-10 pb-10 md:pt-32 md:text-8xl text-3xl font-semibold">
+                <div className="text-content z-0 p-5">
+                    <h1 className="text-black max-w-5xl w-full pt-10 pb-10 md:pt-32 md:text-6xl text-2xl font-semibold">
                         Connecting you to the community you love
                     </h1>
                     <p className="text-black py-5 text-lg max-w-lg">
@@ -34,7 +34,7 @@ const Hero = () => {
                         <span>Register</span>
                     </Button>
                 </div>
-                <div className="image-container relative w-full md:w-1/2 mt-10 md:mt-0">
+                <div className="image-container absolute left-[50%] bottom-[10%] z-[999] w-full md:w-3/6 mt-10 md:mt-0">
                     <img className="w-full z-0 h-auto" src={HeroClip} alt="Clipped Image" />
                 </div>
             </div>
