@@ -12,7 +12,7 @@ import HowItStarted from "@/views/Landing/HowItStarted/index"
 import Community from "@/views/Community/index"
 
 import Event from "@/views/Landing/Event/Index"
-
+import BatchesPage from "@/views/Landing/Batches/index"
 
 const Landing = Loader(lazy(() => import("@/views/Landing/index")));
 
@@ -36,11 +36,13 @@ const LandingRoutes = {
     { path: "community-main", element: <Community /> },
     { path: "training", element: <Training /> },
     // { path: "login", element: <div>Login</div> },
-    { path: "batches", element: <div>Batches</div> },
+    // { path: "batches", element: <div>Batches</div> },
     //      all login will be in login router with diffrent layout please find the folder in routes
     { path: "*", element: <NotFound /> },
     { path: "blogs", element: <BlogPage /> },
     { path: "contact", element: <Contact /> },
+    { path: "batches", element: <BatchesPage />  },
+    
   ],
 };
 
