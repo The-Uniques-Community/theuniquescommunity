@@ -8,6 +8,7 @@ const AdminDashboard = Loader(lazy(() => import("@/views/Admin")));
 const Member = Loader(lazy(() => import('@/views/Admin/Members')))
 const Event = Loader(lazy(() => import('@/views/Admin/Events')))
 const Account = Loader(lazy(() => import('@/views/Admin/Accounts')))
+const Profile = Loader(lazy(() => import('@/views/Admin/Profile')))
 
 const AdminRoutes = {
   path: "/admin",
@@ -28,7 +29,11 @@ const AdminRoutes = {
     {
       path: "/admin/accounts",
       element: <Account/>
-    }
+    },
+    {
+      path: "/admin/profile",
+      element: <Profile/>
+    },
   ],
 };
 
