@@ -30,6 +30,7 @@
     "@reduxjs/toolkit": "^2.5.0",
     "@tabler/icons-react": "^3.30.0",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "formik": "^2.4.6",
     "fortawesome": "^0.0.1-security",
