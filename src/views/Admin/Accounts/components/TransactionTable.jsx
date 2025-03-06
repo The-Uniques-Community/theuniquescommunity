@@ -139,7 +139,7 @@ const FineTable = () => {
               .map((fine, index) => (
                 <TableRow key={index}>
                   <TableCell sx={{ color: "#333" }}>{fine.name}</TableCell>
-                  <TableCell sx={{ color: "#333" }}><div> <img className="h-6 w-6 object-center inline" scr={tu} alt=""/> {fine.batch}</div></TableCell>
+                  <TableCell sx={{ color: "#333" }}><div className="flex gap-x-1 items-center"> <img className="h-5 w-5 object-center object-contain inline" src={tu} alt="TU"/> {fine.batch}</div></TableCell>
                   <TableCell sx={{ color: "#333" }}>
                     {fine.fineAmount}
                   </TableCell>
@@ -163,20 +163,34 @@ const FineTable = () => {
 
       {/* Pagination */}
       <Box display="flex" justifyContent="center" mt={2}>
-        <Pagination
-          count={Math.ceil(filteredfineData.length / rowsPerPage)}
-          page={page}
-          onChange={(e, value) => setPage(value)}
-          sx={{
-            "& .MuiPaginationItem-root": { color: "#ca0019" }, // Default page color
-            "& .Mui-selected": {
-              backgroundColor: "#ca0019",
-              color: "white",
-              fontWeight: "bold",
-            },
-          }}
-        />
-      </Box>
+  <Pagination
+    count={Math.ceil(filteredfineData.length / rowsPerPage)}
+    page={page}
+    onChange={(e, value) => setPage(value)}
+    sx={{
+      display: "flex",
+      gap: "8px",
+      "& button": {
+        color: "black",
+        fontWeight: "bold",
+        borderRadius: "8px",
+        transition: "background-color 0.3s ease",
+        "&:hover": {
+          backgroundColor: "transparent",
+        },
+      },
+      "& .Mui-selected": {
+        backgroundColor: "#ca0019 !important",
+        color: "white",
+        fontWeight: "bold",
+        "&:hover": {
+          backgroundColor: "#ca0019 !important",
+        },
+      },
+    }}
+  />
+</Box>
+
     </Box>
   );
 };
