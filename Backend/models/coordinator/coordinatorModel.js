@@ -1,15 +1,18 @@
 import mongoose from "mongoose";
 
 const coordinatorSchema = new mongoose.Schema({
-    coordinatorName:{
+    fullName:{
         type: String,
     },
-    coordinatorEmail:{
+    email:{
         type: String,  
     },
     role:{
         type: String,
         default: 'coordinator',
+    },
+    password:{
+        type: String,
     },
     coordinatorContact:{
         type: String,
