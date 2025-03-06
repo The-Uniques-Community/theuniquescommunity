@@ -11,7 +11,7 @@ const Account = Loader(lazy(() => import('@/views/Admin/Accounts')))
 
 const AdminRoutes = {
   path: "/admin",
-  element: <ProtectedRoute isAllowed={true} element={<AdminLayout />} />,
+  element: <ProtectedRoute role={'admin'} element={<AdminLayout />} />,
   children: [
     {
       path: "/admin",
