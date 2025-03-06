@@ -1,9 +1,10 @@
 .svg-shaped-div {
     position: relative;
     width: 100%;
-    height: 100vh;
+    margin-top: 20px;
+    height: 80vh;
     /* Full viewport height */
-    background: #e7e8e2;
+    background: #f1f4f9;
     clip-path: url(#heroClip);
     -webkit-clip-path: url(#heroClip);
     overflow: hidden;
