@@ -13,6 +13,9 @@ import TrainingTabs from "./homComponents/TrainingTabs";
 import ReviewCard from "@/utils/Card/ReviewCard";
 // import ShapedCard from "@/utils/Card/ShapedCard";
 import CorporateCultureSection from "./homComponents/CorporateCultureSection";
+import HoverCard from "@/utils/Card/HoverCard";
+import { events } from "@/assets/dummyData/eventsData";
+import CommunityCard from "@/utils/Card/CommunityCard";
 
 const index = () => {
   const theme = useTheme();
@@ -241,11 +244,11 @@ const index = () => {
   dark:[&::-webkit-scrollbar-track]:bg-neutral-200
   dark:[&::-webkit-scrollbar-thumb]:bg-neutral-400 snap-x"
                 >
-                  {blogData.slice(0, 3).map((blog, index) => (
-                    <BlogCard
+                  {events.slice(0, 3).map((blog, index) => (
+                    <CommunityCard
                       key={index}
-                      {...blog}
-                      onClick={() => setSelectedBlog(blog)}
+                      event={blog}
+                      // onClick={() => setSelectedBlog(blog)}
                     />
                   ))}
                 </div>
@@ -254,83 +257,93 @@ const index = () => {
           </section>
         </div>
       </section>
-      <Modal
-        open={!!selectedBlog}
-        onClose={() => setSelectedBlog(null)}
-        aria-labelledby="blog-title"
-        aria-describedby="blog-content"
-      >
-        <Box className="fixed inset-0 bg-white overflow-auto">
-          {selectedBlog && (
-            <div className="max-w-6xl mx-auto p-6">
-              {/* Close Button */}
-              <div className="flex justify-between items-center">
-                <h2
-                  id="blog-title"
-                  className="text-4xl font-bold text-gray-800"
-                >
-                  {selectedBlog.title}
-                </h2>
-                <IconButton onClick={() => setSelectedBlog(null)}>
-                  <CloseIcon className="text-gray-600" />
-                </IconButton>
-              </div>
+      
 
-              {/* Blog Meta Info */}
-              <p className="text-gray-600 text-lg mt-2">
-                {selectedBlog.category} • {selectedBlog.readTime} Mins Read
-              </p>
-
-              {/* Blog Tags */}
-              <div className="flex flex-wrap gap-2 mt-4">
-                {selectedBlog.tags.map((tag, index) => (
-                  <Chip key={index} label={tag} className="bg-gray-200" />
-                ))}
-              </div>
-
-              {/* Blog Image */}
-              <img
-                src={selectedBlog.image}
-                alt={selectedBlog.title}
-                className="w-full h-[400px] object-cover rounded-lg mt-6"
-              />
-
-              {/* Blog Content Sections */}
-              <div
-                id="blog-content"
-                className="mt-6 text-gray-700 text-lg leading-7 space-y-6"
-              >
-                {selectedBlog.subContents.map((section, index) => (
-                  <div key={index}>
-                    {section.heading && (
-                      <h3 className="text-2xl font-semibold text-gray-800">
-                        {section.heading}
-                      </h3>
-                    )}
-                    <p className="mt-2">{section.paragraph}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </Box>
-      </Modal>
-
-      <div className="spacer py-10"></div>
+      {/* <div className="spacer py-10"></div> */}
       <section>
         <AboutSection />
       </section>
-      <div className="spacer py-10"></div>
+      <div className="spacer py-8"></div>
       <section>
-        <CorporateCultureSection />
-      </section>
-      <div className="spacer py-10"></div>
-      <section>
-        <LandingStats />
+        {/* <CorporateCultureSection /> */}
+        <div className="grid lg:grid-cols-2 grid-cols-1 gap-6 lg:gap-8 lg:px-16 px-6">
+          <div></div>
+          <div>
+            <div class="grid place-items-center grid-cols-3 gap-4 md:grid-cols-3">
+              <div class="grid gap-4">
+                <div>
+                  <img
+                    class="h-auto max-w-full rounded-lg object-cover object-center"
+                    src="https://images.unsplash.com/photo-1552960562-daf630e9278b?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=687&amp;q=80"
+                    alt="gallery-photo"
+                  />
+                </div>
+                <div>
+                  <img
+                    class="h-auto max-w-full rounded-lg object-cover object-center"
+                    src="https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=800&amp;q=80"
+                    alt="gallery-photo"
+                  />
+                </div>
+                <div>
+                  <img
+                    class="h-auto max-w-full rounded-lg object-cover object-center "
+                    src="https://docs.material-tailwind.com/img/team-3.jpg"
+                    alt="gallery-photo"
+                  />
+                </div>
+              </div>
+              <div class="grid gap-4">
+                <div>
+                  <img
+                    class="h-auto max-w-full rounded-lg object-cover object-center"
+                    src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=2940&amp;q=80"
+                    alt="gallery-photo"
+                  />
+                </div>
+                <div>
+                  <img
+                    class="h-auto max-w-full rounded-lg object-cover object-center "
+                    src="https://docs.material-tailwind.com/img/team-3.jpg"
+                    alt="gallery-photo"
+                  />
+                </div>
+                <div>
+                  <img
+                    class="h-auto max-w-full rounded-lg object-cover object-center"
+                    src="https://images.unsplash.com/photo-1552960562-daf630e9278b?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=687&amp;q=80"
+                    alt="gallery-photo"
+                  />
+                </div>
+              </div>
+              <div class="grid gap-4">
+                <div>
+                  <img
+                    class="h-auto max-w-full rounded-lg object-cover object-center"
+                    src="https://images.unsplash.com/photo-1552960562-daf630e9278b?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=687&amp;q=80"
+                    alt="gallery-photo"
+                  />
+                </div>
+                <div>
+                  <img
+                    class="h-auto max-w-full rounded-lg object-cover object-center"
+                    src="https://images.unsplash.com/photo-1629367494173-c78a56567877?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=927&amp;q=80"
+                    alt="gallery-photo"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* <HoverCard /> */}
       </section>
       <div className="spacer py-10"></div>
       <section>
         <TrainingTabs />
+      </section>
+      <div className="spacer py-10"></div>
+      <section>
+        <LandingStats />
       </section>
       <div className="spacer py-10"></div>
       <div>

@@ -12,7 +12,7 @@ export const NewMember = ({ user }) => {
   return (
     <>
       {/* User Card */}
-      <Card className="rounded-2xl shadow-lg border border-slate-200 bg-white p-4 max-w-96">
+      <Card className="rounded-2xl shadow-lg border border-slate-200 bg-white p-4 xl:max-w-[390px] max-w-96">
         <CardContent className="flex flex-col gap-2">
           {/* Status Tags */}
           <div className="flex justify-between items-center my-4">
