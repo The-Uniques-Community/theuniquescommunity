@@ -72,7 +72,7 @@ const MissionVission = () => {
               </div>
             </div>
             {section.title === 'VISION' && (
-              <div className="md:w-1/3 flex justify-center">
+              <div className="md:w-1/3 flex justify-center items-center">
                 <h1 className="md:text-5xl text-2xl font-semibold text-center">{section.title}</h1>
               </div>
             )}

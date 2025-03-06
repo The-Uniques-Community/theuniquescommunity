@@ -1,16 +1,29 @@
 import React, { useState } from 'react';
 import Event from './Componant/Event';
 import CommunityCard from '@/utils/Card/CommunityCard';
+import Header from "@/utils/Header/index";
+import CallToAction from '../homComponents/CallToAction';
 
 const Index = () => {
   const [showEvent, setShowEvent] = useState(false);
 
+  // Updated title and subtitle for the Event Page
+  const title = "Join the Biggest Event of the Year 🎉";
+  const subtitle = "Don't miss out!";
+  const chipLabel = "Exclusive Event"; 
+
   return (
     <>
+      {/* Header with event-specific title and subtitle */}
+      <Header title={title} subtitle={subtitle} chipLabel={chipLabel}/>
+
       {/* CommunityCard Click Triggers Popup */}
       <div onClick={() => setShowEvent(true)} className="cursor-pointer">
         <CommunityCard />
       </div>
+
+      {/* CallToAction below CommunityCard */}
+      <CallToAction />
 
       {/* Full-Screen Popup Modal */}
       {showEvent && (

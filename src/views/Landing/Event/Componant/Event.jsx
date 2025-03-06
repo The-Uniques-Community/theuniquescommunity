@@ -98,7 +98,7 @@ export default function KotlinUserGroup({ onClose }) {
                       <p className="text-sm text-gray-500">@{leader.toLowerCase().replace(/ /g, "_")}</p>
                     </div>
                   </div>
-                  <Button color="white" bgColor="#ca0019" border={4} borderColor="#ca0019" iconColor="black" className="text-blue-600 border border-blue-600 px-3 py-1">+ Follow</Button>
+                  
                 </div>
               ))}
             </div>
