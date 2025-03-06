@@ -24,3 +24,6 @@ const coordinatorSchema = new mongoose.Schema({
         type: String,
     }
 });
+
+const Coordinator = mongoose.model('Coordinator', coordinatorSchema);
+export default Coordinator;
