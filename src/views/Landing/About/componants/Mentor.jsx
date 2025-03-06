@@ -1,8 +1,17 @@
+import { useState } from "react";
 import { FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 import ankursir from "../../../../assets/img/About/ankursir.jpg";
 import Button from "../../../../utils/Buttons/HoverButton";
+import ProfileCard from "./Ankur1";
 
 export default function MentorSection() {
+  const [modalOpen, setModalOpen] = useState(false);
+  console.log(modalOpen);
+
+  const togglePopup = () => {
+    setIsPopupOpen(!isPopupOpen);
+  };
+
   return (
     <div>
       <div className="w-[67%] mx-auto flex flex-col align-middle justify-start">
@@ -59,13 +68,17 @@ export default function MentorSection() {
               </div>
             </div>
             
-            {/* Smaller Button */}
-            <div>
-              <Button className="px-4 py-2 text-xs md:text-sm" />
+            <div className=" ">
+              <Button className="px-4 py-2 text-xs" onClick={() => setModalOpen(true)}>
+                Learn More
+              </Button>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Popup Component */}
+      <ProfileCard isOpen={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );
 }

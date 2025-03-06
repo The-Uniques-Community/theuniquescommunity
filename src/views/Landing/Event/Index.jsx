@@ -3,6 +3,7 @@ import Event from './Componant/Event';
 import CommunityCard from '@/utils/Card/CommunityCard';
 import Header from "@/utils/Header/index";
 import CallToAction from '../homComponents/CallToAction';
+import { events } from '@/assets/dummyData/eventsData';
 
 const Index = () => {
   const [showEvent, setShowEvent] = useState(false);
@@ -12,6 +13,7 @@ const Index = () => {
   const subtitle = "Don't miss out!";
   const chipLabel = "Exclusive Event"; 
 
+
   return (
     <>
       {/* Header with event-specific title and subtitle */}
@@ -19,7 +21,7 @@ const Index = () => {
 
       {/* CommunityCard Click Triggers Popup */}
       <div onClick={() => setShowEvent(true)} className="cursor-pointer">
-        <CommunityCard />
+        <CommunityCard event={events[0]}/>
       </div>
 
       {/* CallToAction below CommunityCard */}
