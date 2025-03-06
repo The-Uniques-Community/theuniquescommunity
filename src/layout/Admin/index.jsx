@@ -27,7 +27,7 @@ import uniques_white from "@/assets/logos/uniqueswhite.png";
 import { AccountBalance } from "@mui/icons-material";
 import Brightness4Icon from "@mui/icons-material/Brightness4"; // Dark Mode Icon
 import Brightness7Icon from "@mui/icons-material/Brightness7"; // Light Mode Icon
-
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 // Navigation items with full paths
 const ADMIN_NAVIGATION = [
   { segment: "", title: "Dashboard", icon: <DashboardIcon /> },
@@ -35,6 +35,7 @@ const ADMIN_NAVIGATION = [
   { segment: "events-overview", title: "Events", icon: <EventIcon /> },
   { segment: "community-overview", title: "Community", icon: <Groups3Icon /> },
   { segment: "accounts", title: "Accounts", icon: <AccountBalance/> },
+  { segment: "profile", title: "Profile", icon: <AccountCircleIcon/> },
 ];
 
 function Branding() {
