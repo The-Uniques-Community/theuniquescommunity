@@ -7,7 +7,7 @@ export const createCommunityAdmin = async (req, res) => {
 	const admin = await CommunityAdmin.findOne
 	({ email });
 	if (admin) {
-	  return res.status(400).json({ message: "Admin already exists" });
+	  return res.status(400).json({ message: "Community Admin already exists" });
 	}
 	// Hash the password
 	const hashedPassword = await bcrypt.hash(password, 12);
