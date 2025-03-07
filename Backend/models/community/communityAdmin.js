@@ -1,15 +1,16 @@
 import mongoose from "mongoose";
 
-const coordinatorSchema = new mongoose.Schema({
+const CommunityAdminSchema = new mongoose.Schema({
     fullName:{
         type: String,
     },
     email:{
         type: String,  
+        unique: true,
     },
     role:{
         type: String,
-        default: 'coordinator',
+        default: 'communityAdmin',
     },
     password:{
         type: String,
@@ -28,5 +29,5 @@ const coordinatorSchema = new mongoose.Schema({
     }
 });
 
-const Coordinator = mongoose.model('Coordinator', coordinatorSchema);
-export default Coordinator;
+const CommunityAdmin = mongoose.model('CommunityAdmin', CommunityAdminSchema);
+export default CommunityAdmin;
