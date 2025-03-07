@@ -8,7 +8,7 @@ const CommunityDashboard = Loader(lazy(() => import("@/views/Community")));
 
 const CommunityRoutes = {
   path: "/community",
-  element: <ProtectedRoute isAllowed={true} element={<CommunityLayout />} />,
+  element: <ProtectedRoute role={'communityadmin'} element={<CommunityLayout />} />,
   children: [
     {
       path: "/community",

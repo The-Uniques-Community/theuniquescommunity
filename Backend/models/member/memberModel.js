@@ -1,140 +1,156 @@
-import mongoose from 'mongoose'
-import File from './fileModel.js'
-// import Event from './member/eventModel.js'
+// models/memberModel.js
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import File from "./fileModel.js";
 
-const memberSchema = new mongoose.Schema({
+const memberSchema = new mongoose.Schema(
+  {
     fullName: {
-        type: String,
-        required: true
+      type: String,
+    },
+    googleId:{
+      type:String,
     },
     admno: {
-        type: String,
-        required: true,
-        unique: true,
-        match: [/^[0-9]{4}(BTCS|BTCSD)[0-9]{3}$/]
+      type: String,
+      sparse: true,
+      unique: true,
+      match: [/^[0-9]{4}(BTCS|BTCSD)[0-9]{3}$/],
     },
     email: {
-        type: String,
-        required: true,
-        unique: true,
+      type: String,
+      unique: true,
     },
     password: {
-        type: String,
-        required: true
+      type: String,
     },
     role: {
-        type: String,
-        default: 'member',
+      type: String,
+      default: "member",
     },
     batch: {
-        type: String,
-        required: true,
-        enum: ["The Uniques 1.0", "The Uniques 2.0", "The Uniques 3.0"]
+      type: String,
+
+      enum: ["The Uniques 1.0", "The Uniques 2.0", "The Uniques 3.0"],
     },
     contact: {
-        type: String,
-        required: true
+      type: String,
     },
-    whatsappContact:{
-        type: String,
-        required: true
+    whatsappContact: {
+      type: String,
     },
     address: {
-        type: String,
-        required: true
+      type: String,
     },
     city: {
-        type: String,
-        required: true
+      type: String,
     },
     state: {
-        type: String,
-        required: true
+      type: String,
     },
     isPlaced: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
     isVerified: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
     isSuspended: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
-    profileStatus:{
-        type: String,
-        default: "inactive",
-        enum: ["inactive", "active","pending", "blocked"]
+    profileStatus: {
+      type: String,
+      default: "inactive",
+      enum: ["inactive", "active", "pending", "blocked"],
     },
-    fineStatus:{
-        type: String,
-        default: "0",
+    fineStatus: {
+      type: String,
+      default: "0",
     },
-    certifications: [{
+    certifications: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'File'  // Reference the File model
-    }],
+        ref: "File",
+      },
+    ],
     profilePic: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'File'
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "File",
     },
     skills: {
-        type: Array,
-        default: []
+      type: Array,
+      default: [],
     },
     projects: {
-        type: Array,
-        default: []
+      type: Array,
+      default: [],
     },
     internships: {
-        type: Array,
-        default: []
+      type: Array,
+      default: [],
     },
     achievements: {
-        type: Array,
-        default: []
+      type: Array,
+      default: [],
     },
-    linkedinProfile:{
-        type: String,
-        default: ""
+    linkedinProfile: {
+      type: String,
+      default: "",
     },
-    instagramProfile:{
-        type: String,
-        default: ""
+    instagramProfile: {
+      type: String,
+      default: "",
     },
-    twitterProfile:{
-        type: String,
-        default: ""
+    twitterProfile: {
+      type: String,
+      default: "",
     },
-    githubProfile:{
-        type: String,
-        default: ""
+    githubProfile: {
+      type: String,
+      default: "",
     },
     bio: {
-        type: String,
-        default: ''
+      type: String,
+      default: "",
     },
-
-    // Storing event references using ObjectId
-    event_participation: [{
+    event_participation: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Event'
-    }],
-
-    // Allowing multiple contribution types per event
-    eventContributionType: [{
+        ref: "Event",
+      },
+    ],
+    eventContributionType: [
+      {
         type: String,
-        enum: ["Organizer", "Co-Organizer", "Infrastructure", "Marketing", "Graphic Designing", "Volunteer", "Participant", "Technical Team", "Printing & Stationery", "Others"]
-    }],
+        enum: [
+          "Organizer",
+          "Co-Organizer",
+          "Infrastructure",
+          "Marketing",
+          "Graphic Designing",
+          "Volunteer",
+          "Participant",
+          "Technical Team",
+          "Printing & Stationery",
+          "Others",
+        ],
+      },
+    ],
     course: {
-        type: String,
-        required: true,
-        enum: ["B.Tech CSE", "CSD"]
-    }
+      type: String,
 
-}, { timestamps: true });
+      enum: ["B.Tech CSE", "CSD"],
+    },
+  },
+  { timestamps: true }
+);
 
-const Member = mongoose.model('Member', memberSchema);
+// Compare candidatePassword with the hashed password
+memberSchema.methods.comparePassword = async function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+const Member = mongoose.model("Member", memberSchema);
 export default Member;

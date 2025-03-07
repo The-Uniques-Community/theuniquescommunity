@@ -1,7 +1,7 @@
 import * as React from "react";
 
 const About = (props) => (
-    <div className="flex justify-center gap-16 md:flex-nowrap flex-wrap items-center px-3 pt-24">
+    <div className="flex container mx-auto justify-center gap-16 md:flex-nowrap flex-wrap items-center px-3 pt-24">
         <div className="lg:w-1/2"><div className="lg:ml-auto  lg:mx-0  mx-auto" style={{ width: "80%" }}>
             <svg
                 width="100%"
