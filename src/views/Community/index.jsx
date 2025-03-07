@@ -3,6 +3,7 @@ import Hero from './Landing/Hero'
 import SlideCard from './Landing/SlideCard'
 import About from './Landing/About'
 import Guidelines from './Landing/Guidlines'
+import Sliding from "./Landing/Sliding"
 
 const index = () => {
 	return (
@@ -11,6 +12,7 @@ const index = () => {
 			<About />
 			<Guidelines />
 			<SlideCard />
+			<Sliding/>
 			<div className='p-10'></div>
 		</div>
 	)
