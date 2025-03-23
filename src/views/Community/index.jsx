@@ -14,7 +14,6 @@ const index = () => {
 			<Guidelines />
 			<CTA />
 			<SlideCard />
-			{/* <Eligiblity /> */}
 			<div className='p-10'></div>
 		</div>
 	)
