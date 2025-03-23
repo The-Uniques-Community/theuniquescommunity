@@ -91,29 +91,82 @@ export async function createFolderStructure(mainFolderName, studentId, subfolder
     subfolders: createdSubfolders,
   };
 }
-
 /**
- * Upload a file to a specific folder on Google Drive.
+ * Upload a file to a specific folder on Google Drive with improved naming.
+ * @param {string} filePath - Path to the local file
+ * @param {string} destinationFolderId - Google Drive folder ID
+ * @param {Object} options - Optional parameters for file naming
+ * @param {string} options.studentId - Student ID for context
+ * @param {string} options.category - Category/subfolder name (certificate, profile, etc.)
+ * @param {string} options.customPrefix - Optional custom prefix
+ * @returns {Object} File details including name, ID and URL
  */
-export async function uploadFile(filePath, destinationFolderId) {
-  const fileName = path.basename(filePath);
+export async function uploadFile(filePath, destinationFolderId, options = {}) {
+  const { studentId, category, customPrefix } = options;
+  
+  // Get original filename and split into name and extension
+  const originalFileName = path.basename(filePath);
+  const fileExt = path.extname(originalFileName);
+  const fileNameWithoutExt = path.basename(originalFileName, fileExt);
+  
+  // Create timestamp for uniqueness
+  const timestamp = new Date().toISOString().replace(/[:.-]/g, '').slice(0, 14);
+  
+  // Build new filename with context information
+  let newFileName = '';
+  
+  if (studentId) {
+    newFileName += `${studentId}_`;
+  }
+  
+  if (category) {
+    newFileName += `${category}_`;
+  }
+  
+  if (customPrefix) {
+    newFileName += `${customPrefix}_`;
+  }
+  
+  // Add sanitized original name and timestamp
+  newFileName += `${fileNameWithoutExt.replace(/[^a-zA-Z0-9-_]/g, '')}_${timestamp}${fileExt}`;
+  
   const fileMetadata = {
-    name: fileName,
+    name: newFileName,
     parents: [destinationFolderId],
   };
+  
   const media = {
     body: fs.createReadStream(filePath),
   };
 
+  // Upload the file
   const file = await drive.files.create({
     resource: fileMetadata,
     media,
     fields: 'id, name',
   });
+  
+  // Set permission to "anyone with the link can view"
+  await drive.permissions.create({
+    fileId: file.data.id,
+    requestBody: {
+      role: 'reader',
+      type: 'anyone',
+    }
+  });
+  
+  // Get the shareable web link
+  const getFile = await drive.files.get({
+    fileId: file.data.id,
+    fields: 'webViewLink',
+  });
+  
   const fileId = file.data.id;
-  const fileUrl = `https://drive.google.com/uc?id=${fileId}`;
+  const fileUrl = getFile.data.webViewLink || `https://drive.google.com/uc?id=${fileId}`;
+  
   return {
     fileName: file.data.name,
+    originalName: originalFileName,
     fileId,
     fileUrl,
   };
