@@ -7,32 +7,34 @@ const guestSchema = new mongoose.Schema({
     },
     guestEmail:{
         type: String,
-        required: true
     },
     guestContact:{
         type: String,
-        required: true
     },
     guestLinkedin:{
         type: String,
-        required: true
     },
     guestCompany:{
         type: String,
-        required: true
     },
     guestDesignation:{
         type: String,
-        required: true
     },
     guestImage:{
         type: String,
-        required: true
     },
-    guestEvents:[{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Event',
-    }],
+    events: [{
+        event: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Event'
+        },
+        guestTag: {
+            type: String,
+            enum: ["speaker", "moderator", "panelist", "judge", "mentor", "organizer", "sponsor", "partner", "chief guest", "others"],
+            default: "others"
+        }
+    }]
+    
 });
 
 const Guest = mongoose.model('Guest', guestSchema);

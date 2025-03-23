@@ -107,6 +107,7 @@ function DashboardLayoutAppBar() {
           width: isMobile ? "auto" : drawerOpen ? 240 : 75,
           flexShrink: 0,
           zIndex: '2000',
+          
           ml: 2, // Adds margin-left to create space
           "& .MuiDrawer-paper": {
             width: isMobile ? "auto" : drawerOpen ? 240 : 75,
