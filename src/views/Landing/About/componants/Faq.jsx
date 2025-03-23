@@ -3,30 +3,29 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 
 const faqList = [
-	{
-		isActive: true,
-		question: "What is Easy Frontend?",
-		answer:
-			"When it comes to booking a holiday, we know everyone likes something different - so we've designed our getaways with you in mind.",
-	},
-	{
-		isActive: false,
-		question: "Who is Easy Frontend for?",
-		answer:
-			"When it comes to booking a holiday, we know everyone likes something different - so we've designed our getaways with you in mind.",
-	},
-	{
-		isActive: false,
-		question: "How does Easy Frontend work?",
-		answer:
-			"When it comes to booking a holiday, we know everyone likes something different - so we've designed our getaways with you in mind.",
-	},
-	{
-		isActive: false,
-		question: "How often does your team upload resources?",
-		answer:
-			"When it comes to booking a holiday, we know everyone likes something different - so we've designed our getaways with you in mind.",
-	},
+	
+		{
+		  "isActive": true,
+		  "question": "What is Unques Community?",
+		  "answer": "Unques Community is a vibrant platform where curious minds come together to share knowledge, explore unique ideas, and collaborate on innovative solutions."
+		},
+		{
+		  "isActive": false,
+		  "question": "Who is Unques Community for?",
+		  "answer": "Unques Community welcomes everyone—from beginners to experts—who are passionate about learning, sharing, and growing in a supportive environment."
+		},
+		{
+		  "isActive": false,
+		  "question": "How does Unques Community work?",
+		  "answer": "Members can post questions, share insights, and engage in discussions, while our team curates valuable resources to keep conversations fresh and inspiring."
+		},
+		{
+		  "isActive": false,
+		  "question": "How often do you update community resources?",
+		  "answer": "We regularly update our resources to ensure the community stays informed with the latest trends, ideas, and innovative solutions."
+		}
+	  
+	  
 ];
 
 const FaqItem = ({ faq }) => {
@@ -66,10 +65,7 @@ const Faq8 = () => {
 							Assumenda non repellendus distinctio nihil dicta sapiente,
 							quibusdam maiores, illum at, aliquid blanditiis eligendi qui.
 						</p>
-						<button className="bg-transparent hover:bg-red-800 border border-red-800 hover:text-white rounded transition mt-6 lg:mt-12 px-7 py-3 text-black">
-    View All FAQ's
-</button>
-
+		
 					</div>
 					<div className="col-span-12 md:col-span-6 md:col-start-7">
 						{faqList.map((faq, i) => (

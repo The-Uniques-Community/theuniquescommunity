@@ -11,34 +11,32 @@ const eventSchema = new mongoose.Schema({
     },
     eventBanner:{
         type: String,
-        
     },
     eventDate:{
         type: Date,
-        required: true
     },
     eventTime:{
         type: String,
-        required: true
     },
     eventVenue:{
         type: String,
-        required: true
     },
-    eventOrganizer:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Member',
-        required: true
+    eventOrganizerBatch:{
+        type: String,
+        enum:["The Uniques 1.0","The Uniques 2.0", "The Uniques 3.0", "The Uniques 4.0", "The Uniques 5.0",]
     },
-    eventMembers:[{
-        // Array of member ids
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Member',
+    eventGuests:[{
+        guestId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Guest'
+        },
+        guestTag: {
+            type: String,
+            enum: ["speaker", "moderator", "panelist", "judge", "mentor", "organizer", "sponsor", "partner", "chief guest", "others"],
+            default: "others"
+        }
     }],
-    eventGuests:{
-        type: Array,
-        default: []
-    },
+    
     eventType:{
         type: String,
         required: true,
@@ -49,6 +47,10 @@ const eventSchema = new mongoose.Schema({
         type: String,
         default: "upcoming",
         enum:["upcoming","ongoing","completed"]
+    },
+    eventForm:{
+        type: Array,
+        default: []
     }
 });
 
