@@ -9,6 +9,7 @@ import blogRouter from "./routes/member/blogRoute.js";
 import passport from './config/passport.js';
 import authRoutes from './routes/Authentication/auth.routes.js';
 import communityRoutes from './routes/community/community.routes.js'
+import googleDriveRoutes from './routes/googleDriveUpload.routes.js'
 dotenv.config();
 
 const app = express();
@@ -31,6 +32,7 @@ app.use("/api/admin", adminRoute);
 app.use("/api/community", communityRoutes);
 app.use("/api/blog", blogRouter);
 app.use("/auth", authRoutes);
+app.use('/upload', googleDriveRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
