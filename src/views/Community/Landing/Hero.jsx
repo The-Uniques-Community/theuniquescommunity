@@ -2,6 +2,7 @@ import React from "react";
 import "./style.css";
 import HeroClip from "@/assets/img/Community/Sample1.png";
 import Button from "@/utils/Buttons/Button";
+import DoubleQuotes from "@/assets/img/Community/Double.png"
 
 const Hero = () => {
     return (
@@ -17,12 +18,21 @@ const Hero = () => {
 
             <div className="svg-shaped-div flex flex-col md:flex-row items-center justify-between p-6">
                 <div className="text-content z-0 p-5">
-                    <h1 className="text-black max-w-5xl w-full pt-6 pb-6 md:pt-32 md:text-6xl text-2xl font-semibold">
-                        Connecting you to the community you love
+                    <h1
+                        className="text-black max-w-5xl w-full pb-6 md:text-7xl tracking-wide text-2xl font-semibold"
+                        style={{ lineHeight: "1.2" }}
+                    >
+                        Discover your <span className="text-[#ca0019]">community, join us</span> and thrive.
                     </h1>
-                    <p className="text-black py-5 text-lg max-w-lg">
-                        Join the community of unique individuals and learn from the best
-                    </p>
+
+                    <div className="text-black md:pb-5 pb-6 text-lg max-w-lg flex items-center justify-center gap-2">
+                        <span className="opacity-25">
+                            <img src={DoubleQuotes} alt="icon" />
+                        </span>
+                        <span>
+                            Join the community of unique individuals and learn from the best
+                        </span>
+                    </div>
                     <Button className="z-[999]"
                         path="/register"
                         color="white"
@@ -34,14 +44,14 @@ const Hero = () => {
                         <span>Register</span>
                     </Button>
                 </div>
-                <div className="image-container absolute left-[50%] bottom-[10%] z-[999] w-full md:w-3/6 mt-10 md:mt-0">
-                    <img className="w-full z-0 h-auto" src={HeroClip} alt="Clipped Image" />
+                <div className="image-container absolute md:left-[45%] left-0 bottom-[0%] z-[999] w-full md:w-7/12 mt-10 md:mt-0">
+                    <img className="w-full h-auto" src={HeroClip} alt="Clipped Image" />
                 </div>
             </div>
-            <div className="absolute bottom-5 right-14 flex flex-col items-end">
-                <h3 className="max-w-xl text-4xl font-semibold text-[#ca0019] text-right py-5">Be the part of it.</h3>
+            <div className="absolute bottom-2 right-16 flex flex-col place-items-end md:block hidden">
+                <h3 className="max-w-xl text-4xl font-semibold text-[#ca0019] text-right pt-3 pb-3">Be the part of it.</h3>
                 <Button
-                    className="pt-10"
+                    className="pt-10 w-48"
                     path="/register"
                     color="white"
                     bgColor="black"

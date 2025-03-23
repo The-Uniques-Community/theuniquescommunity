@@ -11,20 +11,25 @@ import Testimonial from "./componants/Testimonial";
 import Faq from "./componants/Faq";
 import CallToAction from "../homComponents/CallToAction";
 
+
+
 const index = () => {
   return (
     <div>
       <Header />
       <Second />
       {/* <Third/> */}
-      <Fourth />
+      {/* <Fourth /> */}
       <Fifth />
       <TrainingTabs />
       <VisionMission />
       <Mentor />
+     
       <Testimonial />
       <Faq />
       <CallToAction />
+
+      
     </div>
   );
 };

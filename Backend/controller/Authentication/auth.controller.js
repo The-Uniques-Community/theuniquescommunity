@@ -1,7 +1,9 @@
 // controllers/auth.controller.js
 import jwt from "jsonwebtoken";
-import passport from "passport";
 import Member from "../../models/member/memberModel.js";
+import Admin from "../../models/admin/adminModel.js";
+import bcrypt from "bcrypt";
+import CommunityAdmin from "../../models/community/communityAdmin.js";
 
 const generateToken = (member) => {
   const payload = {
@@ -56,27 +58,85 @@ export const googleCallback = (req, res, next) => {
 export const emailLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const member = await Member.findOne({ email });
+    // First try to find in Member model
+    let member = await Member.findOne({ email });
+    let role = "member";
+    let modelType = "member";
+
+    // If not found in Member model, try to find in Admin model
+    if (!member) {
+      try {
+        member = await Admin.findOne({ email });
+        if (member) {
+          role = "admin";
+          modelType = "admin";
+        }
+      } catch (error) {
+        console.error("Error loading Admin model:", error);
+      }
+    }
+
+    if (!member) {
+      try {
+        member = await CommunityAdmin.findOne({ email });
+        if (member) {
+          role = "communityadmin";
+          modelType = "communityAdmin";
+        }
+      } catch (error) {
+        console.error("Error loading CommunityAdmin model:", error);
+      }
+    }
+
+    // If still not found in any model
     if (!member) {
       return res
         .status(401)
         .json({ message: "Not a member, please contact tech team." });
     }
-    const isMatch = await member.comparePassword(password);
+
+    // Check password based on model type
+    let isMatch = false;
+    try {
+      if (member.comparePassword) {
+        // Use the method if it exists
+        isMatch = await member.comparePassword(password);
+      } else {
+        // Implement fallback verification using bcrypt directly
+        console.log(
+          "comparePassword method not found, using fallback verification"
+        );
+        if (member.password) {
+          isMatch = await bcrypt.compare(password, member.password);
+        } else {
+          return res
+            .status(401)
+            .json({ message: "Invalid password format for this user type" });
+        }
+      }
+    } catch (error) {
+      console.error("Password comparison error:", error);
+      return res.status(500).json({ message: "Error verifying password" });
+    }
+
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials." });
     }
+
     const token = generateToken(member);
-    // Set the HTTP‑only cookie with similar options as Google callback
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // set to true in production
-      sameSite: "lax", // adjust as needed
-      // domain: '.example.com',  // uncomment if you need to share across subdomains
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
     });
-    // Send back the role as well as a success message
-    return res.json({ message: "Logged in successfully.", role: member.role });
+
+    return res.json({
+      message: "Logged in successfully.",
+      role: member.role,
+      member,
+    });
   } catch (error) {
+    console.error("Login error:", error);
     return res.status(500).json({ message: "Server error" });
   }
 };
