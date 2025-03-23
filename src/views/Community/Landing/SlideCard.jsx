@@ -94,9 +94,9 @@ export default function TestimonialCarousel() {
     return (
         <div className="w-full max-w-6xl mx-auto px-4 py-16">
             <h2 className="text-center text-5xl font-bold mb-16">
-                <span className="text-gray-900">What </span>
-                <span className="text-gray-400">people </span>
-                <span className="text-gray-900">say</span>
+                <span className="text-gray-900">Benifits </span>
+                <span className="text-gray-400">You will </span>
+                <span className="text-gray-900">Get</span>
             </h2>
 
             <div className="relative h-[500px]">
