@@ -54,14 +54,19 @@ export default function TrainingTabs() {
 
   return (
     <div>
-      <div className="lg:ps-16 px-6">
-      <h4 className="text-sm uppercase text-gray-600 mb-2">About Our training</h4>
-      <div>
-          <h2 className="text-3xl lg:text-4xl font-bold mb-8">
-            A new way to manage your<br /> online money.
-          </h2>
+      <div className="w-[85%] mx-auto flex flex-col align-middle justify-start">
+        <div className="flex mb-5 items-center">
+          <span className="border-l-2 border-[#ca0019] h-6 mr-3"></span>
+          <h1 className="text-sm md:text-lg font-bold">TRAINING MODULES</h1>
+        </div>
+        <h1 className="text-2xl md:text-4xl font-semibold">
+          Elevate Your Skills with
+          <span className="text-[#ca0019] text-2xl md:text-5xl md:py-2 block mb-5">
+            Expert-Led Programs
+          </span>
+        </h1>
       </div>
-      </div>
+
       <Box
         sx={{
           bgcolor: "background.paper",
@@ -119,17 +124,17 @@ export default function TrainingTabs() {
         </TabPanel>
         <TabPanel value={value} index={1}>
           <Box>
-            <WebDevTab/>
+            <WebDevTab />
           </Box>
         </TabPanel>
         <TabPanel value={value} index={2}>
           <Box>
-            <MernTab/>
+            <MernTab />
           </Box>
         </TabPanel>
         <TabPanel value={value} index={3}>
           <Box>
-            <AndroidTab/>
+            <AndroidTab />
           </Box>
         </TabPanel>
       </Box>
