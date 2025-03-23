@@ -1,12 +1,39 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { bulkUploadMembers } from "./members.js";
 import Member from "../../models/member/memberModel.js";
 import { sendPendingApprovalEmail } from "../../services/members/sendPendingApprovalEmail.js";
 
 dotenv.config();
 
-
+export const uploadDummyMembers = async (req, res) => {
+    try {
+      const result = await bulkUploadMembers(Member);
+      
+      if (result.success) {
+        return res.status(200).json({
+          success: true,
+          message: `Successfully uploaded ${result.count} members`,
+          count: result.count
+        });
+        
+      } else {
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to upload members',
+          error: result.error
+        });
+      }
+    } catch (error) {
+      console.error('Error in dummy member upload:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Server error during member upload',
+        error: error.message
+      });
+    }
+  };
 
 export const register = async (req, res) => {
     try {
