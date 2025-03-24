@@ -170,13 +170,13 @@ const Guidelines = () => {
                 <div className="pt-[30px] md:px-6 max-sm:mt-6">
                     <h2
                         className="max-sm:text-[24px] sm:text-[40px] text-[#212B36] text-center sm:mb-4 p-4"
-                        style={{ marginBottom: '20px', fontFamily: 'Google_Sans_Medium' }}
+
                     >
-                        In innovation, one size does not fit all
+                        Community Guidelines
                     </h2>
                     <p
                         className="text-center mt-2 my-14 max-sm:px-4 max-sm:my-6 max-sm:mt-[-20px] md:w-4/5 px-2 md:px-8 lg:px-12 mx-auto max-sm:text-[14px] md:text-[16px] font-[400] text-[#919EAB]"
-                        style={{ fontFamily: 'Google_Sans' }}
+
                     >
                         Innovate effortlessly. Our leading innovation management platform and a network of 5 million innovators will help you find the perfect solutions and bring them to market faster.
                     </p>

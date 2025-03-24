@@ -26,19 +26,19 @@ const features = [
 
 const AboutSection = () => {
   return (
-    <div className="bg-white text-gray-900 py-10 lg:px-8 px-8 lg:py-20">
-      <div className="max-w-screen-xl mx-auto grid lg:grid-cols-2 my-5 md:grid-cols-1 grid-cols-1 gap-6 lg:gap-16">
+    <div className="bg-white text-gray-900 py-10 lg:px-8 px-8 lg:py-16">
+      <div className="max-w-screen-xl mx-auto grid lg:grid-cols-2 my-3 md:grid-cols-1 grid-cols-1 gap-6 lg:gap-20">
         {/* Left Section */}
         <div className="">
         <div className="flex flex-wrap items-center justify-between -mx-4">
             <div className="w-full px-4">
               <div className="flex items-center -mx-3 sm:-mx-4">
-                <div className="w-full px-3 sm:px-4 xl:w-1/2">
+                <div className="w-full px-3 sm:px-4 xl:w-1/2 relative group">
                   <div className="py-3 sm:py-4">
                     <img
                       src="https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1rAly0h2CcYnIQDTmzWgy0bcOvPRLxFCXr97NJ"
                       alt=""
-                      className="w-full rounded-2xl"
+                      className="w-full rounded-2xl h-[290px] "
                     />
                   </div>
                   <div className="py-3 sm:py-4">
@@ -50,11 +50,11 @@ const AboutSection = () => {
                   </div>
                 </div>
                 <div className="w-full px-3 sm:px-4 xl:w-1/2">
-                  <div className="relative z-10 my-4">
+                  <div className="relative z-10 my-4 h-[340px]">
                     <img
                       src="https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1ryjxk8vqlFwg67BcWCDfJqjVdA2934s10UemK"
                       alt=""
-                      className="w-full rounded-2xl"
+                      className="w-full rounded-2xl h-[450px]"
                     />
                     <span className="absolute -right-7 -bottom-7 z-[-1]">
                       <svg
@@ -632,29 +632,30 @@ const AboutSection = () => {
         </div>
       </div>
       </div>
-        <div className="lg:ps-8">
-          <h4 className="text-sm uppercase text-gray-600 mb-2">About Our Community</h4>
-          <h2 className="text-3xl lg:text-4xl font-bold mb-8">
-            A new way to manage your online money.
-          </h2>
-            <div className="text-gray-600 my-6">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo exercitationem molestias quidem. Consequatur magni quas sint eius maiores labore eum inventore quibusdam odio beatae, voluptas cupiditate mollitia, sunt fuga laboriosam ut cumque impedit? Perferendis sunt necessitatibus, debitis doloremque sit corporis soluta reprehenderit illum odio. Optio ducimus ad cum nulla commodi.
-            </div>
-            <div className=" my-8">
-                <h4 className="text-3xl lg:text-4xl font-bold my-8">Our Main Focus</h4>
-            </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 mt-6">
-            {features.map((feature, index) => (
-              <div key={index} className="flex items-start gap-4">
-                <div className="p-3 rounded-full bg-black">{feature.icon}</div>
-                <div>
-                  <h3 className="text-lg font-semibold">{feature.title}</h3>
-                  <p className="text-sm text-gray-600">{feature.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+      <div className="lg:ps-8">
+  <h4 className="text-sm uppercase text-gray-600 mb-2">About Our Community</h4>
+  <h2 className="text-3xl lg:text-4xl font-bold mb-8">
+    The <span className="text-red-800">Uniques</span> Community – Learn, Build, and Grow Together.
+  </h2>
+  <div className="text-gray-600 my-6">
+    The Uniques Community is a community where everyone is welcome. We help students bridge the gap between theory and practice and grow their knowledge by providing a peer-to-peer learning environment, conducting workshops, organizing study jams, and building solutions for local businesses.
+  </div>
+  <div className="my-8">
+    <h4 className="text-3xl lg:text-4xl font-bold my-8">Our Main Focus</h4>
+  </div>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 mt-6">
+    {features.map((feature, index) => (
+      <div key={index} className="flex items-start gap-4">
+        <div className="p-3 rounded-full bg-red-800">{feature.icon}</div>
+        <div>
+          <h3 className="text-lg font-semibold">{feature.title}</h3>
+          <p className="text-sm text-gray-600">{feature.description}</p>
         </div>
+      </div>
+    ))}
+  </div>
+</div>
+
 
         {/* Right Section */}
         

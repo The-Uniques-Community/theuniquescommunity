@@ -16,6 +16,13 @@ import CorporateCultureSection from "./homComponents/CorporateCultureSection";
 import HoverCard from "@/utils/Card/HoverCard";
 import { events } from "@/assets/dummyData/eventsData";
 import CommunityCard from "@/utils/Card/CommunityCard";
+import Gallery from "./homComponents/Gallery";
+import Counts from "./homComponents/Counts";
+import Logo from "./homComponents/logo";
+import Startups from "./homComponents/Startups";
+import WhyUs from "./homComponents/WhyUs";
+import TestimonialSectionCarousel from "./homComponents/TestimonialCard";
+import Batches from "./homComponents/Batches";
 
 const index = () => {
   const theme = useTheme();
@@ -25,7 +32,7 @@ const index = () => {
       {/* <Navbar /> */}
       <section>
         <div className="">
-          <section className="relative lg:h-screen bg-gray-50">
+          <section className="relative lg:h-screen bg-gray-50 px-8">
             <div className="px-4 py-12 sm:py-16 sm:px-6 lg:px-0 lg:max-w-7xl lg:mx-auto lg:py-24 xl:py-36 lg:grid lg:grid-cols-2">
               <div className="lg:pr-8">
                 <div className="max-w-md mx-auto sm:max-w-lg lg:mx-0">
@@ -49,8 +56,7 @@ const index = () => {
                     </span>
                   </h1>
                   <p className="mt-6 text-base font-normal leading-7 text-gray-900">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Vehicula massa in enim luctus. Rutrum arcu.
+                  The <span className="text-red-800">Uniques</span>  Community: Bridging Theory & Practice Through Peer Learning, Workshops & Real-World Solutions
                   </p>
                   <svg
                     className="w-auto h-4 mt-8 text-gray-300"
@@ -258,15 +264,57 @@ const index = () => {
         </div>
       </section>
       
+      <section>
+        {/* <LandingStats /> */}
+        <Counts/>
+      </section>
 
-      {/* <div className="spacer py-10"></div> */}
+      <div className="spacer py-10"></div>
       <section>
         <AboutSection />
+      </section>
+      <div className="spacer py-10"></div>
+      <section>
+        <Batches/>
+      </section>
+      <div className="spacer py-10"></div>
+      <section>
+        <TrainingTabs />
+      </section>
+      
+      
+      
+      {/* <div className="spacer py-10"></div> */}
+      {/* <div>
+        <div className="lg:ps-16 px-6">
+          <h4 className="text-sm uppercase text-center text-gray-600 mb-2">
+            About Our training
+          </h4>
+          <h2 className="text-3xl text-center lg:text-4xl font-bold mb-8">
+            A new way to manage your
+            <br />
+            online money.
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center gap-6 lg:px-16 px-6 py-4 lg:py-8">
+          {reviews.map((review, index) => (
+            <ReviewCard key={index} {...review} />
+          ))}
+        </div>
+      </div> */}
+      
+      <div className="spacer py-10"></div>
+      <section>
+        <Startups/>
+      </section>
+      <div className="spacer py-10"></div>
+      <section>
+        <WhyUs/>
       </section>
       <div className="spacer py-8"></div>
       <section>
         {/* <CorporateCultureSection /> */}
-        <div className="grid lg:grid-cols-2 grid-cols-1 gap-6 lg:gap-8 lg:px-16 px-6">
+        {/* <div className="grid lg:grid-cols-2 grid-cols-1 gap-6 lg:gap-8 lg:px-16 px-6">
           <div></div>
           <div>
             <div class="grid place-items-center grid-cols-3 gap-4 md:grid-cols-3">
@@ -334,36 +382,19 @@ const index = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
+        <Gallery/>
         {/* <HoverCard /> */}
       </section>
+      
       <div className="spacer py-10"></div>
       <section>
-        <TrainingTabs />
+        <Logo/>
       </section>
       <div className="spacer py-10"></div>
       <section>
-        <LandingStats />
+        <TestimonialSectionCarousel/>
       </section>
-      <div className="spacer py-10"></div>
-      <div>
-        <div className="lg:ps-16 px-6">
-          <h4 className="text-sm uppercase text-center text-gray-600 mb-2">
-            About Our training
-          </h4>
-          <h2 className="text-3xl text-center lg:text-4xl font-bold mb-8">
-            A new way to manage your
-            <br />
-            online money.
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center gap-6 lg:px-16 px-6 py-4 lg:py-8">
-          {reviews.map((review, index) => (
-            <ReviewCard key={index} {...review} />
-          ))}
-        </div>
-      </div>
-      <div className="spacer py-10"></div>
       <div className="spacer py-10"></div>
       <div className="my-6">
         <CallToAction />
