@@ -30,7 +30,6 @@ const memberSchema = new mongoose.Schema(
     },
     batch: {
       type: String,
-
       enum: ["The Uniques 1.0", "The Uniques 2.0", "The Uniques 3.0"],
     },
     contact: {
@@ -69,6 +68,51 @@ const memberSchema = new mongoose.Schema(
       type: String,
       default: "0",
     },
+    // New semesterSGPA field to track SGPA by semester
+    semesterSGPA: [
+      {
+        semester: {
+          type: Number,
+          required: true,
+          min: 1,
+          max: 8
+        },
+        sgpa: {
+          type: Number,
+          required: true,
+          min: 0,
+          max: 10
+        }
+      }
+    ],
+    // New field to track supplementary exams by semester
+    semesterSupplementary: [
+      {
+        semester: {
+          type: Number,
+          required: true,
+          min: 1,
+          max: 8
+        },
+        subjects: [
+          {
+            subjectCode: {
+              type: String,
+              required: true
+            },
+            subjectName: {
+              type: String,
+              required: true
+            },
+            status: {
+              type: String,
+              enum: ['pending', 'passed', 'failed'],
+              default: 'pending'
+            }
+          }
+        ]
+      }
+    ],
     certifications: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -140,12 +184,40 @@ const memberSchema = new mongoose.Schema(
     ],
     course: {
       type: String,
-
       enum: ["B.Tech CSE", "CSD"],
     },
   },
   { timestamps: true }
 );
+
+// Virtual property to calculate CGPA from semester SGPAs
+memberSchema.virtual('cgpa').get(function() {
+  if (!this.semesterSGPA || this.semesterSGPA.length === 0) {
+    return 0;
+  }
+  
+  const totalSGPA = this.semesterSGPA.reduce((sum, semester) => sum + semester.sgpa, 0);
+  return (totalSGPA / this.semesterSGPA.length).toFixed(2);
+});
+
+// Virtual to get total number of supplementary exams
+memberSchema.virtual('totalSupplementary').get(function() {
+  if (!this.semesterSupplementary) return 0;
+  
+  return this.semesterSupplementary.reduce((total, sem) => {
+    return total + (sem.subjects ? sem.subjects.length : 0);
+  }, 0);
+});
+
+// Virtual to get pending supplementary exams
+memberSchema.virtual('pendingSupplementary').get(function() {
+  if (!this.semesterSupplementary) return 0;
+  
+  return this.semesterSupplementary.reduce((total, sem) => {
+    return total + (sem.subjects ? 
+      sem.subjects.filter(subj => subj.status === 'pending').length : 0);
+  }, 0);
+});
 
 // Compare candidatePassword with the hashed password
 memberSchema.methods.comparePassword = async function (candidatePassword) {
