@@ -15,7 +15,7 @@ const BatchesPage = () => {
   const [expandedBatch, setExpandedBatch] = useState(null);
 
 
-  // Get the current batch data
+
   const currentBatch = useMemo(() => batchesData.find((batch) => batch.id === selectedBatch), [selectedBatch])
 
   // Get achievements for the current batch

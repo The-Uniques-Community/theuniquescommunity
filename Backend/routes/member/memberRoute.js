@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, logout, editProfile, getProfile } from '../../controller/member/memberController.js';
+import { register, login, logout, editProfile, getProfile, uploadDummyMembers} from '../../controller/member/memberController.js';
 
 const memberRoute = express.Router()
 
@@ -8,5 +8,6 @@ memberRoute.post('/login', login);
 memberRoute.post('/logout', logout);
 memberRoute.post('/editProfile', editProfile);
 memberRoute.post('/getProfile', getProfile);
+memberRoute.post('/bulk-upload', uploadDummyMembers)
 
 export default memberRoute;
