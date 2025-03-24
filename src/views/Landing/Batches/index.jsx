@@ -162,7 +162,7 @@ const index = () => {
     fetchMembers();
   }, [selectedBatch]); // Search is handled client-side
 
-  // Get the current batch data
+
   const currentBatch = useMemo(() => {
     return batchesData.find((batch) => batch.id === selectedBatch);
   }, [selectedBatch, batchesData]);
