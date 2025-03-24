@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { Button, Card, CardContent, Avatar, Modal, Box, Tabs, Tab, Chip, Divider } from "@mui/material";
+import { 
+  Button, Card, CardContent, Avatar, Modal, Box, Tabs, Tab, Chip, Divider, 
+  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField,
+  Snackbar, Alert, CircularProgress
+} from "@mui/material";
 import { FaEye } from "react-icons/fa";
 import InfoIcon from '@mui/icons-material/Info';
 import PushPinIcon from '@mui/icons-material/PushPin';
@@ -17,15 +21,34 @@ import CodeIcon from '@mui/icons-material/Code';
 import BadgeIcon from '@mui/icons-material/Badge';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import BlockIcon from '@mui/icons-material/Block';
+import DoneIcon from '@mui/icons-material/Done';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
+import axios from 'axios';
 
 import tu from '@/assets/logos/tu.png';
 
-export const NewMember = ({ user }) => {
+export const NewMember = ({ user, refreshData }) => {
   const [open, setOpen] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [expandedSemesters, setExpandedSemesters] = useState({});
+  
+  // API related states
+  const [loading, setLoading] = useState(false);
+  const [blockLoading, setBlockLoading] = useState(false);
+  const [suspendLoading, setSuspendLoading] = useState(false);
+  const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
+  const [suspendReason, setSuspendReason] = useState('');
+  const [fineDialogOpen, setFineDialogOpen] = useState(false);
+  const [fineAmount, setFineAmount] = useState('');
+  const [fineReason, setFineReason] = useState('');
+  const [alert, setAlert] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -46,6 +69,156 @@ export const NewMember = ({ user }) => {
       case 'inactive': return 'bg-gray-500';
       case 'blocked': return 'bg-red-500';
       default: return 'bg-gray-500';
+    }
+  };
+
+  // Handle block/unblock user
+  const handleToggleBlock = async () => {
+    try {
+      setBlockLoading(true);
+      
+      // API call to toggle block status
+      const response = await axios.patch(`http://localhost:5000/api/admin/member/${user._id}/block`);
+      
+      // Show success message
+      setAlert({
+        open: true,
+        message: response.data.message,
+        severity: 'success'
+      });
+      
+      // Refresh data to show updated status
+      if (refreshData && typeof refreshData === 'function') {
+        refreshData();
+      }
+    } catch (error) {
+      console.error('Error toggling block status:', error);
+      
+      setAlert({
+        open: true,
+        message: error.response?.data?.message || 'Failed to update block status',
+        severity: 'error'
+      });
+    } finally {
+      setBlockLoading(false);
+    }
+  };
+
+  // Handle suspend dialog open
+  const handleOpenSuspendDialog = () => {
+    setSuspendReason('');
+    setSuspendDialogOpen(true);
+  };
+
+  // Handle suspend/unsuspend user
+  const handleToggleSuspend = async () => {
+    // If user is already suspended, we can unsuspend without a reason
+    // If not, we need to check if a reason is provided
+    if (!user.isSuspended && (!suspendReason || suspendReason.trim() === '')) {
+      setAlert({
+        open: true,
+        message: 'Please provide a reason for suspension',
+        severity: 'error'
+      });
+      return;
+    }
+    
+    try {
+      setSuspendLoading(true);
+      
+      // API call to toggle suspend status
+      const response = await axios.patch(`http://localhost:5000/api/admin/member/${user._id}/suspend`, {
+        reason: suspendReason
+      });
+      
+      // Close the dialog if open
+      setSuspendDialogOpen(false);
+      
+      // Show success message
+      setAlert({
+        open: true,
+        message: response.data.message,
+        severity: 'success'
+      });
+      
+      // Refresh data to show updated status
+      if (refreshData && typeof refreshData === 'function') {
+        refreshData();
+      }
+    } catch (error) {
+      console.error('Error toggling suspend status:', error);
+      
+      setAlert({
+        open: true,
+        message: error.response?.data?.message || 'Failed to update suspension status',
+        severity: 'error'
+      });
+    } finally {
+      setSuspendLoading(false);
+    }
+  };
+  
+  // Handle fine dialog open
+  const handleOpenFineDialog = () => {
+    setFineAmount('');
+    setFineReason('');
+    setFineDialogOpen(true);
+  };
+
+  // Handle imposing fine
+  const handleImposeFine = async () => {
+    // Validate inputs
+    if (!fineAmount || fineAmount <= 0) {
+      setAlert({
+        open: true,
+        message: 'Please enter a valid amount',
+        severity: 'error'
+      });
+      return;
+    }
+    
+    if (!fineReason.trim()) {
+      setAlert({
+        open: true,
+        message: 'Please provide a reason for the fine',
+        severity: 'error'
+      });
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      
+      // API call to impose fine
+      const response = await axios.post(`http://localhost:5000/api/admin/member/${user._id}/fine`, {
+        amount: Number(fineAmount),
+        reason: fineReason.trim()
+      });
+      
+      // Close the dialog
+      setFineDialogOpen(false);
+      
+      // Show success message
+      setAlert({
+        open: true,
+        message: response.data.message,
+        severity: 'success'
+      });
+      
+      // Refresh data to show updated fine status
+      if (refreshData && typeof refreshData === 'function') {
+        refreshData();
+      }
+    } catch (error) {
+      console.error('Error imposing fine:', error);
+      
+      setAlert({
+        open: true,
+        message: error.response?.data?.message || 'Failed to impose fine',
+        severity: 'error'
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -121,6 +294,13 @@ export const NewMember = ({ user }) => {
                 label={user.profileStatus.toUpperCase()} 
                 className={`${getStatusColor(user.profileStatus)} text-white`}
               />
+              {user.isSuspended && (
+                <Chip 
+                  icon={<RemoveCircleIcon />} 
+                  label="SUSPENDED" 
+                  className="bg-red-600 text-white"
+                />
+              )}
               {user.isPlaced && (
                 <Chip 
                   icon={<WorkIcon />} 
@@ -458,7 +638,6 @@ export const NewMember = ({ user }) => {
                 {user.event_participation && user.event_participation.length > 0 ? (
                   <div className="text-gray-500 text-sm">
                     {user.event_participation.length} events participated
-                    {/* Note: You would need to populate the actual event data to show more details */}
                   </div>
                 ) : (
                   <div className="text-gray-500 text-sm">No event participation records</div>
@@ -488,36 +667,167 @@ export const NewMember = ({ user }) => {
           {/* Footer Actions */}
           <Divider className="my-6" />
           <div className="flex justify-between items-center">
-            {user.profileStatus !== 'blocked' ? (
+            <div className="flex flex-wrap gap-2">
+              {/* Block/Unblock Button */}
               <Button 
                 variant="contained" 
-                color="error" 
-                startIcon={<BlockIcon />}
-                className="bg-red-600"
+                color={user.profileStatus === 'blocked' ? "success" : "error"}
+                startIcon={!blockLoading && (user.profileStatus === 'blocked' ? <DoneIcon /> : <BlockIcon />)}
+                className={user.profileStatus === 'blocked' ? "bg-green-600" : "bg-red-600"}
+                onClick={handleToggleBlock}
+                disabled={blockLoading || suspendLoading || loading}
               >
-                Block User
+                {blockLoading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : user.profileStatus === 'blocked' ? (
+                  "Unblock User"
+                ) : (
+                  "Block User"
+                )}
               </Button>
-            ) : (
+              
+              {/* Suspend/Unsuspend Button */}
               <Button 
                 variant="contained" 
-                color="success" 
-                className="bg-green-600"
+                color={user.isSuspended ? "success" : "warning"}
+                startIcon={!suspendLoading && (user.isSuspended ? <DoneIcon /> : <RemoveCircleIcon />)}
+                className={user.isSuspended ? "bg-green-600" : "bg-amber-600"}
+                onClick={user.isSuspended ? handleToggleSuspend : handleOpenSuspendDialog}
+                disabled={blockLoading || suspendLoading || loading}
               >
-                Unblock User
+                {suspendLoading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : user.isSuspended ? (
+                  "Unsuspend User"
+                ) : (
+                  "Suspend User"
+                )}
               </Button>
-            )}
-            <div className="flex gap-3">
+              
+              {/* Impose Fine Button */}
               <Button 
-                variant="outlined" 
-                className="border-gray-500"
-                onClick={() => setOpen(false)}
+                variant="contained" 
+                color="warning"
+                startIcon={<CurrencyRupeeIcon />}
+                onClick={handleOpenFineDialog}
+                disabled={blockLoading || suspendLoading || loading || user.isSuspended}
+                className="bg-amber-600"
               >
-                Close
+                Impose Fine
               </Button>
             </div>
+            
+            <Button 
+              variant="outlined" 
+              className="border-gray-500"
+              onClick={() => setOpen(false)}
+            >
+              Close
+            </Button>
           </div>
         </Box>
-      </Modal> 
+      </Modal>
+      
+      {/* Suspend Reason Dialog */}
+      <Dialog open={suspendDialogOpen} onClose={() => setSuspendDialogOpen(false)}>
+        <DialogTitle>Suspend User</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please provide a reason for suspending {user.fullName}. This information will be used for administrative purposes.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Reason for Suspension"
+            type="text"
+            fullWidth
+            multiline
+            rows={3}
+            value={suspendReason}
+            onChange={(e) => setSuspendReason(e.target.value)}
+            required
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSuspendDialogOpen(false)} disabled={suspendLoading}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleToggleSuspend} 
+            color="warning" 
+            disabled={suspendLoading || !suspendReason.trim()}
+            startIcon={suspendLoading ? <CircularProgress size={20} /> : null}
+          >
+            {suspendLoading ? "Processing..." : "Suspend"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
+      {/* Fine Dialog */}
+      <Dialog open={fineDialogOpen} onClose={() => setFineDialogOpen(false)}>
+        <DialogTitle>Impose Fine on {user.fullName}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Enter the fine amount and reason. This fine will be added to the student's record.
+            {parseInt(user.fineStatus) > 0 && (
+              <span className="block mt-2 text-red-500">
+                Note: This member already has an outstanding fine of ₹{user.fineStatus}.
+              </span>
+            )}
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Fine Amount (₹)"
+            type="number"
+            fullWidth
+            value={fineAmount}
+            onChange={(e) => setFineAmount(e.target.value)}
+            inputProps={{ min: 1 }}
+            required
+          />
+          <TextField
+            margin="dense"
+            label="Reason for Fine"
+            type="text"
+            fullWidth
+            multiline
+            rows={3}
+            value={fineReason}
+            onChange={(e) => setFineReason(e.target.value)}
+            required
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setFineDialogOpen(false)} disabled={loading}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleImposeFine} 
+            color="error" 
+            disabled={loading || !fineAmount || !fineReason.trim()}
+            startIcon={loading ? <CircularProgress size={20} /> : <CurrencyRupeeIcon />}
+          >
+            {loading ? "Processing..." : "Impose Fine"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
+      {/* Alert Snackbar */}
+      <Snackbar
+        open={alert.open}
+        autoHideDuration={6000}
+        onClose={() => setAlert({ ...alert, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={() => setAlert({ ...alert, open: false })}
+          severity={alert.severity}
+          sx={{ width: '100%' }}
+        >
+          {alert.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

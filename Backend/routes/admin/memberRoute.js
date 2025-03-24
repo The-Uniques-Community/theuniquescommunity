@@ -7,6 +7,9 @@ import {
   getMembersByFineStatus,
   getMembersBySupplementary,
   getMembersWithPendingSupplementary,
+  toggleSuspendStatus,
+  toggleBlockStatus,
+  updateMemberProfile,
 } from '../../controller/admin/memberController.js';
 
 const memberAdminRouter = express.Router();
@@ -31,6 +34,15 @@ memberAdminRouter.get('/supplementary/semester/:semester',   getMembersBySupplem
 
 // Get members with pending supplementary exams
 memberAdminRouter.get('/supplementary/pending',   getMembersWithPendingSupplementary);
+
+memberAdminRouter.patch('/:id/block', toggleBlockStatus);
+
+// Suspend/unsuspend member
+memberAdminRouter.patch('/:id/suspend', toggleSuspendStatus);
+
+// Update member profile
+memberAdminRouter.put('/:id', updateMemberProfile);
+
 
 // Export the router
 export default memberAdminRouter;
