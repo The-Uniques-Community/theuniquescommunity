@@ -112,7 +112,7 @@ export function TestimonialSectionCarousel() {
       Reviews by Companies
     </h1>
   </div>
-  <h1 className="w-[100vh] text-2xl md:text-4xl font-semibold">
+  <h1 className="text-2xl md:text-4xl font-semibold max-w-5xl">
     What Industry Leaders Say About Us  
     <span className="text-[#ca0019] text-2xl md:text-5xl md:py-2 block mb-5">
       Innovation, Excellence & Impact

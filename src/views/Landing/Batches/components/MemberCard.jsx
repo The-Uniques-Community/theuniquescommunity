@@ -8,7 +8,6 @@ import Modal from '@mui/material/Modal';
 import { useTheme } from '@mui/material/styles';
 import Button from '@/utils/Buttons/Button';
 
-
 const style = {
   position: 'absolute',
   top: '50%',
@@ -24,32 +23,96 @@ const style = {
   overflow: 'auto'
 };
 
-const MemberCard= ({
-  id,
-  fullName,
-  position,
-  batch,
-  profileImg,
-  bio,
-  skills,
-  socialLinks,
-  achievements,
-  certificates,
-  projects,
-  contributions,
-  onClick,
-}) => {
+const MemberCard = ({ member }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("about");
 
+  // Extract member properties
+  const {
+    _id,
+    fullName,
+    batch,
+    bio = "",
+    course = "Member",
+    skills = [],
+    achievements = [],
+    certifications = [],
+    projects = [],
+    eventContributionType = []
+  } = member;
+
+  // Format position (displayed role/status)
+  const position = member.isPlaced ? 
+    `Placed - ${course || ""}` : 
+    course || "Member";
+
+  // Format profile image - handle both object reference and direct URL
+  const profileImg = member.profilePic?.url || 
+                    (typeof member.profilePic === 'string' ? member.profilePic : 
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}`);
+
+  // Format social links
+  const socialLinks = {
+    github: member.githubProfile || null,
+    linkedin: member.linkedinProfile || null,
+    twitter: member.twitterProfile || null,
+    instagram: member.instagramProfile || null,
+    website: member.personalWebsite || null
+  };
+
+  // Format achievements for display
+  const formattedAchievements = Array.isArray(achievements) ? 
+    achievements.map((achievement, index) => ({
+      id: achievement.id || index,
+      title: achievement.title || achievement.name || achievement,
+      description: achievement.description || "",
+      date: achievement.date || "",
+      color: achievement.color || "bg-gray-700",
+      icon: achievement.icon || null
+    })) : [];
+
+  // Format certificates for display
+  const formattedCertificates = Array.isArray(certifications) ? 
+    certifications.map((cert, index) => ({
+      id: cert._id || index,
+      title: cert.title || cert.name || "Certification",
+      issuer: cert.issuer || cert.organization || "",
+      date: cert.date || cert.issuedDate || "",
+      imageUrl: cert.imageUrl || cert.url || null
+    })) : [];
+
+  // Format projects for display
+  const formattedProjects = Array.isArray(projects) ? 
+    projects.map((project, index) => ({
+      id: project.id || index,
+      title: project.title || project.name || "Project",
+      description: project.description || "",
+      link: project.link || project.url || null,
+      imageUrl: project.imageUrl || project.image || null,
+      technologies: Array.isArray(project.technologies) ? 
+        project.technologies : 
+        (project.tech ? [project.tech] : [])
+    })) : [];
+
+  // Format contributions from eventContributionType
+  const contributions = Array.isArray(eventContributionType) ? 
+    eventContributionType : [];
+
+  // Format skills as objects if they're strings
+  const formattedSkills = Array.isArray(skills) ? 
+    skills.map((skill, index) => {
+      if (typeof skill === 'object') return skill;
+      return { name: skill, id: index };
+    }) : [];
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  // Only show first 5 skills in the card
-  const displaySkills = skills.slice(0, 3);
-  const hasMoreSkills = skills.length > 3;
+  // Only show first 3 skills in the card
+  const displaySkills = formattedSkills.slice(0, 3);
+  const hasMoreSkills = formattedSkills.length > 3;
 
   return (
     <div className="bg-white group hover:cursor-pointer hover:shadow-lg duration-75 px-2 py-2 border-t-[1px] shadow-md rounded-sm relative">
@@ -85,18 +148,18 @@ const MemberCard= ({
             ))}
             
             {hasMoreSkills && (
-              <span className="text-xs text-center bg-[#ca0019] text-white px-1 py-[4px] rounded-full">+{skills.length - 5}</span>
+              <span className="text-xs text-center bg-[#ca0019] text-white px-1 py-[4px] rounded-full">+{formattedSkills.length - 3}</span>
             )}
           </div>
 
           {/* Achievements Preview */}
-          {achievements.length > 0 && (
+          {formattedAchievements.length > 0 && (
             <div className="mt-3">
               <h4 className="text-sm font-semibold items-center gap-1 flex flex-wrap">
                 <Award className="w-3 h-3" /> Achievements
               </h4>
               <div className="flex mt-1 gap-1 flex-wrap">
-                {achievements.slice(0, 2).map((achievement) => (
+                {formattedAchievements.slice(0, 2).map((achievement) => (
                   <span
                     key={achievement.id}
                     className={`bg-gray-700 text-white text-xs px-2 py-0.5 rounded-full`}
@@ -104,9 +167,9 @@ const MemberCard= ({
                     {achievement.title}
                   </span>
                 ))}
-                {achievements.length > 2 && (
+                {formattedAchievements.length > 2 && (
                   <span className=" text-gray-700 text-xs px-2 py-0.5 rounded-full">
-                    +{achievements.length - 2}
+                    +{formattedAchievements.length - 2}
                   </span>
                 )}
               </div>
@@ -198,7 +261,7 @@ const MemberCard= ({
             <div className="md:col-span-1">
               <div className="relative mb-5">
                 <img
-                  src={profileImg || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80"}
+                  src={profileImg || "https://ui-avatars.com/api/?name=" + encodeURIComponent(fullName)}
                   alt={`${fullName}'s profile`}
                   className="w-full h-64 rounded-lg object-cover shadow-md"
                 />
@@ -211,17 +274,6 @@ const MemberCard= ({
                 <h3 className="text-xl font-bold text-gray-900 border-b border-gray-200 pb-1">{fullName}</h3>
                 <p className="text-gray-600 mt-1 italic">{position}</p>
               </div>
-
-              {/* <Button
-                path="/profile"
-                bgColor={theme.palette.primary?.main || "#ca0019"}
-                color="white"
-                border={0}
-                borderColor={theme.palette.primary?.dark || "#9a0014"}
-                onClick={() => navigate('/profile')}
-              >
-                <span>Know More</span>
-              </Button> */}
 
               {/* Social Links */}
               <div className="mb-6 mt-6">
@@ -289,7 +341,7 @@ const MemberCard= ({
               <div>
                 <h4 className="font-semibold mb-3 text-gray-800">Skills</h4>
                 <div className="flex flex-wrap gap-2">
-                  {skills.map((skill, index) => (
+                  {formattedSkills.map((skill, index) => (
                     <span key={index} className="text-sm bg-gray-100 px-3 py-1.5 rounded-full">
                       {skill.name}
                       {skill.level && <span className="ml-1 text-xs text-gray-500">• {skill.level}</span>}
@@ -345,13 +397,13 @@ const MemberCard= ({
                   </div>
 
                   {/* Achievements */}
-                  {achievements.length > 0 && (
+                  {formattedAchievements.length > 0 && (
                     <div className="mb-8">
                       <h4 className="font-semibold mb-4 flex items-center gap-1.5 text-gray-800">
                         <Award className="w-4 h-4" /> Achievements
                       </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {achievements.map((achievement) => (
+                        {formattedAchievements.map((achievement) => (
                           <div
                             key={achievement.id}
                             className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
@@ -396,25 +448,29 @@ const MemberCard= ({
                     <FileText className="w-4 h-4" /> Certificates & Credentials
                   </h4>
                   <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-5">
-                    {certificates.map((certificate) => (
-                      <div
-                        key={certificate.id}
-                        className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-                      >
-                        <div className="aspect-[16/9] overflow-hidden bg-gray-50 flex items-center justify-center">
-                          <img
-                            src={certificate.imageUrl || "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"}
-                            alt={certificate.title}
-                            className="w-full h-full object-contain"
-                          />
+                    {formattedCertificates.length > 0 ? (
+                      formattedCertificates.map((certificate) => (
+                        <div
+                          key={certificate.id}
+                          className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                        >
+                          <div className="aspect-[16/9] overflow-hidden bg-gray-50 flex items-center justify-center">
+                            <img
+                              src={certificate.imageUrl || "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"}
+                              alt={certificate.title}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                          <div className="p-4">
+                            <h5 className="font-medium text-gray-900">{certificate.title}</h5>
+                            <p className="text-sm text-gray-600 mt-1">{certificate.issuer}</p>
+                            <p className="text-xs text-gray-500 mt-1.5">{certificate.date}</p>
+                          </div>
                         </div>
-                        <div className="p-4">
-                          <h5 className="font-medium text-gray-900">{certificate.title}</h5>
-                          <p className="text-sm text-gray-600 mt-1">{certificate.issuer}</p>
-                          <p className="text-xs text-gray-500 mt-1.5">{certificate.date}</p>
-                        </div>
-                      </div>
-                    ))}
+                      ))
+                    ) : (
+                      <p className="text-gray-500 col-span-3">No certificates added yet.</p>
+                    )}
                   </div>
                 </div>
               )}
@@ -425,43 +481,47 @@ const MemberCard= ({
                     <Briefcase className="w-4 h-4" /> Projects
                   </h4>
                   <div className="space-y-6">
-                    {projects.map((project) => (
-                      <div
-                        key={project.id}
-                        className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-                      >
-                        {project.imageUrl && (
-                          <div className="aspect-[21/9] overflow-hidden bg-gray-50">
-                            <img
-                              src={project.imageUrl || "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"}
-                              alt={project.title}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        )}
-                        <div className="p-5">
-                          <h5 className="font-medium text-lg text-gray-900">{project.title}</h5>
-                          <p className="text-gray-700 my-3 leading-relaxed">{project.description}</p>
-                          <div className="flex flex-wrap gap-2 mb-4">
-                            {project.technologies.map((tech, index) => (
-                              <span key={index} className="text-xs bg-gray-100 px-2.5 py-1 rounded-full">
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-                          {project.link && (
-                            <a
-                              href={project.link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-sm text-[#ca0019] hover:underline flex items-center gap-1 font-medium"
-                            >
-                              View Project <ArrowUpRight size={14} />
-                            </a>
+                    {formattedProjects.length > 0 ? (
+                      formattedProjects.map((project) => (
+                        <div
+                          key={project.id}
+                          className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                        >
+                          {project.imageUrl && (
+                            <div className="aspect-[21/9] overflow-hidden bg-gray-50">
+                              <img
+                                src={project.imageUrl || "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"}
+                                alt={project.title}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
                           )}
+                          <div className="p-5">
+                            <h5 className="font-medium text-lg text-gray-900">{project.title}</h5>
+                            <p className="text-gray-700 my-3 leading-relaxed">{project.description}</p>
+                            <div className="flex flex-wrap gap-2 mb-4">
+                              {project.technologies && project.technologies.map((tech, index) => (
+                                <span key={index} className="text-xs bg-gray-100 px-2.5 py-1 rounded-full">
+                                  {tech}
+                                </span>
+                              ))}
+                            </div>
+                            {project.link && (
+                              <a
+                                href={project.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm text-[#ca0019] hover:underline flex items-center gap-1 font-medium"
+                              >
+                                View Project <ArrowUpRight size={14} />
+                              </a>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    ) : (
+                      <p className="text-gray-500">No projects added yet.</p>
+                    )}
                   </div>
                 </div>
               )}
