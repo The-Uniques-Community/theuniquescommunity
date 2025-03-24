@@ -66,18 +66,15 @@ export const createEvent = async (req, res) => {
  */
 export const getAllEvents = async (req, res) => {
   try {
-    const { status, type, organizer } = req.query;
+    const { status, type } = req.query;
     const filter = {};
 
     // Apply filters if provided
     if (status) filter.eventStatus = status;
     if (type) filter.eventType = type;
-    if (organizer) filter.eventOrganizer = organizer;
+    // if (organizer) filter.eventOrganizer = organizer;
 
-    const events = await Event.find(filter)
-      .populate('eventOrganizer', 'memberName memberImage')
-      .populate('eventMembers', 'memberName memberImage')
-      .sort({ eventDate: 1 });
+    const events = await Event.find({}).populate('eventGuests.guestId');
 
     res.status(200).json({
       success: true,
