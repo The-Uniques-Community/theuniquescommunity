@@ -6,6 +6,7 @@ import Guidelines from './Landing/Guidlines'
 import CTA from "./Landing/CallToAction"
 import Eligiblity from './Landing/Eligiblity'
 import Sliding from "./Landing/Sliding"
+import SpotCard from './Landing/SpotCard'
 
 const index = () => {
 	return (
@@ -15,7 +16,7 @@ const index = () => {
 			<Guidelines />
 			<CTA />
 			<SlideCard />
-			<Sliding/>
+			<Sliding />
 			<Eligiblity />
 			<div className='p-10'></div>
 		</div>
