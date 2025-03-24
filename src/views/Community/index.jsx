@@ -3,10 +3,10 @@ import Hero from './Landing/Hero'
 import SlideCard from './Landing/SlideCard'
 import About from './Landing/About'
 import Guidelines from './Landing/Guidlines'
-import CTA from "./Landing/CallToAction"
+
 import Eligiblity from './Landing/Eligiblity'
 import CTA from "./Landing/CallToAction"
-import Eligiblity from './Landing/Eligiblity'
+
 import Sliding from "./Landing/Sliding"
 
 const index = () => {
