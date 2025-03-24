@@ -30,6 +30,7 @@ export const sendPendingApprovalEmail = async (userEmail, fname) => {
         .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">

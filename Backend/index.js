@@ -14,6 +14,7 @@ import communityRoutes from './routes/community/community.routes.js'
 import googleDriveRoutes from './routes/googleDriveUpload.routes.js'
 import memberAdminRouter from "./routes/admin/memberRoute.js";
 import fineRouter from "./routes/admin/fineRoute.js";
+import publicMemberRouter from "./routes/landing/publicMemberRouter.js";
 dotenv.config();
 
 const app = express();
@@ -41,6 +42,7 @@ app.use("/api/guest", guestRoute);
 app.use("/api/events", eventRouter)
 app.use('/upload', googleDriveRoutes);
 app.use("/api/admin/fine", fineRouter);
+app.use("/api/public/members", publicMemberRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
