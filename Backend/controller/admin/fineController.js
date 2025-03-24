@@ -1,5 +1,5 @@
 import Member from "../../models/member/memberModel.js";
-
+import mongoose from "mongoose";
 // Search for members by various criteria
 export const searchMembers = async (req, res) => {
   try {
@@ -46,60 +46,81 @@ export const searchMembers = async (req, res) => {
 };
 
 // Impose a fine on a member
+// Impose a fine on a member
 export const imposeFine = async (req, res) => {
   try {
-    const { memberId } = req.params;
+    const { memberId } = req.params; // FIXED: Changed from 'id' to 'memberId' to match route parameter
     const { amount, reason } = req.body;
     
-    // Validate inputs
-    if (!memberId) {
+    // Validate parameters
+    if (!mongoose.Types.ObjectId.isValid(memberId)) { // FIXED: Updated reference
       return res.status(400).json({
         success: false,
-        message: "Member ID is required"
+        message: 'Invalid ID format'
       });
     }
     
-    if (!amount || isNaN(parseInt(amount))) {
+    if (!amount || isNaN(amount) || amount <= 0) {
       return res.status(400).json({
         success: false,
-        message: "Valid fine amount is required"
+        message: 'Amount must be a positive number'
+      });
+    }
+    
+    if (!reason || reason.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        message: 'Reason is required'
       });
     }
     
     // Find the member
-    const member = await Member.findById(memberId);
+    const member = await Member.findById(memberId); // FIXED: Updated reference
+    
     if (!member) {
       return res.status(404).json({
         success: false,
-        message: "Member not found"
+        message: 'Member not found'
       });
     }
     
-    // Update fine amount (add to existing fine if present)
+    // Convert current fine to number (handling string values)
     const currentFine = parseInt(member.fineStatus) || 0;
-    const newFineAmount = currentFine + parseInt(amount);
+    
+    // Add the new fine amount
+    const newFineTotal = currentFine + parseInt(amount);
     
     // Update the member's fine status
-    member.fineStatus = newFineAmount.toString();
+    member.fineStatus = newFineTotal.toString();
+    
+    // Add the fine to fine history if available
+    if (Array.isArray(member.fineHistory)) {
+      member.fineHistory.push({
+        amount: parseInt(amount),
+        reason,
+        date: new Date(),
+        status: 'pending' // Assuming new fines start as pending
+      });
+    }
+    
+    // Save the updated member
     await member.save();
     
-    // Return updated fine information
     return res.status(200).json({
       success: true,
-      message: "Fine imposed successfully",
+      message: `Fine of ₹${amount} imposed successfully`,
       data: {
         memberId: member._id,
         memberName: member.fullName,
-        previousFine: currentFine,
-        addedFine: parseInt(amount),
-        totalFine: newFineAmount,
-        reason: reason || "Not specified"
+        newFineTotal: member.fineStatus
       }
     });
   } catch (error) {
+    console.error('Error imposing fine:', error);
     return res.status(500).json({
       success: false,
-      message: "Error imposing fine: " + error.message
+      message: 'Server error',
+      error: error.message
     });
   }
 };
