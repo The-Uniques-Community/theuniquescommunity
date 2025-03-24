@@ -33,19 +33,19 @@ const AboutSection = () => {
         <div className="flex flex-wrap items-center justify-between -mx-4">
             <div className="w-full px-4">
               <div className="flex items-center -mx-3 sm:-mx-4">
-                <div className="w-full px-3 sm:px-4 xl:w-1/2 relative group">
+                <div className="w-full px-3 sm:px-4 md:w-1/2 relative group">
                   <div className="py-3 sm:py-4">
                     <img
                       src="https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1rAly0h2CcYnIQDTmzWgy0bcOvPRLxFCXr97NJ"
                       alt=""
-                      className="w-full rounded-2xl h-[290px] "
+                      className="w-full rounded-2xl h-auto max-h-[290px] object-cover"
                     />
                   </div>
                   <div className="py-3 sm:py-4">
                     <img
                       src="https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1raMyrl2dZ5nbhfgUQ7zpymvWrP0ksNEJAiwGe"
                       alt=""
-                      className="w-full rounded-2xl"
+                      className="w-full rounded-2xl h-auto object-cover"
                     />
                   </div>
                 </div>
@@ -54,9 +54,9 @@ const AboutSection = () => {
                     <img
                       src="https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1ryjxk8vqlFwg67BcWCDfJqjVdA2934s10UemK"
                       alt=""
-                      className="w-full rounded-2xl h-[450px]"
+                      className="w-full rounded-2xl h-auto max-h-[450px] object-cover"
                     />
-                    <span className="absolute -right-7 -bottom-7 z-[-1]">
+                    <span className="absolute -right-7 -bottom-7 z-[-1] hidden lg:block">
                       <svg
                         width={134}
                         height={106}
