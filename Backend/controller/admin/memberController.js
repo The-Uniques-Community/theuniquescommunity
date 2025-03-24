@@ -1,35 +1,205 @@
 import Member from "../../models/member/memberModel.js";
-
+import mongoose from "mongoose";
 export const getSingleMember = async (req, res) => {
-    try {
-      const { id } = req.params;
-      
-      const member = await Member.findById(id)
-        .select('-password') // Exclude password from the response
-        .populate('certifications')
-        .populate('profilePic')
-        .populate('event_participation');
-      
-      if (!member) {
-        return res.status(404).json({
-          success: false,
-          message: 'Member not found'
-        });
-      }
-      
-      return res.status(200).json({
-        success: true,
-        data: member
-      });
-    } catch (error) {
-      console.error('Error fetching member:', error);
-      return res.status(500).json({
+  try {
+    const { id } = req.params;
+    
+    // Validate if id is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
         success: false,
-        message: 'Server error',
-        error: error.message
+        message: 'Invalid ID format. Must be a valid MongoDB ObjectId.'
       });
     }
-  };
+    
+    const member = await Member.findById(id)
+      .select('-password') // Exclude password from the response
+      .populate('certifications')
+      .populate('profilePic')
+      .populate('event_participation');
+    
+    if (!member) {
+      return res.status(404).json({
+        success: false,
+        message: 'Member not found'
+      });
+    }
+    
+    return res.status(200).json({
+      success: true,
+      data: member
+    });
+  } catch (error) {
+    console.error('Error fetching member:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+};
+
+export const toggleBlockStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Validate if id is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid ID format. Must be a valid MongoDB ObjectId.'
+      });
+    }
+    
+    const member = await Member.findById(id);
+    
+    if (!member) {
+      return res.status(404).json({
+        success: false,
+        message: 'Member not found'
+      });
+    }
+    
+    // Toggle block status
+    const newStatus = member.profileStatus === 'blocked' ? 'active' : 'blocked';
+    member.profileStatus = newStatus;
+    
+    await member.save();
+    
+    return res.status(200).json({
+      success: true,
+      message: `Member has been ${newStatus === 'blocked' ? 'blocked' : 'unblocked'} successfully`,
+      data: {
+        id: member._id,
+        profileStatus: member.profileStatus
+      }
+    });
+  } catch (error) {
+    console.error('Error toggling block status:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+};
+
+// Suspend or Unsuspend Member
+export const toggleSuspendStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body;
+    
+    // Validate if id is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid ID format. Must be a valid MongoDB ObjectId.'
+      });
+    }
+    
+    const member = await Member.findById(id);
+    
+    if (!member) {
+      return res.status(404).json({
+        success: false,
+        message: 'Member not found'
+      });
+    }
+    
+    // If suspending, require a reason
+    if (!member.isSuspended && (!reason || reason.trim() === '')) {
+      return res.status(400).json({
+        success: false,
+        message: 'A reason is required to suspend a member'
+      });
+    }
+    
+    // Toggle suspended status
+    member.isSuspended = !member.isSuspended;
+    
+    await member.save();
+    
+    return res.status(200).json({
+      success: true,
+      message: `Member has been ${member.isSuspended ? 'suspended' : 'unsuspended'} successfully`,
+      data: {
+        id: member._id,
+        isSuspended: member.isSuspended
+      }
+    });
+  } catch (error) {
+    console.error('Error toggling suspend status:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+};
+
+// Edit Member Profile
+export const updateMemberProfile = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+    
+    // Validate if id is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid ID format. Must be a valid MongoDB ObjectId.'
+      });
+    }
+    
+    // Fields that admin is not allowed to update
+    const restrictedFields = ['password', 'googleId', 'role', '_id', 'email'];
+    
+    // Remove restricted fields from update data
+    restrictedFields.forEach(field => {
+      if (updateData[field]) delete updateData[field];
+    });
+    
+    // Find member and update with validated data
+    const updatedMember = await Member.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    ).select('-password');
+    
+    if (!updatedMember) {
+      return res.status(404).json({
+        success: false,
+        message: 'Member not found'
+      });
+    }
+    
+    return res.status(200).json({
+      success: true,
+      message: 'Member profile updated successfully',
+      data: updatedMember
+    });
+  } catch (error) {
+    console.error('Error updating member profile:', error);
+    
+    // Check for validation errors
+    if (error.name === 'ValidationError') {
+      const validationErrors = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({
+        success: false,
+        message: 'Validation error',
+        errors: validationErrors
+      });
+    }
+    
+    return res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+};
+
   
   // Get all members with pagination
   export const getAllMembers = async (req, res) => {

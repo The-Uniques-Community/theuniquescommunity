@@ -85,7 +85,7 @@ const FineTable = () => {
   const fetchFines = async () => {
     try {
       setLoading(true);
-      // You'll need to implement this API endpoint to get fine records
+      // Keep this endpoint as is since it's working
       const response = await axios.get(`http://localhost:5000/api/admin/member/fines/all`, {
         params: {
           page,
@@ -109,125 +109,128 @@ const FineTable = () => {
     }
   };
 
-  // Search members
-  const searchMembers = async () => {
-    if (!searchQuery.trim()) return;
-    
-    try {
-      setSearchLoading(true);
-      const response = await axios.get(`http://localhost:5000/api/admin/fine/search`, {
-        params: {
-          query: searchQuery,
-          batch: batchFilter !== "All Batches" ? batchFilter : undefined,
-          limit: 10
-        }
-      });
-      
-      setSearchResults(response.data.data || []);
-      setSearchLoading(false);
-    } catch (error) {
-      console.error("Error searching members:", error);
-      setAlert({
-        open: true,
-        message: "Failed to search members",
-        severity: "error"
-      });
-      setSearchLoading(false);
-    }
-  };
-
-  // Add fine to member
   const addFine = async () => {
-    if (!selectedMember || !fineAmount || !fineReason) {
-      setAlert({
-        open: true,
-        message: "Please complete all fields",
-        severity: "warning"
-      });
-      return;
-    }
+  if (!selectedMember || !fineAmount || !fineReason) {
+    setAlert({
+      open: true,
+      message: "Please complete all fields",
+      severity: "warning"
+    });
+    return;
+  }
+  
+  try {
+    setLoading(true);
+    // FIXED: Changed to match fineRouter POST /:memberId/impose route
+    await axios.post(`http://localhost:5000/api/admin/fine/${selectedMember._id}/impose`, {
+      amount: Number(fineAmount),
+      reason: fineReason
+    });
     
-    try {
-      setLoading(true);
-      await axios.post(`http://localhost:5000/api/admin/fine/${selectedMember._id}/impose`, {
-        amount: fineAmount,
-        reason: fineReason
-      });
-      
-      setAlert({
-        open: true,
-        message: `Fine of ₹${fineAmount} imposed successfully`,
-        severity: "success"
-      });
-      
-      // Reset form and close modal
-      setSelectedMember(null);
-      setFineAmount("");
-      setFineReason("");
-      setOpenAddFineModal(false);
-      
-      // Refresh data
-      fetchFines();
-    } catch (error) {
-      console.error("Error imposing fine:", error);
-      setAlert({
-        open: true,
-        message: "Failed to impose fine",
-        severity: "error"
-      });
-      setLoading(false);
-    }
-  };
+    setAlert({
+      open: true,
+      message: `Fine of ₹${fineAmount} imposed successfully`,
+      severity: "success"
+    });
+    
+    // Reset form and close modal
+    setSelectedMember(null);
+    setFineAmount("");
+    setFineReason("");
+    setOpenAddFineModal(false);
+    
+    // Refresh data
+    fetchFines();
+  } catch (error) {
+    console.error("Error imposing fine:", error);
+    setAlert({
+      open: true,
+      message: error.response?.data?.message || "Failed to impose fine",
+      severity: "error"
+    });
+    setLoading(false);
+  }
+};
 
-  // Clear fine
-  const clearFine = async (memberId) => {
-    try {
-      setLoading(true);
-      await axios.post(`http://localhost:5000/api/admin/fine/${memberId}/clear`);
-      
-      setAlert({
-        open: true,
-        message: "Fine cleared successfully",
-        severity: "success"
-      });
-      
-      // Refresh data
-      fetchFines();
-    } catch (error) {
-      console.error("Error clearing fine:", error);
-      setAlert({
-        open: true,
-        message: "Failed to clear fine",
-        severity: "error"
-      });
-      setLoading(false);
-    }
-  };
+// 2. Fix the clearFine function
+const clearFine = async (memberId) => {
+  try {
+    setLoading(true);
+    // FIXED: Changed to match fineRouter POST /:memberId/clear route
+    await axios.post(`http://localhost:5000/api/admin/fine/${memberId}/clear`);
+    
+    setAlert({
+      open: true,
+      message: "Fine cleared successfully",
+      severity: "success"
+    });
+    
+    // Refresh data
+    fetchFines();
+  } catch (error) {
+    console.error("Error clearing fine:", error);
+    setAlert({
+      open: true,
+      message: error.response?.data?.message || "Failed to clear fine",
+      severity: "error"
+    });
+    setLoading(false);
+  }
+};
 
-  // Get fine details
-  const viewFineDetails = async (member) => {
-    try {
-      setLoading(true);
-      const response = await axios.get(`http://localhost:5000/api/admin/fine/${member._id}/history`);
-      
-      setSelectedFine({
-        ...response.data.data,
-        member: member
-      });
-      
-      setOpenViewModal(true);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching fine details:", error);
-      setAlert({
-        open: true,
-        message: "Failed to fetch fine details",
-        severity: "error"
-      });
-      setLoading(false);
-    }
-  };
+// 3. Fix the viewFineDetails function
+const viewFineDetails = async (member) => {
+  try {
+    setLoading(true);
+    // FIXED: Changed to match fineRouter GET /:memberId/history route
+    const response = await axios.get(`http://localhost:5000/api/admin/fine/${member._id}/history`);
+    
+    setSelectedFine({
+      ...response.data.data,
+      member: member
+    });
+    
+    setOpenViewModal(true);
+    setLoading(false);
+  } catch (error) {
+    console.error("Error fetching fine details:", error);
+    setAlert({
+      open: true,
+      message: error.response?.data?.message || "Failed to fetch fine details",
+      severity: "error"
+    });
+    setLoading(false);
+  }
+};
 
+// 4. Fix the searchMembers function - ALREADY CORRECT
+const searchMembers = async () => {
+  if (!searchQuery.trim()) return;
+  
+  try {
+    setSearchLoading(true);
+    
+    // This is already correct - it matches fineRouter GET /search route
+    const response = await axios.get(`http://localhost:5000/api/admin/fine/search`, {
+      params: {
+        query: searchQuery,  // Use 'query' as expected by your controller
+        batch: batchFilter !== "All Batches" ? batchFilter : undefined,
+        limit: 10
+      }
+    });
+    
+    setSearchResults(response.data.data || []);
+    setSearchLoading(false);
+  } catch (error) {
+    console.error("Error searching members:", error);
+    setAlert({
+      open: true,
+      message: error.response?.data?.message || "Failed to search members",
+      severity: "error"
+    });
+    setSearchLoading(false);
+  }
+};
   // Load data when component mounts or filters change
   useEffect(() => {
     fetchFines();

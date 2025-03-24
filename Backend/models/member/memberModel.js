@@ -68,6 +68,11 @@ const memberSchema = new mongoose.Schema(
       type: String,
       default: "0",
     },
+    fineReason:{
+      type:String,
+      default:""
+    },
+    
     // New semesterSGPA field to track SGPA by semester
     semesterSGPA: [
       {
