@@ -37,28 +37,28 @@ const About = (props) => (
         </div>
         <div className="md:w-1/2 p-4">
             <div className="md:w-[80%] text-left">
-                <p className="bg-[#fdf5e2] md:text-left p-2 text-2xl rounded-xl">
+                <p className="bg-[#ca0019] md:text-left p-2 text-2xl text-white rounded-xl">
                     What is the Criteria for Being an Ambassador?
                 </p>
-                <p className="text-gray-500 text-sm text-left my-4">
+                <p className="text-black text-sm text-left my-4">
                     <strong>Minimum One Year Until Graduation:</strong> Applicants should have at least one year remaining until graduation from their undergraduate or graduate program.
                 </p>
-                <p className="text-gray-500 text-sm text-left">
+                <p className="text-black text-sm text-left">
                     <strong>Full-Time Enrollment:</strong> Applicants must be enrolled full-time in an undergraduate or graduate program at a college or university.
                 </p>
-                <p className="text-gray-500 text-sm text-left">
+                <p className="text-black text-sm text-left">
                     <strong>Commitment:</strong> Individuals must commit to the program for a minimum of one year, demonstrating dedication to their role as a Lead.
                 </p>
-                <p className="text-gray-500 text-sm text-left">
+                <p className="text-black text-sm text-left">
                     <strong>Passion for Impact:</strong> Applicants should be passionate about creating a positive impact within their community and fostering growth and collaboration among peers.
                 </p>
-                <p className="text-gray-500 text-sm text-left">
+                <p className="text-black text-sm text-left">
                     <strong>Technical Understanding:</strong> Individuals should possess a foundational understanding of computer programming and/or software engineering concepts.
                 </p>
-                <p className="text-gray-500 text-sm text-left">
+                <p className="text-black text-sm text-left">
                     <strong>Event Planning Experience:</strong> Preference will be given to applicants with prior experience in event planning or leading a team.
                 </p>
-                <p className="text-gray-500 text-sm text-left">
+                <p className="text-black text-sm text-left">
                     <strong>Connection to Local Developer Community:</strong> Applicants should have a connection to the local developer community.
                 </p>
 
@@ -66,7 +66,7 @@ const About = (props) => (
                     <p className="bg-[#fdf5e2] md:text-left p-2 text-2xl rounded-xl">
                         Community Guidelines
                     </p>
-                    <p className="text-gray-500 text-sm text-left my-4">
+                    <p className="text-black text-sm text-left my-4">
                         The Uniques Community is committed to fostering a safe, inclusive, and harassment-free environment for all participants. We believe that every individual deserves to participate in our events without fear of harassment, discrimination, or condescension.
                     </p>
                 </div>
@@ -74,7 +74,7 @@ const About = (props) => (
                 <p className="bg-[#fdf5e2] md:text-left p-2 text-2xl rounded-xl">
                     Responsibilities of an Ambassador
                 </p>
-                <ul className="text-gray-500 text-sm text-left my-4 list-disc pl-5">
+                <ul className="text-black text-sm text-left my-4 list-disc pl-5">
                     <li><strong>Host Regular Events:</strong> Organize and host events at least once a month.</li>
                     <li><strong>Report Activities:</strong> Regularly report your chapter's activities on the designated platform.</li>
                     <li><strong>Build a Core Team:</strong> Assemble a dedicated team to support event organization.</li>
