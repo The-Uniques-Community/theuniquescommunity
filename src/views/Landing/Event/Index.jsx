@@ -73,7 +73,7 @@ const Index = () => {
 
       {/* Display All Community Cards */}
       {!loading && !error && Array.isArray(events) && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-5">
+        <div className="grid my-20 max-w-6xl mx-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 place-items-center gap-6 p-5">
           {events.length > 0 ? (
             events.map((event) => (
               <div 
@@ -82,7 +82,7 @@ const Index = () => {
                   setSelectedEvent(event);
                   setShowEvent(true);
                 }} 
-                className="cursor-pointer hover:shadow-lg transition-shadow duration-300"
+                className="cursor-pointer"
               >
                 <CommunityCard event={event}/>
               </div>
