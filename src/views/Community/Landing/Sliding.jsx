@@ -15,9 +15,9 @@ const WeirdCard = ({ title, description }) => {
           <img className="w-6 object-contain h-6" src={tu_red || "/placeholder.svg"} alt="logo" />
         </div>
         <div className="border2"></div>
-        <h2 className="text-xl font-light mt-6">{title}</h2>
+        <h2 className="text-xl font-bold mt-8 ">{title}</h2>
         <div className="bg-[#ca0019] h-[1px] w-0 group-hover:w-1/2 transition-all duration-500"></div>
-        <p className="text-sm font-light text-justify mt-4">{description}</p>
+        <p className="text-sm font-light text-justify">{description}</p>
       </div>
       <div className="relative">
         <div className="px-2 bg-slate-200 flex justify-center items-center py-1 h-5 w-[70px] rounded-xl absolute bottom-0 right-0">
@@ -33,10 +33,10 @@ export default function SplitLayout() {
 
 
   const cardData = [
-    { title: "Launch or Expand Your Community", description: "Kickstart or enhance a student club at your university, collaborating with university officials and forming a dedicated core team." },
-    { title: "Conduct Engaging Workshops", description: "Organize interactive workshops to help students explore various developer tools and platforms within a peer-supported environment." },
+    { title: "Expand Your Community", description: "Kickstart a student club at your university, collaborating with university officials and forming a dedicated core team." },
+    { title: "Engaging Workshops", description: "Organize interactive workshops to help students explore various developer tools and platforms ." },
     { title: "Lead Project Development", description: "Collaborate with local organizations to identify project opportunities and spearhead impactful community projects." },
-    { title: "Foster Your Professional Growth", description: "Gain access to community management training, technical insights, and exclusive industry events." },
+    { title: "Professional Growth", description: "Gain access to community management training, technical insights, and exclusive industry events." },
     { title: "Expand Your Network", description: "Connect with student leaders, industry professionals, and experienced mentors in a thriving global community." },
     { title: "Community Empowerment", description: "Receive dedicated support and resources to educate and expand your community both online and offline." },
   ]
