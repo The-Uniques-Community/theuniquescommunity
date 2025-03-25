@@ -5,6 +5,7 @@ import CommunityCard from '@/utils/Card/CommunityCard';
 import Header from '@/utils/Header/index';
 import CallToAction from '../homComponents/CallToAction';
 import { TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import EventForm from '@/utils/event/EventForm';
 
 const Index = () => {
   const [events, setEvents] = useState([]);
@@ -27,18 +28,41 @@ const Index = () => {
         const response = await axios.get('http://localhost:5000/api/events');
         
         if (response.data && Array.isArray(response.data.events)) {
-          setEvents(response.data.events);
-          setFilteredEvents(response.data.events);
+          const eventsData = response.data.events;
+          setEvents(eventsData);
+          setFilteredEvents(eventsData);
 
-          const types = [...new Set(response.data.events.map(event => event.type))];
+          // Log the first event to understand structure
+          if (eventsData.length > 0) {
+            console.log('Sample event structure:', eventsData[0]);
+          }
+
+          // Extract unique event types from eventType field
+          const types = [...new Set(eventsData
+            .filter(event => event.eventType) // Only include events with eventType
+            .map(event => event.eventType))];
+          console.log('Available event types:', types);
           setEventTypes(types);
           
-          const uniqueYears = [...new Set(response.data.events.map(event => new Date(event.date).getFullYear()))];
+          // Extract unique years from eventDate field
+          const uniqueYears = [...new Set(eventsData
+            .filter(event => event.eventDate)
+            .map(event => {
+              try {
+                return new Date(event.eventDate).getFullYear();
+              } catch(e) {
+                console.warn('Invalid date:', event.eventDate);
+                return null;
+              }
+            })
+            .filter(Boolean))]; // Remove null values
+            
           setYears(uniqueYears.sort((a, b) => b - a));
         } else {
           setError('Invalid response format');
         }
       } catch (error) {
+        console.error('Error fetching events:', error);
         setError('Failed to load events');
       } finally {
         setLoading(false);
@@ -50,23 +74,62 @@ const Index = () => {
 
   useEffect(() => {
     let filtered = events;
-
+    
+    console.log('Filtering with:', { searchTerm, eventType, month, year });
+    console.log('Initial events count:', events.length);
+  
     if (searchTerm.trim()) {
-      filtered = filtered.filter(event => 
-        event.name && event.name.toLowerCase().includes(searchTerm.trim().toLowerCase())
-      );
+      filtered = filtered.filter(event => {
+        // Try multiple potential property names that might contain the event title
+        // Based on your schema, eventName is the correct field
+        return event.eventName && 
+          event.eventName.toLowerCase().includes(searchTerm.trim().toLowerCase());
+      });
+      console.log('After name filter:', filtered.length);
     }
-
+  
     if (eventType) {
-      filtered = filtered.filter(event => event.type === eventType);
+      filtered = filtered.filter(event => {
+        console.log(`Comparing event type: "${event.eventType}" with selected: "${eventType}"`);
+        return event.eventType === eventType;
+      });
+      console.log('After type filter:', filtered.length);
     }
 
     if (month) {
-      filtered = filtered.filter(event => new Date(event.date).getMonth() + 1 === parseInt(month));
+      filtered = filtered.filter(event => {
+        try {
+          if (!event.eventDate) return false;
+          
+          const eventDate = new Date(event.eventDate);
+          if (isNaN(eventDate.getTime())) return false;
+          
+          const eventMonth = eventDate.getMonth() + 1; // JavaScript months are 0-indexed
+          console.log(`Event date: ${event.eventDate}, parsed month: ${eventMonth}, filter month: ${month}`);
+          return eventMonth === parseInt(month);
+        } catch (e) {
+          console.error('Error parsing date:', e);
+          return false;
+        }
+      });
+      console.log('After month filter:', filtered.length);
     }
 
     if (year) {
-      filtered = filtered.filter(event => new Date(event.date).getFullYear() === parseInt(year));
+      filtered = filtered.filter(event => {
+        try {
+          if (!event.eventDate) return false;
+          
+          const eventDate = new Date(event.eventDate);
+          if (isNaN(eventDate.getTime())) return false;
+          
+          return eventDate.getFullYear() === parseInt(year);
+        } catch (e) {
+          console.error('Error parsing date:', e);
+          return false;
+        }
+      });
+      console.log('After year filter:', filtered.length);
     }
 
     setFilteredEvents(filtered);
@@ -87,7 +150,14 @@ const Index = () => {
         
         <FormControl variant="outlined" size="small" style={{ minWidth: 150 }}>
           <InputLabel>Event Type</InputLabel>
-          <Select value={eventType} onChange={(e) => setEventType(e.target.value)} label="Event Type">
+          <Select 
+            value={eventType} 
+            onChange={(e) => {
+              console.log('Selected event type:', e.target.value);
+              setEventType(e.target.value);
+            }} 
+            label="Event Type"
+          >
             <MenuItem value="">All</MenuItem>
             {eventTypes.map(type => (
               <MenuItem key={type} value={type}>{type}</MenuItem>
@@ -130,6 +200,7 @@ const Index = () => {
           <div className="col-span-full text-center py-8 text-gray-500">No events found.</div>
         )}
       </div>
+      <EventForm />
       
       <CallToAction />
       
