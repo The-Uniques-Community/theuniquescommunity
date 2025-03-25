@@ -163,30 +163,142 @@ const index = () => {
   }, [selectedBatch]); // Search is handled client-side
 
 
-  const currentBatch = useMemo(() => batchesData.find((batch) => batch.id === selectedBatch), [selectedBatch])
+  const currentBatch = useMemo(() => {
+    return batchesData.find((batch) => batch.id === selectedBatch);
+  }, [selectedBatch, batchesData]);
 
-  // Get achievements for the current batch
-  const batchAchievements = useMemo(
-    () => achievementsData.filter((achievement) => achievement.batchId === selectedBatch),
-    [selectedBatch],
-  )
+  // Achievement Card Component using MUI
+  const AchievementCard = ({ title, description, icon, color }) => {
+    return (
+      <Card sx={{ 
+        borderRadius: 2, 
+        boxShadow: '0 4px 8px rgba(0,0,0,0.05)', 
+        transition: 'transform 0.2s, box-shadow 0.2s',
+        '&:hover': {
+          transform: 'translateY(-4px)',
+          boxShadow: '0 6px 12px rgba(0,0,0,0.1)'
+        }
+      }}>
+        <CardContent>
+          <Box display="flex" alignItems="flex-start" gap={2}>
+            <Box 
+              sx={{ 
+                backgroundColor: color || '#ca0019', 
+                color: 'white', 
+                borderRadius: '50%',
+                p: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              {icon || <EmojiEventsIcon />}
+            </Box>
+            <Box>
+              <Typography variant="h6" component="h3" sx={{ fontWeight: 'medium', mb: 0.5 }}>
+                {title}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {description}
+              </Typography>
+            </Box>
+          </Box>
+        </CardContent>
+      </Card>
+    );
+  };
 
-  // Get members for the current batch
-  const batchMembers = useMemo(() => membersData.filter((member) => member.batchId === selectedBatch), [selectedBatch])
+  // Using dummy achievement data
+  useEffect(() => {
+    const defaultAchievements = {
+      "All": [
+        {
+          id: "community-excellence",
+          title: "Community Excellence",
+          description: "Recognized for outstanding contributions to the tech ecosystem",
+          color: "rgb(59, 130, 246)"
+        }
+      ],
+      "The Uniques 1.0": [
+        {
+          id: "founding-milestone",
+          title: "Founding Milestone",
+          description: "Established the community and set the foundation for future growth",
+          color: "rgb(34, 197, 94)"
+        }
+      ],
+      "The Uniques 2.0": [
+        {
+          id: "community-growth",
+          title: "Community Growth",
+          description: "Expanded membership by 200% and introduced mentorship programs",
+          color: "rgb(168, 85, 247)"
+        }
+      ],
+      "The Uniques 3.0": [
+        {
+          id: "innovation-hub",
+          title: "Innovation Hub",
+          description: "Launched the innovation lab for members to collaborate on projects",
+          color: "rgb(249, 115, 22)"
+        }
+      ]
+    };
 
-  // Filter members based on search term
-  const filteredMembers = useMemo(() => {
-    if (!batchMembers) return []
+    setAchievements(defaultAchievements[selectedBatch] || []);
+  }, [selectedBatch]);
 
-    return searchTerm.trim() === ""
-      ? batchMembers
-      : batchMembers.filter(
-          (member) =>
-            member.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            member.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            member.skills.some((skill) => skill.name.toLowerCase().includes(searchTerm.toLowerCase())),
-        )
-  }, [searchTerm, batchMembers])
+  // Function to retry both data fetches
+  const refreshData = () => {
+    // Reset state
+    setMembers([]);
+    setLoading(true);
+    setError(null);
+    setCountsLoading(true);
+    
+    // Fetch both counts and members data
+    const fetchAll = async () => {
+      try {
+        // First fetch counts
+        const countsResponse = await axios.get("http://localhost:5000/api/public/members/counts");
+        if (countsResponse.data.success) {
+          setBatchCounts(countsResponse.data.data);
+        }
+        
+        // Then fetch members
+        const membersResponse = await axios.get("http://localhost:5000/api/public/members", {
+          params: {
+            batch: selectedBatch !== "All" ? selectedBatch : undefined
+          }
+        });
+        
+        if (membersResponse.data.success) {
+          const processedMembers = membersResponse.data.data.map(member => ({
+            ...member,
+            fullName: member.fullName || "Anonymous Member",
+            batch: member.batch || "Unspecified Batch",
+            skills: Array.isArray(member.skills) ? member.skills : [],
+            projects: Array.isArray(member.projects) ? member.projects : [],
+            achievements: Array.isArray(member.achievements) ? member.achievements : [],
+            certifications: Array.isArray(member.certifications) ? member.certifications : []
+          }));
+          
+          setMembers(processedMembers);
+          setTotalMembers(membersResponse.data.count);
+        } else {
+          setError("Failed to refresh data");
+        }
+      } catch (err) {
+        console.error("Error refreshing data:", err);
+        setError("Failed to refresh data. Please try again.");
+      } finally {
+        setLoading(false);
+        setCountsLoading(false);
+      }
+    };
+    
+    fetchAll();
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -77,7 +77,7 @@ export default function Eventmodel({ event, onClose }) {
     const safeEventGuests = Array.isArray(event.eventGuests) ? event.eventGuests : [];
 
     return (
-        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 mt-14 z-50">
             <div className="bg-white w-full h-[90vh] overflow-auto rounded-xl shadow-lg relative p-6">
                 
                 {/* Close Button */}

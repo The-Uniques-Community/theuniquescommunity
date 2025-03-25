@@ -82,7 +82,7 @@ const Index = () => {
                   setSelectedEvent(event);
                   setShowEvent(true);
                 }} 
-                className="cursor-pointer hover:shadow-lg transition-shadow duration-300"
+                className="cursor-pointertransition-shadow duration-300"
               >
                 <CommunityCard event={event}/>
               </div>
