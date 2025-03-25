@@ -271,6 +271,8 @@ const EventForm = ({ event, onSuccess }) => {
         if (formattedValues.eventDate) {
           formattedValues.eventDate = new Date(formattedValues.eventDate).toISOString();
         }
+
+        console.log('eventGallery', galleryIds);
         
         const eventData = {
           ...formattedValues,
