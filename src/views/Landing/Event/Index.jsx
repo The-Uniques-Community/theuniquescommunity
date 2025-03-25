@@ -5,6 +5,7 @@ import Header from "@/utils/Header/index";
 import CallToAction from '../homComponents/CallToAction';
 import { events } from '@/assets/dummyData/eventsData';
 
+
 const Index = () => {
   const [showEvent, setShowEvent] = useState(false);
 
@@ -18,7 +19,6 @@ const Index = () => {
     <>
       {/* Header with event-specific title and subtitle */}
       <Header title={title} subtitle={subtitle} chipLabel={chipLabel}/>
-
       {/* CommunityCard Click Triggers Popup */}
       <div onClick={() => setShowEvent(true)} className="cursor-pointer">
         <CommunityCard event={events[0]}/>
