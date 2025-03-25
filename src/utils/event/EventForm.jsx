@@ -226,6 +226,8 @@ const EventForm = ({ event, onSuccess }) => {
             // Continue with form submission even if upload fails
           }
         }
+
+        const galleryIds = []
         
         // Step 2: Handle gallery uploads if any
         if (galleryFiles && galleryFiles.length > 0) {
@@ -252,6 +254,9 @@ const EventForm = ({ event, onSuccess }) => {
               galleryFormData
             );
             
+            if (galleryResponse.data.files && galleryResponse.data.files.length > 0) {
+              galleryIds.push(...galleryResponse.data.files.map(file => file._id));
+            }
             console.log('Gallery uploads processed:', galleryResponse.data);
             
             // No need to update the form values as the backend handles the connections
@@ -270,6 +275,7 @@ const EventForm = ({ event, onSuccess }) => {
         const eventData = {
           ...formattedValues,
           eventBanner: bannerId,
+          eventGallery: galleryIds,
           eventForm: {
             formFeilds: formFields
           }

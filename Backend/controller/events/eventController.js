@@ -21,7 +21,8 @@ export const createEvent = async (req, res) => {
       eventGuests,
       eventType,
       eventStatus,
-      eventForm
+      eventForm,
+      eventGallery  // Add this line
     } = req.body;
 
     // Validate required fields
@@ -71,7 +72,8 @@ export const createEvent = async (req, res) => {
       eventForm: {
         formId,
         formFeilds: eventForm?.formFeilds || []
-      }
+      },
+      eventGallery: eventGallery || []  // Add this line
     });
 
     await newEvent.save();
@@ -97,6 +99,7 @@ export const createEvent = async (req, res) => {
     // Populate relevant fields for response
     const populatedEvent = await Event.findById(newEvent._id)
       .populate('eventBanner')
+      .populate('eventGallery')  // Add this line
       .populate({
         path: 'eventGuests.guestId',
         model: 'Guest',
@@ -141,6 +144,7 @@ export const getAllEvents = async (req, res) => {
 
     const events = await Event.find(filter)
       .populate('eventBanner')
+      .populate('eventGallery')
       .populate({
         path: 'eventGuests.guestId',
         model: 'Guest',
@@ -348,6 +352,7 @@ export const updateEvent = async (req, res) => {
       { new: true, runValidators: true }
     )
     .populate('eventBanner')
+    .populate('eventGallery')
     .populate({
       path: 'eventGuests.guestId',
       model: 'Guest',
