@@ -10,7 +10,8 @@ const eventSchema = new mongoose.Schema({
         required: true
     },
     eventBanner:{
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'File'
     },
     eventDate:{
         type: Date,
@@ -36,10 +37,14 @@ const eventSchema = new mongoose.Schema({
             default: "others"
         }
     }],
+    eventGallery:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'File'
+    }],
     
     eventType:{
         type: String,
-        required: true,
+        required: true, 
         multiple: true,
         enum:["Workshop","Seminar","Webinar","Hackathon","Competition","Conference","Fest","Cultural","Ideathon","Sports","Talk Show","Meetup","Others"]
     },
@@ -49,8 +54,14 @@ const eventSchema = new mongoose.Schema({
         enum:["upcoming","ongoing","completed"]
     },
     eventForm:{
-        type: Array,
+      formId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Form'
+       },
+      formFeilds: {
+         type: Array,
         default: []
+       }
     }
 });
 
