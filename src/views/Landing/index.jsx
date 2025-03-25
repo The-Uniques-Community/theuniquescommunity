@@ -282,7 +282,6 @@ const index = () => {
       <section>
         <TrainingTabs />
       </section>
-      {/* <EventForm />     */}
 
       
       
