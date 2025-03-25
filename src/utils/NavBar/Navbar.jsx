@@ -82,7 +82,7 @@ const Navbar = () => {
               <span>ABOUT US</span>
             </div>
           </Link>
-          <Link to="/community-page">
+          <Link to="/community-main">
             <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
               <span>COMMUNITY</span>
             </div>

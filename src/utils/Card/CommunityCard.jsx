@@ -21,7 +21,7 @@ const CommunityCard = ({ event }) => {
         </div>
       </div>
       <div>
-        <p className="text-xl pt-3 pb-1 px-3 font-medium">{event?.eventName}</p>
+        <p className="text-xl pt-3 pb-1 px-3 font-medium">{event?.eventName ? (event.eventName.length > 20 ? event.eventName.slice(0, 20) + "..." : event.eventName) : "Event"}</p>
         <div className="flex justify-start items-center gap-x-1 px-2">
           <LocationOnOutlinedIcon sx={{ fontSize: 16 }} className="text-slate-700" />
           <p className="text-xs text-slate-700">{event?.eventVenue}</p>

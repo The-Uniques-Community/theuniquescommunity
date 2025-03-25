@@ -77,16 +77,16 @@ export default function Eventmodel({ event, onClose }) {
     const safeEventGuests = Array.isArray(event.eventGuests) ? event.eventGuests : [];
 
     return (
-        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 mt-14 z-50">
-            <div className="bg-white w-full h-[90vh] overflow-auto rounded-xl shadow-lg relative p-6">
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-[9999999] p-2 sm:p-4 overflow-hidden">
+            <div className="bg-white w-full max-w-7xl mx-auto h-[90vh] sm:h-[85vh] md:h-[90vh] overflow-auto rounded-xl shadow-lg relative p-3 sm:p-4 md:p-6">
                 
                 {/* Close Button */}
-                <button onClick={onClose} className="absolute top-4 right-4 bg-red-500 text-white p-2 rounded-full hover:bg-red-700 z-10">
+                <button onClick={onClose} className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-red-500 text-white p-2 rounded-full hover:bg-red-700 z-10">
                     <X size={20} />
                 </button>
 
                 {/* Header Banner */}
-                <div className="w-full h-96 border-b border-gray-300 rounded-xl">
+                <div className="w-full h-40 sm:h-60 md:h-96 border-b border-gray-300 rounded-xl">
                     <img 
                         src={event.eventBanner || "https://marketplace.canva.com/EAFluVdXLok/2/0/1600w/canva-blue-professional-webinar-facebook-event-cover-wp0XR0lqPgc.jpg"} 
                         alt={event.eventName}
@@ -95,19 +95,19 @@ export default function Eventmodel({ event, onClose }) {
                 </div>
 
                 {/* Profile Section */}
-                <div className="px-6 py-4 flex justify-between items-start border-gray-300">
-                    <div className="flex">
+                <div className="px-2 sm:px-4 md:px-6 py-4 flex flex-col sm:flex-row justify-between items-start border-gray-300">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center w-full sm:w-auto mb-4 sm:mb-0">
                         <img 
                             src={event.eventBanner || "https://content.jdmagicbox.com/v2/comp/bhubaneshwar/v3/0674px674.x674.190323210154.e8v3/catalogue/event-square-ac-banquet-hall-jaydev-vihar-bhubaneshwar-ac-banquet-halls-jqazlem37r.jpg"} 
-                            className="rounded-lg border border-gray-400 w-28 h-28 object-cover" 
+                            className="rounded-lg border border-gray-400 w-20 h-20 sm:w-24 sm:h-24 object-cover mb-3 sm:mb-0" 
                             alt={event.eventName}
                         />
-                        <div className="ml-6">
-                            <h1 className="text-3xl font-bold">{event.eventName}</h1>
-                            <h2 className="text-xl text-gray-500">{event.eventVenue}</h2>
+                        <div className="sm:ml-6">
+                            <h1 className="text-2xl sm:text-3xl font-bold">{event.eventName}</h1>
+                            <h2 className="text-lg sm:text-xl text-gray-500">{event.eventVenue}</h2>
                             <div className="flex items-center text-gray-500 mt-2">
-                                <Calendar className="w-5 h-5 mr-2" />
-                                <span>{new Date(event.eventDate).toLocaleDateString('en-US', {
+                                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                                <span className="text-sm sm:text-base">{new Date(event.eventDate).toLocaleDateString('en-US', {
                                     weekday: 'long',
                                     year: 'numeric',
                                     month: 'long',
@@ -115,12 +115,12 @@ export default function Eventmodel({ event, onClose }) {
                                 })}</span>
                             </div>
                             <div className="flex items-center text-gray-500 mt-1">
-                                <Clock className="w-5 h-5 mr-2" />
-                                <span>{event.eventTime}</span>
+                                <Clock className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                                <span className="text-sm sm:text-base">{event.eventTime}</span>
                             </div>
                         </div>
                     </div>
-                    <div className="flex space-x-3">
+                    <div className="flex space-x-3 w-full sm:w-auto justify-end">
                         <Button color="white" bgColor="#ca0019" border={4} borderColor="#ca0019" iconColor="black">Share</Button>
                         <Button color="white" bgColor="#ca0019" border={4} borderColor="#ca0019" iconColor="black">Register</Button>
                     </div>
@@ -132,7 +132,7 @@ export default function Eventmodel({ event, onClose }) {
                     onChange={handleChange} 
                     textColor="primary" 
                     indicatorColor="primary" 
-                    className="px-6"
+                    className="px-2 sm:px-4 md:px-6"
                     variant="scrollable"
                     scrollButtons="auto"
                 >
@@ -145,22 +145,22 @@ export default function Eventmodel({ event, onClose }) {
                 </Tabs>
 
                 {/* Main Content */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 p-2 sm:p-4 md:p-6">
                     
                     {/* Dynamic Content */}
-                    <div className="md:col-span-2 border-b border-t border-gray-300 p-4">
+                    <div className="md:col-span-2 border-b border-t border-gray-300 p-3 sm:p-4">
                         {activeTab === "about" ? (
                             <>
-                                <h2 className="text-2xl font-bold mb-4">About This Event</h2>
-                                <p className="text-gray-600 whitespace-pre-line">{event.eventDescription}</p>
+                                <h2 className="text-xl sm:text-2xl font-bold mb-4">About This Event</h2>
+                                <p className="text-gray-600 whitespace-pre-line text-sm sm:text-base">{event.eventDescription}</p>
                                 
-                                <div className="mt-6 grid grid-cols-2 gap-4">
-                                    <div className="bg-gray-100 p-4 rounded-lg">
+                                <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="bg-gray-100 p-3 sm:p-4 rounded-lg">
                                         <div className="flex items-center">
-                                            <Calendar className="w-5 h-5 mr-2 text-gray-700" />
-                                            <h3 className="font-semibold text-gray-700">Date</h3>
+                                            <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-700" />
+                                            <h3 className="font-semibold text-gray-700 text-sm sm:text-base">Date</h3>
                                         </div>
-                                        <p className="mt-1 text-gray-600 ml-7">
+                                        <p className="mt-1 text-gray-600 ml-6 sm:ml-7 text-xs sm:text-sm">
                                             {new Date(event.eventDate).toLocaleDateString('en-US', {
                                                 weekday: 'long',
                                                 year: 'numeric',
@@ -170,34 +170,34 @@ export default function Eventmodel({ event, onClose }) {
                                         </p>
                                     </div>
                                     
-                                    <div className="bg-gray-100 p-4 rounded-lg">
+                                    <div className="bg-gray-100 p-3 sm:p-4 rounded-lg">
                                         <div className="flex items-center">
-                                            <Clock className="w-5 h-5 mr-2 text-gray-700" />
-                                            <h3 className="font-semibold text-gray-700">Time</h3>
+                                            <Clock className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-700" />
+                                            <h3 className="font-semibold text-gray-700 text-sm sm:text-base">Time</h3>
                                         </div>
-                                        <p className="mt-1 text-gray-600 ml-7">{event.eventTime}</p>
+                                        <p className="mt-1 text-gray-600 ml-6 sm:ml-7 text-xs sm:text-sm">{event.eventTime}</p>
                                     </div>
                                     
-                                    <div className="bg-gray-100 p-4 rounded-lg">
+                                    <div className="bg-gray-100 p-3 sm:p-4 rounded-lg">
                                         <div className="flex items-center">
-                                            <MapPin className="w-5 h-5 mr-2 text-gray-700" />
-                                            <h3 className="font-semibold text-gray-700">Venue</h3>
+                                            <MapPin className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-700" />
+                                            <h3 className="font-semibold text-gray-700 text-sm sm:text-base">Venue</h3>
                                         </div>
-                                        <p className="mt-1 text-gray-600 ml-7">{event.eventVenue}</p>
+                                        <p className="mt-1 text-gray-600 ml-6 sm:ml-7 text-xs sm:text-sm">{event.eventVenue}</p>
                                     </div>
                                     
-                                    <div className="bg-gray-100 p-4 rounded-lg">
+                                    <div className="bg-gray-100 p-3 sm:p-4 rounded-lg">
                                         <div className="flex items-center">
-                                            <User className="w-5 h-5 mr-2 text-gray-700" />
-                                            <h3 className="font-semibold text-gray-700">Organizer</h3>
+                                            <User className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-700" />
+                                            <h3 className="font-semibold text-gray-700 text-sm sm:text-base">Organizer</h3>
                                         </div>
-                                        <p className="mt-1 text-gray-600 ml-7">{event.eventOrganizerBatch}</p>
+                                        <p className="mt-1 text-gray-600 ml-6 sm:ml-7 text-xs sm:text-sm">{event.eventOrganizerBatch}</p>
                                     </div>
                                 </div>
                             </>
                         ) : activeTab === "guests" ? (
                             <>
-                                <h2 className="text-2xl font-bold mb-4">Event Guests</h2>
+                                <h2 className="text-xl sm:text-2xl font-bold mb-4">Event Guests</h2>
                                 {safeEventGuests.length > 0 ? (
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         {safeEventGuests.map((guest, index) => {
@@ -209,63 +209,63 @@ export default function Eventmodel({ event, onClose }) {
                                             const guestTag = guest?.guestTag || "guest";
                                             
                                             return (
-                                                <div key={index} className="border rounded-lg p-4 flex items-center">
+                                                <div key={index} className="border rounded-lg p-3 sm:p-4 flex items-center">
                                                     <img 
                                                         src={guestImage} 
-                                                        className="w-16 h-16 rounded-full object-cover" 
+                                                        className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover" 
                                                         alt={guestName}
                                                     />
-                                                    <div className="ml-4">
-                                                        <h3 className="font-semibold">{guestName}</h3>
-                                                        <p className="text-sm text-gray-600 capitalize">{guestTag}</p>
-                                                        <p className="text-sm text-gray-500">{guestDesignation}</p>
+                                                    <div className="ml-3 sm:ml-4">
+                                                        <h3 className="font-semibold text-sm sm:text-base">{guestName}</h3>
+                                                        <p className="text-xs sm:text-sm text-gray-600 capitalize">{guestTag}</p>
+                                                        <p className="text-xs sm:text-sm text-gray-500">{guestDesignation}</p>
                                                     </div>
                                                 </div>
                                             );
                                         })}
                                     </div>
                                 ) : (
-                                    <p className="text-gray-600">No guests listed for this event.</p>
+                                    <p className="text-gray-600 text-sm sm:text-base">No guests listed for this event.</p>
                                 )}
                             </>
                         ) : activeTab === "organizers" ? (
                             <>
-                                <h2 className="text-2xl font-bold mb-4">Event Organizers</h2>
-                                <div className="border rounded-lg p-4">
-                                    <h3 className="font-semibold text-lg">{event.eventOrganizerBatch}</h3>
-                                    <p className="text-gray-600 mt-2">
+                                <h2 className="text-xl sm:text-2xl font-bold mb-4">Event Organizers</h2>
+                                <div className="border rounded-lg p-3 sm:p-4">
+                                    <h3 className="font-semibold text-base sm:text-lg">{event.eventOrganizerBatch}</h3>
+                                    <p className="text-gray-600 mt-2 text-sm sm:text-base">
                                         The event is organized by {event.eventOrganizerBatch}, a group of passionate individuals dedicated to creating impactful experiences.
                                     </p>
                                 </div>
                             </>
                         ) : (
                             <>
-                                <h2 className="text-2xl font-bold mb-4">Related {activeTab} Events</h2>
+                                <h2 className="text-xl sm:text-2xl font-bold mb-4">Related {activeTab} Events</h2>
                                 {filteredEvents && filteredEvents.length > 0 ? (
-                                    <ul className="space-y-4">
+                                    <ul className="space-y-3 sm:space-y-4">
                                         {filteredEvents.map(relatedEvent => (
-                                            <li key={relatedEvent._id} className="p-4 border rounded-md shadow-md">
-                                                <div className="flex">
+                                            <li key={relatedEvent._id} className="p-3 sm:p-4 border rounded-md shadow-md">
+                                                <div className="flex flex-col sm:flex-row">
                                                     <img 
                                                         src={relatedEvent.eventBanner || "https://via.placeholder.com/100"} 
                                                         alt={relatedEvent.eventName}
-                                                        className="w-20 h-20 object-cover rounded-md" 
+                                                        className="w-full sm:w-20 h-32 sm:h-20 object-cover rounded-md mb-2 sm:mb-0" 
                                                     />
-                                                    <div className="ml-4">
-                                                        <strong>{relatedEvent.eventName}</strong>
-                                                        <div className="text-sm text-gray-500">
+                                                    <div className="sm:ml-4">
+                                                        <strong className="text-sm sm:text-base">{relatedEvent.eventName}</strong>
+                                                        <div className="text-xs sm:text-sm text-gray-500">
                                                             <div className="flex items-center mt-1">
-                                                                <Calendar className="w-4 h-4 mr-1" />
+                                                                <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                                                                 {new Date(relatedEvent.eventDate).toLocaleDateString()}
                                                             </div>
                                                             <div className="flex items-center mt-1">
-                                                                <Clock className="w-4 h-4 mr-1" />
+                                                                <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                                                                 {relatedEvent.eventTime}
                                                             </div>
                                                         </div>
                                                         <button 
                                                             onClick={() => fetchEventDetails(relatedEvent._id)} 
-                                                            className="mt-2 text-blue-500 hover:underline"
+                                                            className="mt-2 text-blue-500 hover:underline text-xs sm:text-sm"
                                                         >
                                                             Know More
                                                         </button>
@@ -275,17 +275,17 @@ export default function Eventmodel({ event, onClose }) {
                                         ))}
                                     </ul>
                                 ) : (
-                                    <p className="text-gray-600">No related {activeTab} events found.</p>
+                                    <p className="text-gray-600 text-sm sm:text-base">No related {activeTab} events found.</p>
                                 )}
                             </>
                         )}
                     </div>
 
                     {/* Event Status & Leadership - Right Side */}
-                    <div className="border border-gray-300 p-4 rounded-2xl">
-                        <div className="mb-6">
-                            <h2 className="text-xl font-bold mb-2">Event Status</h2>
-                            <div className={`inline-block px-3 py-1 rounded-full text-white ${
+                    <div className="border border-gray-300 p-3 sm:p-4 rounded-2xl">
+                        <div className="mb-4 sm:mb-6">
+                            <h2 className="text-lg sm:text-xl font-bold mb-2">Event Status</h2>
+                            <div className={`inline-block px-2 sm:px-3 py-1 rounded-full text-white text-xs sm:text-sm ${
                                 event.eventStatus === 'upcoming' ? 'bg-blue-500' : 
                                 event.eventStatus === 'ongoing' ? 'bg-green-500' : 'bg-gray-500'
                             }`}>
@@ -293,19 +293,19 @@ export default function Eventmodel({ event, onClose }) {
                             </div>
                         </div>
                         
-                        <h2 className="text-xl font-bold mb-4">Community Leaders</h2>
-                        <div className="space-y-4">
+                        <h2 className="text-lg sm:text-xl font-bold mb-2 sm:mb-4">Community Leaders</h2>
+                        <div className="space-y-3 sm:space-y-4">
                             {eventLeaders.map((leader, index) => (
                                 <div key={index} className="flex justify-between items-center border-b pb-2">
                                     <div className="flex items-center">
                                         <img 
                                             src={leader.image} 
-                                            className="rounded-full w-12 h-12 border border-gray-300 object-cover" 
+                                            className="rounded-full w-10 h-10 sm:w-12 sm:h-12 border border-gray-300 object-cover" 
                                             alt={leader.name}
                                         />
-                                        <div className="ml-3">
-                                            <h3 className="font-medium">{leader.name}</h3> 
-                                            <p className="text-sm text-gray-500">{leader.role}</p>
+                                        <div className="ml-2 sm:ml-3">
+                                            <h3 className="font-medium text-sm sm:text-base">{leader.name}</h3> 
+                                            <p className="text-xs sm:text-sm text-gray-500">{leader.role}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -313,9 +313,9 @@ export default function Eventmodel({ event, onClose }) {
                         </div>
 
                         {safeEventGuests.length > 0 && (
-                            <div className="mt-6">
-                                <h2 className="text-xl font-bold mb-4">Featured Guests</h2>
-                                <div className="space-y-3">
+                            <div className="mt-4 sm:mt-6">
+                                <h2 className="text-lg sm:text-xl font-bold mb-2 sm:mb-4">Featured Guests</h2>
+                                <div className="space-y-2 sm:space-y-3">
                                     {safeEventGuests.slice(0, 3).map((guest, index) => {
                                         // Safely access nested properties 
                                         const guestId = guest?.guestId || {};
@@ -327,11 +327,11 @@ export default function Eventmodel({ event, onClose }) {
                                             <div key={index} className="flex items-center">
                                                 <img 
                                                     src={guestImage} 
-                                                    className="w-10 h-10 rounded-full object-cover" 
+                                                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover" 
                                                     alt={guestName}
                                                 />
-                                                <div className="ml-3">
-                                                    <h3 className="font-medium text-sm">{guestName}</h3>
+                                                <div className="ml-2 sm:ml-3">
+                                                    <h3 className="font-medium text-xs sm:text-sm">{guestName}</h3>
                                                     <p className="text-xs text-gray-500">{guestTag}</p>
                                                 </div>
                                             </div>
@@ -340,7 +340,7 @@ export default function Eventmodel({ event, onClose }) {
                                     {safeEventGuests.length > 3 && (
                                         <button 
                                             onClick={() => setActiveTab("guests")}
-                                            className="text-blue-500 text-sm hover:underline mt-2"
+                                            className="text-blue-500 text-xs sm:text-sm hover:underline mt-1 sm:mt-2"
                                         >
                                             View all {safeEventGuests.length} guests
                                         </button>
@@ -353,32 +353,32 @@ export default function Eventmodel({ event, onClose }) {
 
                 {/* Event Details Popup */}
                 {selectedDetailEvent && (
-                    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
-                        <div className="bg-white w-11/12 md:w-2/3 p-6 rounded-xl shadow-lg relative max-h-[80vh] overflow-y-auto">
+                    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50 p-2 sm:p-4">
+                        <div className="bg-white w-11/12 md:w-2/3 lg:w-1/2 p-3 sm:p-6 rounded-xl shadow-lg relative max-h-[80vh] overflow-y-auto">
                             <button 
                                 onClick={() => setSelectedDetailEvent(null)} 
-                                className="absolute top-4 right-4 bg-red-500 text-white p-2 rounded-full hover:bg-red-700"
+                                className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-red-500 text-white p-2 rounded-full hover:bg-red-700"
                             >
                                 <X size={20} />
                             </button>
                             
-                            <div className="flex flex-col md:flex-row gap-6">
+                            <div className="flex flex-col md:flex-row gap-4 sm:gap-6">
                                 <div className="md:w-1/3">
                                     <img 
                                         src={selectedDetailEvent.eventBanner || "https://via.placeholder.com/300"} 
                                         alt={selectedDetailEvent.eventName}
-                                        className="w-full h-48 md:h-64 object-cover rounded-lg" 
+                                        className="w-full h-40 sm:h-48 md:h-64 object-cover rounded-lg" 
                                     />
                                 </div>
                                 
                                 <div className="md:w-2/3">
-                                    <h2 className="text-2xl font-bold">{selectedDetailEvent.eventName}</h2>
+                                    <h2 className="text-xl sm:text-2xl font-bold">{selectedDetailEvent.eventName}</h2>
                                     
                                     <div className="flex flex-wrap gap-2 mt-2">
-                                        <span className="bg-gray-200 text-gray-800 px-2 py-1 rounded text-sm">
+                                        <span className="bg-gray-200 text-gray-800 px-2 py-1 rounded text-xs sm:text-sm">
                                             {selectedDetailEvent.eventType}
                                         </span>
-                                        <span className={`px-2 py-1 rounded text-sm text-white ${
+                                        <span className={`px-2 py-1 rounded text-xs sm:text-sm text-white ${
                                             selectedDetailEvent.eventStatus === 'upcoming' ? 'bg-blue-500' : 
                                             selectedDetailEvent.eventStatus === 'ongoing' ? 'bg-green-500' : 'bg-gray-500'
                                         }`}>
@@ -388,8 +388,8 @@ export default function Eventmodel({ event, onClose }) {
                                     
                                     <div className="mt-4 space-y-2 text-gray-700">
                                         <div className="flex items-center">
-                                            <Calendar className="w-5 h-5 mr-2 text-gray-500" />
-                                            <span>{new Date(selectedDetailEvent.eventDate).toLocaleDateString('en-US', {
+                                            <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-500" />
+                                            <span className="text-xs sm:text-sm">{new Date(selectedDetailEvent.eventDate).toLocaleDateString('en-US', {
                                                 weekday: 'long',
                                                 year: 'numeric',
                                                 month: 'long',
@@ -398,24 +398,24 @@ export default function Eventmodel({ event, onClose }) {
                                         </div>
                                         
                                         <div className="flex items-center">
-                                            <Clock className="w-5 h-5 mr-2 text-gray-500" />
-                                            <span>{selectedDetailEvent.eventTime}</span>
+                                            <Clock className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-500" />
+                                            <span className="text-xs sm:text-sm">{selectedDetailEvent.eventTime}</span>
                                         </div>
                                         
                                         <div className="flex items-center">
-                                            <MapPin className="w-5 h-5 mr-2 text-gray-500" />
-                                            <span>{selectedDetailEvent.eventVenue}</span>
+                                            <MapPin className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-500" />
+                                            <span className="text-xs sm:text-sm">{selectedDetailEvent.eventVenue}</span>
                                         </div>
                                         
                                         <div className="flex items-center">
-                                            <UsersIcon className="w-5 h-5 mr-2 text-gray-500" />
-                                            <span>{selectedDetailEvent.eventOrganizerBatch}</span>
+                                            <UsersIcon className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-500" />
+                                            <span className="text-xs sm:text-sm">{selectedDetailEvent.eventOrganizerBatch}</span>
                                         </div>
                                     </div>
                                     
                                     <div className="mt-4">
-                                        <h3 className="font-semibold text-lg mb-2">Description</h3>
-                                        <p className="text-gray-600">{selectedDetailEvent.eventDescription}</p>
+                                        <h3 className="font-semibold text-base sm:text-lg mb-2">Description</h3>
+                                        <p className="text-gray-600 text-xs sm:text-sm">{selectedDetailEvent.eventDescription}</p>
                                     </div>
                                     
                                     <div className="mt-6 flex justify-end gap-3">
