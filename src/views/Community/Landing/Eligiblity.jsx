@@ -1,140 +1,78 @@
 import React from 'react';
-// Replace with your actual profile image import (or a URL).
+import SpotlightCard from '@/utils/Card/SpotLightCard';
 import profileImg from '@/assets/img/Community/Sample1.png';
-
-// Simple gear icon (Tailwind Heroicons). Feel free to replace with any icon you prefer.
-const GearIcon = () => (
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth="1.5"
-        stroke="currentColor"
-        className="w-6 h-6 text-red-500"
-    >
-        <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M11.25 6.75V4.5m-2.25 6.75H4.5m14.25 0h2.25m-2.25 0a8.25 8.25 0 11-16.5 0 8.25 8.25 0 0116.5 0zM12 9.75v2.25l1.5 1.5"
-        />
-    </svg>
-);
 
 const SevenCardsLayout = () => {
     return (
-        <div className=" container mx-auto flex items-center justify-center bg-white">
-            {/* 
-        3x3 grid:
-          - Row 1: Card #1 (col 1), empty (col 2), Card #2 (col 3)
-          - Row 2: Card #3 (col 1), Card #4 (center, col 2), Card #5 (col 3)
-          - Row 3: Card #6 (col 1), empty (col 2), Card #7 (col 3)
-      */}
-            <div className="grid w-full rounded-xl grid-cols-3 grid-rows-3 gap-8">
-                {/* Card #1 */}
-                <div className="relative flex items-center justify-center">
-                    <span className="absolute text-gray-200 text-7xl font-bold z-0 select-none">
-                        01
-                    </span>
-                    <div className="relative z-10 w-full rounded-xl h-56 bg-red-600 p-4   flex flex-col">
-                        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-2">
-                            <GearIcon />
-                        </div>
-                        <h3 className="text-white font-bold text-lg">Heading</h3>
-                        <p className="text-white text-sm mt-1">Text should be here.</p>
+        <div>
+            <h2 className="text-center text-5xl font-bold my-24">
+                <span className="text-gray-900">Exciting </span>
+                <span className="text-[#ca0019]">Perks </span>
+                <span className="text-gray-900">for You</span>
+            </h2>
+            <div className="container mx-auto flex items-center justify-center">
+                <div className="grid w-full rounded-xl grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+
+                    <div className="relative flex items-center justify-center">
+                        <SpotlightCard spotlightColor="rgba(191, 0, 0, 0.50)">
+                            <span className="relative text-gray-200 text-7xl font-bold z-0 select-none">01</span>
+                            <div className="relative z-10 w-full rounded-xl h-auto p-4 flex flex-col">
+                                <h3 className="font-bold text-lg">Exclusive Events</h3>
+                                <p className="text-sm mt-1">Get access to members-only workshops, webinars, and meetups.</p>
+                            </div>
+                        </SpotlightCard>
                     </div>
-                </div>
 
-                {/* Empty cell */}
-                <div />
+                    <div />
 
-                {/* Card #2 */}
-                <div className="relative flex items-center justify-center">
-                    <span className="absolute text-gray-200 text-7xl font-bold z-0 select-none">
-                        02
-                    </span>
-                    <div className="relative z-10 w-full rounded-xl h-56 bg-red-600 p-4   flex flex-col">
-                        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-2">
-                            <GearIcon />
-                        </div>
-                        <h3 className="text-white font-bold text-lg">Heading</h3>
-                        <p className="text-white text-sm mt-1">Text should be here.</p>
+                    <div className="relative flex items-center justify-center">
+                        <SpotlightCard spotlightColor="rgba(191, 0, 0, 0.50)">
+                            <span className="relative text-gray-200 text-7xl font-bold z-0 select-none">02</span>
+                            <div className="relative z-10 w-full rounded-xl h-auto p-4 flex flex-col">
+                                <h3 className="font-bold text-lg">Networking</h3>
+                                <p className="text-sm mt-1">Connect with industry experts, mentors, and like-minded peers.</p>
+                            </div>
+                        </SpotlightCard>
                     </div>
-                </div>
 
-                {/* Card #3 */}
-                <div className="relative flex items-center justify-center">
-                    <span className="absolute text-gray-200 text-8xl -right-14 font-bold z-0 select-none">
-                        03
-                    </span>
-                    {/* <div className="relative z-10 w-full rounded-xl h-56 bg-red-600 p-4   flex flex-col">
-                        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-2">
-                            <GearIcon />
-                        </div>
-                        <h3 className="text-white font-bold text-lg">Heading</h3>
-                        <p className="text-white text-sm mt-1">Text should be here.</p>
-                    </div> */}
-                </div>
-
-                {/* Card #4 (Center) - With Profile Image */}
-                <div className="relative flex items-center justify-center">
-                    <span className="absolute text-gray-200 text-7xl font-bold z-0 select-none">
-                        04
-                    </span>
-                    <div className="relative z-10 w-full rounded-xl h-56 bg-red-600 p-4   flex flex-col items-center justify-center">
-                        <img
-                            src={profileImg}
-                            alt="Profile"
-                            className="w-20 h-20 object-cover rounded-full mb-2"
-                        />
-                        <h3 className="text-white font-bold text-lg">Heading</h3>
-                        <p className="text-white text-sm mt-1 text-center">
-                            Text should be here.
-                        </p>
+                    <div className="relative flex items-center justify-center">
+                        <span className="absolute text-[#ca0019] text-8xl right-14 font-bold z-0 select-none">03</span>
                     </div>
-                </div>
 
-                {/* Card #5 */}
-                <div className="relative flex items-center justify-center">
-                    <span className="absolute text-gray-200 text-8xl -left-14 font-bold z-0 select-none">
-                        05
-                    </span>
-                    {/* <div className="relative z-10 w-full rounded-xl h-56 bg-red-600 p-4   flex flex-col">
-                        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-2">
-                            <GearIcon />
-                        </div>
-                        <h3 className="text-white font-bold text-lg">Heading</h3>
-                        <p className="text-white text-sm mt-1">Text should be here.</p>
-                    </div> */}
-                </div>
-
-                {/* Card #6 */}
-                <div className="relative flex items-center justify-center">
-                    <span className="absolute text-gray-200 text-7xl font-bold z-0 select-none">
-                        06
-                    </span>
-                    <div className="relative z-10 w-full rounded-xl h-56 bg-red-600 p-4   flex flex-col">
-                        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-2">
-                            <GearIcon />
-                        </div>
-                        <h3 className="text-white font-bold text-lg">Heading</h3>
-                        <p className="text-white text-sm mt-1">Text should be here.</p>
+                    <div className="relative flex items-center justify-center">
+                        <SpotlightCard spotlightColor="rgba(191, 0, 0, 0.50)">
+                            <span className="relative text-gray-200 text-7xl font-bold z-0 select-none">04</span>
+                            <div className="relative z-10 w-full rounded-xl h-auto p-4 flex flex-col">
+                                <h3 className="font-bold text-lg">Skill Development</h3>
+                                <p className="text-sm mt-1">Participate in hands-on projects and learning opportunities.</p>
+                            </div>
+                        </SpotlightCard>
                     </div>
-                </div>
 
-                {/* Empty cell */}
-                <div />
+                    <div className="relative flex items-center justify-center">
+                        <span className="absolute text-[#ca0019] text-8xl left-14 font-bold z-0 select-none">05</span>
+                    </div>
 
-                {/* Card #7 */}
-                <div className="relative flex items-center justify-center">
-                    <span className="absolute text-gray-200 text-7xl font-bold z-0 select-none">
-                        07
-                    </span>
-                    <div className="relative z-10 w-full rounded-xl h-56 bg-red-600 p-4   flex flex-col">
-                        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-2">
-                            <GearIcon />
-                        </div>
-                        <h3 className="text-white font-bold text-lg">Heading</h3>
-                        <p className="text-white text-sm mt-1">Text should be here.</p>
+                    <div className="relative flex items-center justify-center">
+                        <SpotlightCard spotlightColor="rgba(191, 0, 0, 0.50)">
+                            <span className="relative text-gray-200 text-7xl font-bold z-0 select-none">06</span>
+                            <div className="relative z-10 w-full rounded-xl h-auto p-4 flex flex-col">
+                                <h3 className="font-bold text-lg">Recognition</h3>
+                                <p className="text-sm mt-1">Get featured on our platforms and earn rewards for contributions.</p>
+                            </div>
+                        </SpotlightCard>
+                    </div>
+
+                    <div />
+
+                    <div className="relative flex items-center justify-center">
+                        <SpotlightCard spotlightColor="rgba(191, 0, 0, 0.50)">
+                            <span className="relative text-gray-200 text-7xl font-bold z-0 select-none">07</span>
+                            <div className="relative z-10 w-full rounded-xl h-auto p-4 flex flex-col">
+                                <h3 className="font-bold text-lg">Exclusive Merchandise</h3>
+                                <p className="text-sm mt-1">Receive branded goodies, T-shirts, and special gifts.</p>
+                            </div>
+                        </SpotlightCard>
                     </div>
                 </div>
             </div>

@@ -15,7 +15,7 @@ function Startups() {
                 Our Innovative Startups
               </h1>
             </div>
-            <h1 className="md:w-[100vw] !w-[140vw]  text-2xl md:text-4xl font-semibold">
+            <h1 className="w-[100vw] text-2xl md:text-4xl font-semibold">
               Pioneering the Future with
               <span className="text-[#ca0019] text-2xl md:text-5xl md:py-2 block mb-5">
                 Disruptive Ideas & Technology

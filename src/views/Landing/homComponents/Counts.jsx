@@ -304,7 +304,7 @@ const   Counts = () => {
     <section 
       id="about" 
       ref={sectionRef}
-      className="relative  px-6 overflow-hidden bg-gradient-to-b from-white to-gray-50"
+      className="relative py-6 px-6 overflow-hidden bg-gray-50"
     >
       {/* Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">

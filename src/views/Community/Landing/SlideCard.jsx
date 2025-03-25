@@ -8,44 +8,45 @@ const testimonials = [
     {
         id: 1,
         quote:
-            "Living in Willow Creek Residences has been an absolute dream! The spacious layout of our duplex provides the perfect balance of privacy and community. The high-quality finishes and thoughtful design make it feel luxurious yet homey. The location in Boulder is ideal, close to great schools, parks, and shopping.",
+            "Being an ambassador has been an incredible journey! The opportunity to organize events and lead a community of like-minded individuals has helped me grow both personally and professionally. The mentorship from regional leads has been invaluable in shaping my leadership skills.",
         name: "Michael Thompson",
-        title: "CEO, Creative Industry",
+        title: "Lead Ambassador",
         avatar: "/placeholder.svg?height=60&width=60",
     },
     {
         id: 2,
         quote:
-            "Living in Willow Creek Residences has been an absolute dream! The spacious layout of our duplex provides the perfect balance of privacy and community. The high-quality finishes and thoughtful design make it feel luxurious yet homey. The location in Boulder is ideal, close to great schools, parks, and shopping.",
+            "The Uniques Community has provided me with a platform to connect with developers and industry experts. Hosting events and engaging with my peers has enhanced my communication skills, and I love being part of a network that fosters innovation and collaboration.",
         name: "Sarah Johnson",
-        title: "Marketing Director",
+        title: "Community Organizer",
         avatar: "/placeholder.svg?height=60&width=60",
     },
     {
         id: 3,
         quote:
-            "Living in Willow Creek Residences has been an absolute dream! The spacious layout of our duplex provides the perfect balance of privacy and community. The high-quality finishes and thoughtful design make it feel luxurious yet homey. The location in Boulder is ideal, close to great schools, parks, and shopping.",
+            "As an ambassador, I’ve learned the importance of teamwork and event planning. Organizing workshops and reporting activities have strengthened my ability to lead and manage a core team effectively. The experience has been nothing short of rewarding!",
         name: "David Williams",
-        title: "Software Engineer",
+        title: "Technical Lead",
         avatar: "/placeholder.svg?height=60&width=60",
     },
     {
         id: 4,
         quote:
-            "Living in Willow Creek Residences has been an absolute dream! The spacious layout of our duplex provides the perfect balance of privacy and community. The high-quality finishes and thoughtful design make it feel luxurious yet homey. The location in Boulder is ideal, close to great schools, parks, and shopping.",
+            "One of the best aspects of being an ambassador is the chance to make a real impact. Whether it's mentoring aspiring developers or planning tech events, I've gained valuable experience that will stay with me throughout my career.",
         name: "Emily Chen",
-        title: "Interior Designer",
+        title: "Event Coordinator",
         avatar: "/placeholder.svg?height=60&width=60",
     },
     {
         id: 5,
         quote:
-            "Living in Willow Creek Residences has been an absolute dream! The spacious layout of our duplex provides the perfect balance of privacy and community. The high-quality finishes and thoughtful design make it feel luxurious yet homey. The location in Boulder is ideal, close to great schools, parks, and shopping.",
+            "The Uniques Community has helped me develop leadership skills while allowing me to engage with the local developer community. The experience of participating in campaigns and networking with professionals has been incredibly beneficial for my career.",
         name: "Robert Miller",
-        title: "Financial Analyst",
+        title: "Program Ambassador",
         avatar: "/placeholder.svg?height=60&width=60",
     },
 ];
+
 
 export default function TestimonialCarousel() {
     const [activeIndex, setActiveIndex] = useState(0);
@@ -92,106 +93,108 @@ export default function TestimonialCarousel() {
     const { prevIndex, nextIndex } = getVisibleIndices();
 
     return (
-        <div className="w-full max-w-6xl mx-auto px-4 py-16">
-            <h2 className="text-center text-5xl font-bold mb-16">
-                <span className="text-gray-900">Benifits </span>
-                <span className="text-gray-400">You will </span>
-                <span className="text-gray-900">Get</span>
-            </h2>
+        <div className="container mx-auto">
+            <div className="w-full max-w-6xl mx-auto px-4 py-16">
+                <h2 className="text-center text-5xl font-bold mb-16">
+                    <span className="text-gray-900">Benifits </span>
+                    <span className="text-gray-400">You will </span>
+                    <span className="text-gray-900">Get</span>
+                </h2>
 
-            <div className="relative h-[500px]">
-                {/* Carousel Track */}
-                <div className="relative w-full h-full">
-                    {/* Previous Card */}
-                    <div
-                        className="absolute top-1/2 left-0 w-[350px] transform-gpu transition-all duration-700 ease-out z-10 opacity-70"
-                        style={{
-                            transform: `translateY(-50%) translateX(${isAnimating ? "0%" : "5%"}) rotate(-6deg) perspective(1000px) rotateY(10deg)`,
-                            transformOrigin: "center right",
-                        }}
-                    >
-                        <TestimonialCard testimonial={testimonials[prevIndex]} variant="light" />
+                <div className="relative h-[500px]">
+                    {/* Carousel Track */}
+                    <div className="relative w-full h-full">
+                        {/* Previous Card */}
+                        <div
+                            className="absolute top-1/2 left-0 w-[350px] sm:w-[250px] md:w-[350px] transform-gpu transition-all duration-700 ease-out z-10 opacity-70"
+                            style={{
+                                transform: `translateY(-50%) translateX(${isAnimating ? "0%" : "5%"}) rotate(-6deg) perspective(1000px) rotateY(10deg)`,
+                                transformOrigin: "center right",
+                            }}
+                        >
+                            <TestimonialCard testimonial={testimonials[prevIndex]} variant="light" />
+                        </div>
+
+                        {/* Active Card */}
+                        <div
+                            className="absolute top-1/2 left-1/2 w-[400px] -translate-x-1/2 -translate-y-1/2 transform-gpu transition-all duration-700 ease-out z-20"
+                            style={{
+                                transform: `translateY(-50%) translateX(-50%) ${isAnimating ? "scale(0.98)" : "scale(1)"}`,
+                            }}
+                        >
+                            <TestimonialCard testimonial={testimonials[activeIndex]} variant="highlight" />
+                        </div>
+
+                        {/* Next Card */}
+                        <div
+                            className="absolute top-1/2 right-0 w-[350px] sm:w-[250px] md:w-[350px] transform-gpu transition-all duration-700 ease-out z-10 opacity-70"
+                            style={{
+                                transform: `translateY(-50%) translateX(${isAnimating ? "0%" : "-5%"}) rotate(6deg) perspective(1000px) rotateY(-10deg)`,
+                                transformOrigin: "center left",
+                            }}
+                        >
+                            <TestimonialCard testimonial={testimonials[nextIndex]} variant="light" />
+                        </div>
                     </div>
 
-                    {/* Active Card */}
-                    <div
-                        className="absolute top-1/2 left-1/2 w-[400px] -translate-x-1/2 -translate-y-1/2 transform-gpu transition-all duration-700 ease-out z-20"
-                        style={{
-                            transform: `translateY(-50%) translateX(-50%) ${isAnimating ? "scale(0.98)" : "scale(1)"}`,
-                        }}
-                    >
-                        <TestimonialCard testimonial={testimonials[activeIndex]} variant="highlight" />
-                    </div>
+                    {/* Curved Navigation Line */}
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-64 h-16 mt-8">
+                        <svg width="100%" height="100%" viewBox="0 0 256 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            {/* Curved background line */}
+                            <path
+                                d="M16 24C48 8 96 0 128 0C160 0 208 8 240 24"
+                                stroke="#E5E7EB"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                            />
 
-                    {/* Next Card */}
-                    <div
-                        className="absolute top-1/2 right-0 w-[350px] transform-gpu transition-all duration-700 ease-out z-10 opacity-70"
-                        style={{
-                            transform: `translateY(-50%) translateX(${isAnimating ? "0%" : "-5%"}) rotate(6deg) perspective(1000px) rotateY(-10deg)`,
-                            transformOrigin: "center left",
-                        }}
-                    >
-                        <TestimonialCard testimonial={testimonials[nextIndex]} variant="light" />
+                            {/* Active position indicator */}
+                            {testimonials.map((_, index) => {
+                                // Calculate position along the curve
+                                const percentage = index / (testimonials.length - 1);
+                                const cx = 16 + percentage * 224;
+                                const cy = 24 - Math.sin(Math.PI * percentage) * 24;
+
+                                return (
+                                    <circle
+                                        key={index}
+                                        cx={cx}
+                                        cy={cy}
+                                        r={index === activeIndex ? 4 : 3}
+                                        fill={index === activeIndex ? "#ca0019" : "white"}
+                                        stroke={index === activeIndex ? "#ca0019" : "#E5E7EB"}
+                                        strokeWidth="2"
+                                        className="transition-all duration-500"
+                                    />
+                                );
+                            })}
+                        </svg>
                     </div>
                 </div>
 
-                {/* Curved Navigation Line */}
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-64 h-16 mt-8">
-                    <svg width="100%" height="100%" viewBox="0 0 256 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        {/* Curved background line */}
-                        <path
-                            d="M16 24C48 8 96 0 128 0C160 0 208 8 240 24"
-                            stroke="#E5E7EB"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                        />
-
-                        {/* Active position indicator */}
-                        {testimonials.map((_, index) => {
-                            // Calculate position along the curve
-                            const percentage = index / (testimonials.length - 1);
-                            const cx = 16 + percentage * 224;
-                            const cy = 24 - Math.sin(Math.PI * percentage) * 24;
-
-                            return (
-                                <circle
-                                    key={index}
-                                    cx={cx}
-                                    cy={cy}
-                                    r={index === activeIndex ? 4 : 3}
-                                    fill={index === activeIndex ? "#ca0019" : "white"}
-                                    stroke={index === activeIndex ? "#ca0019" : "#E5E7EB"}
-                                    strokeWidth="2"
-                                    className="transition-all duration-500"
-                                />
-                            );
-                        })}
-                    </svg>
+                {/* Navigation Buttons */}
+                <div className="flex justify-center mt-8 space-x-4">
+                    <button
+                        onClick={prevSlide}
+                        variant="outline"
+                        size="icon"
+                        className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 border-gray-200 hover:bg-gray-100 hover:text-gray-900"
+                        disabled={isAnimating}
+                    >
+                        <ChevronLeft className="h-5 w-5" />
+                        <span className="sr-only">Previous testimonial</span>
+                    </button>
+                    <button
+                        onClick={nextSlide}
+                        variant="default"
+                        size="icon"
+                        className="w-10 h-10 flex justify-center items-center rounded-full bg-[#ca0017] hover:bg-[#ca0023] text-white"
+                        disabled={isAnimating}
+                    >
+                        <ChevronRight className="h-5 w-5" />
+                        <span className="sr-only">Next testimonial</span>
+                    </button>
                 </div>
-            </div>
-
-            {/* Navigation Buttons */}
-            <div className="flex justify-center mt-8 space-x-4">
-                <button
-                    onClick={prevSlide}
-                    variant="outline"
-                    size="icon"
-                    className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-50 border-gray-200 hover:bg-gray-100 hover:text-gray-900"
-                    disabled={isAnimating}
-                >
-                    <ChevronLeft className="h-5 w-5" />
-                    <span className="sr-only">Previous testimonial</span>
-                </button>
-                <button
-                    onClick={nextSlide}
-                    variant="default"
-                    size="icon"
-                    className="w-10 h-10 flex justify-center items-center rounded-full bg-[#ca0017] hover:bg-[#ca0023] text-white"
-                    disabled={isAnimating}
-                >
-                    <ChevronRight className="h-5 w-5" />
-                    <span className="sr-only">Next testimonial</span>
-                </button>
             </div>
         </div>
     );

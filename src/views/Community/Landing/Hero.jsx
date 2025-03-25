@@ -44,7 +44,7 @@ const Hero = () => {
                         <span>Register</span>
                     </Button>
                 </div>
-                <div className="image-container absolute md:left-[45%] left-0 bottom-[0%] z-[999] w-full md:w-7/12 mt-10 md:mt-0">
+                <div className="image-container absolute md:left-[40%] left-0 bottom-[0%] z-[999] w-full md:w-8/12 mt-10 md:mt-0">
                     <img className="w-full h-auto" src={HeroClip} alt="Clipped Image" />
                 </div>
             </div>
