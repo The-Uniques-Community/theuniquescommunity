@@ -23,6 +23,7 @@ import Startups from "./homComponents/Startups";
 import WhyUs from "./homComponents/WhyUs";
 import TestimonialSectionCarousel from "./homComponents/TestimonialCard";
 import Batches from "./homComponents/Batches";
+import EventForm from "@/utils/event/EventForm";
 
 const index = () => {
   const theme = useTheme();
@@ -281,7 +282,7 @@ const index = () => {
       <section>
         <TrainingTabs />
       </section>
-      
+
       
       
       {/* <div className="spacer py-10"></div> */}
