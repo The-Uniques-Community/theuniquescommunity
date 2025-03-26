@@ -3,6 +3,9 @@ import Loader from "@/utils/Loader";
 import ProtectedRoute from "@/routes/ProtectedRoute";
 
 
+
+
+const EventForm = Loader(lazy(() => import("@/utils/event/EventForm")));
 const AdminLayout = Loader(lazy(() => import("@/layout/Admin")));
 const AdminDashboard = Loader(lazy(() => import("@/views/Admin")));
 const Member = Loader(lazy(() => import("@/views/Admin/Members")));
@@ -27,6 +30,10 @@ const AdminRoutes = {
     {
       path: "/admin/events-overview",
       element: <Event />,
+    },
+    {
+      path: "/admin/events-overview/create",
+      element: <EventForm />,
     },
     {
       path: "/admin/events-overview/view/:id",

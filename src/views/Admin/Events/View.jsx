@@ -354,7 +354,7 @@ const EventView = () => {
 
   // Handle budget navigation
   const handleNavigateToBudget = () => {
-    navigate(`/admin/events/${id}/budget`);
+    navigate(`/admin/events-overview/${id}/budget`);
   };
 
   // Format date for display

@@ -422,7 +422,7 @@ const EventForm = ({ event, onSuccess }) => {
   };
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', p: 2 }}>
+    <Box sx={{  mx: 'auto', p: 2 }}>
        <Snackbar
         open={showSuccess}
         autoHideDuration={6000}
@@ -646,8 +646,8 @@ const EventForm = ({ event, onSuccess }) => {
                 helperText={formik.touched.eventDescription && formik.errors.eventDescription}
               />
               
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+              <Grid spacing={2}>
+                <Grid item xs={12} mb={2} sm={6}>
                   <FormControl fullWidth>
                     <InputLabel id="eventType-label">Event Type</InputLabel>
                     <Select
@@ -668,7 +668,7 @@ const EventForm = ({ event, onSuccess }) => {
                     )}
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12}  sm={6}>
                   <FormControl fullWidth>
                     <InputLabel id="eventStatus-label">Event Status</InputLabel>
                     <Select
@@ -687,8 +687,8 @@ const EventForm = ({ event, onSuccess }) => {
                 </Grid>
               </Grid>
               
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+              <Grid  spacing={2}>
+                <Grid item mb={2} xs={12} sm={6}>
                   <TextField
                     fullWidth
                     id="eventDate"

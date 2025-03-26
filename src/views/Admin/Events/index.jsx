@@ -158,7 +158,7 @@ const index = () => {
   };
 
   const handleCreateEvent = () => {
-    navigate("/admin/events/create");
+    navigate("/admin/events-overview/create");
   };
 
   const handleViewEvent = (eventId) => {
