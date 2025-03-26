@@ -23,7 +23,8 @@ export const createEvent = async (req, res) => {
       eventType,
       eventStatus,
       eventForm,
-      eventGallery, // Add this line
+      eventGallery,
+      sponsors, // Add this line to extract sponsors from request body
     } = req.body;
 
     // Validate required fields
