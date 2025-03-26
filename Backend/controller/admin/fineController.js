@@ -1,6 +1,10 @@
 import Member from "../../models/member/memberModel.js";
 import mongoose from "mongoose";
-// Search for members by various criteria
+
+/**
+ * Search for members by name, email or admission number
+ * @route GET /api/admin/members/search
+ */
 export const searchMembers = async (req, res) => {
   try {
     const { query, batch, limit = 10 } = req.query;
@@ -28,7 +32,7 @@ export const searchMembers = async (req, res) => {
     
     // Execute search
     const members = await Member.find(searchCriteria)
-      .select("fullName admno email batch profilePic fineStatus")
+      .select("fullName admno email batch profilePic fines")
       .limit(parseInt(limit));
     
     // Return search results
@@ -45,18 +49,20 @@ export const searchMembers = async (req, res) => {
   }
 };
 
-// Impose a fine on a member
-// Impose a fine on a member
+/**
+ * Impose a fine on a member
+ * @route POST /api/admin/members/:memberId/fines
+ */
 export const imposeFine = async (req, res) => {
   try {
-    const { memberId } = req.params; // FIXED: Changed from 'id' to 'memberId' to match route parameter
-    const { amount, reason } = req.body;
+    const { memberId } = req.params;
+    const { amount, reason, dateImposed = new Date() } = req.body;
     
     // Validate parameters
-    if (!mongoose.Types.ObjectId.isValid(memberId)) { // FIXED: Updated reference
+    if (!mongoose.Types.ObjectId.isValid(memberId)) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid ID format'
+        message: 'Invalid member ID format'
       });
     }
     
@@ -75,7 +81,7 @@ export const imposeFine = async (req, res) => {
     }
     
     // Find the member
-    const member = await Member.findById(memberId); // FIXED: Updated reference
+    const member = await Member.findById(memberId);
     
     if (!member) {
       return res.status(404).json({
@@ -84,35 +90,31 @@ export const imposeFine = async (req, res) => {
       });
     }
     
-    // Convert current fine to number (handling string values)
-    const currentFine = parseInt(member.fineStatus) || 0;
-    
-    // Add the new fine amount
-    const newFineTotal = currentFine + parseInt(amount);
-    
-    // Update the member's fine status
-    member.fineStatus = newFineTotal.toString();
-    
-    // Add the fine to fine history if available
-    if (Array.isArray(member.fineHistory)) {
-      member.fineHistory.push({
-        amount: parseInt(amount),
-        reason,
-        date: new Date(),
-        status: 'pending' // Assuming new fines start as pending
-      });
-    }
-    
-    // Save the updated member
+    // Create new fine object
+    const newFine = {
+      amount: Number(amount),
+      reason,
+      dateImposed,
+      status: 'pending'
+    };
+
+    // Add fine to member's fines array
+    member.fines.push(newFine);
     await member.save();
     
-    return res.status(200).json({
+    // Get the newly added fine with its generated ID
+    const addedFine = member.fines[member.fines.length - 1];
+
+    return res.status(201).json({
       success: true,
       message: `Fine of ₹${amount} imposed successfully`,
       data: {
+        fine: addedFine,
         memberId: member._id,
         memberName: member.fullName,
-        newFineTotal: member.fineStatus
+        totalPendingFines: member.fines
+          .filter(f => f.status === 'pending')
+          .reduce((sum, fine) => sum + fine.amount, 0)
       }
     });
   } catch (error) {
@@ -125,72 +127,179 @@ export const imposeFine = async (req, res) => {
   }
 };
 
-// Clear fine for a member
-export const clearFine = async (req, res) => {
+/**
+ * Update fine status (mark as paid, waived or pending)
+ * @route PATCH /api/admin/members/:memberId/fines/:fineId
+ */
+export const updateFineStatus = async (req, res) => {
   try {
-    const { memberId } = req.params;
-    
-    // Validate inputs
-    if (!memberId) {
+    const { memberId, fineId } = req.params;
+    const { status, proofOfPaymentId } = req.body;
+
+    // Validate IDs
+    if (!mongoose.Types.ObjectId.isValid(memberId) || 
+        !mongoose.Types.ObjectId.isValid(fineId)) {
       return res.status(400).json({
         success: false,
-        message: "Member ID is required"
+        message: 'Invalid ID format'
       });
     }
-    
+
+    // Validate status
+    if (!status || !['paid', 'waived', 'pending'].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid status. Must be paid, waived, or pending'
+      });
+    }
+
     // Find the member
     const member = await Member.findById(memberId);
     if (!member) {
       return res.status(404).json({
         success: false,
-        message: "Member not found"
+        message: 'Member not found'
       });
     }
+
+    // Find the specific fine
+    const fineIndex = member.fines.findIndex(
+      fine => fine._id.toString() === fineId
+    );
+
+    if (fineIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: 'Fine not found'
+      });
+    }
+
+    // Update fine status
+    member.fines[fineIndex].status = status;
     
-    // Store the previous fine amount for reference
-    const previousFine = member.fineStatus;
-    
-    // Clear the fine
-    member.fineStatus = "0";
+    // Update proof of payment if provided
+    if (proofOfPaymentId && mongoose.Types.ObjectId.isValid(proofOfPaymentId)) {
+      member.fines[fineIndex].proofOfPayment = proofOfPaymentId;
+    }
+
     await member.save();
-    
+
     return res.status(200).json({
       success: true,
-      message: "Fine cleared successfully",
+      message: `Fine marked as ${status} successfully`,
       data: {
-        memberId: member._id,
-        memberName: member.fullName,
-        previousFine,
-        currentFine: "0"
+        fine: member.fines[fineIndex],
+        totalPendingFines: member.fines
+          .filter(f => f.status === 'pending')
+          .reduce((sum, fine) => sum + fine.amount, 0)
       }
     });
   } catch (error) {
+    console.error('Error updating fine status:', error);
     return res.status(500).json({
       success: false,
-      message: "Error clearing fine: " + error.message
+      message: 'Error updating fine status',
+      error: error.message
     });
   }
 };
 
-// Get fine history (optional - for tracking purposes)
-export const getFineHistory = async (req, res) => {
+/**
+ * Remove a fine
+ * @route DELETE /api/admin/members/:memberId/fines/:fineId
+ */
+export const removeFine = async (req, res) => {
+  try {
+    const { memberId, fineId } = req.params;
+
+    // Validate IDs
+    if (!mongoose.Types.ObjectId.isValid(memberId) || 
+        !mongoose.Types.ObjectId.isValid(fineId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid ID format'
+      });
+    }
+
+    // Find the member
+    const member = await Member.findById(memberId);
+    if (!member) {
+      return res.status(404).json({
+        success: false,
+        message: 'Member not found'
+      });
+    }
+
+    // Find and store the fine before removal for reference
+    const fineToRemove = member.fines.find(fine => fine._id.toString() === fineId);
+    if (!fineToRemove) {
+      return res.status(404).json({
+        success: false,
+        message: 'Fine not found'
+      });
+    }
+
+    // Remove the fine
+    member.fines = member.fines.filter(fine => fine._id.toString() !== fineId);
+    await member.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Fine removed successfully',
+      data: {
+        removedFine: fineToRemove,
+        totalPendingFines: member.fines
+          .filter(f => f.status === 'pending')
+          .reduce((sum, fine) => sum + fine.amount, 0)
+      }
+    });
+  } catch (error) {
+    console.error('Error removing fine:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error removing fine',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Get all pending fines for a member
+ * @route GET /api/admin/members/:memberId/fines/pending
+ */
+export const getPendingFines = async (req, res) => {
   try {
     const { memberId } = req.params;
-    
+
+    // Validate ID
+    if (!mongoose.Types.ObjectId.isValid(memberId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid member ID format'
+      });
+    }
+
     // Find the member
     const member = await Member.findById(memberId)
-      .select("fullName admno email batch fineStatus");
+      .select('fullName admno email batch fines')
+      .populate('fines.proofOfPayment');
     
     if (!member) {
       return res.status(404).json({
         success: false,
-        message: "Member not found"
+        message: 'Member not found'
       });
     }
+
+    // Filter pending fines
+    const pendingFines = member.fines.filter(fine => fine.status === 'pending');
     
+    // Calculate total amount
+    const totalAmount = pendingFines.reduce((sum, fine) => sum + fine.amount, 0);
+
     return res.status(200).json({
       success: true,
-      message: "Fine information retrieved successfully",
+      message: 'Pending fines retrieved successfully',
       data: {
         member: {
           id: member._id,
@@ -199,14 +308,214 @@ export const getFineHistory = async (req, res) => {
           email: member.email,
           batch: member.batch
         },
-        currentFine: member.fineStatus
-        // You could add transaction history here if you implement it
+        pendingFines,
+        totalAmount
       }
     });
   } catch (error) {
+    console.error('Error retrieving pending fines:', error);
     return res.status(500).json({
       success: false,
-      message: "Error retrieving fine history: " + error.message
+      message: 'Error retrieving pending fines',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Get fine history for a member
+ * @route GET /api/admin/members/:memberId/fines
+ */
+export const getFineHistory = async (req, res) => {
+  try {
+    const { memberId } = req.params;
+    const { status } = req.query;
+
+    // Validate ID
+    if (!mongoose.Types.ObjectId.isValid(memberId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid member ID format'
+      });
+    }
+
+    // Find the member
+    const member = await Member.findById(memberId)
+      .select('fullName admno email batch fines')
+      .populate('fines.proofOfPayment');
+    
+    if (!member) {
+      return res.status(404).json({
+        success: false,
+        message: 'Member not found'
+      });
+    }
+
+    // Filter by status if provided
+    let fines = member.fines;
+    if (status && ['pending', 'paid', 'waived'].includes(status)) {
+      fines = fines.filter(fine => fine.status === status);
+    }
+
+    // Sort by date imposed (newest first)
+    fines.sort((a, b) => new Date(b.dateImposed) - new Date(a.dateImposed));
+
+    // Calculate totals
+    const totals = {
+      total: member.fines.reduce((sum, fine) => sum + fine.amount, 0),
+      pending: member.fines
+        .filter(f => f.status === 'pending')
+        .reduce((sum, fine) => sum + fine.amount, 0),
+      paid: member.fines
+        .filter(f => f.status === 'paid')
+        .reduce((sum, fine) => sum + fine.amount, 0),
+      waived: member.fines
+        .filter(f => f.status === 'waived')
+        .reduce((sum, fine) => sum + fine.amount, 0)
+    };
+
+    return res.status(200).json({
+      success: true,
+      message: 'Fine history retrieved successfully',
+      data: {
+        member: {
+          id: member._id,
+          name: member.fullName,
+          admno: member.admno,
+          email: member.email,
+          batch: member.batch
+        },
+        fines,
+        totals
+      }
+    });
+  } catch (error) {
+    console.error('Error retrieving fine history:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error retrieving fine history',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Get fine statistics across all members
+ * @route GET /api/admin/fines/statistics
+ */
+export const getFineStatistics = async (req, res) => {
+  try {
+    const members = await Member.find()
+      .select('fullName fines')
+      .populate('fines.proofOfPayment');
+    
+    const statistics = {
+      totalFinesIssued: 0,
+      totalAmount: 0,
+      totalPendingAmount: 0,
+      totalPaidAmount: 0,
+      totalWaivedAmount: 0,
+      membersWithPendingFines: 0,
+      recentFines: []
+    };
+
+    const allFines = [];
+    
+    members.forEach(member => {
+      if (!member.fines || member.fines.length === 0) return;
+      
+      // Count total fines
+      statistics.totalFinesIssued += member.fines.length;
+      
+      // Sum amounts by status
+      member.fines.forEach(fine => {
+        statistics.totalAmount += fine.amount;
+        
+        if (fine.status === 'pending') {
+          statistics.totalPendingAmount += fine.amount;
+        } else if (fine.status === 'paid') {
+          statistics.totalPaidAmount += fine.amount;
+        } else if (fine.status === 'waived') {
+          statistics.totalWaivedAmount += fine.amount;
+        }
+        
+        // Add to all fines for sorting later
+        allFines.push({
+          ...fine.toObject(),
+          memberName: member.fullName,
+          memberId: member._id
+        });
+      });
+      
+      // Count members with pending fines
+      if (member.fines.some(fine => fine.status === 'pending')) {
+        statistics.membersWithPendingFines++;
+      }
+    });
+    
+    // Get 5 most recent fines
+    statistics.recentFines = allFines
+      .sort((a, b) => new Date(b.dateImposed) - new Date(a.dateImposed))
+      .slice(0, 5);
+    
+    return res.status(200).json({
+      success: true,
+      message: 'Fine statistics retrieved successfully',
+      data: statistics
+    });
+  } catch (error) {
+    console.error('Error retrieving fine statistics:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error retrieving fine statistics',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Get members with pending fines
+ * @route GET /api/admin/fines/pending/members
+ */
+export const getMembersWithPendingFines = async (req, res) => {
+  try {
+    const members = await Member.find({
+      'fines.status': 'pending'
+    }).select('fullName admno email batch fines');
+    
+    const membersWithDetails = members.map(member => {
+      const pendingFines = member.fines.filter(fine => fine.status === 'pending');
+      const totalPendingAmount = pendingFines.reduce((sum, fine) => sum + fine.amount, 0);
+      
+      return {
+        id: member._id,
+        name: member.fullName,
+        admno: member.admno,
+        email: member.email,
+        batch: member.batch,
+        pendingFinesCount: pendingFines.length,
+        totalPendingAmount
+      };
+    });
+    
+    // Sort by amount (highest first)
+    membersWithDetails.sort((a, b) => b.totalPendingAmount - a.totalPendingAmount);
+    
+    return res.status(200).json({
+      success: true,
+      message: 'Members with pending fines retrieved successfully',
+      data: {
+        count: membersWithDetails.length,
+        members: membersWithDetails
+      }
+    });
+  } catch (error) {
+    console.error('Error retrieving members with pending fines:', error);
+    return res.status(500).json({
+      
+      success: false,
+      message: 'Error retrieving members with pending fines',
+      error: error.message
     });
   }
 };

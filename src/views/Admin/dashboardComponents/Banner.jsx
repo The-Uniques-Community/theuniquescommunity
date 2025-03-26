@@ -1,5 +1,6 @@
 import React from "react";
-import { Box, Button, Link, Typography, Stack } from "@mui/material";
+import { Box, Button, Typography, Stack } from "@mui/material";
+import { Link } from "react-router";
 
 
 export default function Banner(props) {
@@ -59,6 +60,7 @@ export default function Banner(props) {
       </Typography>
 
       <Stack direction="row" alignItems="center" spacing={4}>
+        <Link to="members-overview">
         <Button
           variant="contained"
           sx={{
@@ -70,15 +72,16 @@ export default function Banner(props) {
             px: "27px",
             ":hover": { backgroundColor: "#f4f4f4" },
           }}
-        >
+          >
             Manage Students
         </Button>
-        <Link href="#" underline="none">
+          </Link>
+        <Link to="events-overview" underline="none">
           <Typography
             variant="body2"
             sx={{ color: "white", fontWeight: 500 }}
           >
-            Go to Profile
+            Manage Events
           </Typography>
         </Link>
       </Stack>

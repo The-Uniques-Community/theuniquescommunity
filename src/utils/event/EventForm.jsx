@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Button, 
-  Card, 
-  CardContent, 
-  TextField, 
-  Typography, 
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  TextField,
+  Typography,
   Stack,
   MenuItem,
   Select,
@@ -26,7 +26,7 @@ import {
   ImageList,
   ImageListItem,
   CircularProgress,
-  Snackbar, 
+  Snackbar,
   Alert,
   InputAdornment
 } from '@mui/material';
@@ -41,77 +41,102 @@ import * as Yup from 'yup';
 import axios from 'axios';
 
 const EVENT_TYPES = [
-  "Workshop", "Seminar", "Webinar", "Hackathon", "Competition", 
-  "Conference", "Fest", "Cultural", "Ideathon", "Sports", 
-  "Talk Show", "Meetup", "Others"
+  "Workshop",
+  "Seminar",
+  "Webinar",
+  "Hackathon",
+  "Competition",
+  "Conference",
+  "Fest",
+  "Cultural",
+  "Ideathon",
+  "Sports",
+  "Talk Show",
+  "Meetup",
+  "Others",
 ];
 
 const EVENT_BATCHES = [
-  "The Uniques 1.0", "The Uniques 2.0", "The Uniques 3.0", 
-  "The Uniques 4.0", "The Uniques 5.0"
+  "The Uniques 1.0",
+  "The Uniques 2.0",
+  "The Uniques 3.0",
+  "The Uniques 4.0",
+  "The Uniques 5.0",
 ];
 
 const GUEST_TAGS = [
-  "speaker", "moderator", "panelist", "judge", "mentor", 
-  "organizer", "sponsor", "partner", "chief guest", "others"
+  "speaker",
+  "moderator",
+  "panelist",
+  "judge",
+  "mentor",
+  "organizer",
+  "sponsor",
+  "partner",
+  "chief guest",
+  "others",
 ];
 
 const FIELD_TYPES = [
-  "text", "email", "number", "select", "checkbox", 
-  "radio", "date", "textarea", "file"
+  "text",
+  "email",
+  "number",
+  "select",
+  "checkbox",
+  "radio",
+  "date",
+  "textarea",
+  "file",
 ];
 
 // Form field validation schema
 const validationSchema = Yup.object({
-  eventName: Yup.string().required('Event name is required'),
-  eventDescription: Yup.string().required('Event description is required'),
-  eventType: Yup.string().required('Event type is required'),
+  eventName: Yup.string().required("Event name is required"),
+  eventDescription: Yup.string().required("Event description is required"),
+  eventType: Yup.string().required("Event type is required"),
   eventDate: Yup.string().nullable(),
   eventTime: Yup.string(),
   eventVenue: Yup.string(),
-  eventOrganizerBatch: Yup.string()
+  eventOrganizerBatch: Yup.string(),
 });
 
 // New guest form validation (using your model's field names)
 const guestValidationSchema = Yup.object({
-  guestName: Yup.string().required('Guest name is required'),
-  guestEmail: Yup.string().email('Invalid email'),
+  guestName: Yup.string().required("Guest name is required"),
+  guestEmail: Yup.string().email("Invalid email"),
   guestCompany: Yup.string(),
-  guestDesignation: Yup.string()
+  guestDesignation: Yup.string(),
 });
 
 const EventForm = ({ event, onSuccess }) => {
   // First define isEdit before using it in state declarations
   const isEdit = Boolean(event);
-  
+
   const [formFields, setFormFields] = useState(
     event?.eventForm?.formFeilds || []
   );
   const [bannerFile, setBannerFile] = useState(null);
   const [bannerPreview, setBannerPreview] = useState(
-    event?.eventBanner?.fileUrl || ''
+    event?.eventBanner?.fileUrl || ""
   );
   // Add gallery states
   const [galleryFiles, setGalleryFiles] = useState([]);
   const [galleryPreviews, setGalleryPreviews] = useState([]);
   const [replaceExistingGallery, setReplaceExistingGallery] = useState(false);
   const [existingGallery, setExistingGallery] = useState([]);
-  
+
   const [allGuests, setAllGuests] = useState([]);
   const [openGuestDialog, setOpenGuestDialog] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
-  
-  // Sponsor states - now using isEdit which is defined above
-  const [hasSponsors, setHasSponsors] = useState(isEdit && event?.sponsors && event.sponsors.length > 0);
-  const [sponsors, setSponsors] = useState(isEdit && event?.sponsors ? [...event.sponsors] : []);
- 
+
+  const isEdit = Boolean(event);
 
   // Fetch all guests on component mount
   useEffect(() => {
     fetchGuests();
-    
+
     // If editing an event, fetch its gallery images
     if (isEdit && event?._id) {
       fetchEventGallery(event._id);
@@ -120,7 +145,9 @@ const EventForm = ({ event, onSuccess }) => {
 
   const fetchGuests = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/guest/get-all-guests");
+      const response = await axios.get(
+        "http://localhost:5000/api/guest/get-all-guests"
+      );
       setAllGuests(response.data.guests || []);
     } catch (error) {
       console.error("Error fetching guests:", error);
@@ -130,7 +157,10 @@ const EventForm = ({ event, onSuccess }) => {
   // Fetch event gallery images
   const fetchEventGallery = async (eventId) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/events/${eventId}?populate=gallery`, { withCredentials: true });
+      const response = await axios.get(
+        `http://localhost:5000/api/events/${eventId}?populate=gallery`,
+        { withCredentials: true }
+      );
       if (response.data.event && response.data.event.eventGallery) {
         setExistingGallery(response.data.event.eventGallery || []);
       }
@@ -145,7 +175,7 @@ const EventForm = ({ event, onSuccess }) => {
     if (!file) return;
 
     setBannerFile(file);
-    
+
     // Create preview URL
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -159,13 +189,13 @@ const EventForm = ({ event, onSuccess }) => {
     const files = Array.from(e.target.files);
     if (!files.length) return;
 
-    setGalleryFiles(prev => [...prev, ...files]);
-    
+    setGalleryFiles((prev) => [...prev, ...files]);
+
     // Create preview URLs for all selected files
-    files.forEach(file => {
+    files.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setGalleryPreviews(prev => [...prev, reader.result]);
+        setGalleryPreviews((prev) => [...prev, reader.result]);
       };
       reader.readAsDataURL(file);
     });
@@ -173,115 +203,128 @@ const EventForm = ({ event, onSuccess }) => {
 
   // Remove a gallery file from selection
   const removeGalleryFile = (index) => {
-    setGalleryFiles(prev => prev.filter((_, i) => i !== index));
-    setGalleryPreviews(prev => prev.filter((_, i) => i !== index));
+    setGalleryFiles((prev) => prev.filter((_, i) => i !== index));
+    setGalleryPreviews((prev) => prev.filter((_, i) => i !== index));
   };
-  
+
   const formatDateForInput = (dateString) => {
-    if (!dateString) return '';
-    
+    if (!dateString) return "";
+
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return '';
-    
-    return date.toISOString().split('T')[0]; // Returns YYYY-MM-DD
+    if (isNaN(date.getTime())) return "";
+
+    return date.toISOString().split("T")[0]; // Returns YYYY-MM-DD
   };
 
   const formik = useFormik({
     initialValues: {
-      eventName: event?.eventName || '',
-      eventDescription: event?.eventDescription || '',
-      eventBanner: event?.eventBanner || '',
-      eventDate: formatDateForInput(event?.eventDate) || '',
-      eventTime: event?.eventTime || '',
-      eventVenue: event?.eventVenue || '',
-      eventOrganizerBatch: event?.eventOrganizerBatch || '',
-      eventType: event?.eventType || '',
-      eventStatus: event?.eventStatus || 'upcoming',
-      eventGuests: event?.eventGuests || []
+      eventName: event?.eventName || "",
+      eventDescription: event?.eventDescription || "",
+      eventBanner: event?.eventBanner || "",
+      eventDate: formatDateForInput(event?.eventDate) || "",
+      eventTime: event?.eventTime || "",
+      eventVenue: event?.eventVenue || "",
+      eventOrganizerBatch: event?.eventOrganizerBatch || "",
+      eventType: event?.eventType || "",
+      eventStatus: event?.eventStatus || "upcoming",
+      eventGuests: event?.eventGuests || [],
     },
     validationSchema,
     onSubmit: async (values) => {
       try {
         setLoading(true);
-        
+
         let eventId = isEdit ? event._id : null;
         let bannerId = values.eventBanner;
-        
+
         // Step 1: Handle banner upload if a new file was selected
         if (bannerFile) {
           const bannerFormData = new FormData();
-          bannerFormData.append('files', bannerFile);
-          bannerFormData.append('eventName', values.eventName);
-          bannerFormData.append('fileKey', 'eventBanner');
-          
+          bannerFormData.append("files", bannerFile);
+          bannerFormData.append("eventName", values.eventName);
+          bannerFormData.append("fileKey", "eventBanner");
+
           // If editing, include the event ID to update existing banner
           if (isEdit) {
-            bannerFormData.append('eventId', eventId);
+            bannerFormData.append("eventId", eventId);
           }
-          
+
           try {
             const uploadResponse = await axios.post(
-              'http://localhost:5000/upload/event_file_upload', 
+              "http://localhost:5000/upload/event_file_upload",
               bannerFormData
             );
-            
-            if (uploadResponse.data.files && uploadResponse.data.files.length > 0) {
+
+            if (
+              uploadResponse.data.files &&
+              uploadResponse.data.files.length > 0
+            ) {
               bannerId = uploadResponse.data.files[0]._id;
-              console.log('Banner uploaded successfully:', uploadResponse.data);
+              console.log("Banner uploaded successfully:", uploadResponse.data);
             }
           } catch (uploadError) {
-            console.error('Error uploading banner:', uploadError);
+            console.error("Error uploading banner:", uploadError);
             // Continue with form submission even if upload fails
           }
         }
 
-        const galleryIds = []
-        
+        const galleryIds = [];
+
         // Step 2: Handle gallery uploads if any
         if (galleryFiles && galleryFiles.length > 0) {
           const galleryFormData = new FormData();
-          
+
           // Add each gallery file to form data
           for (const file of galleryFiles) {
-            galleryFormData.append('files', file);
+            galleryFormData.append("files", file);
           }
-          
-          galleryFormData.append('eventName', values.eventName);
-          galleryFormData.append('fileKey', 'eventGallery');
-          
+
+          galleryFormData.append("eventName", values.eventName);
+          galleryFormData.append("fileKey", "eventGallery");
+
           // If editing, include the event ID to link files to existing event
           // and specify whether to replace existing gallery or add to it
           if (isEdit) {
-            galleryFormData.append('eventId', eventId);
-            galleryFormData.append('replaceGallery', replaceExistingGallery ? 'true' : 'false');
+            galleryFormData.append("eventId", eventId);
+            galleryFormData.append(
+              "replaceGallery",
+              replaceExistingGallery ? "true" : "false"
+            );
           }
-          
+
           try {
             const galleryResponse = await axios.post(
-              'http://localhost:5000/upload/event_file_upload', 
+              "http://localhost:5000/upload/event_file_upload",
               galleryFormData
             );
-            
-            if (galleryResponse.data.files && galleryResponse.data.files.length > 0) {
-              galleryIds.push(...galleryResponse.data.files.map(file => file._id));
+
+            if (
+              galleryResponse.data.files &&
+              galleryResponse.data.files.length > 0
+            ) {
+              galleryIds.push(
+                ...galleryResponse.data.files.map((file) => file._id)
+              );
             }
-            console.log('Gallery uploads processed:', galleryResponse.data);
-            
+            console.log("Gallery uploads processed:", galleryResponse.data);
+
             // No need to update the form values as the backend handles the connections
           } catch (galleryError) {
-            console.error('Error uploading gallery images:', galleryError);
+            console.error("Error uploading gallery images:", galleryError);
             // Continue with form submission even if gallery upload fails
           }
         }
-        
+
         // Step 3: Format event data for submission
         const formattedValues = { ...values };
         if (formattedValues.eventDate) {
-          formattedValues.eventDate = new Date(formattedValues.eventDate).toISOString();
+          formattedValues.eventDate = new Date(
+            formattedValues.eventDate
+          ).toISOString();
         }
 
-        console.log('eventGallery', galleryIds);
-        
+        console.log("eventGallery", galleryIds);
+
         const eventData = {
           ...formattedValues,
           eventBanner: bannerId,
@@ -292,23 +335,31 @@ const EventForm = ({ event, onSuccess }) => {
           // Include sponsors data if hasSponsors is true
           sponsors: hasSponsors ? sponsors : []
         };
-        
+
         // Step 4: Create or update the event
         let response;
         if (isEdit) {
-          response = await axios.put(`http://localhost:5000/api/events/${eventId}`, eventData, { withCredentials: true });
+          response = await axios.put(
+            `http://localhost:5000/api/events/${eventId}`,
+            eventData,
+            { withCredentials: true }
+          );
         } else {
-          response = await axios.post('http://localhost:5000/api/events', eventData, { withCredentials: true });
+          response = await axios.post(
+            "http://localhost:5000/api/events",
+            eventData,
+            { withCredentials: true }
+          );
           eventId = response.data.event._id; // Get new event ID for guest linking
         }
-        
+
         //toast and redirect
         if (response.data.success || response.data.event) {
           // Set success message based on whether creating or editing
-          const message = isEdit 
-            ? `Event "${values.eventName}" has been updated successfully!` 
+          const message = isEdit
+            ? `Event "${values.eventName}" has been updated successfully!`
             : `Event "${values.eventName}" has been created successfully!`;
-          
+
           setSuccessMessage(message);
           setShowSuccess(true);
           formik.resetForm();
@@ -316,110 +367,109 @@ const EventForm = ({ event, onSuccess }) => {
             onSuccess(response.data.event);
           }
         }
-     
-          
- 
-        
       } catch (error) {
-        console.error('Error saving event:', error);
-        setSuccessMessage('');
+        console.error("Error saving event:", error);
+        setSuccessMessage("");
         setShowSuccess(false);
         // Show error to user (you could set state here to display an error message)
       } finally {
         setLoading(false);
       }
-    }
+    },
   });
-  
+
   // Guest dialog form
   const guestFormik = useFormik({
     initialValues: {
-      guestName: '',
-      guestEmail: '',
-      guestContact: '',
-      guestLinkedin: '',
-      guestCompany: '',
-      guestDesignation: '',
-      guestImage: ''
+      guestName: "",
+      guestEmail: "",
+      guestContact: "",
+      guestLinkedin: "",
+      guestCompany: "",
+      guestDesignation: "",
+      guestImage: "",
     },
     validationSchema: guestValidationSchema,
     onSubmit: async (values) => {
       try {
-        const response = await axios.post('http://localhost:5000/api/guest/add-guest', values);
+        const response = await axios.post(
+          "http://localhost:5000/api/guest/add-guest",
+          values
+        );
         if (response.data.success) {
           // Add the new guest to the list and close dialog
           setAllGuests([...allGuests, response.data.guest]);
           setOpenGuestDialog(false);
-          
+
           // Reset the form
           guestFormik.resetForm();
         }
       } catch (error) {
-        console.error('Error creating guest:', error);
+        console.error("Error creating guest:", error);
       }
-    }
+    },
   });
-  
+
   const addGuest = () => {
-    formik.setFieldValue('eventGuests', [
+    formik.setFieldValue("eventGuests", [
       ...formik.values.eventGuests,
-      { guestId: '', guestTag: 'others' }
+      { guestId: "", guestTag: "others" },
     ]);
   };
-  
+
   const removeGuest = (index) => {
     const newGuests = [...formik.values.eventGuests];
     newGuests.splice(index, 1);
-    formik.setFieldValue('eventGuests', newGuests);
+    formik.setFieldValue("eventGuests", newGuests);
   };
-  
+
   const handleGuestChange = (index, guest) => {
     const newGuests = [...formik.values.eventGuests];
     newGuests[index].guestId = guest._id;
-    formik.setFieldValue('eventGuests', newGuests);
+    formik.setFieldValue("eventGuests", newGuests);
   };
-  
+
   const addFormField = () => {
     setFormFields([
       ...formFields,
       {
         fieldName: `field_${formFields.length + 1}`,
-        fieldType: 'text',
-        fieldLabel: '',
-        placeholder: '',
+        fieldType: "text",
+        fieldLabel: "",
+        placeholder: "",
         required: false,
-        options: []
-      }
+        options: [],
+      },
     ]);
   };
-  
+
   const removeFormField = (index) => {
     const newFields = [...formFields];
     newFields.splice(index, 1);
     setFormFields(newFields);
   };
-  
+
   const updateFormField = (index, field, value) => {
     const newFields = [...formFields];
     newFields[index][field] = value;
     setFormFields(newFields);
   };
-  
+
   const addOption = (fieldIndex) => {
     const newFields = [...formFields];
     if (!newFields[fieldIndex].options) {
       newFields[fieldIndex].options = [];
     }
-    newFields[fieldIndex].options.push('');
+    newFields[fieldIndex].options.push("");
     setFormFields(newFields);
   };
-  
+
   const updateOption = (fieldIndex, optionIndex, value) => {
     const newFields = [...formFields];
     newFields[fieldIndex].options[optionIndex] = value;
     setFormFields(newFields);
   };
-  
+
   const removeOption = (fieldIndex, optionIndex) => {
     const newFields = [...formFields];
     newFields[fieldIndex].options.splice(optionIndex, 1);
@@ -428,74 +478,85 @@ const EventForm = ({ event, onSuccess }) => {
 
   // Find guest details by ID
   const findGuestById = (id) => {
-    return allGuests.find(guest => guest._id === id) || null;
+    return allGuests.find((guest) => guest._id === id) || null;
   };
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', p: 2 }}>
-       <Snackbar
+    <Box sx={{ mx: "auto", p: 2 }}>
+      <Snackbar
         open={showSuccess}
         autoHideDuration={6000}
         onClose={() => setShowSuccess(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert 
-          onClose={() => setShowSuccess(false)} 
-          severity="success" 
+        <Alert
+          onClose={() => setShowSuccess(false)}
+          severity="success"
           variant="filled"
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           {successMessage}
         </Alert>
       </Snackbar>
+      <Button
+        startIcon={<ArrowBack />}
+        onClick={() => navigate(-1)}
+        sx={{ mb: 1 }}
+      >
+        Back to Event
+      </Button>
       <form onSubmit={formik.handleSubmit}>
         <Card elevation={0} sx={{ mb: 4, borderRadius: 2 }}>
           <CardContent>
-            <Typography variant="h5" component="h2" sx={{ mb: 3, fontWeight: 500 }}>
-              {isEdit ? 'Edit Event' : 'Create New Event'}
+            <Typography
+              variant="h5"
+              component="h2"
+              sx={{ mb: 3, fontWeight: 500 }}
+            >
+              {isEdit ? "Edit Event" : "Create New Event"}
             </Typography>
-            
+
             {/* Banner Upload */}
-            <Box 
-              sx={{ 
-                mb: 3, 
-                border: '1px dashed #ccc', 
+            <Box
+              sx={{
+                mb: 3,
+                border: "1px dashed #ccc",
                 borderRadius: 2,
                 p: 2,
-                textAlign: 'center',
-                position: 'relative'
+                textAlign: "center",
+                position: "relative",
               }}
             >
               <input
                 type="file"
                 accept="image/*"
                 id="banner-upload"
-                style={{ display: 'none' }}
+                style={{ display: "none" }}
                 onChange={handleBannerChange}
               />
-              
+
               {bannerPreview ? (
-                <Box sx={{ position: 'relative' }}>
-                  <img 
-                    src={bannerPreview} 
-                    alt="Event Banner" 
-                    style={{ 
-                      maxWidth: '100%', 
-                      maxHeight: '200px',
-                      borderRadius: '8px'
-                    }} 
+                <Box sx={{ position: "relative" }}>
+                  <img
+                    src={bannerPreview}
+                    alt="Event Banner"
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "200px",
+                      borderRadius: "8px",
+                    }}
                   />
                   <IconButton
-                    sx={{ 
-                      position: 'absolute', 
-                      top: 8, 
+                    sx={{
+                      position: "absolute",
+                      top: 8,
                       right: 8,
-                      bgcolor: 'rgba(255,255,255,0.7)' 
+                      bgcolor: "rgba(255,255,255,0.7)",
                     }}
                     onClick={() => {
                       setBannerFile(null);
-                      setBannerPreview('');
-                      formik.setFieldValue('eventBanner', '');
+                      setBannerPreview("");
+                      formik.setFieldValue("eventBanner", "");
                     }}
                   >
                     <DeleteIcon />
@@ -517,32 +578,43 @@ const EventForm = ({ event, onSuccess }) => {
                 </label>
               )}
             </Box>
-            
+
             {/* Gallery Upload - NEW SECTION */}
-            <Box 
-              sx={{ 
-                mb: 3, 
-                border: '1px dashed #ccc', 
+            <Box
+              sx={{
+                mb: 3,
+                border: "1px dashed #ccc",
                 borderRadius: 2,
                 p: 2,
-                textAlign: 'center',
-                position: 'relative'
+                textAlign: "center",
+                position: "relative",
               }}
             >
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6" component="h3" sx={{ fontWeight: 500 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 2,
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  component="h3"
+                  sx={{ fontWeight: 500 }}
+                >
                   Event Gallery
                 </Typography>
-                
+
                 <input
                   type="file"
                   accept="image/*"
                   id="gallery-upload"
                   multiple
-                  style={{ display: 'none' }}
+                  style={{ display: "none" }}
                   onChange={handleGalleryChange}
                 />
-                
+
                 <label htmlFor="gallery-upload">
                   <Button
                     component="span"
@@ -554,65 +626,81 @@ const EventForm = ({ event, onSuccess }) => {
                   </Button>
                 </label>
               </Box>
-              
+
               {isEdit && existingGallery.length > 0 && (
                 <Box sx={{ mb: 2 }}>
-                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 500 }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ mb: 1, fontWeight: 500 }}
+                  >
                     Existing Gallery Images ({existingGallery.length})
                   </Typography>
-                  
+
                   <FormControlLabel
                     control={
                       <Checkbox
                         checked={replaceExistingGallery}
-                        onChange={(e) => setReplaceExistingGallery(e.target.checked)}
+                        onChange={(e) =>
+                          setReplaceExistingGallery(e.target.checked)
+                        }
                       />
                     }
                     label="Replace existing gallery with new uploads"
                   />
-                  
-                  <ImageList sx={{ maxHeight: 200, overflow: 'auto' }} cols={4} rowHeight={100}>
+
+                  <ImageList
+                    sx={{ maxHeight: 200, overflow: "auto" }}
+                    cols={4}
+                    rowHeight={100}
+                  >
                     {existingGallery.map((galleryItem, index) => (
                       <ImageListItem key={galleryItem._id || index}>
                         <img
                           src={galleryItem.fileUrl}
                           alt={`Gallery image ${index + 1}`}
                           loading="lazy"
-                          style={{ objectFit: 'cover', height: '100%' }}
+                          style={{ objectFit: "cover", height: "100%" }}
                         />
                       </ImageListItem>
                     ))}
                   </ImageList>
                 </Box>
               )}
-              
+
               {/* New Gallery Uploads */}
               {galleryPreviews.length > 0 && (
                 <Box>
-                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 500 }}>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ mb: 1, fontWeight: 500 }}
+                  >
                     New Images to Upload ({galleryPreviews.length})
                   </Typography>
-                  
-                  <ImageList sx={{ maxHeight: 200, overflow: 'auto' }} cols={4} rowHeight={100}>
+
+                  <ImageList
+                    sx={{ maxHeight: 200, overflow: "auto" }}
+                    cols={4}
+                    rowHeight={100}
+                  >
                     {galleryPreviews.map((preview, index) => (
-                      <ImageListItem key={index} sx={{ position: 'relative' }}>
+                      <ImageListItem key={index} sx={{ position: "relative" }}>
                         <img
                           src={preview}
                           alt={`Preview ${index + 1}`}
                           loading="lazy"
-                          style={{ objectFit: 'cover', height: '100%' }}
+                          style={{ objectFit: "cover", height: "100%" }}
                         />
                         <IconButton
                           size="small"
                           sx={{
-                            position: 'absolute',
+                            position: "absolute",
                             top: 0,
                             right: 0,
-                            bgcolor: 'rgba(0,0,0,0.5)',
-                            color: 'white',
-                            '&:hover': {
-                              bgcolor: 'rgba(0,0,0,0.7)',
-                            }
+                            bgcolor: "rgba(0,0,0,0.5)",
+                            color: "white",
+                            "&:hover": {
+                              bgcolor: "rgba(0,0,0,0.7)",
+                            },
                           }}
                           onClick={() => removeGalleryFile(index)}
                         >
@@ -623,14 +711,19 @@ const EventForm = ({ event, onSuccess }) => {
                   </ImageList>
                 </Box>
               )}
-              
+
               {galleryPreviews.length === 0 && existingGallery.length === 0 && (
-                <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', mt: 2 }}>
-                  No gallery images selected. Click "Add Images" to upload event photos.
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ fontStyle: "italic", mt: 2 }}
+                >
+                  No gallery images selected. Click "Add Images" to upload event
+                  photos.
                 </Typography>
               )}
             </Box>
-            
+
             <Stack spacing={3}>
               <TextField
                 fullWidth
@@ -639,10 +732,12 @@ const EventForm = ({ event, onSuccess }) => {
                 label="Event Name"
                 value={formik.values.eventName}
                 onChange={formik.handleChange}
-                error={formik.touched.eventName && Boolean(formik.errors.eventName)}
+                error={
+                  formik.touched.eventName && Boolean(formik.errors.eventName)
+                }
                 helperText={formik.touched.eventName && formik.errors.eventName}
               />
-              
+
               <TextField
                 fullWidth
                 id="eventDescription"
@@ -652,12 +747,18 @@ const EventForm = ({ event, onSuccess }) => {
                 rows={4}
                 value={formik.values.eventDescription}
                 onChange={formik.handleChange}
-                error={formik.touched.eventDescription && Boolean(formik.errors.eventDescription)}
-                helperText={formik.touched.eventDescription && formik.errors.eventDescription}
+                error={
+                  formik.touched.eventDescription &&
+                  Boolean(formik.errors.eventDescription)
+                }
+                helperText={
+                  formik.touched.eventDescription &&
+                  formik.errors.eventDescription
+                }
               />
-              
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+
+              <Grid spacing={2}>
+                <Grid item xs={12} mb={2} sm={6}>
                   <FormControl fullWidth>
                     <InputLabel id="eventType-label">Event Type</InputLabel>
                     <Select
@@ -667,14 +768,21 @@ const EventForm = ({ event, onSuccess }) => {
                       value={formik.values.eventType}
                       onChange={formik.handleChange}
                       label="Event Type"
-                      error={formik.touched.eventType && Boolean(formik.errors.eventType)}
+                      error={
+                        formik.touched.eventType &&
+                        Boolean(formik.errors.eventType)
+                      }
                     >
                       {EVENT_TYPES.map((type) => (
-                        <MenuItem key={type} value={type}>{type}</MenuItem>
+                        <MenuItem key={type} value={type}>
+                          {type}
+                        </MenuItem>
                       ))}
                     </Select>
                     {formik.touched.eventType && formik.errors.eventType && (
-                      <FormHelperText error>{formik.errors.eventType}</FormHelperText>
+                      <FormHelperText error>
+                        {formik.errors.eventType}
+                      </FormHelperText>
                     )}
                   </FormControl>
                 </Grid>
@@ -696,9 +804,9 @@ const EventForm = ({ event, onSuccess }) => {
                   </FormControl>
                 </Grid>
               </Grid>
-              
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+
+              <Grid spacing={2}>
+                <Grid item mb={2} xs={12} sm={6}>
                   <TextField
                     fullWidth
                     id="eventDate"
@@ -730,7 +838,7 @@ const EventForm = ({ event, onSuccess }) => {
                   />
                 </Grid>
               </Grid>
-              
+
               <TextField
                 fullWidth
                 id="eventVenue"
@@ -739,9 +847,11 @@ const EventForm = ({ event, onSuccess }) => {
                 value={formik.values.eventVenue}
                 onChange={formik.handleChange}
               />
-              
+
               <FormControl fullWidth>
-                <InputLabel id="eventOrganizerBatch-label">Organizer Batch</InputLabel>
+                <InputLabel id="eventOrganizerBatch-label">
+                  Organizer Batch
+                </InputLabel>
                 <Select
                   labelId="eventOrganizerBatch-label"
                   id="eventOrganizerBatch"
@@ -751,24 +861,33 @@ const EventForm = ({ event, onSuccess }) => {
                   label="Organizer Batch"
                 >
                   {EVENT_BATCHES.map((batch) => (
-                    <MenuItem key={batch} value={batch}>{batch}</MenuItem>
+                    <MenuItem key={batch} value={batch}>
+                      {batch}
+                    </MenuItem>
                   ))}
                 </Select>
               </FormControl>
             </Stack>
           </CardContent>
         </Card>
-        
+
         {/* Event Guests */}
         <Card elevation={0} sx={{ mb: 4, borderRadius: 2 }}>
           <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 2,
+              }}
+            >
               <Typography variant="h6" component="h3" sx={{ fontWeight: 500 }}>
                 Event Guests
               </Typography>
               <Box>
-                <Button 
-                  startIcon={<PersonAddIcon />} 
+                <Button
+                  startIcon={<PersonAddIcon />}
                   onClick={() => setOpenGuestDialog(true)}
                   variant="outlined"
                   size="small"
@@ -776,8 +895,8 @@ const EventForm = ({ event, onSuccess }) => {
                 >
                   New Guest
                 </Button>
-                <Button 
-                  startIcon={<AddIcon />} 
+                <Button
+                  startIcon={<AddIcon />}
                   onClick={addGuest}
                   variant="outlined"
                   size="small"
@@ -786,43 +905,43 @@ const EventForm = ({ event, onSuccess }) => {
                 </Button>
               </Box>
             </Box>
-            
+
             {formik.values.eventGuests.map((guest, index) => {
               const guestData = findGuestById(guest.guestId);
-              
+
               return (
-                <Box 
-                  key={index} 
-                  sx={{ 
-                    mb: 2, 
-                    p: 2, 
-                    border: '1px solid #e0e0e0', 
+                <Box
+                  key={index}
+                  sx={{
+                    mb: 2,
+                    p: 2,
+                    border: "1px solid #e0e0e0",
                     borderRadius: 1,
-                    position: 'relative'
+                    position: "relative",
                   }}
                 >
-                  <IconButton 
-                    size="small" 
+                  <IconButton
+                    size="small"
                     onClick={() => removeGuest(index)}
-                    sx={{ 
-                      position: 'absolute', 
-                      top: -12, 
-                      right: -12, 
-                      bgcolor: '#f5f5f5',
-                      border: '1px solid #e0e0e0',
-                      '&:hover': {
-                        bgcolor: '#e5e5e5'
-                      }
+                    sx={{
+                      position: "absolute",
+                      top: -12,
+                      right: -12,
+                      bgcolor: "#f5f5f5",
+                      border: "1px solid #e0e0e0",
+                      "&:hover": {
+                        bgcolor: "#e5e5e5",
+                      },
                     }}
                   >
                     <DeleteIcon fontSize="small" />
                   </IconButton>
-                  
+
                   <Grid container spacing={2}>
                     <Grid item xs={12} sm={8}>
                       <Autocomplete
                         options={allGuests}
-                        getOptionLabel={(option) => option.guestName || ''}
+                        getOptionLabel={(option) => option.guestName || ""}
                         value={guestData || null}
                         onChange={(_, newValue) => {
                           if (newValue) {
@@ -840,12 +959,24 @@ const EventForm = ({ event, onSuccess }) => {
                         )}
                         renderOption={(props, option) => (
                           <li {...props}>
-                            <Stack direction="row" spacing={2} alignItems="center">
-                              <Avatar sx={{ width: 32, height: 32 }}>{option.guestName?.charAt(0)}</Avatar>
+                            <Stack
+                              direction="row"
+                              spacing={2}
+                              alignItems="center"
+                            >
+                              <Avatar sx={{ width: 32, height: 32 }}>
+                                {option.guestName?.charAt(0)}
+                              </Avatar>
                               <Box>
-                                <Typography variant="subtitle2">{option.guestName}</Typography>
-                                <Typography variant="caption" color="text.secondary">
-                                  {option.guestDesignation} at {option.guestCompany}
+                                <Typography variant="subtitle2">
+                                  {option.guestName}
+                                </Typography>
+                                <Typography
+                                  variant="caption"
+                                  color="text.secondary"
+                                >
+                                  {option.guestDesignation} at{" "}
+                                  {option.guestCompany}
                                 </Typography>
                               </Box>
                             </Stack>
@@ -861,7 +992,7 @@ const EventForm = ({ event, onSuccess }) => {
                           onChange={(e) => {
                             const newGuests = [...formik.values.eventGuests];
                             newGuests[index].guestTag = e.target.value;
-                            formik.setFieldValue('eventGuests', newGuests);
+                            formik.setFieldValue("eventGuests", newGuests);
                           }}
                           label="Guest Role"
                         >
@@ -873,16 +1004,28 @@ const EventForm = ({ event, onSuccess }) => {
                         </Select>
                       </FormControl>
                     </Grid>
-                    
+
                     {/* Show selected guest details */}
                     {guestData && (
                       <Grid item xs={12}>
-                        <Box sx={{ mt: 1, p: 1, bgcolor: '#f9f9f9', borderRadius: 1 }}>
+                        <Box
+                          sx={{
+                            mt: 1,
+                            p: 1,
+                            bgcolor: "#f9f9f9",
+                            borderRadius: 1,
+                          }}
+                        >
                           <Typography variant="body2" color="text.secondary">
-                            <strong>{guestData.guestDesignation}</strong> at {guestData.guestCompany}
+                            <strong>{guestData.guestDesignation}</strong> at{" "}
+                            {guestData.guestCompany}
                           </Typography>
                           {guestData.guestEmail && (
-                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{ mt: 0.5 }}
+                            >
                               Email: {guestData.guestEmail}
                             </Typography>
                           )}
@@ -898,283 +1041,35 @@ const EventForm = ({ event, onSuccess }) => {
                 </Box>
               );
             })}
-            
+
             {formik.values.eventGuests.length === 0 && (
-              <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', mt: 2 }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontStyle: "italic", mt: 2 }}
+              >
                 No guests added yet. Click "Add Guest" to include event guests.
               </Typography>
             )}
           </CardContent>
         </Card>
-        
-        {/* Event Sponsors - NEW SECTION */}
-        <Card elevation={0} sx={{ mb: 4, borderRadius: 2 }}>
-          <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6" component="h3" sx={{ fontWeight: 500 }}>
-                Event Sponsors
-              </Typography>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={hasSponsors}
-                    onChange={(e) => setHasSponsors(e.target.checked)}
-                  />
-                }
-                label="This event has sponsors"
-              />
-            </Box>
-            
-            {hasSponsors && (
-              <>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-                  <Button
-                    startIcon={<AddIcon />}
-                    onClick={() => setSponsors([...sponsors, {
-                      name: '',
-                      amount: 0,
-                      type: 'cash',
-                      receivedStatus: 'pending',
-                      contactPerson: '',
-                      logoUrl: '',
-                      contactEmail: '',
-                      contactPhone: '',
-                      notes: ''
-                    }])}
-                    variant="outlined"
-                    size="small"
-                  >
-                    Add Sponsor
-                  </Button>
-                </Box>
-                
-                {sponsors.map((sponsor, index) => (
-                  <Box 
-                    key={index} 
-                    sx={{ 
-                      mb: 3, 
-                      p: 2, 
-                      border: '1px solid #e0e0e0', 
-                      borderRadius: 1,
-                      position: 'relative'
-                    }}
-                  >
-                    <IconButton 
-                      size="small" 
-                      onClick={() => {
-                        const newSponsors = [...sponsors];
-                        newSponsors.splice(index, 1);
-                        setSponsors(newSponsors);
-                      }}
-                      sx={{ 
-                        position: 'absolute', 
-                        top: -12, 
-                        right: -12, 
-                        bgcolor: '#f5f5f5',
-                        border: '1px solid #e0e0e0',
-                        '&:hover': {
-                          bgcolor: '#e5e5e5'
-                        }
-                      }}
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
-                    
-                    <Stack spacing={2}>
-                      <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
-                          <TextField
-                            fullWidth
-                            label="Sponsor Name"
-                            value={sponsor.name}
-                            onChange={(e) => {
-                              const newSponsors = [...sponsors];
-                              newSponsors[index].name = e.target.value;
-                              setSponsors(newSponsors);
-                            }}
-                            placeholder="Company/Organization Name"
-                            size="small"
-                            required
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <TextField
-                            fullWidth
-                            label="Sponsorship Amount"
-                            value={sponsor.amount}
-                            onChange={(e) => {
-                              const newSponsors = [...sponsors];
-                              newSponsors[index].amount = Number(e.target.value);
-                              setSponsors(newSponsors);
-                            }}
-                            placeholder="0"
-                            size="small"
-                            type="number"
-                            required
-                            InputProps={{
-                              startAdornment: <InputAdornment position="start">₹</InputAdornment>,
-                            }}
-                          />
-                        </Grid>
-                      </Grid>
-                      
-                      <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
-                          <FormControl fullWidth size="small">
-                            <InputLabel>Sponsorship Type</InputLabel>
-                            <Select
-                              value={sponsor.type}
-                              onChange={(e) => {
-                                const newSponsors = [...sponsors];
-                                newSponsors[index].type = e.target.value;
-                                setSponsors(newSponsors);
-                              }}
-                              label="Sponsorship Type"
-                            >
-                              <MenuItem value="cash">Cash</MenuItem>
-                              <MenuItem value="in-kind">In-Kind</MenuItem>
-                              <MenuItem value="services">Services</MenuItem>
-                            </Select>
-                          </FormControl>
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <FormControl fullWidth size="small">
-                            <InputLabel>Received Status</InputLabel>
-                            <Select
-                              value={sponsor.receivedStatus}
-                              onChange={(e) => {
-                                const newSponsors = [...sponsors];
-                                newSponsors[index].receivedStatus = e.target.value;
-                                setSponsors(newSponsors);
-                              }}
-                              label="Received Status"
-                            >
-                              <MenuItem value="pending">Pending</MenuItem>
-                              <MenuItem value="received">Received</MenuItem>
-                            </Select>
-                          </FormControl>
-                        </Grid>
-                      </Grid>
-                      
-                      <Divider sx={{ my: 1 }}>Contact Information</Divider>
-                      
-                      <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
-                          <TextField
-                            fullWidth
-                            label="Contact Person"
-                            value={sponsor.contactPerson || ''}
-                            onChange={(e) => {
-                              const newSponsors = [...sponsors];
-                              newSponsors[index].contactPerson = e.target.value;
-                              setSponsors(newSponsors);
-                            }}
-                            placeholder="Name of contact"
-                            size="small"
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <TextField
-                            fullWidth
-                            label="Logo URL"
-                            value={sponsor.logoUrl || ''}
-                            onChange={(e) => {
-                              const newSponsors = [...sponsors];
-                              newSponsors[index].logoUrl = e.target.value;
-                              setSponsors(newSponsors);
-                            }}
-                            placeholder="https://example.com/logo.png"
-                            size="small"
-                          />
-                        </Grid>
-                      </Grid>
-                      
-                      <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
-                          <TextField
-                            fullWidth
-                            label="Contact Email"
-                            value={sponsor.contactEmail || ''}
-                            onChange={(e) => {
-                              const newSponsors = [...sponsors];
-                              newSponsors[index].contactEmail = e.target.value;
-                              setSponsors(newSponsors);
-                            }}
-                            placeholder="email@example.com"
-                            size="small"
-                            type="email"
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <TextField
-                            fullWidth
-                            label="Contact Phone"
-                            value={sponsor.contactPhone || ''}
-                            onChange={(e) => {
-                              const newSponsors = [...sponsors];
-                              newSponsors[index].contactPhone = e.target.value;
-                              setSponsors(newSponsors);
-                            }}
-                            placeholder="+91 1234567890"
-                            size="small"
-                          />
-                        </Grid>
-                      </Grid>
-                      
-                      <TextField
-                        fullWidth
-                        label="Notes"
-                        multiline
-                        rows={2}
-                        value={sponsor.notes || ''}
-                        onChange={(e) => {
-                          const newSponsors = [...sponsors];
-                          newSponsors[index].notes = e.target.value;
-                          setSponsors(newSponsors);
-                        }}
-                        placeholder="Additional details about the sponsorship"
-                        size="small"
-                      />
-                      
-                      {/* Date received field for "received" status */}
-                      {sponsor.receivedStatus === 'received' && (
-                        <TextField
-                          fullWidth
-                          label="Date Received"
-                          type="date"
-                          value={sponsor.dateReceived ? new Date(sponsor.dateReceived).toISOString().split('T')[0] : ''}
-                          onChange={(e) => {
-                            const newSponsors = [...sponsors];
-                            newSponsors[index].dateReceived = e.target.value;
-                            setSponsors(newSponsors);
-                          }}
-                          InputLabelProps={{ shrink: true }}
-                          size="small"
-                        />
-                      )}
-                    </Stack>
-                  </Box>
-                ))}
-                
-                {sponsors.length === 0 && (
-                  <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', mt: 2 }}>
-                    No sponsors added yet. Click "Add Sponsor" to include event sponsors.
-                  </Typography>
-                )}
-              </>
-            )}
-          </CardContent>
-        </Card>
-        
+
         {/* Registration Form Fields */}
         <Card elevation={0} sx={{ mb: 4, borderRadius: 2 }}>
           <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 2,
+              }}
+            >
               <Typography variant="h6" component="h3" sx={{ fontWeight: 500 }}>
                 Registration Form
               </Typography>
-              <Button 
-                startIcon={<AddIcon />} 
+              <Button
+                startIcon={<AddIcon />}
                 onClick={addFormField}
                 variant="outlined"
                 size="small"
@@ -1182,35 +1077,35 @@ const EventForm = ({ event, onSuccess }) => {
                 Add Field
               </Button>
             </Box>
-            
+
             {formFields.map((field, fieldIndex) => (
-              <Box 
-                key={fieldIndex} 
-                sx={{ 
-                  mb: 3, 
-                  p: 2, 
-                  border: '1px solid #e0e0e0', 
+              <Box
+                key={fieldIndex}
+                sx={{
+                  mb: 3,
+                  p: 2,
+                  border: "1px solid #e0e0e0",
                   borderRadius: 1,
-                  position: 'relative'
+                  position: "relative",
                 }}
               >
-                <IconButton 
-                  size="small" 
+                <IconButton
+                  size="small"
                   onClick={() => removeFormField(fieldIndex)}
-                  sx={{ 
-                    position: 'absolute', 
-                    top: -12, 
-                    right: -12, 
-                    bgcolor: '#f5f5f5',
-                    border: '1px solid #e0e0e0',
-                    '&:hover': {
-                      bgcolor: '#e5e5e5'
-                    }
+                  sx={{
+                    position: "absolute",
+                    top: -12,
+                    right: -12,
+                    bgcolor: "#f5f5f5",
+                    border: "1px solid #e0e0e0",
+                    "&:hover": {
+                      bgcolor: "#e5e5e5",
+                    },
                   }}
                 >
                   <DeleteIcon fontSize="small" />
                 </IconButton>
-                
+
                 <Stack spacing={2}>
                   <Grid container spacing={2}>
                     <Grid item xs={12} sm={4}>
@@ -1218,7 +1113,13 @@ const EventForm = ({ event, onSuccess }) => {
                         fullWidth
                         label="Field Name"
                         value={field.fieldName}
-                        onChange={(e) => updateFormField(fieldIndex, 'fieldName', e.target.value)}
+                        onChange={(e) =>
+                          updateFormField(
+                            fieldIndex,
+                            "fieldName",
+                            e.target.value
+                          )
+                        }
                         placeholder="e.g., full_name"
                         size="small"
                       />
@@ -1228,11 +1129,19 @@ const EventForm = ({ event, onSuccess }) => {
                         <InputLabel>Field Type</InputLabel>
                         <Select
                           value={field.fieldType}
-                          onChange={(e) => updateFormField(fieldIndex, 'fieldType', e.target.value)}
+                          onChange={(e) =>
+                            updateFormField(
+                              fieldIndex,
+                              "fieldType",
+                              e.target.value
+                            )
+                          }
                           label="Field Type"
                         >
                           {FIELD_TYPES.map((type) => (
-                            <MenuItem key={type} value={type}>{type}</MenuItem>
+                            <MenuItem key={type} value={type}>
+                              {type}
+                            </MenuItem>
                           ))}
                         </Select>
                       </FormControl>
@@ -1242,20 +1151,32 @@ const EventForm = ({ event, onSuccess }) => {
                         fullWidth
                         label="Field Label"
                         value={field.fieldLabel}
-                        onChange={(e) => updateFormField(fieldIndex, 'fieldLabel', e.target.value)}
+                        onChange={(e) =>
+                          updateFormField(
+                            fieldIndex,
+                            "fieldLabel",
+                            e.target.value
+                          )
+                        }
                         placeholder="e.g., Full Name"
                         size="small"
                       />
                     </Grid>
                   </Grid>
-                  
+
                   <Grid container spacing={2}>
                     <Grid item xs={12} sm={8}>
                       <TextField
                         fullWidth
                         label="Placeholder"
-                        value={field.placeholder || ''}
-                        onChange={(e) => updateFormField(fieldIndex, 'placeholder', e.target.value)}
+                        value={field.placeholder || ""}
+                        onChange={(e) =>
+                          updateFormField(
+                            fieldIndex,
+                            "placeholder",
+                            e.target.value
+                          )
+                        }
                         placeholder="e.g., Enter your full name"
                         size="small"
                       />
@@ -1264,8 +1185,14 @@ const EventForm = ({ event, onSuccess }) => {
                       <FormControl fullWidth size="small">
                         <InputLabel>Required</InputLabel>
                         <Select
-                          value={field.required ? 'yes' : 'no'}
-                          onChange={(e) => updateFormField(fieldIndex, 'required', e.target.value === 'yes')}
+                          value={field.required ? "yes" : "no"}
+                          onChange={(e) =>
+                            updateFormField(
+                              fieldIndex,
+                              "required",
+                              e.target.value === "yes"
+                            )
+                          }
                           label="Required"
                         >
                           <MenuItem value="yes">Yes</MenuItem>
@@ -1274,65 +1201,92 @@ const EventForm = ({ event, onSuccess }) => {
                       </FormControl>
                     </Grid>
                   </Grid>
-                  
+
                   {/* Options for select, radio, checkbox */}
-                  {['select', 'radio', 'checkbox'].includes(field.fieldType) && (
-                    <>
-                      <Divider sx={{ my: 1 }}>Options</Divider>
-                      
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                        <Typography variant="body2" fontWeight={500}>
-                          Field Options
-                        </Typography>
-                        <Button 
-                          startIcon={<AddIcon />} 
-                          onClick={() => addOption(fieldIndex)}
-                          variant="text"
-                          size="small"
+                  {["select", "radio", "checkbox"].includes(
+                    field.fieldType
+                  ) && (
+                      <>
+                        <Divider sx={{ my: 1 }}>Options</Divider>
+
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            mb: 1,
+                          }}
                         >
-                          Add Option
-                        </Button>
-                      </Box>
-                      
-                      {field.options?.map((option, optionIndex) => (
-                        <Box key={optionIndex} sx={{ display: 'flex', mb: 1 }}>
-                          <TextField
-                            fullWidth
+                          <Typography variant="body2" fontWeight={500}>
+                            Field Options
+                          </Typography>
+                          <Button
+                            startIcon={<AddIcon />}
+                            onClick={() => addOption(fieldIndex)}
+                            variant="text"
                             size="small"
-                            value={option}
-                            onChange={(e) => updateOption(fieldIndex, optionIndex, e.target.value)}
-                            placeholder={`Option ${optionIndex + 1}`}
-                          />
-                          <IconButton 
-                            size="small" 
-                            onClick={() => removeOption(fieldIndex, optionIndex)}
-                            color="error"
                           >
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
+                            Add Option
+                          </Button>
                         </Box>
-                      ))}
-                      
-                      {(!field.options || field.options.length === 0) && (
-                        <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', mt: 1 }}>
-                          No options added. Click "Add Option" to add field options.
-                        </Typography>
-                      )}
-                    </>
-                  )}
+
+                        {field.options?.map((option, optionIndex) => (
+                          <Box key={optionIndex} sx={{ display: "flex", mb: 1 }}>
+                            <TextField
+                              fullWidth
+                              size="small"
+                              value={option}
+                              onChange={(e) =>
+                                updateOption(
+                                  fieldIndex,
+                                  optionIndex,
+                                  e.target.value
+                                )
+                              }
+                              placeholder={`Option ${optionIndex + 1}`}
+                            />
+                            <IconButton
+                              size="small"
+                              onClick={() =>
+                                removeOption(fieldIndex, optionIndex)
+                              }
+                              color="error"
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
+                        ))}
+
+                        {(!field.options || field.options.length === 0) && (
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ fontStyle: "italic", mt: 1 }}
+                          >
+                            No options added. Click "Add Option" to add field
+                            options.
+                          </Typography>
+                        )}
+                      </>
+                    )}
                 </Stack>
               </Box>
             ))}
-            
+
             {formFields.length === 0 && (
-              <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', mt: 2 }}>
-                No form fields added yet. Click "Add Field" to create registration form.
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontStyle: "italic", mt: 2 }}
+              >
+                No form fields added yet. Click "Add Field" to create
+                registration form.
               </Typography>
             )}
           </CardContent>
         </Card>
-        
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
+
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 4 }}>
           <Button
             variant="contained"
             color="primary"
@@ -1347,14 +1301,18 @@ const EventForm = ({ event, onSuccess }) => {
                 <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
                 Saving...
               </>
-            ) : (isEdit ? 'Update Event' : 'Create Event')}
+            ) : isEdit ? (
+              "Update Event"
+            ) : (
+              "Create Event"
+            )}
           </Button>
         </Box>
       </form>
-      
+
       {/* Guest Creation Dialog */}
-      <Dialog 
-        open={openGuestDialog} 
+      <Dialog
+        open={openGuestDialog}
         onClose={() => setOpenGuestDialog(false)}
         maxWidth="sm"
         fullWidth
@@ -1370,10 +1328,15 @@ const EventForm = ({ event, onSuccess }) => {
                 label="Guest Name"
                 value={guestFormik.values.guestName}
                 onChange={guestFormik.handleChange}
-                error={guestFormik.touched.guestName && Boolean(guestFormik.errors.guestName)}
-                helperText={guestFormik.touched.guestName && guestFormik.errors.guestName}
+                error={
+                  guestFormik.touched.guestName &&
+                  Boolean(guestFormik.errors.guestName)
+                }
+                helperText={
+                  guestFormik.touched.guestName && guestFormik.errors.guestName
+                }
               />
-              
+
               <TextField
                 fullWidth
                 id="guestEmail"
@@ -1382,10 +1345,16 @@ const EventForm = ({ event, onSuccess }) => {
                 type="email"
                 value={guestFormik.values.guestEmail}
                 onChange={guestFormik.handleChange}
-                error={guestFormik.touched.guestEmail && Boolean(guestFormik.errors.guestEmail)}
-                helperText={guestFormik.touched.guestEmail && guestFormik.errors.guestEmail}
+                error={
+                  guestFormik.touched.guestEmail &&
+                  Boolean(guestFormik.errors.guestEmail)
+                }
+                helperText={
+                  guestFormik.touched.guestEmail &&
+                  guestFormik.errors.guestEmail
+                }
               />
-              
+
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <TextField
@@ -1395,8 +1364,14 @@ const EventForm = ({ event, onSuccess }) => {
                     label="Company/Organization"
                     value={guestFormik.values.guestCompany}
                     onChange={guestFormik.handleChange}
-                    error={guestFormik.touched.guestCompany && Boolean(guestFormik.errors.guestCompany)}
-                    helperText={guestFormik.touched.guestCompany && guestFormik.errors.guestCompany}
+                    error={
+                      guestFormik.touched.guestCompany &&
+                      Boolean(guestFormik.errors.guestCompany)
+                    }
+                    helperText={
+                      guestFormik.touched.guestCompany &&
+                      guestFormik.errors.guestCompany
+                    }
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -1407,12 +1382,18 @@ const EventForm = ({ event, onSuccess }) => {
                     label="Designation"
                     value={guestFormik.values.guestDesignation}
                     onChange={guestFormik.handleChange}
-                    error={guestFormik.touched.guestDesignation && Boolean(guestFormik.errors.guestDesignation)}
-                    helperText={guestFormik.touched.guestDesignation && guestFormik.errors.guestDesignation}
+                    error={
+                      guestFormik.touched.guestDesignation &&
+                      Boolean(guestFormik.errors.guestDesignation)
+                    }
+                    helperText={
+                      guestFormik.touched.guestDesignation &&
+                      guestFormik.errors.guestDesignation
+                    }
                   />
                 </Grid>
               </Grid>
-              
+
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <TextField
@@ -1435,7 +1416,7 @@ const EventForm = ({ event, onSuccess }) => {
                   />
                 </Grid>
               </Grid>
-              
+
               <TextField
                 fullWidth
                 id="guestImage"
@@ -1449,12 +1430,12 @@ const EventForm = ({ event, onSuccess }) => {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setOpenGuestDialog(false)}>Cancel</Button>
-            <Button 
-              type="submit" 
-              variant="contained" 
+            <Button
+              type="submit"
+              variant="contained"
               disabled={guestFormik.isSubmitting}
             >
-              {guestFormik.isSubmitting ? 'Adding...' : 'Add Guest'}
+              {guestFormik.isSubmitting ? "Adding..." : "Add Guest"}
             </Button>
           </DialogActions>
         </form>

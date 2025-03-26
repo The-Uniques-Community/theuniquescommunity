@@ -3,11 +3,14 @@ import Loader from "@/utils/Loader";
 import ProtectedRoute from "@/routes/ProtectedRoute";
 
 
+
+
+const EventForm = Loader(lazy(() => import("@/utils/event/EventForm")));
 const AdminLayout = Loader(lazy(() => import("@/layout/Admin")));
 const AdminDashboard = Loader(lazy(() => import("@/views/Admin")));
 const Member = Loader(lazy(() => import("@/views/Admin/Members")));
 const Event = Loader(lazy(() => import("@/views/Admin/Events")));
-const Account = Loader(lazy(() => import("@/views/Admin/Accounts")));
+const Account = Loader(lazy(() => import("@/views/Admin/Accounts/index")));
 const Profile = Loader(lazy(() => import("@/views/Admin/Profile")));
 const EventBudget = Loader(lazy(() => import("@/views/Admin/Events/Budget")));
 const EventView = Loader(lazy(() => import("@/views/Admin/Events/View")));
@@ -27,6 +30,10 @@ const AdminRoutes = {
     {
       path: "/admin/events-overview",
       element: <Event />,
+    },
+    {
+      path: "/admin/events-overview/create",
+      element: <EventForm />,
     },
     {
       path: "/admin/events-overview/view/:id",

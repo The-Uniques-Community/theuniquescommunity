@@ -110,12 +110,8 @@ const MemberCard = ({ member }) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  // Only show first 3 skills in the card
-  const displaySkills = formattedSkills.slice(0, 3);
-  const hasMoreSkills = formattedSkills.length > 3;
-
   return (
-    <div className="bg-white group hover:cursor-pointer hover:shadow-lg duration-75 px-2 py-2 border-t-[1px] shadow-md rounded-sm relative">
+    <div className="bg-white group hover:cursor-pointer hover:shadow-lg transition-shadow duration-200 px-2 py-2 border border-gray-200 shadow-md rounded-lg relative max-w-72">
       {/* Main Card Content */}
       <div className="flex flex-col h-full">
         {/* Profile Image */}
@@ -123,7 +119,7 @@ const MemberCard = ({ member }) => {
           <div onClick={handleOpen} className="overflow-hidden rounded-lg">
             <img
               src={profileImg}
-              className="hover:scale-100 duration-150 custom-clip rounded-t-lg rounded-l-lg lg:w-[42vh] w-[70vh] h-56 object-cover"
+              className="hover:scale-105 duration-300 custom-clip rounded-t-lg rounded-l-lg lg:w-[42vh] w-[70vh] h-56 object-cover"
               alt={`${fullName}'s Profile`}
             />
           </div>
@@ -139,42 +135,31 @@ const MemberCard = ({ member }) => {
           <h3 className="text-xl font-bold border-b border-gray-300 pb-1">{fullName}</h3>
           <p className="text-gray-600 text-sm mt-1">{position}</p>
 
-          {/* Skills */}
-          <div className="mt-3 flex flex-wrap gap-1">
-            {displaySkills.map((skill, index) => (
-              <span key={index} className="flex flex-wrap text-xs bg-gray-100 px-2 py-1 rounded-full">
-                {skill.name}
+          {/* Skills Count */}
+          <div className=''>
+
+          <div className="mt-3 w-3/4 flex flex-wrap items-center gap-2">
+            <span className="text-xs bg-gray-100 px-3 py-1 rounded-full flex items-center">
+              <span className="font-medium mr-1">{formattedSkills.length}</span> Skills
+            </span>
+
+            {/* Achievements Count */}
+            {formattedAchievements.length > 0 && (
+              <span className="text-xs bg-gray-100 px-3 py-1 rounded-full flex items-center">
+                <Award className="w-3 h-3 mr-1 text-[#ca0019]" />
+                <span className="font-medium mr-1">{formattedAchievements.length}</span> Achievements
               </span>
-            ))}
+            )}
             
-            {hasMoreSkills && (
-              <span className="text-xs text-center bg-[#ca0019] text-white px-1 py-[4px] rounded-full">+{formattedSkills.length - 3}</span>
+            {/* Projects Count - Optional */}
+            {formattedProjects.length > 0 && (
+              <span className="text-xs bg-gray-100 px-3 py-1 rounded-full flex items-center">
+                <Briefcase className="w-3 h-3 mr-1 text-[#ca0019]" />
+                <span className="font-medium mr-1">{formattedProjects.length}</span> Projects
+              </span>
             )}
           </div>
-
-          {/* Achievements Preview */}
-          {formattedAchievements.length > 0 && (
-            <div className="mt-3">
-              <h4 className="text-sm font-semibold items-center gap-1 flex flex-wrap">
-                <Award className="w-3 h-3" /> Achievements
-              </h4>
-              <div className="flex mt-1 gap-1 flex-wrap">
-                {formattedAchievements.slice(0, 2).map((achievement) => (
-                  <span
-                    key={achievement.id}
-                    className={`bg-gray-700 text-white text-xs px-2 py-0.5 rounded-full`}
-                  >
-                    {achievement.title}
-                  </span>
-                ))}
-                {formattedAchievements.length > 2 && (
-                  <span className=" text-gray-700 text-xs px-2 py-0.5 rounded-full">
-                    +{formattedAchievements.length - 2}
-                  </span>
-                )}
-              </div>
             </div>
-          )}
         </div>
 
         {/* Social Media Links */}
@@ -234,7 +219,7 @@ const MemberCard = ({ member }) => {
         {/* View Details Button */}
         <button
           onClick={handleOpen}
-          className="absolute bottom-4 right-4 w-10 h-10 bg-black rounded-full flex items-center justify-center text-white hover:bg-[#ca0019] transition-colors"
+          className="absolute bottom-4 right-4 w-10 h-10 bg-black rounded-full flex items-center justify-center text-white group-hover:bg-[#ca0019] transition-colors"
         >
           <ArrowUpRight size={18} className="group-hover:rotate-45 transition-transform duration-300" />
         </button>

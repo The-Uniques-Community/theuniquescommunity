@@ -214,7 +214,7 @@ const MembersIndex = () => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, page]);
-  
+  console.log(members)
   return (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <TabContext value={value}>

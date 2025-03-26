@@ -11,6 +11,7 @@ const BlogSchema = new mongoose.Schema(
       {
         heading: { type: String, required: false },
         paragraph: { type: String, required: true },
+        
       },
     ],
     tags: [{ type: String }],

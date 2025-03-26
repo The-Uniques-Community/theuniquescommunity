@@ -33,9 +33,7 @@ const ADMIN_NAVIGATION = [
   { segment: "", title: "Dashboard", icon: <DashboardIcon /> },
   { segment: "members-overview", title: "Members", icon: <GroupIcon /> },
   { segment: "events-overview", title: "Events", icon: <EventIcon /> },
-  { segment: "community-overview", title: "Community", icon: <Groups3Icon /> },
   { segment: "accounts", title: "Accounts", icon: <AccountBalance/> },
-  { segment: "profile", title: "Profile", icon: <AccountCircleIcon/> },
 ];
 
 function Branding() {
