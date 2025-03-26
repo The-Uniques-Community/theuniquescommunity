@@ -186,7 +186,7 @@ const commingEvents = [
         }
       ],
       eventType: "Ideathon",
-      eventStatus: "completed"
+      eventStatus: "completed"  
     },
     {
       eventName: "Google I/O Extended 2023",

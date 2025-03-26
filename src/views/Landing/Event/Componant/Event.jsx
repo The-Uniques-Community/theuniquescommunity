@@ -39,6 +39,12 @@ export default function Eventmodel({ event, onClose }) {
                         image: "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg"
                     }]);
                 }
+                
+                // If the current event doesn't have populated gallery data, you might need to fetch it
+                if (event && (!event.eventGallery || event.eventGallery.length === 0)) {
+                    axios.get(`http://localhost:5000/api/events/${event._id}/gallery`)
+                        .catch(err => console.error("Error fetching gallery:", err));
+                }
             })
             .catch(error => {
                 console.error("Error fetching events:", error);
@@ -51,7 +57,7 @@ export default function Eventmodel({ event, onClose }) {
         setActiveTab(newValue);
         
         // Filter events based on selected tab
-        if (newValue !== "about" && newValue !== "guests" && newValue !== "organizers") {
+        if (newValue !== "about" && newValue !== "guests" && newValue !== "organizers" && newValue !== "gallery") {
             const filtered = allEvents.filter(e => 
                 e.eventType === newValue && e._id !== event._id
             );
@@ -68,6 +74,18 @@ export default function Eventmodel({ event, onClose }) {
         }
     };
 
+    // Helper function to extract Google Drive file ID from event banner
+    const extractBannerFileId = (banner) => {
+        if (!banner) return '1OSWCFdMnh8Y1wZoepQuup8HXzmcpxxKu'; // Default fallback
+        
+        if (typeof banner === 'string') {
+            return banner;
+        } else {
+            // If banner is an object, try to extract fileId or _id
+            return banner.fileId || banner._id || '1OSWCFdMnh8Y1wZoepQuup8HXzmcpxxKu';
+        }
+    };
+
     // If no event is provided, show a loading state
     if (!event) {
         return <div>Loading event information...</div>;
@@ -75,6 +93,12 @@ export default function Eventmodel({ event, onClose }) {
 
     // Safety check to ensure eventGuests is always an array
     const safeEventGuests = Array.isArray(event.eventGuests) ? event.eventGuests : [];
+
+    // Safety check to ensure eventGallery is always an array
+    const safeEventGallery = Array.isArray(event.eventGallery) ? event.eventGallery : [];
+
+    // Extract banner file ID
+    const bannerFileId = extractBannerFileId(event.eventBanner);
 
     return (
         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-[9999999] p-2 sm:p-4 overflow-hidden">
@@ -85,23 +109,21 @@ export default function Eventmodel({ event, onClose }) {
                     <X size={20} />
                 </button>
 
-                {/* Header Banner */}
+                {/* Header Banner - Dynamic from backend */}
                 <div className="w-full h-40 sm:h-60 md:h-96 border-b border-gray-300 rounded-xl">
-                    <img 
-                        src={event.eventBanner || "https://marketplace.canva.com/EAFluVdXLok/2/0/1600w/canva-blue-professional-webinar-facebook-event-cover-wp0XR0lqPgc.jpg"} 
-                        alt={event.eventName}
-                        className="w-full h-full object-cover rounded-xl" 
-                    />
+                    <iframe  
+                        src={`https://drive.google.com/file/d/${bannerFileId}/preview`}
+                        className="w-full h-full object-cover rounded-xl"
+                        title="Event banner"
+                        loading="lazy"
+                        allow="autoplay"
+                    ></iframe>
                 </div>
 
                 {/* Profile Section */}
                 <div className="px-2 sm:px-4 md:px-6 py-4 flex flex-col sm:flex-row justify-between items-start border-gray-300">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center w-full sm:w-auto mb-4 sm:mb-0">
-                        <img 
-                            src={event.eventBanner || "https://content.jdmagicbox.com/v2/comp/bhubaneshwar/v3/0674px674.x674.190323210154.e8v3/catalogue/event-square-ac-banquet-hall-jaydev-vihar-bhubaneshwar-ac-banquet-halls-jqazlem37r.jpg"} 
-                            className="rounded-lg border border-gray-400 w-20 h-20 sm:w-24 sm:h-24 object-cover mb-3 sm:mb-0" 
-                            alt={event.eventName}
-                        />
+                      
                         <div className="sm:ml-6">
                             <h1 className="text-2xl sm:text-3xl font-bold">{event.eventName}</h1>
                             <h2 className="text-lg sm:text-xl text-gray-500">{event.eventVenue}</h2>
@@ -140,6 +162,7 @@ export default function Eventmodel({ event, onClose }) {
                     {eventTypes.map(type => (
                         <Tab key={type} value={type} label={type} />
                     ))}
+                    <Tab value="gallery" label="Gallery" />
                     <Tab value="guests" label="Guests" />
                     <Tab value="organizers" label="Organizers" />
                 </Tabs>
@@ -195,6 +218,33 @@ export default function Eventmodel({ event, onClose }) {
                                     </div>
                                 </div>
                             </>
+                        ) : activeTab === "gallery" ? (
+                            <>
+                                <h2 className="text-xl sm:text-2xl font-bold mb-4">Event Gallery</h2>
+                                {safeEventGallery && safeEventGallery.length > 0 ? (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        {safeEventGallery.map((image, index) => {
+                                            // Extract the Google Drive file ID from the image object
+                                            const driveFileId = typeof image === 'string' ? image : 
+                                                            (image.fileId || image._id || '');
+                                            
+                                            return (
+                                                <div key={index} className="w-full h-48 sm:h-56 md:h-64 border border-gray-200 rounded-xl overflow-hidden">
+                                                    <iframe 
+                                                        src={`https://drive.google.com/file/d/${driveFileId}/preview`}
+                                                        className="w-full h-full object-cover rounded-xl"
+                                                        loading="lazy"
+                                                        title={`Event gallery image ${index + 1}`}
+                                                        allow="autoplay"
+                                                    ></iframe>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-600 text-sm sm:text-base">No gallery images available for this event.</p>
+                                )}
+                            </>
                         ) : activeTab === "guests" ? (
                             <>
                                 <h2 className="text-xl sm:text-2xl font-bold mb-4">Event Guests</h2>
@@ -203,8 +253,8 @@ export default function Eventmodel({ event, onClose }) {
                                         {safeEventGuests.map((guest, index) => {
                                             // Safely access nested properties
                                             const guestId = guest?.guestId || {};
-                                            const guestName = guestId?.name || "Unknown Guest";
-                                            const guestImage = guestId?.image || "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg";
+                                            const guestName = guestId?.guestName || "Unknown Guest";
+                                            const guestImage = guestId?.guestImage || "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg";
                                             const guestDesignation = guestId?.designation || "";
                                             const guestTag = guest?.guestTag || "guest";
                                             
@@ -243,36 +293,45 @@ export default function Eventmodel({ event, onClose }) {
                                 <h2 className="text-xl sm:text-2xl font-bold mb-4">Related {activeTab} Events</h2>
                                 {filteredEvents && filteredEvents.length > 0 ? (
                                     <ul className="space-y-3 sm:space-y-4">
-                                        {filteredEvents.map(relatedEvent => (
-                                            <li key={relatedEvent._id} className="p-3 sm:p-4 border rounded-md shadow-md">
-                                                <div className="flex flex-col sm:flex-row">
-                                                    <img 
-                                                        src={relatedEvent.eventBanner || "https://via.placeholder.com/100"} 
-                                                        alt={relatedEvent.eventName}
-                                                        className="w-full sm:w-20 h-32 sm:h-20 object-cover rounded-md mb-2 sm:mb-0" 
-                                                    />
-                                                    <div className="sm:ml-4">
-                                                        <strong className="text-sm sm:text-base">{relatedEvent.eventName}</strong>
-                                                        <div className="text-xs sm:text-sm text-gray-500">
-                                                            <div className="flex items-center mt-1">
-                                                                <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                                                                {new Date(relatedEvent.eventDate).toLocaleDateString()}
-                                                            </div>
-                                                            <div className="flex items-center mt-1">
-                                                                <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                                                                {relatedEvent.eventTime}
-                                                            </div>
+                                        {filteredEvents.map(relatedEvent => {
+                                            // Extract banner ID for related events
+                                            const relatedBannerId = extractBannerFileId(relatedEvent.eventBanner);
+                                            
+                                            return (
+                                                <li key={relatedEvent._id} className="p-3 sm:p-4 border rounded-md shadow-md">
+                                                    <div className="flex flex-col sm:flex-row">
+                                                        <div className="w-full sm:w-20 h-32 sm:h-20 mb-2 sm:mb-0 rounded-md overflow-hidden">
+                                                            <iframe 
+                                                                src={`https://drive.google.com/file/d/${relatedBannerId}/preview`}
+                                                                className="w-full h-full object-cover"
+                                                                loading="lazy"
+                                                                title={`${relatedEvent.eventName} banner`}
+                                                                allow="autoplay"
+                                                            ></iframe>
                                                         </div>
-                                                        <button 
-                                                            onClick={() => fetchEventDetails(relatedEvent._id)} 
-                                                            className="mt-2 text-blue-500 hover:underline text-xs sm:text-sm"
-                                                        >
-                                                            Know More
-                                                        </button>
+                                                        <div className="sm:ml-4">
+                                                            <strong className="text-sm sm:text-base">{relatedEvent.eventName}</strong>
+                                                            <div className="text-xs sm:text-sm text-gray-500">
+                                                                <div className="flex items-center mt-1">
+                                                                    <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                                                                    {new Date(relatedEvent.eventDate).toLocaleDateString()}
+                                                                </div>
+                                                                <div className="flex items-center mt-1">
+                                                                    <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                                                                    {relatedEvent.eventTime}
+                                                                </div>
+                                                            </div>
+                                                            <button 
+                                                                onClick={() => fetchEventDetails(relatedEvent._id)} 
+                                                                className="mt-2 text-blue-500 hover:underline text-xs sm:text-sm"
+                                                            >
+                                                                Know More
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </li>
-                                        ))}
+                                                </li>
+                                            );
+                                        })}
                                     </ul>
                                 ) : (
                                     <p className="text-gray-600 text-sm sm:text-base">No related {activeTab} events found.</p>
@@ -348,6 +407,34 @@ export default function Eventmodel({ event, onClose }) {
                                 </div>
                             </div>
                         )}
+
+                        {/* Show gallery preview if available */}
+                        {safeEventGallery.length > 0 && (
+                            <div className="mt-4 sm:mt-6">
+                                <h2 className="text-lg sm:text-xl font-bold mb-2 sm:mb-4">Gallery Preview</h2>
+                                <div className="space-y-2">
+                                    <div className="h-32 border border-gray-200 rounded-xl overflow-hidden">
+                                        {safeEventGallery[0] && (
+                                            <iframe 
+                                                src={`https://drive.google.com/file/d/${typeof safeEventGallery[0] === 'string' ? safeEventGallery[0] : (safeEventGallery[0].fileId || safeEventGallery[0]._id || '')}/preview`}
+                                                className="w-full h-full object-cover"
+                                                loading="lazy"
+                                                title="Gallery preview"
+                                                allow="autoplay"
+                                            ></iframe>
+                                        )}
+                                    </div>
+                                    {safeEventGallery.length > 1 && (
+                                        <button 
+                                            onClick={() => setActiveTab("gallery")}
+                                            className="text-blue-500 text-xs sm:text-sm hover:underline mt-1"
+                                        >
+                                            View all {safeEventGallery.length} images
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -363,12 +450,14 @@ export default function Eventmodel({ event, onClose }) {
                             </button>
                             
                             <div className="flex flex-col md:flex-row gap-4 sm:gap-6">
-                                <div className="md:w-1/3">
-                                    <img 
-                                        src={selectedDetailEvent.eventBanner || "https://via.placeholder.com/300"} 
-                                        alt={selectedDetailEvent.eventName}
-                                        className="w-full h-40 sm:h-48 md:h-64 object-cover rounded-lg" 
-                                    />
+                                <div className="md:w-1/3 h-40 sm:h-48 md:h-64 rounded-lg overflow-hidden">
+                                    <iframe 
+                                        src={`https://drive.google.com/file/d/${extractBannerFileId(selectedDetailEvent.eventBanner)}/preview`}
+                                        className="w-full h-full object-cover"
+                                        loading="lazy"
+                                        title={`${selectedDetailEvent.eventName} banner`}
+                                        allow="autoplay"
+                                    ></iframe>
                                 </div>
                                 
                                 <div className="md:w-2/3">
