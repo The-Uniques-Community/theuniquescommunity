@@ -25,8 +25,10 @@ import {
   Checkbox,
   ImageList,
   ImageListItem,
-  CircularProgress
-  ,Snackbar, Alert
+  CircularProgress,
+  Snackbar, 
+  Alert,
+  InputAdornment
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -79,6 +81,9 @@ const guestValidationSchema = Yup.object({
 });
 
 const EventForm = ({ event, onSuccess }) => {
+  // First define isEdit before using it in state declarations
+  const isEdit = Boolean(event);
+  
   const [formFields, setFormFields] = useState(
     event?.eventForm?.formFeilds || []
   );
@@ -98,7 +103,10 @@ const EventForm = ({ event, onSuccess }) => {
   const [successMessage, setSuccessMessage] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   
-  const isEdit = Boolean(event);
+  // Sponsor states - now using isEdit which is defined above
+  const [hasSponsors, setHasSponsors] = useState(isEdit && event?.sponsors && event.sponsors.length > 0);
+  const [sponsors, setSponsors] = useState(isEdit && event?.sponsors ? [...event.sponsors] : []);
+ 
 
   // Fetch all guests on component mount
   useEffect(() => {
@@ -280,7 +288,9 @@ const EventForm = ({ event, onSuccess }) => {
           eventGallery: galleryIds,
           eventForm: {
             formFeilds: formFields
-          }
+          },
+          // Include sponsors data if hasSponsors is true
+          sponsors: hasSponsors ? sponsors : []
         };
         
         // Step 4: Create or update the event
@@ -893,6 +903,265 @@ const EventForm = ({ event, onSuccess }) => {
               <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', mt: 2 }}>
                 No guests added yet. Click "Add Guest" to include event guests.
               </Typography>
+            )}
+          </CardContent>
+        </Card>
+        
+        {/* Event Sponsors - NEW SECTION */}
+        <Card elevation={0} sx={{ mb: 4, borderRadius: 2 }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h6" component="h3" sx={{ fontWeight: 500 }}>
+                Event Sponsors
+              </Typography>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={hasSponsors}
+                    onChange={(e) => setHasSponsors(e.target.checked)}
+                  />
+                }
+                label="This event has sponsors"
+              />
+            </Box>
+            
+            {hasSponsors && (
+              <>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+                  <Button
+                    startIcon={<AddIcon />}
+                    onClick={() => setSponsors([...sponsors, {
+                      name: '',
+                      amount: 0,
+                      type: 'cash',
+                      receivedStatus: 'pending',
+                      contactPerson: '',
+                      logoUrl: '',
+                      contactEmail: '',
+                      contactPhone: '',
+                      notes: ''
+                    }])}
+                    variant="outlined"
+                    size="small"
+                  >
+                    Add Sponsor
+                  </Button>
+                </Box>
+                
+                {sponsors.map((sponsor, index) => (
+                  <Box 
+                    key={index} 
+                    sx={{ 
+                      mb: 3, 
+                      p: 2, 
+                      border: '1px solid #e0e0e0', 
+                      borderRadius: 1,
+                      position: 'relative'
+                    }}
+                  >
+                    <IconButton 
+                      size="small" 
+                      onClick={() => {
+                        const newSponsors = [...sponsors];
+                        newSponsors.splice(index, 1);
+                        setSponsors(newSponsors);
+                      }}
+                      sx={{ 
+                        position: 'absolute', 
+                        top: -12, 
+                        right: -12, 
+                        bgcolor: '#f5f5f5',
+                        border: '1px solid #e0e0e0',
+                        '&:hover': {
+                          bgcolor: '#e5e5e5'
+                        }
+                      }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                    
+                    <Stack spacing={2}>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            fullWidth
+                            label="Sponsor Name"
+                            value={sponsor.name}
+                            onChange={(e) => {
+                              const newSponsors = [...sponsors];
+                              newSponsors[index].name = e.target.value;
+                              setSponsors(newSponsors);
+                            }}
+                            placeholder="Company/Organization Name"
+                            size="small"
+                            required
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            fullWidth
+                            label="Sponsorship Amount"
+                            value={sponsor.amount}
+                            onChange={(e) => {
+                              const newSponsors = [...sponsors];
+                              newSponsors[index].amount = Number(e.target.value);
+                              setSponsors(newSponsors);
+                            }}
+                            placeholder="0"
+                            size="small"
+                            type="number"
+                            required
+                            InputProps={{
+                              startAdornment: <InputAdornment position="start">₹</InputAdornment>,
+                            }}
+                          />
+                        </Grid>
+                      </Grid>
+                      
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                          <FormControl fullWidth size="small">
+                            <InputLabel>Sponsorship Type</InputLabel>
+                            <Select
+                              value={sponsor.type}
+                              onChange={(e) => {
+                                const newSponsors = [...sponsors];
+                                newSponsors[index].type = e.target.value;
+                                setSponsors(newSponsors);
+                              }}
+                              label="Sponsorship Type"
+                            >
+                              <MenuItem value="cash">Cash</MenuItem>
+                              <MenuItem value="in-kind">In-Kind</MenuItem>
+                              <MenuItem value="services">Services</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <FormControl fullWidth size="small">
+                            <InputLabel>Received Status</InputLabel>
+                            <Select
+                              value={sponsor.receivedStatus}
+                              onChange={(e) => {
+                                const newSponsors = [...sponsors];
+                                newSponsors[index].receivedStatus = e.target.value;
+                                setSponsors(newSponsors);
+                              }}
+                              label="Received Status"
+                            >
+                              <MenuItem value="pending">Pending</MenuItem>
+                              <MenuItem value="received">Received</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </Grid>
+                      </Grid>
+                      
+                      <Divider sx={{ my: 1 }}>Contact Information</Divider>
+                      
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            fullWidth
+                            label="Contact Person"
+                            value={sponsor.contactPerson || ''}
+                            onChange={(e) => {
+                              const newSponsors = [...sponsors];
+                              newSponsors[index].contactPerson = e.target.value;
+                              setSponsors(newSponsors);
+                            }}
+                            placeholder="Name of contact"
+                            size="small"
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            fullWidth
+                            label="Logo URL"
+                            value={sponsor.logoUrl || ''}
+                            onChange={(e) => {
+                              const newSponsors = [...sponsors];
+                              newSponsors[index].logoUrl = e.target.value;
+                              setSponsors(newSponsors);
+                            }}
+                            placeholder="https://example.com/logo.png"
+                            size="small"
+                          />
+                        </Grid>
+                      </Grid>
+                      
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            fullWidth
+                            label="Contact Email"
+                            value={sponsor.contactEmail || ''}
+                            onChange={(e) => {
+                              const newSponsors = [...sponsors];
+                              newSponsors[index].contactEmail = e.target.value;
+                              setSponsors(newSponsors);
+                            }}
+                            placeholder="email@example.com"
+                            size="small"
+                            type="email"
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            fullWidth
+                            label="Contact Phone"
+                            value={sponsor.contactPhone || ''}
+                            onChange={(e) => {
+                              const newSponsors = [...sponsors];
+                              newSponsors[index].contactPhone = e.target.value;
+                              setSponsors(newSponsors);
+                            }}
+                            placeholder="+91 1234567890"
+                            size="small"
+                          />
+                        </Grid>
+                      </Grid>
+                      
+                      <TextField
+                        fullWidth
+                        label="Notes"
+                        multiline
+                        rows={2}
+                        value={sponsor.notes || ''}
+                        onChange={(e) => {
+                          const newSponsors = [...sponsors];
+                          newSponsors[index].notes = e.target.value;
+                          setSponsors(newSponsors);
+                        }}
+                        placeholder="Additional details about the sponsorship"
+                        size="small"
+                      />
+                      
+                      {/* Date received field for "received" status */}
+                      {sponsor.receivedStatus === 'received' && (
+                        <TextField
+                          fullWidth
+                          label="Date Received"
+                          type="date"
+                          value={sponsor.dateReceived ? new Date(sponsor.dateReceived).toISOString().split('T')[0] : ''}
+                          onChange={(e) => {
+                            const newSponsors = [...sponsors];
+                            newSponsors[index].dateReceived = e.target.value;
+                            setSponsors(newSponsors);
+                          }}
+                          InputLabelProps={{ shrink: true }}
+                          size="small"
+                        />
+                      )}
+                    </Stack>
+                  </Box>
+                ))}
+                
+                {sponsors.length === 0 && (
+                  <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', mt: 2 }}>
+                    No sponsors added yet. Click "Add Sponsor" to include event sponsors.
+                  </Typography>
+                )}
+              </>
             )}
           </CardContent>
         </Card>

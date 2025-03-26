@@ -57,7 +57,7 @@ export default function Eventmodel({ event, onClose }) {
         setActiveTab(newValue);
         
         // Filter events based on selected tab
-        if (newValue !== "about" && newValue !== "guests" && newValue !== "organizers" && newValue !== "gallery") {
+        if (newValue !== "about" && newValue !== "guests" && newValue !== "organizers" && newValue !== "gallery" && newValue !== "sponsors") {
             const filtered = allEvents.filter(e => 
                 e.eventType === newValue && e._id !== event._id
             );
@@ -96,6 +96,9 @@ export default function Eventmodel({ event, onClose }) {
 
     // Safety check to ensure eventGallery is always an array
     const safeEventGallery = Array.isArray(event.eventGallery) ? event.eventGallery : [];
+
+    // Safety check to ensure sponsors is always an array
+    const safeEventSponsors = Array.isArray(event.sponsors) ? event.sponsors : [];
 
     // Extract banner file ID
     const bannerFileId = extractBannerFileId(event.eventBanner);
@@ -164,6 +167,7 @@ export default function Eventmodel({ event, onClose }) {
                     ))}
                     <Tab value="gallery" label="Gallery" />
                     <Tab value="guests" label="Guests" />
+                    <Tab value="sponsors" label="Sponsors" />
                     <Tab value="organizers" label="Organizers" />
                 </Tabs>
 
@@ -276,6 +280,30 @@ export default function Eventmodel({ event, onClose }) {
                                     </div>
                                 ) : (
                                     <p className="text-gray-600 text-sm sm:text-base">No guests listed for this event.</p>
+                                )}
+                            </>
+                        ) : activeTab === "sponsors" ? (
+                            <>
+                                <h2 className="text-xl sm:text-2xl font-bold mb-4">Event Sponsors</h2>
+                                {safeEventSponsors.length > 0 ? (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {safeEventSponsors.map((sponsor, index) => (
+                                            <div key={index} className="border rounded-lg p-3 sm:p-4 flex items-center">
+                                                <img 
+                                                    src={sponsor.logoUrl || "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg"} 
+                                                    className="w-12 h-12 sm:w-16 sm:h-16 object-cover" 
+                                                    alt={sponsor.name}
+                                                />
+                                                <div className="ml-3 sm:ml-4">
+                                                    <h3 className="font-semibold text-sm sm:text-base">{sponsor.name}</h3>
+                                                    <p className="text-xs sm:text-sm text-gray-600 capitalize">{sponsor.type}</p>
+                                                    {sponsor.notes && <p className="text-xs sm:text-sm text-gray-500">{sponsor.notes}</p>}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-600 text-sm sm:text-base">No sponsors listed for this event.</p>
                                 )}
                             </>
                         ) : activeTab === "organizers" ? (
@@ -402,6 +430,35 @@ export default function Eventmodel({ event, onClose }) {
                                             className="text-blue-500 text-xs sm:text-sm hover:underline mt-1 sm:mt-2"
                                         >
                                             View all {safeEventGuests.length} guests
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {safeEventSponsors.length > 0 && (
+                            <div className="mt-4 sm:mt-6">
+                                <h2 className="text-lg sm:text-xl font-bold mb-2 sm:mb-4">Featured Sponsors</h2>
+                                <div className="space-y-2 sm:space-y-3">
+                                    {safeEventSponsors.slice(0, 3).map((sponsor, index) => (
+                                        <div key={index} className="flex items-center">
+                                            <img 
+                                                src={sponsor.logoUrl || "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg"} 
+                                                className="w-8 h-8 sm:w-10 sm:h-10 object-cover" 
+                                                alt={sponsor.name}
+                                            />
+                                            <div className="ml-2 sm:ml-3">
+                                                <h3 className="font-medium text-xs sm:text-sm">{sponsor.name}</h3>
+                                                <p className="text-xs text-gray-500 capitalize">{sponsor.type}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {safeEventSponsors.length > 3 && (
+                                        <button 
+                                            onClick={() => setActiveTab("sponsors")}
+                                            className="text-blue-500 text-xs sm:text-sm hover:underline mt-1 sm:mt-2"
+                                        >
+                                            View all {safeEventSponsors.length} sponsors
                                         </button>
                                     )}
                                 </div>
