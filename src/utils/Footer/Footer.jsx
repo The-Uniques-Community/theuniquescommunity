@@ -1,75 +1,87 @@
 import { useTheme } from "@mui/material";
-import { FaLinkedinIn, FaTwitter, FaInstagram } from "react-icons/fa";
+import { FaLinkedinIn, FaTwitter, FaInstagram, FaGithub } from "react-icons/fa";
 import logo from '../../assets/logos/theuniquesCommunity.png'
 import { Link } from "react-router";
+
 const Footer = () => {
     const theme = useTheme();
   return (
     <footer className="bg-slate-200 lg:p-6 md:p-6 sm:p-6 p-4 py-12">
       <div style={{borderBottomWidth:'1px',borderColor:theme.palette.primary.dark}} className="max-w-7xl py-4 mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
         <div>
-          <img src={logo} className="mb-4 w-full h-10 object-contain object-left" alt="" />
+          <img src={logo} className="mb-4 w-full h-10 object-contain object-left" alt="The Uniques Community Logo" />
           <p className="text-sm mb-4">
-            Eget urna dictum varius duis at velit consectetur. Lorem ipsum dolor sit amet consectetur.
+            The Uniques Community is a student-led initiative focused on fostering technical skills, collaboration, and professional growth through hands-on projects and industry mentorship.
           </p>
         </div>
 
-        {/* Explore */}
+        {/* Navigation */}
         <div className="px-3">
-          <h4 className="text-lg font-semibold mb-2">EXPLORE</h4>
+          <h4 className="text-lg font-semibold mb-2">NAVIGATE</h4>
           <ul className="text-sm space-y-2">
-            <li className="hover:text-slate-800 hover:underline duration"><Link to="#">accumsan consequat</Link></li>
-            <li className="hover:text-slate-800 hover:underline duration"><Link to="#">exercitation ullamco</Link></li>
-            <li className="hover:text-slate-800 hover:underline duration"><Link to="#">fugiat nulla</Link></li>
-            <li className="hover:text-slate-800 hover:underline duration"><Link to="#">dolore magna</Link></li>
+            <li className="hover:text-slate-800 hover:underline duration"><Link to="/">Home</Link></li>
+            <li className="hover:text-slate-800 hover:underline duration"><Link to="/about">About Us</Link></li>
+            <li className="hover:text-slate-800 hover:underline duration"><Link to="/events">Events</Link></li>
+            <li className="hover:text-slate-800 hover:underline duration"><Link to="/blogs">Blogs</Link></li>
           </ul>
         </div>
 
-        {/* Know More */}
+        {/* Community */}
         <div className="px-3">
-          <h4 className="text-lg font-semibold mb-2">KNOW MORE</h4>
+          <h4 className="text-lg font-semibold mb-2">COMMUNITY</h4>
           <ul className="text-sm space-y-2">
-            <li className="hover:text-slate-800 hover:underline duration"><Link to="#">blandit cursus</Link></li>
-            <li className="hover:text-slate-800 hover:underline duration"><Link to="#">aliquam a lacus</Link></li>
-            <li className="hover:text-slate-800 hover:underline duration"><Link to="#">fugiat nulla</Link></li>
-            <li className="hover:text-slate-800 hover:underline duration"><Link to="#">dolore magna</Link></li>
+            <li className="hover:text-slate-800 hover:underline duration"><Link to="/community-main">Community Page</Link></li>
+            <li className="hover:text-slate-800 hover:underline duration"><Link to="/batches">Batches</Link></li>
+            <li className="hover:text-slate-800 hover:underline duration"><Link to="/howitstarted">How It Started</Link></li>
+            <li className="hover:text-slate-800 hover:underline duration"><Link to="/auth/login">Member Login</Link></li>
           </ul>
         </div>
 
-        {/* About */}
+        {/* Resources */}
         <div className="px-3">
-          <h4 className="text-lg font-semibold mb-2">ABOUT</h4>
+          <h4 className="text-lg font-semibold mb-2">RESOURCES</h4>
           <ul className="text-sm space-y-2">
-            <li className="hover:text-slate-800 hover:underline duration"><Link to="#">Vestibulum morbi blandit</Link></li>
-            <li className="hover:text-slate-800 hover:underline duration"><Link to="#">orci sagittis</Link></li>
-            <li className="hover:text-slate-800 hover:underline duration"><Link to="#">ultrices vel sagittis</Link></li>
-            <li className="hover:text-slate-800 hover:underline duration"><Link to="#">adipiscing</Link></li>
+            <li className="hover:text-slate-800 hover:underline duration"><Link to="/training">Training Model</Link></li>
+            <li className="hover:text-slate-800 hover:underline duration"><Link to="/contact">Contact Us</Link></li>
+            <li className="hover:text-slate-800 hover:underline duration"><Link to="/privacy-policy">Privacy Policy</Link></li>
+            <li className="hover:text-slate-800 hover:underline duration"><Link to="/terms-of-service">Terms of Service</Link></li>
           </ul>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto mt-6 grid grid-cols-1 gap-4 place-content-end">
+      <div className="max-w-6xl mx-auto mt-6 grid grid-cols-1 gap-4">
+        {/* Copyright */}
+        <div className="text-sm text-center md:text-left">
+          © {new Date().getFullYear()} The Uniques Community. All rights reserved.
+        </div>
 
         {/* Social Icons */}
-        <div className="flex justify-end items-center space-x-4">
+        <div className="flex justify-center md:justify-end items-center space-x-4">
             <div className="w-8 h-8 rounded-full bg-slate-200">
-                <Link to="/">
-                <div style={{backgroundColor:theme.palette.primary.dark}} className=" w-8 h-8 rounded-full flex justify-center items-center">
-                    <FaLinkedinIn color="white" className="text-blue-600 cursor-pointer" size={20} />
+                <Link to="https://www.linkedin.com/company/theuniquesofflicial" target="_blank" rel="noopener noreferrer">
+                <div style={{backgroundColor:theme.palette.primary.dark}} className="w-8 h-8 rounded-full flex justify-center items-center">
+                    <FaLinkedinIn color="white" className="cursor-pointer" size={20} />
                 </div>
                 </Link>
             </div>
             <div className="w-8 h-8 rounded-full bg-slate-200">
-                <Link to="/">
-                <div style={{backgroundColor:theme.palette.primary.dark}} className=" w-8 h-8 rounded-full flex justify-center items-center">
+                <Link to="https://www.instagram.com/theuniquesofficial?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer">
+                <div style={{backgroundColor:theme.palette.primary.dark}} className="w-8 h-8 rounded-full flex justify-center items-center">
                     <FaInstagram color="white" className="mx-auto cursor-pointer" size={20} />
                 </div>
                 </Link>
             </div>
             <div className="w-8 h-8 rounded-full bg-slate-200">
-                <Link to="/">
+                <Link to="https://twitter.com/theuniquescomm" target="_blank" rel="noopener noreferrer">
                 <div style={{backgroundColor:theme.palette.primary.dark}} className="w-8 h-8 rounded-full flex justify-center items-center">
-                    <FaTwitter className=" cursor-pointer" size={20} color="white" />
+                    <FaTwitter className="cursor-pointer" size={20} color="white" />
+                </div>
+                </Link>
+            </div>
+            <div className="w-8 h-8 rounded-full bg-slate-200">
+                <Link to="https://github.com/theuniquescommunity" target="_blank" rel="noopener noreferrer">
+                <div style={{backgroundColor:theme.palette.primary.dark}} className="w-8 h-8 rounded-full flex justify-center items-center">
+                    <FaGithub className="cursor-pointer" size={20} color="white" />
                 </div>
                 </Link>
             </div>

@@ -16,11 +16,22 @@ import {
   Alert, 
   Button,
   Snackbar,
-  Badge
+  Badge,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormHelperText
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 const MembersIndex = () => {
   // State for active tab
@@ -56,6 +67,21 @@ const MembersIndex = () => {
     message: "",
     severity: "success"
   });
+  
+  // Add member modal state
+  const [addMemberOpen, setAddMemberOpen] = useState(false);
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [addMemberLoading, setAddMemberLoading] = useState(false);
+  const [newMember, setNewMember] = useState({
+    fullName: '',
+    email: '',
+    batch: '',
+    admno: '',
+    password: '',
+    course: 'B.Tech CSE'
+  });
+  const [formErrors, setFormErrors] = useState({});
+  const [addedMemberInfo, setAddedMemberInfo] = useState(null);
   
   // Handle tab change
   const handleChange = (event, newValue) => {
@@ -196,6 +222,131 @@ const MembersIndex = () => {
     setPage(newPage);
   };
   
+  // Handle Add Member form input change
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    
+    // Convert admission number to uppercase
+    const processedValue = name === 'admno' ? value.toUpperCase() : value;
+    
+    setNewMember({
+      ...newMember,
+      [name]: processedValue
+    });
+    
+    // Clear error for this field if any
+    if (formErrors[name]) {
+      setFormErrors({
+        ...formErrors,
+        [name]: ''
+      });
+    }
+  };
+  
+  // Validate form fields
+  const validateForm = () => {
+    const errors = {};
+    
+    if (!newMember.fullName.trim()) {
+      errors.fullName = 'Name is required';
+    }
+    
+    if (!newMember.email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(newMember.email)) {
+      errors.email = 'Email is invalid';
+    }
+    
+    if (!newMember.batch) {
+      errors.batch = 'Batch is required';
+    }
+    
+    if (!newMember.admno.trim()) {
+      errors.admno = 'Admission number is required';
+    } else if (!/^[0-9]{4}(BTCS|BTCED)[0-9]{3}$/.test(newMember.admno)) {
+      errors.admno = 'Invalid format. Expected: ####BTCS### or ####BTCED###';
+    }
+    
+    // Password is optional
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+  
+  // Handle Add Member form submission
+  const handleAddMemberSubmit = () => {
+    if (validateForm()) {
+      setConfirmationOpen(true);
+    }
+  };
+  
+  // Handle Add Member API call
+  const handleConfirmAddMember = async () => {
+    try {
+      setAddMemberLoading(true);
+      
+      const response = await axios.post('http://localhost:5000/api/admin/member/add', newMember);
+      
+      if (response.data.success) {
+        // Store member info in state
+        const memberInfo = {
+          member: response.data.data.member || {
+            fullName: newMember.fullName,
+            email: newMember.email,
+            batch: newMember.batch
+          },
+          temporaryPassword: response.data.data.temporaryPassword || 'Password not available'
+        };
+        
+        setAddedMemberInfo(memberInfo);
+        
+        // Show success message
+        setAlert({
+          open: true,
+          message: 'Member added successfully!',
+          severity: 'success'
+        });
+        
+        // Close confirmation dialog
+        setConfirmationOpen(false);
+        
+        // Refresh data
+        fetchMembers();
+        fetchTabCounts();
+        
+        // Reset form
+        setNewMember({
+          fullName: '',
+          email: '',
+          batch: '',
+          admno: '',
+          password: '',
+          course: 'B.Tech CSE'
+        });
+      } else {
+        throw new Error(response.data.message || 'Failed to add member');
+      }
+    } catch (err) {
+      console.error("Error adding member:", err);
+      
+      setAlert({
+        open: true,
+        message: err.response?.data?.message || 'Failed to add member. Please try again.',
+        severity: 'error'
+      });
+      
+      setConfirmationOpen(false);
+    } finally {
+      setAddMemberLoading(false);
+    }
+  };
+  
+  // Close the added member info modal and reset
+  const handleCloseAddedInfo = () => {
+    setAddedMemberInfo(null);
+    setAddMemberOpen(false);
+  };
+  
   // Initialize data on component mount
   useEffect(() => {
     fetchTabCounts();
@@ -214,11 +365,17 @@ const MembersIndex = () => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, page]);
-  console.log(members)
+  
   return (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <TabContext value={value}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Box sx={{ 
+          borderBottom: 1, 
+          borderColor: "divider",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}>
           <TabList 
             onChange={handleChange} 
             aria-label="members tabs"
@@ -286,6 +443,20 @@ const MembersIndex = () => {
               value="6" 
             />
           </TabList>
+          
+          {/* Add Member Button */}
+          <Button
+            variant="contained"
+            startIcon={<PersonAddIcon />}
+            onClick={() => setAddMemberOpen(true)}
+            sx={{ 
+              bgcolor: "#ca0019", 
+              "&:hover": { bgcolor: "#a30014" },
+              mr: 2
+            }}
+          >
+            Add Member
+          </Button>
         </Box>
         
         {/* Search and filter controls */}
@@ -408,6 +579,198 @@ const MembersIndex = () => {
           </TabPanel>
         ))}
       </TabContext>
+      
+      {/* Add Member Modal */}
+      <Dialog 
+        open={addMemberOpen} 
+        onClose={() => setAddMemberOpen(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle sx={{ fontWeight: 500 }}>Add New Member</DialogTitle>
+        <DialogContent>
+          <Box component="form" noValidate sx={{ mt: 2 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="fullName"
+              label="Full Name"
+              name="fullName"
+              autoFocus
+              value={newMember.fullName}
+              onChange={handleInputChange}
+              error={!!formErrors.fullName}
+              helperText={formErrors.fullName}
+            />
+            
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              type="email"
+              value={newMember.email}
+              onChange={handleInputChange}
+              error={!!formErrors.email}
+              helperText={formErrors.email}
+            />
+            
+            <FormControl 
+              fullWidth 
+              margin="normal"
+              required
+              error={!!formErrors.batch}
+            >
+              <InputLabel>Batch</InputLabel>
+              <Select
+                name="batch"
+                value={newMember.batch}
+                label="Batch"
+                onChange={handleInputChange}
+              >
+                <MenuItem value="The Uniques 1.0">The Uniques 1.0</MenuItem>
+                <MenuItem value="The Uniques 2.0">The Uniques 2.0</MenuItem>
+                <MenuItem value="The Uniques 3.0">The Uniques 3.0</MenuItem>
+                <MenuItem value="The Uniques 4.0">The Uniques 4.0</MenuItem>
+              </Select>
+              {formErrors.batch && <FormHelperText>{formErrors.batch}</FormHelperText>}
+            </FormControl>
+            
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="admno"
+              label="Admission Number"
+              name="admno"
+              placeholder="e.g. 2021BTCS001"
+              value={newMember.admno}
+              onChange={handleInputChange}
+              error={!!formErrors.admno}
+              helperText={formErrors.admno || "Format: ####BTCS### or ####BTCED###"}
+              inputProps={{ style: { textTransform: 'uppercase' } }}
+            />
+            
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Course</InputLabel>
+              <Select
+                name="course"
+                value={newMember.course}
+                label="Course"
+                onChange={handleInputChange}
+              >
+                <MenuItem value="B.Tech CSE">B.Tech CSE</MenuItem>
+                <MenuItem value="CSD">CSD</MenuItem>
+              </Select>
+            </FormControl>
+            
+            <TextField
+              margin="normal"
+              fullWidth
+              id="password"
+              label="Password (Optional)"
+              name="password"
+              type="password"
+              value={newMember.password}
+              onChange={handleInputChange}
+              helperText="If left blank, a random password will be generated"
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setAddMemberOpen(false)}>Cancel</Button>
+          <Button 
+            onClick={handleAddMemberSubmit}
+            variant="contained"
+            sx={{ bgcolor: "#ca0019", "&:hover": { bgcolor: "#a30014" } }}
+          >
+            Add Member
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
+      {/* Confirmation Modal */}
+      <Dialog
+        open={confirmationOpen}
+        onClose={() => !addMemberLoading && setConfirmationOpen(false)}
+      >
+        <DialogTitle>Confirm New Member</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to add this member?
+          </DialogContentText>
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="subtitle2" gutterBottom>Member Details:</Typography>
+            <Typography variant="body2"><strong>Name:</strong> {newMember.fullName}</Typography>
+            <Typography variant="body2"><strong>Email:</strong> {newMember.email}</Typography>
+            <Typography variant="body2"><strong>Batch:</strong> {newMember.batch}</Typography>
+            <Typography variant="body2"><strong>Admission No:</strong> {newMember.admno}</Typography>
+            <Typography variant="body2"><strong>Course:</strong> {newMember.course}</Typography>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button 
+            onClick={() => setConfirmationOpen(false)} 
+            disabled={addMemberLoading}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleConfirmAddMember} 
+            variant="contained"
+            color="primary"
+            disabled={addMemberLoading}
+          >
+            {addMemberLoading ? <CircularProgress size={24} /> : 'Confirm'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
+      {/* Success Modal */}
+      {addedMemberInfo && (
+        <Dialog
+          open={!!addedMemberInfo}
+          onClose={handleCloseAddedInfo}
+        >
+          <DialogTitle sx={{ color: 'green' }}>
+            Member Added Successfully
+          </DialogTitle>
+          <DialogContent>
+            <Alert severity="success" sx={{ mb: 2 }}>
+              The new member has been added! They can now log in with their credentials.
+            </Alert>
+            
+            <Box sx={{ mt: 2, p: 2, bgcolor: 'background.paper', borderRadius: 1 }}>
+              <Typography variant="subtitle2" gutterBottom>Member Account Details:</Typography>
+              <Typography variant="body2">
+                <strong>Name:</strong> {addedMemberInfo.member?.fullName || newMember.fullName}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Email:</strong> {addedMemberInfo.member?.email || newMember.email}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Password:</strong> {addedMemberInfo.temporaryPassword}
+              </Typography>
+            </Box>
+            
+            <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>
+              Please share these credentials with the member. They will be asked to change their password on first login.
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button 
+              onClick={handleCloseAddedInfo} 
+              variant="contained"
+              color="primary"
+            >
+              Done
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
       
       {/* Snackbar for alerts */}
       <Snackbar

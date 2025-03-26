@@ -1,5 +1,6 @@
 import Member from "../../models/member/memberModel.js";
-
+import Enquiry from "../../models/Enquiry/enquiryModel.js";
+import sendContactEmail from "../../services/members/sendContactEmail.js";
 // Get all public members with pagination and filters
 export const getPublicMembers = async (req, res) => {
     try {
@@ -206,3 +207,66 @@ export const getMemberCounts = async (req, res) => {
       });
     }
   };
+
+  export const submitContactForm = async (req, res) => {
+    try {
+        // Extract contact form data
+        const { firstName, lastName, email, phone, message, services } = req.body;
+        
+        // Basic validation
+        if (!firstName || !lastName || !email || !message) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide all required fields: firstName, lastName, email, and message'
+            });
+        }
+        
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide a valid email address'
+            });
+        }
+        
+        // Store the enquiry in the database
+        const newEnquiry = new Enquiry({
+            firstName,
+            lastName,
+            email,
+            phone: phone || undefined,
+            message,
+            services: services || [],
+            ipAddress: req.ip,
+            referrer: req.get('referer') || 'Direct'
+        });
+        
+        await newEnquiry.save();
+        
+        // Send email notification
+        const emailSent = await sendContactEmail({
+            ...req.body,
+            enquiryId: newEnquiry._id // Include the enquiry ID for reference
+        });
+        
+        if (!emailSent) {
+            // Even if the email fails, the enquiry is stored in the database
+            console.warn(`Email notification failed for enquiry ID: ${newEnquiry._id}`);
+        }
+        
+        // Success response
+        return res.status(200).json({
+            success: true,
+            message: 'Contact form submitted successfully',
+            enquiryId: newEnquiry._id
+        });
+    } catch (error) {
+        console.error('Error processing contact form:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Server error while processing your request',
+            error: error.message
+        });
+    }
+};
