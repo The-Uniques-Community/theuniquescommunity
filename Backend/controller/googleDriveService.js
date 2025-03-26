@@ -158,11 +158,11 @@ export async function uploadFile(filePath, destinationFolderId, options = {}) {
   // Get the shareable web link
   const getFile = await drive.files.get({
     fileId: file.data.id,
-    fields: 'webViewLink',
+    fields: 'thumbnailLink',
   });
   
   const fileId = file.data.id;
-  const fileUrl = getFile.data.webViewLink || `https://drive.google.com/uc?id=${fileId}`;
+  const fileUrl = getFile.data.thumbnailLink || `https://drive.google.com/uc?id=${fileId}`;
   
   return {
     fileName: file.data.name,

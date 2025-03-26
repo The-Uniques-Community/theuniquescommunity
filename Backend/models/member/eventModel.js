@@ -140,7 +140,7 @@ const eventSchema = new mongoose.Schema({
             // Only validate when status is "received"
             if (value === "received") {
               return !!this.receiptId; // Must have receiptId for received sponsorships
-            }
+            } 
             return true;
           },
           message: "Receipt upload required to mark sponsorship as received",
