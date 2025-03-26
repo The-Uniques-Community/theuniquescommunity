@@ -190,7 +190,7 @@ export const NewMember = ({ user, refreshData }) => {
       setLoading(true);
       
       // API call to impose fine
-      const response = await axios.post(`http://localhost:5000/api/admin/member/${user._id}/fine`, {
+      const response = await axios.post(`http://localhost:5000/api/admin/fine/members/${user._id}/fines`, {
         amount: Number(fineAmount),
         reason: fineReason.trim()
       });
@@ -225,7 +225,7 @@ export const NewMember = ({ user, refreshData }) => {
   return (
     <>
       {/* User Card */}
-      <Card className="rounded-2xl shadow-lg border border-slate-200 bg-white p-4 xl:max-w-[390px] max-w-96">
+      <Card className="rounded-2xl shadow-lg border border-slate-200 bg-white p-4 xl:max-w-[30px] xl:min-w-[350px] max-w-80 min-w-80">
         <CardContent className="flex flex-col gap-2">
           {/* Status Tags */}
           <div className="flex justify-between items-center my-4">

@@ -18,15 +18,24 @@ import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import GroupsIcon from '@mui/icons-material/Groups';
 import PaidIcon from '@mui/icons-material/Paid';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import axios from 'axios';
+
+const API_BASE_URL = 'http://localhost:5000/api/admin';
 
 const index = () => {
   // State for statistics
   const [stats, setStats] = useState({
     totalMembers: 0,
-    totalFine: 0,
-    paidMembers: 0,
-    pendingMembers: 0
+    totalFinesIssued: 0,
+    totalAmount: 0,
+    totalPendingAmount: 0,
+    totalPaidAmount: 0,
+    totalWaivedAmount: 0,
+    membersWithPendingFines: 0,
+    paidMembers: 0
   });
   
   // State for chart data
@@ -43,36 +52,31 @@ const index = () => {
       try {
         setLoading(true);
         
-        // Fetch members with fines
-        const finesRes = await axios.get('http://localhost:5000/api/admin/member/fines/all');
-        const fineMembers = finesRes.data.data || [];
+        // 1. Fetch fine statistics using the dedicated endpoint
+        const fineStatsRes = await axios.get(`${API_BASE_URL}/fine/fines/statistics`);
+        const fineStats = fineStatsRes.data.data || {};
         
-        // Calculate total fine amount
-        const totalFineAmount = fineMembers.reduce((total, member) => {
-          return total + parseInt(member.fineStatus || 0);
-        }, 0);
+        // 2. Get total members count
+        const membersRes = await axios.get(`${API_BASE_URL}/member?limit=1`);
+        const totalMembers = membersRes.data.count || 0;
         
-        // Count members with pending fines
-        const membersWithFines = fineMembers.filter(member => 
-          parseInt(member.fineStatus || 0) > 0
-        ).length;
+        // 3. Calculate members with/without pending fines
+        const pendingMembers = fineStats.membersWithPendingFines || 0;
+        const paidMembers = totalMembers - pendingMembers;
         
-        // Get total members count
-        const membersRes = await axios.get('http://localhost:5000/api/admin/member?page=1&limit=1');
-        const totalMembers = membersRes.data.pagination?.total || 0;
-        
-        // Fetch batch-wise distribution for chart
+        // 4. Fetch batch-wise distribution for chart
         const batches = ["The Uniques 1.0", "The Uniques 2.0", "The Uniques 3.0"];
         const batchData = [];
         
         for (const batch of batches) {
           try {
-            const batchRes = await axios.get(`http://localhost:5000/api/admin/fine/search`, {
+            // Get members with pending fines for this batch
+            const batchRes = await axios.get(`${API_BASE_URL}/fine/fines/pending/members`, {
               params: { batch, limit: 100 }
             });
             
-            const batchMembers = batchRes.data.data || [];
-            const batchTotal = batchMembers.reduce((sum, m) => sum + parseInt(m.fineStatus || 0), 0);
+            const batchMembers = batchRes.data.data.members || [];
+            const batchTotal = batchMembers.reduce((sum, m) => sum + (m.totalPendingAmount || 0), 0);
             
             batchData.push({
               name: batch,
@@ -87,9 +91,13 @@ const index = () => {
         // Update states
         setStats({
           totalMembers,
-          totalFine: totalFineAmount,
-          pendingMembers: membersWithFines,
-          paidMembers: totalMembers - membersWithFines
+          totalFinesIssued: fineStats.totalFinesIssued || 0,
+          totalAmount: fineStats.totalAmount || 0,
+          totalPendingAmount: fineStats.totalPendingAmount || 0,
+          totalPaidAmount: fineStats.totalPaidAmount || 0,
+          totalWaivedAmount: fineStats.totalWaivedAmount || 0,
+          membersWithPendingFines: pendingMembers,
+          paidMembers
         });
         
         setChartData(batchData);
@@ -101,9 +109,9 @@ const index = () => {
         
         // Fallback data
         setChartData([
-          { name: 'The Uniques 1.0', fines: 2500, members: 20 },
-          { name: 'The Uniques 2.0', fines: 1800, members: 18 },
-          { name: 'The Uniques 3.0', fines: 1200, members: 12 }
+          { name: 'The Uniques 1.0', fines: 0, members: 0 },
+          { name: 'The Uniques 2.0', fines: 0, members: 0 },
+          { name: 'The Uniques 3.0', fines: 0, members: 0 }
         ]);
       }
     };
@@ -114,7 +122,7 @@ const index = () => {
   // Prepare data for pie chart
   const pieData = [
     { name: 'Paid Members', value: stats.paidMembers },
-    { name: 'Members with Fine', value: stats.pendingMembers }
+    { name: 'Members with Fine', value: stats.membersWithPendingFines }
   ];
 
   return (
@@ -129,30 +137,68 @@ const index = () => {
         </Alert>
       )}
       
-      {/* Stats Cards Row */}
-      <div className='grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4 my-4'>
+      {/* Primary Stats Cards Row */}
+      <Typography variant="h6" fontWeight="medium" className="mb-2 text-gray-700">
+        Overview
+      </Typography>
+      <div className='grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4 mb-6'>
         <StatCard 
-          icon={<GroupsIcon fontSize="large" />}
+          icon={<GroupsIcon fontSize="large" className="text-blue-600" />}
           title='Total Members' 
           value={loading ? <CircularProgress size={24} /> : stats.totalMembers}
           link="/admin/members-overview"
         />
         <StatCard 
-          icon={<CurrencyRupeeIcon fontSize="large" />}
-          title='Total Fine' 
-          value={loading ? <CircularProgress size={24} /> : `₹${stats.totalFine}`}
+          icon={<ReceiptIcon fontSize="large" className="text-purple-600" />}
+          title='Total Fines Issued' 
+          value={loading ? <CircularProgress size={24} /> : stats.totalFinesIssued}
         />
         <StatCard 
-          icon={<PaidIcon fontSize="large" />}
-          title='Members Paid' 
-          value={loading ? <CircularProgress size={24} /> : stats.paidMembers}
+          icon={<CurrencyRupeeIcon fontSize="large" className="text-amber-700" />}
+          title='Total Fine Amount' 
+          value={loading ? <CircularProgress size={24} /> : `₹${stats.totalAmount}`}
         />
         <StatCard 
-          icon={<WarningAmberIcon fontSize="large" />}
-          title='Members with Fine' 
-          value={loading ? <CircularProgress size={24} /> : stats.pendingMembers}
+          icon={<PendingActionsIcon fontSize="large" className="text-red-600" />}
+          title='Pending Amount' 
+          value={loading ? <CircularProgress size={24} /> : `₹${stats.totalPendingAmount}`}
         />
       </div>
+      
+      {/* Secondary Stats Cards Row */}
+      <Typography variant="h6" fontWeight="medium" className="mb-2 text-gray-700">
+        Member Status
+      </Typography>
+      <div className='grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4 mb-6'>
+        <StatCard 
+          icon={<PaidIcon fontSize="large" className="text-green-600" />}
+          title='Paid Amount' 
+          value={loading ? <CircularProgress size={24} /> : `₹${stats.totalPaidAmount}`}
+          bgColor="bg-green-50"
+        />
+        <StatCard 
+          icon={<ThumbUpIcon fontSize="large" className="text-indigo-600" />}
+          title='Waived Amount' 
+          value={loading ? <CircularProgress size={24} /> : `₹${stats.totalWaivedAmount}`}
+          bgColor="bg-indigo-50"
+        />
+        <StatCard 
+          icon={<PaidIcon fontSize="large" className="text-emerald-600" />}
+          title='Members with No Fine' 
+          value={loading ? <CircularProgress size={24} /> : stats.paidMembers}
+          bgColor="bg-emerald-50"
+        />
+        <StatCard 
+          icon={<WarningAmberIcon fontSize="large" className="text-rose-600" />}
+          title='Members with Fine' 
+          value={loading ? <CircularProgress size={24} /> : stats.membersWithPendingFines}
+          bgColor="bg-rose-50"
+        />
+      </div>
+      
+      {/* Charts Section and the rest of your code remains the same */}
+      {/* ... */}
+    
       
       {/* Charts Section */}
       <Grid container spacing={3} className="mb-6">

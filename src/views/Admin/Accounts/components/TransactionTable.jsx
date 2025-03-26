@@ -33,35 +33,75 @@ import {
   ListItemText,
   ListItemAvatar,
   Divider,
+  Card,
+  CardContent,
+  Grid,
+  Tab,
+  Tabs,
+  Tooltip,
+  Link,
+  Stack,
+  Badge,
+  Autocomplete,
+  useTheme,
 } from "@mui/material";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import SearchIcon from "@mui/icons-material/Search";
-import CloseIcon from "@mui/icons-material/Close";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import PersonSearchIcon from "@mui/icons-material/PersonSearch";
-import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import {
+  FileDownload as FileDownloadIcon,
+  Search as SearchIcon,
+  Close as CloseIcon,
+  Visibility as VisibilityIcon,
+  Delete as DeleteIcon,
+  AddCircle as AddCircleIcon,
+  PersonSearch as PersonSearchIcon,
+  CurrencyRupee as CurrencyRupeeIcon,
+  CheckCircle as CheckCircleIcon,
+  DateRange as DateRangeIcon,
+  ErrorOutline as ErrorOutlineIcon,
+  Receipt as ReceiptIcon,
+  Refresh as RefreshIcon,
+  History as HistoryIcon,
+  Dashboard as DashboardIcon,
+  Info as InfoIcon
+} from "@mui/icons-material";
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import axios from "axios";
+// Import date-fns without destructuring to avoid the missing module error
+import * as dateFns from 'date-fns';
 import tu from '@/assets/logos/tu.png';
+import * as XLSX from 'xlsx';
 
-// PDF Export component would be defined separately
+// Base API URL
+const API_BASE_URL = 'http://localhost:5000/api/admin/fine';
 
 const FineTable = () => {
+  const theme = useTheme();
   // State management
   const [fines, setFines] = useState([]);
+  const [statistics, setStatistics] = useState({
+    totalFinesIssued: 0,
+    totalAmount: 0,
+    totalPendingAmount: 0,
+    totalPaidAmount: 0,
+    totalWaivedAmount: 0,
+    membersWithPendingFines: 0,
+    recentFines: []
+  });
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [batchFilter, setBatchFilter] = useState("All Batches");
+  const [statusFilter, setStatusFilter] = useState("All");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [rowsPerPage] = useState(5);
+  const [rowsPerPage] = useState(10);
   
   // Modal states
   const [openViewModal, setOpenViewModal] = useState(false);
   const [openAddFineModal, setOpenAddFineModal] = useState(false);
+  const [openDeleteConfirmModal, setOpenDeleteConfirmModal] = useState(false);
+  const [openStatsModal, setOpenStatsModal] = useState(false);
   const [selectedFine, setSelectedFine] = useState(null);
+  const [fineToDelete, setFineToDelete] = useState(null);
   
   // Search members modal
   const [openSearchModal, setOpenSearchModal] = useState(false);
@@ -73,6 +113,10 @@ const FineTable = () => {
   const [selectedMember, setSelectedMember] = useState(null);
   const [fineAmount, setFineAmount] = useState("");
   const [fineReason, setFineReason] = useState("");
+  const [fineDate, setFineDate] = useState(new Date());
+  
+  // Tab state for fine details modal
+  const [activeTab, setActiveTab] = useState(0);
   
   // Alert state
   const [alert, setAlert] = useState({
@@ -81,22 +125,57 @@ const FineTable = () => {
     severity: "success"
   });
 
-  // Fetch fine data
+  // Get fine statistics
+  const fetchFineStatistics = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/fines/statistics`);
+      setStatistics(response.data.data);
+    } catch (error) {
+      console.error("Error fetching fine statistics:", error);
+      setAlert({
+        open: true,
+        message: "Failed to fetch fine statistics",
+        severity: "error"
+      });
+    }
+  };
+
+  // Fetch members with fines
   const fetchFines = async () => {
     try {
       setLoading(true);
-      // Keep this endpoint as is since it's working
-      const response = await axios.get(`http://localhost:5000/api/admin/member/fines/all`, {
-        params: {
-          page,
-          limit: rowsPerPage,
-          batch: batchFilter !== "All Batches" ? batchFilter : undefined,
-          search
-        }
-      });
       
-      setFines(response.data.data || []);
-      setTotalPages(Math.ceil((response.data.pagination?.total || response.data.data.length) / rowsPerPage));
+      // Use the pending/members endpoint for all fines
+      const endpoint = `${API_BASE_URL}/fines/pending/members`;
+      
+      // Create query parameters object - only add filters with values
+      const params = {
+        page,
+        limit: rowsPerPage
+      };
+      
+      if (batchFilter !== "All Batches") {
+        params.batch = batchFilter;
+      }
+      
+      if (search && search.trim() !== "") {
+        params.search = search.trim();
+      }
+      
+      if (statusFilter !== "All") {
+        params.status = statusFilter.toLowerCase();
+      }
+      
+      const response = await axios.get(endpoint, { params });
+      
+      if (response.data && response.data.success) {
+        setFines(response.data.data.members || []);
+        setTotalPages(Math.ceil(response.data.data.count / rowsPerPage) || 1);
+        fetchFineStatistics(); // Get updated statistics
+      } else {
+        throw new Error("Failed to fetch fine data");
+      }
+      
       setLoading(false);
     } catch (error) {
       console.error("Error fetching fines:", error);
@@ -109,150 +188,231 @@ const FineTable = () => {
     }
   };
 
-  const addFine = async () => {
-  if (!selectedMember || !fineAmount || !fineReason) {
-    setAlert({
-      open: true,
-      message: "Please complete all fields",
-      severity: "warning"
-    });
-    return;
-  }
-  
-  try {
-    setLoading(true);
-    // FIXED: Changed to match fineRouter POST /:memberId/impose route
-    await axios.post(`http://localhost:5000/api/admin/fine/${selectedMember._id}/impose`, {
-      amount: Number(fineAmount),
-      reason: fineReason
-    });
+  const imposeFine = async () => {
+    if (!selectedMember || !fineAmount || !fineReason) {
+      setAlert({
+        open: true,
+        message: "Please complete all required fields",
+        severity: "warning"
+      });
+      return;
+    }
     
-    setAlert({
-      open: true,
-      message: `Fine of ₹${fineAmount} imposed successfully`,
-      severity: "success"
-    });
-    
-    // Reset form and close modal
-    setSelectedMember(null);
-    setFineAmount("");
-    setFineReason("");
-    setOpenAddFineModal(false);
-    
-    // Refresh data
-    fetchFines();
-  } catch (error) {
-    console.error("Error imposing fine:", error);
-    setAlert({
-      open: true,
-      message: error.response?.data?.message || "Failed to impose fine",
-      severity: "error"
-    });
-    setLoading(false);
-  }
-};
-
-// 2. Fix the clearFine function
-const clearFine = async (memberId) => {
-  try {
-    setLoading(true);
-    // FIXED: Changed to match fineRouter POST /:memberId/clear route
-    await axios.post(`http://localhost:5000/api/admin/fine/${memberId}/clear`);
-    
-    setAlert({
-      open: true,
-      message: "Fine cleared successfully",
-      severity: "success"
-    });
-    
-    // Refresh data
-    fetchFines();
-  } catch (error) {
-    console.error("Error clearing fine:", error);
-    setAlert({
-      open: true,
-      message: error.response?.data?.message || "Failed to clear fine",
-      severity: "error"
-    });
-    setLoading(false);
-  }
-};
-
-// 3. Fix the viewFineDetails function
-const viewFineDetails = async (member) => {
-  try {
-    setLoading(true);
-    // FIXED: Changed to match fineRouter GET /:memberId/history route
-    const response = await axios.get(`http://localhost:5000/api/admin/fine/${member._id}/history`);
-    
-    setSelectedFine({
-      ...response.data.data,
-      member: member
-    });
-    
-    setOpenViewModal(true);
-    setLoading(false);
-  } catch (error) {
-    console.error("Error fetching fine details:", error);
-    setAlert({
-      open: true,
-      message: error.response?.data?.message || "Failed to fetch fine details",
-      severity: "error"
-    });
-    setLoading(false);
-  }
-};
-
-// 4. Fix the searchMembers function - ALREADY CORRECT
-const searchMembers = async () => {
-  if (!searchQuery.trim()) return;
-  
-  try {
-    setSearchLoading(true);
-    
-    // This is already correct - it matches fineRouter GET /search route
-    const response = await axios.get(`http://localhost:5000/api/admin/fine/search`, {
-      params: {
-        query: searchQuery,  // Use 'query' as expected by your controller
-        batch: batchFilter !== "All Batches" ? batchFilter : undefined,
-        limit: 10
-      }
-    });
-    
-    setSearchResults(response.data.data || []);
-    setSearchLoading(false);
-  } catch (error) {
-    console.error("Error searching members:", error);
-    setAlert({
-      open: true,
-      message: error.response?.data?.message || "Failed to search members",
-      severity: "error"
-    });
-    setSearchLoading(false);
-  }
-};
-  // Load data when component mounts or filters change
-  useEffect(() => {
-    fetchFines();
-  }, [page, batchFilter, search]);
-
-  // Status Chip component
-  const getStatusChip = (status) => {
-    switch (status) {
-      case "Completed":
-        return <Chip label="Completed" color="success" />;
-      case "Pending":
-        return <Chip label="Pending" color="warning" />;
-      case "Waived":
-        return <Chip label="Waived" color="default" />;
-      default:
-        return <Chip label={status} />;
+    try {
+      setLoading(true);
+      
+      await axios.post(`${API_BASE_URL}/members/${selectedMember._id}/fines`, {
+        amount: Number(fineAmount),
+        reason: fineReason,
+        dateImposed: fineDate
+      });
+      
+      setAlert({
+        open: true,
+        message: `Fine of ₹${fineAmount} imposed successfully`,
+        severity: "success"
+      });
+      
+      // Reset form and close modal
+      setSelectedMember(null);
+      setFineAmount("");
+      setFineReason("");
+      setFineDate(new Date());
+      setOpenAddFineModal(false);
+      
+      // Refresh data
+      fetchFines();
+    } catch (error) {
+      console.error("Error imposing fine:", error);
+      setAlert({
+        open: true,
+        message: error.response?.data?.message || "Failed to impose fine",
+        severity: "error"
+      });
+      setLoading(false);
     }
   };
 
-  // Export to CSV function
-  const exportToCSV = () => {
-    // Implementation for CSV export
+  const updateFineStatus = async (memberId, fineId, newStatus) => {
+    try {
+      setLoading(true);
+      
+      await axios.patch(`${API_BASE_URL}/members/${memberId}/fines/${fineId}`, {
+        status: newStatus
+      });
+      
+      setAlert({
+        open: true,
+        message: `Fine marked as ${newStatus} successfully`,
+        severity: "success"
+      });
+      
+      // Refresh data and close modal if open
+      fetchFines();
+      setOpenViewModal(false);
+    } catch (error) {
+      console.error("Error updating fine status:", error);
+      setAlert({
+        open: true,
+        message: error.response?.data?.message || "Failed to update fine status",
+        severity: "error"
+      });
+      setLoading(false);
+    }
+  };
+
+  const removeFine = async () => {
+    if (!fineToDelete) return;
+    
+    try {
+      setLoading(true);
+      
+      await axios.delete(`${API_BASE_URL}/members/${fineToDelete.memberId}/fines/${fineToDelete.fineId}`);
+      
+      setAlert({
+        open: true,
+        message: "Fine removed successfully",
+        severity: "success"
+      });
+      
+      // Reset state and close modal
+      setFineToDelete(null);
+      setOpenDeleteConfirmModal(false);
+      
+      // Refresh data
+      fetchFines();
+    } catch (error) {
+      console.error("Error removing fine:", error);
+      setAlert({
+        open: true,
+        message: error.response?.data?.message || "Failed to remove fine",
+        severity: "error"
+      });
+      setLoading(false);
+    }
+  };
+
+  const viewFineDetails = async (member) => {
+    try {
+      setLoading(true);
+      
+      // Get complete fine history for the member
+      const response = await axios.get(`${API_BASE_URL}/members/${member.id}/fines`);
+      
+      setSelectedFine({
+        member,
+        fines: response.data.data.fines,
+        totals: response.data.data.totals
+      });
+      
+      setActiveTab(0); // Reset to first tab
+      setOpenViewModal(true);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching fine details:", error);
+      setAlert({
+        open: true,
+        message: error.response?.data?.message || "Failed to fetch fine details",
+        severity: "error"
+      });
+      setLoading(false);
+    }
+  };
+
+  const searchMembers = async () => {
+    if (!searchQuery.trim()) return;
+    
+    try {
+      setSearchLoading(true);
+      
+      const response = await axios.get(`${API_BASE_URL}/members/search`, {
+        params: {
+          query: searchQuery,
+          batch: batchFilter !== "All Batches" ? batchFilter : undefined,
+          limit: 10
+        }
+      });
+      
+      setSearchResults(response.data.data || []);
+      setSearchLoading(false);
+    } catch (error) {
+      console.error("Error searching members:", error);
+      setAlert({
+        open: true,
+        message: error.response?.data?.message || "Failed to search members",
+        severity: "error"
+      });
+      setSearchLoading(false);
+    }
+  };
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    // Reset to first page when searching
+    setPage(1);
+  };
+
+  // Handle batch filter change
+  const handleBatchChange = (e) => {
+    setBatchFilter(e.target.value);
+    // Reset to first page when changing filter
+    setPage(1);
+  };
+
+  // Handle status filter change
+  const handleStatusChange = (e) => {
+    setStatusFilter(e.target.value);
+    // Reset to first page when changing filter
+    setPage(1);
+  };
+
+  // Export to Excel function
+  const exportToExcel = () => {
+    // Create worksheet from fines data
+    const worksheet = XLSX.utils.json_to_sheet(fines.map(fine => ({
+      'Member Name': fine.name,
+      'Admission No': fine.admno,
+      'Batch': fine.batch,
+      'Total Pending Amount': fine.totalPendingAmount,
+      'Pending Fines Count': fine.pendingFinesCount,
+      'Last Updated': new Date(fine.updatedAt).toLocaleDateString()
+    })));
+    
+    // Create workbook and add worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Fines');
+    
+    // Generate Excel file and trigger download
+    XLSX.writeFile(workbook, `Fine_Records_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+  
+  // Load data when component mounts or filters change
+  useEffect(() => {
+    fetchFines();
+  }, [page, batchFilter, statusFilter]);
+
+  // Separate useEffect for search to add debouncing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchFines();
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // Status Chip component
+  const getStatusChip = (status) => {
+    switch (status.toLowerCase()) {
+      case "paid":
+        return <Chip label="Paid" color="success" size="small" />;
+      case "pending":
+        return <Chip label="Pending" color="warning" size="small" />;
+      case "waived":
+        return <Chip label="Waived" color="default" size="small" />;
+      default:
+        return <Chip label={status} size="small" />;
+    }
   };
 
   return (
@@ -264,6 +424,75 @@ const searchMembers = async () => {
         p: 3,
       }}
     >
+      {/* Statistics Cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card sx={{ height: '100%', boxShadow: 2 }}>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom variant="overline">
+                Total Fines Amount
+              </Typography>
+              <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#ca0019' }}>
+                ₹{statistics.totalAmount || 0}
+              </Typography>
+              <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+                {statistics.totalFinesIssued || 0} fines issued in total
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card sx={{ height: '100%', boxShadow: 2 }}>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom variant="overline">
+                Pending Amount
+              </Typography>
+              <Typography variant="h4" sx={{ fontWeight: 'bold', color: theme.palette.warning.main }}>
+                ₹{statistics.totalPendingAmount || 0}
+              </Typography>
+              <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+                {statistics.membersWithPendingFines || 0} members with pending fines
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card sx={{ height: '100%', boxShadow: 2 }}>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom variant="overline">
+                Paid Amount
+              </Typography>
+              <Typography variant="h4" sx={{ fontWeight: 'bold', color: theme.palette.success.main }}>
+                ₹{statistics.totalPaidAmount || 0}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card 
+            sx={{ 
+              height: '100%', 
+              boxShadow: 2, 
+              cursor: 'pointer',
+              '&:hover': { boxShadow: 4 } 
+            }}
+            onClick={() => setOpenStatsModal(true)}
+          >
+            <CardContent sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <Typography color="textSecondary" gutterBottom variant="overline">
+                Statistics & Insights
+              </Typography>
+              <Box sx={{ mt: 'auto', display: 'flex', alignItems: 'center' }}>
+                <DashboardIcon sx={{ color: '#ca0019', mr: 1 }} />
+                <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                  View Detailed Analytics
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
       {/* Header */}
       <Box
         display="flex"
@@ -286,30 +515,39 @@ const searchMembers = async () => {
       </Box>
 
       {/* Filters & Search */}
-      <Box display="flex" justifyContent="space-between" mb={2}>
+      <Box display="flex" justifyContent="space-between" mb={2} flexWrap="wrap" gap={2}>
         <TextField
           variant="outlined"
-          placeholder="Search by Name or Reason"
+          placeholder="Search by Name or Admission No"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={handleSearchChange}
           InputProps={{
             startAdornment: <SearchIcon sx={{ mr: 1, color: "#555" }} />,
           }}
-          sx={{ bgcolor: "#fff", borderRadius: 1, input: { color: "#333" } }}
+          sx={{ bgcolor: "#fff", borderRadius: 1, input: { color: "#333" }, flexGrow: 1 }}
         />
-        <div>
-          <div className="flex gap-x-4">
-            <Button 
-              variant="contained" 
-              startIcon={<FileDownloadIcon />}
-              onClick={exportToCSV}
-              sx={{ bgcolor: "#ca0019" }}
+        <Box display="flex" gap={2} flexWrap="wrap">
+          <FormControl sx={{ minWidth: 120 }}>
+            <InputLabel>Status</InputLabel>
+            <Select
+              value={statusFilter}
+              label="Status"
+              onChange={handleStatusChange}
+              sx={{ bgcolor: "#fff", color: "#333" }}
             >
-              Export CSV
-            </Button>
+              <MenuItem value="All">All Status</MenuItem>
+              <MenuItem value="Pending">Pending</MenuItem>
+              <MenuItem value="Paid">Paid</MenuItem>
+              <MenuItem value="Waived">Waived</MenuItem>
+            </Select>
+          </FormControl>
+          
+          <FormControl sx={{ minWidth: 150 }}>
+            <InputLabel>Batch</InputLabel>
             <Select
               value={batchFilter}
-              onChange={(e) => setBatchFilter(e.target.value)}
+              label="Batch"
+              onChange={handleBatchChange}
               sx={{ bgcolor: "#fff", color: "#333" }}
             >
               <MenuItem value="All Batches">All Batches</MenuItem>
@@ -317,8 +555,17 @@ const searchMembers = async () => {
               <MenuItem value="The Uniques 2.0">The Uniques 2.0</MenuItem>
               <MenuItem value="The Uniques 3.0">The Uniques 3.0</MenuItem>
             </Select>
-          </div>
-        </div>
+          </FormControl>
+          
+          <Button 
+            variant="contained" 
+            startIcon={<FileDownloadIcon />}
+            onClick={exportToExcel}
+            sx={{ bgcolor: "#ca0019" }}
+          >
+            Export Excel
+          </Button>
+        </Box>
       </Box>
 
       {/* Fines Table */}
@@ -336,15 +583,15 @@ const searchMembers = async () => {
                 Batch
               </TableCell>
               <TableCell sx={{ color: "#555", fontWeight: "bold" }}>
-                Fine Amount
+                Pending Amount
               </TableCell>
               <TableCell sx={{ color: "#555", fontWeight: "bold" }}>
-                Imposed Date
+                Pending Fines
               </TableCell>
               <TableCell sx={{ color: "#555", fontWeight: "bold" }}>
-                Payment Status
+                Last Updated
               </TableCell>
-              <TableCell sx={{ color: "#555", fontWeight: "bold" }}>
+              <TableCell sx={{ color: "#555", fontWeight: "bold", width: 120 }}>
                 Actions
               </TableCell>
             </TableRow>
@@ -363,13 +610,13 @@ const searchMembers = async () => {
                 </TableCell>
               </TableRow>
             ) : (
-              fines.map((fine, index) => (
-                <TableRow key={index} hover>
+              fines.map((fine) => (
+                <TableRow key={fine.id} hover>
                   <TableCell sx={{ color: "#333" }}>
                     <div className="flex items-center gap-2">
-                      <Avatar src={fine.profilePic} alt={fine.fullName} />
+                      <Avatar alt={fine.name} src={fine.profilePic?.url} />
                       <div>
-                        <Typography variant="body1">{fine.fullName}</Typography>
+                        <Typography variant="body1">{fine.name}</Typography>
                         <Typography variant="caption" color="textSecondary">
                           {fine.admno}
                         </Typography>
@@ -383,36 +630,58 @@ const searchMembers = async () => {
                     </div>
                   </TableCell>
                   <TableCell sx={{ color: "#333" }}>
-                    ₹{fine.fineStatus}
+                    <Typography
+                      sx={{
+                        fontWeight: 'bold',
+                        color: fine.totalPendingAmount > 0 ? theme.palette.warning.dark : theme.palette.success.main
+                      }}
+                    >
+                      ₹{fine.totalPendingAmount}
+                    </Typography>
+                  </TableCell>
+                  <TableCell sx={{ color: "#333" }}>
+                    {fine.pendingFinesCount > 0 ? (
+                      <Badge badgeContent={fine.pendingFinesCount} color="warning">
+                        <ReceiptIcon fontSize="small" />
+                      </Badge>
+                    ) : (
+                      <Chip label="None" size="small" color="success" />
+                    )}
                   </TableCell>
                   <TableCell sx={{ color: "#333" }}>
                     {new Date(fine.updatedAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
-                    {parseInt(fine.fineStatus) > 0 ? (
-                      <Chip label="Unpaid" color="warning" />
-                    ) : (
-                      <Chip label="Paid" color="success" />
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <IconButton 
-                        color="primary" 
-                        onClick={() => viewFineDetails(fine)}
-                        size="small"
-                      >
-                        <VisibilityIcon />
-                      </IconButton>
-                      <IconButton 
-                        color="error"
-                        onClick={() => clearFine(fine._id)}
-                        size="small"
-                        disabled={parseInt(fine.fineStatus) === 0}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </div>
+                    <Box display="flex" gap={1}>
+                      <Tooltip title="View Details">
+                        <IconButton 
+                          color="primary" 
+                          onClick={() => viewFineDetails(fine)}
+                          size="small"
+                        >
+                          <VisibilityIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Add Fine">
+                        <IconButton 
+                          color="warning"
+                          size="small"
+                          onClick={() => {
+                            setSelectedMember({
+                              _id: fine.id,
+                              fullName: fine.name,
+                              admno: fine.admno,
+                              batch: fine.batch,
+                              profilePic: fine.profilePic,
+                              pendingAmount: fine.totalPendingAmount
+                            });
+                            setOpenAddFineModal(true);
+                          }}
+                        >
+                          <AddCircleIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
                   </TableCell>
                 </TableRow>
               ))
@@ -428,24 +697,9 @@ const searchMembers = async () => {
           page={page}
           onChange={(e, value) => setPage(value)}
           sx={{
-            display: "flex",
-            gap: "8px",
-            "& button": {
-              color: "black",
-              fontWeight: "bold",
-              borderRadius: "8px",
-              transition: "background-color 0.3s ease",
-              "&:hover": {
-                backgroundColor: "transparent",
-              },
-            },
             "& .Mui-selected": {
               backgroundColor: "#ca0019 !important",
               color: "white",
-              fontWeight: "bold",
-              "&:hover": {
-                backgroundColor: "#ca0019 !important",
-              },
             },
           }}
         />
@@ -462,7 +716,7 @@ const searchMembers = async () => {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 500,
+          width: 700,
           bgcolor: 'background.paper',
           boxShadow: 24,
           p: 4,
@@ -470,8 +724,8 @@ const searchMembers = async () => {
           maxHeight: '90vh',
           overflow: 'auto'
         }}>
-          <div className="flex justify-between items-center mb-4">
-            <Typography variant="h6" component="h2">
+          <div className="flex justify-between items-center mb-2">
+            <Typography variant="h5" component="h2" fontWeight="bold">
               Fine Details
             </Typography>
             <IconButton onClick={() => setOpenViewModal(false)}>
@@ -483,12 +737,12 @@ const searchMembers = async () => {
             <>
               <div className="flex items-center gap-3 mb-4">
                 <Avatar 
-                  src={selectedFine.member.profilePic} 
-                  alt={selectedFine.member.fullName}
+                  src={selectedFine.member.profilePic?.url} 
+                  alt={selectedFine.member.name}
                   sx={{ width: 56, height: 56 }}
                 />
                 <div>
-                  <Typography variant="h6">{selectedFine.member.fullName}</Typography>
+                  <Typography variant="h6">{selectedFine.member.name}</Typography>
                   <Typography variant="body2" color="textSecondary">
                     {selectedFine.member.admno} • {selectedFine.member.batch}
                   </Typography>
@@ -497,58 +751,197 @@ const searchMembers = async () => {
               
               <Divider sx={{ mb: 3 }} />
               
-              <Box sx={{ mb: 3, p: 2, bgcolor: '#f9f9f9', borderRadius: 2 }}>
-                <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
-                  Current Fine Status
-                </Typography>
-                <div className="flex justify-between items-center">
-                  <Typography variant="body1">Amount Due:</Typography>
-                  <Chip 
-                    label={`₹${selectedFine.currentFine}`} 
-                    color={parseInt(selectedFine.currentFine) > 0 ? "error" : "success"}
-                    sx={{ fontWeight: 'bold' }}
-                  />
-                </div>
+              {/* Tabs for fine details */}
+              <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+                <Tabs value={activeTab} onChange={(e, newValue) => setActiveTab(newValue)}>
+                  <Tab label="Summary" />
+                  <Tab label="Fine History" />
+                </Tabs>
               </Box>
               
-              <Box sx={{ mb: 3 }}>
-                <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
-                  Contact Information
-                </Typography>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <Typography variant="body2" color="textSecondary">Email:</Typography>
-                    <Typography variant="body2">{selectedFine.member.email}</Typography>
-                  </div>
-                  {selectedFine.member.contact && (
-                    <div>
-                      <Typography variant="body2" color="textSecondary">Phone:</Typography>
-                      <Typography variant="body2">{selectedFine.member.contact}</Typography>
-                    </div>
+              {/* Summary Tab */}
+              {activeTab === 0 && (
+                <div>
+                  <Grid container spacing={2} sx={{ mb: 3 }}>
+                    <Grid item xs={12} sm={4}>
+                      <Card sx={{ bgcolor: theme.palette.warning.light, height: '100%' }}>
+                        <CardContent>
+                          <Typography variant="overline">
+                            Pending
+                          </Typography>
+                          <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                            ₹{selectedFine.totals?.pending || 0}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                      <Card sx={{ bgcolor: theme.palette.success.light, height: '100%' }}>
+                        <CardContent>
+                          <Typography variant="overline">
+                            Paid
+                          </Typography>
+                          <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                            ₹{selectedFine.totals?.paid || 0}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                      <Card sx={{ bgcolor: theme.palette.grey[200], height: '100%' }}>
+                        <CardContent>
+                          <Typography variant="overline">
+                            Waived
+                          </Typography>
+                          <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                            ₹{selectedFine.totals?.waived || 0}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  </Grid>
+                  
+                  <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1 }}>
+                    Pending Fines
+                  </Typography>
+                  
+                  {selectedFine.fines.filter(f => f.status === 'pending').length > 0 ? (
+                    selectedFine.fines.filter(f => f.status === 'pending').map((fine) => (
+                      <Card key={fine._id} sx={{ mb: 2, borderLeft: `4px solid ${theme.palette.warning.main}` }}>
+                        <CardContent sx={{ pb: 1 }}>
+                          <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+                            <div>
+                              <Typography variant="body1" fontWeight="medium">
+                                ₹{fine.amount} - {fine.reason}
+                              </Typography>
+                              <Typography variant="caption" color="textSecondary">
+                                Imposed: {new Date(fine.dateImposed).toLocaleDateString()}
+                              </Typography>
+                            </div>
+                            <Box>
+                              <Button 
+                                size="small"
+                                variant="outlined"
+                                color="success"
+                                onClick={() => updateFineStatus(selectedFine.member.id, fine._id, 'paid')}
+                              >
+                                Mark Paid
+                              </Button>
+                              <IconButton 
+                                size="small" 
+                                color="error"
+                                sx={{ ml: 1 }}
+                                onClick={() => {
+                                  setFineToDelete({
+                                    memberId: selectedFine.member.id,
+                                    fineId: fine._id,
+                                    amount: fine.amount
+                                  });
+                                  setOpenDeleteConfirmModal(true);
+                                }}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Box>
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    ))
+                  ) : (
+                    <Typography variant="body2" color="textSecondary" sx={{ py: 2 }}>
+                      No pending fines
+                    </Typography>
                   )}
                 </div>
-              </Box>
+              )}
               
-              <div className="flex justify-end gap-2 mt-4">
-                <Button 
-                  variant="outlined" 
-                  onClick={() => setOpenViewModal(false)}
-                >
-                  Close
-                </Button>
-                <Button 
-                  variant="contained" 
-                  color="primary"
-                  onClick={() => {
-                    clearFine(selectedFine.member._id);
-                    setOpenViewModal(false);
-                  }}
-                  disabled={parseInt(selectedFine.currentFine) === 0}
-                  sx={{ bgcolor: "#ca0019" }}
-                >
-                  Mark as Paid
-                </Button>
-              </div>
+              {/* History Tab */}
+              {activeTab === 1 && (
+                <div>
+                  <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
+                    All Fines
+                  </Typography>
+                  
+                  {selectedFine.fines.length > 0 ? (
+                    selectedFine.fines.map((fine) => {
+                      // Determine border color based on status
+                      let borderColor;
+                      switch (fine.status) {
+                        case 'paid': borderColor = theme.palette.success.main; break;
+                        case 'pending': borderColor = theme.palette.warning.main; break;
+                        case 'waived': borderColor = theme.palette.grey[500]; break;
+                        default: borderColor = theme.palette.grey[300];
+                      }
+                      
+                      return (
+                        <Card key={fine._id} sx={{ mb: 2, borderLeft: `4px solid ${borderColor}` }}>
+                          <CardContent>
+                            <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+                              <div>
+                                <Typography variant="body1" fontWeight="medium">
+                                  ₹{fine.amount} - {fine.reason}
+                                </Typography>
+                                <Box mt={0.5}>
+                                  <Typography variant="caption" color="textSecondary" sx={{ display: 'block' }}>
+                                    Imposed: {new Date(fine.dateImposed).toLocaleDateString()}
+                                  </Typography>
+                                  <Box display="flex" alignItems="center" mt={0.5}>
+                                    {getStatusChip(fine.status)}
+                                    {fine.proofOfPayment && (
+                                      <Link 
+                                        href="#"
+                                        underline="hover" 
+                                        color="primary" 
+                                        sx={{ ml: 2, fontSize: '0.75rem', display: 'flex', alignItems: 'center' }}
+                                      >
+                                        <ReceiptIcon fontSize="inherit" sx={{ mr: 0.5 }} />
+                                        View Receipt
+                                      </Link>
+                                    )}
+                                  </Box>
+                                </Box>
+                              </div>
+                              
+                              {fine.status === 'pending' && (
+                                <Box>
+                                  <Button 
+                                    size="small"
+                                    variant="outlined"
+                                    color="error"
+                                    onClick={() => {
+                                      setFineToDelete({
+                                        memberId: selectedFine.member.id,
+                                        fineId: fine._id,
+                                        amount: fine.amount
+                                      });
+                                      setOpenDeleteConfirmModal(true);
+                                    }}
+                                    sx={{ mr: 1 }}
+                                  >
+                                    Remove
+                                  </Button>
+                                  <Button 
+                                    size="small"
+                                    variant="outlined"
+                                    color="success"
+                                    onClick={() => updateFineStatus(selectedFine.member.id, fine._id, 'paid')}
+                                  >
+                                    Mark Paid
+                                  </Button>
+                                </Box>
+                              )}
+                            </Box>
+                          </CardContent>
+                        </Card>
+                      );
+                    })
+                  ) : (
+                    <Typography variant="body2" color="textSecondary" sx={{ py: 2 }}>
+                      No fine records found
+                    </Typography>
+                  )}
+                </div>
+              )}
             </>
           )}
         </Box>
@@ -621,7 +1014,7 @@ const searchMembers = async () => {
                     }}
                   >
                     <ListItemAvatar>
-                      <Avatar src={member.profilePic} />
+                      <Avatar src={member.profilePic?.url} />
                     </ListItemAvatar>
                     <ListItemText 
                       primary={member.fullName}
@@ -630,10 +1023,10 @@ const searchMembers = async () => {
                           <span>{member.admno}</span>
                           <span className="mx-1">•</span>
                           <span>{member.batch}</span>
-                          {member.fineStatus && parseInt(member.fineStatus) > 0 && (
+                          {member.fines && member.fines.some(fine => fine.status === 'pending') && (
                             <Chip 
                               size="small" 
-                              label={`₹${member.fineStatus} due`} 
+                              label="Has pending fines" 
                               color="error"
                               sx={{ ml: 1 }}
                             />
@@ -669,7 +1062,7 @@ const searchMembers = async () => {
             <>
               <div className="flex items-center gap-3 mb-4 mt-2">
                 <Avatar 
-                  src={selectedMember.profilePic} 
+                  src={selectedMember.profilePic?.url} 
                   alt={selectedMember.fullName}
                   sx={{ width: 56, height: 56 }}
                 />
@@ -683,9 +1076,9 @@ const searchMembers = async () => {
               
               <Divider sx={{ mb: 3 }} />
               
-              {selectedMember.fineStatus && parseInt(selectedMember.fineStatus) > 0 && (
+              {selectedMember.pendingAmount > 0 && (
                 <Alert severity="info" sx={{ mb: 3 }}>
-                  This member already has an existing fine of ₹{selectedMember.fineStatus}
+                  This member already has a total pending fine of ₹{selectedMember.pendingAmount}
                 </Alert>
               )}
               
@@ -699,6 +1092,7 @@ const searchMembers = async () => {
                   value={fineAmount}
                   onChange={(e) => setFineAmount(e.target.value)}
                   fullWidth
+                  required
                 />
               </FormControl>
               
@@ -710,7 +1104,20 @@ const searchMembers = async () => {
                   value={fineReason}
                   onChange={(e) => setFineReason(e.target.value)}
                   fullWidth
+                  required
                 />
+              </FormControl>
+              
+              <FormControl fullWidth sx={{ mb: 3 }}>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    label="Date Imposed"
+                    value={fineDate}
+                    onChange={(newDate) => setFineDate(newDate)}
+                    slotProps={{ textField: { fullWidth: true } }}
+                    maxDate={new Date()}
+                  />
+                </LocalizationProvider>
               </FormControl>
             </>
           )}
@@ -718,13 +1125,158 @@ const searchMembers = async () => {
         <DialogActions>
           <Button onClick={() => setOpenAddFineModal(false)}>Cancel</Button>
           <Button 
-            onClick={addFine} 
+            onClick={imposeFine} 
             variant="contained" 
             sx={{ bgcolor: "#ca0019" }}
           >
             Add Fine
           </Button>
         </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Modal */}
+      <Dialog
+        open={openDeleteConfirmModal}
+        onClose={() => setOpenDeleteConfirmModal(false)}
+      >
+        <DialogTitle>
+          Confirm Fine Removal
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">
+            Are you sure you want to remove this fine of ₹{fineToDelete?.amount}?
+          </Typography>
+          <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+            This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDeleteConfirmModal(false)}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={removeFine} 
+            variant="contained" 
+            color="error"
+          >
+            Remove
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Statistics Modal */}
+      <Dialog
+        open={openStatsModal}
+        onClose={() => setOpenStatsModal(false)}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>
+          <div className="flex justify-between items-center">
+            <Typography variant="h6">Fine Statistics & Analytics</Typography>
+            <IconButton onClick={() => setOpenStatsModal(false)}>
+              <CloseIcon />
+            </IconButton>
+          </div>
+        </DialogTitle>
+        <DialogContent>
+          <Grid container spacing={3} sx={{ mb: 4, mt: 1 }}>
+            <Grid item xs={12} sm={6} md={3}>
+              <Card sx={{ height: '100%' }}>
+                <CardContent>
+                  <Typography color="textSecondary" variant="overline">
+                    Total Fines
+                  </Typography>
+                  <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#ca0019' }}>
+                    ₹{statistics.totalAmount || 0}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    {statistics.totalFinesIssued || 0} total records
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            
+            <Grid item xs={12} sm={6} md={3}>
+              <Card sx={{ height: '100%' }}>
+                <CardContent>
+                  <Typography color="textSecondary" variant="overline">
+                    Pending
+                  </Typography>
+                  <Typography variant="h4" sx={{ fontWeight: 'bold', color: theme.palette.warning.main }}>
+                    ₹{statistics.totalPendingAmount || 0}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    {statistics.membersWithPendingFines || 0} members
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            
+            <Grid item xs={12} sm={6} md={3}>
+              <Card sx={{ height: '100%' }}>
+                <CardContent>
+                  <Typography color="textSecondary" variant="overline">
+                    Paid
+                  </Typography>
+                  <Typography variant="h4" sx={{ fontWeight: 'bold', color: theme.palette.success.main }}>
+                    ₹{statistics.totalPaidAmount || 0}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            
+            <Grid item xs={12} sm={6} md={3}>
+              <Card sx={{ height: '100%' }}>
+                <CardContent>
+                  <Typography color="textSecondary" variant="overline">
+                    Waived
+                  </Typography>
+                  <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                    ₹{statistics.totalWaivedAmount || 0}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+          
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Recent Activity
+          </Typography>
+          
+          <TableContainer component={Paper} sx={{ mb: 3 }}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell><Typography variant="subtitle2">Member</Typography></TableCell>
+                  <TableCell><Typography variant="subtitle2">Amount</Typography></TableCell>
+                  <TableCell><Typography variant="subtitle2">Reason</Typography></TableCell>
+                  <TableCell><Typography variant="subtitle2">Date</Typography></TableCell>
+                  <TableCell><Typography variant="subtitle2">Status</Typography></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {statistics.recentFines && statistics.recentFines.length > 0 ? (
+                  statistics.recentFines.map((fine) => (
+                    <TableRow key={fine._id} hover>
+                      <TableCell>{fine.memberName}</TableCell>
+                      <TableCell>₹{fine.amount}</TableCell>
+                      <TableCell>{fine.reason}</TableCell>
+                      <TableCell>{new Date(fine.dateImposed).toLocaleDateString()}</TableCell>
+                      <TableCell>{getStatusChip(fine.status)}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5} align="center">
+                      No recent activity
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </DialogContent>
       </Dialog>
 
       {/* Alert Snackbar */}

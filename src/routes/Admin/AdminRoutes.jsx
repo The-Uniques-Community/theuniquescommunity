@@ -10,7 +10,7 @@ const AdminLayout = Loader(lazy(() => import("@/layout/Admin")));
 const AdminDashboard = Loader(lazy(() => import("@/views/Admin")));
 const Member = Loader(lazy(() => import("@/views/Admin/Members")));
 const Event = Loader(lazy(() => import("@/views/Admin/Events")));
-const Account = Loader(lazy(() => import("@/views/Admin/Accounts")));
+const Account = Loader(lazy(() => import("@/views/Admin/Accounts/index")));
 const Profile = Loader(lazy(() => import("@/views/Admin/Profile")));
 const EventBudget = Loader(lazy(() => import("@/views/Admin/Events/Budget")));
 const EventView = Loader(lazy(() => import("@/views/Admin/Events/View")));

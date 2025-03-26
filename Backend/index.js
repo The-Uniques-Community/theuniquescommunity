@@ -15,6 +15,7 @@ import googleDriveRoutes from './routes/googleDriveUpload.routes.js'
 import memberAdminRouter from "./routes/admin/memberRoute.js";
 import fineRouter from "./routes/admin/fineRoute.js";
 import publicMemberRouter from "./routes/landing/publicMemberRouter.js";
+import memberFineRoute from "./routes/member/fineRoute.js";
 dotenv.config();
 
 const app = express();
@@ -33,6 +34,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/member", memberRoute);
+app.use("/api/fine", memberFineRoute)
 app.use("/api/admin", adminRoute);
 app.use("/api/admin/member",memberAdminRouter)
 app.use("/api/community", communityRoutes);

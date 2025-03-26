@@ -16,6 +16,7 @@ const eventIds = {
   eventThree: createObjectId(),
   eventFour: createObjectId(),
 };
+
 export const getMemberData = async () => {
     // Hash passwords
     const defaultPassword = await hashPassword('password123');
@@ -39,6 +40,8 @@ export const getMemberData = async () => {
         isSuspended: false,
         profileStatus: "active",
         fineStatus: "0",
+        // New fine model data
+        fines: [],
         semesterSGPA: [
           { semester: 1, sgpa: 8.6 },
           { semester: 2, sgpa: 8.9 },
@@ -99,6 +102,17 @@ export const getMemberData = async () => {
         isSuspended: false,
         profileStatus: "active",
         fineStatus: "0",
+        // New fine model data
+        fines: [
+          {
+            amount: 200,
+            reason: "Late submission of assignment",
+            dateImposed: new Date("2023-12-10"),
+            status: "paid",
+            datePaid: new Date("2023-12-15"),
+            proofOfPayment: null
+          }
+        ],
         semesterSGPA: [
           { semester: 1, sgpa: 7.8 },
           { semester: 2, sgpa: 7.5 },
@@ -173,6 +187,15 @@ export const getMemberData = async () => {
         isSuspended: false,
         profileStatus: "active",
         fineStatus: "0",
+        // New fine model data
+        fines: [
+          {
+            amount: 150,
+            reason: "Missing community meeting",
+            dateImposed: new Date("2024-01-20"),
+            status: "pending"
+          }
+        ],
         semesterSGPA: [
           { semester: 1, sgpa: 8.3 }
         ],
@@ -214,6 +237,21 @@ export const getMemberData = async () => {
         isSuspended: true, // Suspended account
         profileStatus: "blocked",
         fineStatus: "500", // Has outstanding fine
+        // New fine model data
+        fines: [
+          {
+            amount: 300,
+            reason: "Late return of community equipment",
+            dateImposed: new Date("2023-10-05"),
+            status: "pending"
+          },
+          {
+            amount: 200,
+            reason: "Unauthorized absence from mandatory event",
+            dateImposed: new Date("2023-11-15"),
+            status: "pending"
+          }
+        ],
         semesterSGPA: [
           { semester: 1, sgpa: 6.2 },
           { semester: 2, sgpa: 5.8 },
@@ -297,4 +335,47 @@ export const getMemberData = async () => {
       console.error('Error in bulk upload of members:', error);
       return { success: false, error: error.message };
     }
+  };
+
+  // New function to update fine data for existing members
+  export const updateMemberFines = async (Member) => {
+    try {
+      const members = await getMemberData();
+      
+      // For each sample member, update their fine data
+      for (const memberData of members) {
+        const result = await Member.findOneAndUpdate(
+          { admno: memberData.admno },
+          { 
+            $set: { 
+              fines: memberData.fines,
+              // Calculate fineStatus based on pending fines
+              fineStatus: calculateFineStatus(memberData.fines)
+            }
+          },
+          { new: true }
+        );
+        
+        if (result) {
+          console.log(`Updated fine data for member ${memberData.fullName}`);
+        } else {
+          console.log(`Member ${memberData.fullName} not found`);
+        }
+      }
+      
+      return { success: true, message: "Fine data updated successfully" };
+    } catch (error) {
+      console.error('Error updating member fines:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  // Helper function to calculate fineStatus from fines array
+  const calculateFineStatus = (fines) => {
+    // Sum up pending fines
+    const pendingAmount = fines
+      .filter(fine => fine.status === 'pending')
+      .reduce((sum, fine) => sum + fine.amount, 0);
+      
+    return pendingAmount.toString(); // Convert to string to match existing format
   };
