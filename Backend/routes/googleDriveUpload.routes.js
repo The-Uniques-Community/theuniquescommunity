@@ -537,4 +537,114 @@ router.post("/event_file_upload", upload.array("files", 10), async (req, res) =>
   }
 });
 
+router.post("/budget_file_upload", upload.single("file"), async (req, res) => {
+  const tempFile = req.file;
+  
+  try {
+    const { eventId, itemType, itemId } = req.body;
+
+    if (!tempFile || !eventId || !itemType || !itemId) {
+      return res.status(400).json({ 
+        message: "Missing required fields or file." 
+      });
+    }
+
+    // Validate itemType
+    if (!["expense", "sponsor"].includes(itemType)) {
+      return res.status(400).json({ 
+        message: "Invalid itemType. Must be 'expense' or 'sponsor'." 
+      });
+    }
+
+    // Find the event
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({
+        message: `Event with ID ${eventId} not found`
+      });
+    }
+
+    // Find the specific item (expense or sponsorship)
+    let itemArray = itemType === "expense" ? event.expenses : event.sponsors;
+    const itemIndex = itemArray.findIndex(item => item._id.toString() === itemId);
+    
+    if (itemIndex === -1) {
+      return res.status(404).json({
+        message: `${itemType} with ID ${itemId} not found in event`
+      });
+    }
+
+    // Create folder structure: Main Folder -> Event Folder -> Budget -> ItemType
+    const folderStructure = await createFolderStructure(
+      "The Uniques Event",
+      event.eventName,
+      ["budget", itemType]
+    );
+    
+    const targetFolderId = folderStructure.subfolders[itemType].id;
+
+    // Upload file to Google Drive
+    const fileUploadResult = await uploadFile(tempFile.path, targetFolderId, {
+      eventName: event.eventName,
+      category: `${itemType}-receipt`,
+      customPrefix: `${itemType}-${itemId.substring(0, 8)}`
+    });
+    
+    // Create file record
+    const fileRecord = new File({
+      fileName: fileUploadResult.fileName,
+      fileUrl: fileUploadResult.fileUrl,
+      fileId: fileUploadResult.fileId,
+      eventId: eventId,
+      fileType: `${itemType}-receipt`,
+      relatedId: itemId
+    });
+    await fileRecord.save();
+    
+    // Update the event item with receipt reference
+    const updatePath = `${itemType}s.${itemIndex}.receiptId`;
+    const updateObj = { [updatePath]: fileRecord._id };
+    
+    // If this is a sponsorship being marked as received, update status and date
+    if (itemType === "sponsor") {
+      updateObj[`${itemType}s.${itemIndex}.receivedStatus`] = "received";
+      updateObj[`${itemType}s.${itemIndex}.dateReceived`] = new Date();
+    }
+    // If this is an expense being marked as completed, update status and date
+    else if (itemType === "expense") {
+      updateObj[`${itemType}s.${itemIndex}.paymentStatus`] = "completed";
+      updateObj[`${itemType}s.${itemIndex}.paidOn`] = new Date();
+    }
+    
+    await Event.findByIdAndUpdate(eventId, updateObj);
+    
+    // Send response
+    res.status(200).json({
+      message: `Receipt uploaded and ${itemType} updated successfully`,
+      file: {
+        ...fileUploadResult,
+        _id: fileRecord._id,
+      },
+      eventId: eventId,
+      itemType: itemType,
+      itemId: itemId,
+      status: itemType === "sponsor" ? "received" : "completed"
+    });
+
+  } catch (error) {
+    console.error(`Error in budget file upload:`, error);
+    res.status(500).json({ 
+      message: `Error during budget file upload.`,
+      error: error.message
+    });
+  } finally {
+    // Clean up temporary file
+    if (tempFile) {
+      fs.unlink(tempFile.path, (err) => {
+        if (err) console.error("Error deleting temp file:", tempFile.path, err);
+      });
+    }
+  }
+});
+
 export default router;
