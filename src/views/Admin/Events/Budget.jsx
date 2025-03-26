@@ -873,7 +873,7 @@ const EventBudget = () => {
         <Button
           variant="contained"
           sx={{ mt: 2 }}
-          onClick={() => navigate("/admin/events")}
+          onClick={() => navigate(-1)}
         >
           Back to Events
         </Button>
