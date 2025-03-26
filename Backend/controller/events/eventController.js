@@ -82,34 +82,39 @@ export const createEvent = async (req, res) => {
     // Initialize budget fields if sponsors are provided
     if (sponsors && sponsors.length > 0) {
       // Calculate total amount from sponsors
-      const totalSponsorship = sponsors.reduce((total, sponsor) => total + (sponsor.amount || 0), 0);
-      
+      const totalSponsorship = sponsors.reduce(
+        (total, sponsor) => total + (sponsor.amount || 0),
+        0
+      );
+
       // Initialize budget with sponsor amounts
       newEvent.budget = {
         totalAllocated: totalSponsorship,
         totalSpent: 0,
         remaining: totalSponsorship,
-        currency: 'INR',
-        status: 'active',
+        currency: "INR",
+        status: "active",
         lastUpdatedBy: {
           userId: req.user?._id || null,
-          role: req.user?.role || 'admin',
-          timestamp: new Date()
-        }
+          role: req.user?.role || "admin",
+          timestamp: new Date(),
+        },
       };
 
       // Add entry to budget history
-      newEvent.budgetHistory = [{
-        action: 'created',
-        amount: totalSponsorship,
-        category: 'sponsorship',
-        note: 'Initial budget from sponsors',
-        performedBy: {
-          userId: req.user?._id || null,
-          role: req.user?.role || 'admin'
+      newEvent.budgetHistory = [
+        {
+          action: "created",
+          amount: totalSponsorship,
+          category: "sponsorship",
+          note: "Initial budget from sponsors",
+          performedBy: {
+            userId: req.user?._id || null,
+            role: req.user?.role || "admin",
+          },
+          timestamp: new Date(),
         },
-        timestamp: new Date()
-      }];
+      ];
     }
 
     await newEvent.save();
@@ -158,40 +163,195 @@ export const createEvent = async (req, res) => {
  * Get all events with optional filtering
  * @route GET /api/events
  */
+
 export const getAllEvents = async (req, res) => {
   try {
     const { status, type, organizer, page = 1, limit = 10 } = req.query;
-    const filter = {};
+    const pageNum = Number(page);
+    const limitNum = Number(limit);
+    let filter = {};
 
-    // Apply filters if provided
-    if (status) filter.eventStatus = status;
+    // Apply standard filters if provided
     if (type) filter.eventType = type;
     if (organizer) filter.eventOrganizerBatch = organizer;
 
-    // Count total documents for pagination
-    const total = await Event.countDocuments(filter);
+    // If status filter is provided, use it directly
+    if (status) {
+      filter.eventStatus = status;
+    }
 
-    // Calculate pagination
-    const skip = (page - 1) * limit;
+    // Count events by status for analytics
+    const baseFilter = { ...filter };
+    if (baseFilter.eventStatus) delete baseFilter.eventStatus;
+    
+    const totalOngoing = await Event.countDocuments({
+      ...baseFilter,
+      eventStatus: "ongoing",
+    });
+    
+    const totalUpcoming = await Event.countDocuments({
+      ...baseFilter,
+      eventStatus: "upcoming",
+    });
+    
+    const totalCompleted = await Event.countDocuments({
+      ...baseFilter,
+      eventStatus: "completed",
+    });
+    
+    const totalCancelled = await Event.countDocuments({
+      ...baseFilter,
+      eventStatus: "cancelled",
+    });
+    
+    const total = totalOngoing + totalUpcoming + totalCompleted + totalCancelled;
+    
+    let events = [];
+    
+    // If specific status filter is applied, use standard pagination
+    if (status) {
+      const skip = (pageNum - 1) * limitNum;
+      
+      events = await Event.find(filter)
+        .populate("eventBanner")
+        .populate("eventGallery")
+        .populate({
+          path: "eventGuests.guestId",
+          model: "Guest",
+          select: "guestName guestEmail guestCompany guestDesignation",
+        })
+        .sort({ eventDate: status === "completed" || status === "cancelled" ? -1 : 1 })
+        .skip(skip)
+        .limit(limitNum);
+    } 
+    // No status filter, show prioritized events 
+    else {
+      if (pageNum === 1) {
+        // First page: Show ongoing, then upcoming, then completed to fill limit
+        const ongoingEvents = await Event.find({ ...baseFilter, eventStatus: "ongoing" })
+          .populate("eventBanner")
+          .populate("eventGallery")
+          .populate({
+            path: "eventGuests.guestId",
+            model: "Guest",
+            select: "guestName guestEmail guestCompany guestDesignation",
+          })
+          .sort({ eventDate: 1 });
 
-    const events = await Event.find(filter)
-      .populate("eventBanner")
-      .populate("eventGallery")
-      .populate({
-        path: "eventGuests.guestId",
-        model: "Guest",
-        select: "guestName guestEmail guestCompany guestDesignation",
-      })
-      .sort({ eventDate: 1 })
-      .skip(skip)
-      .limit(Number(limit));
+        let remainingSlots = limitNum - ongoingEvents.length;
+        let upcomingEvents = [];
+        
+        if (remainingSlots > 0) {
+          upcomingEvents = await Event.find({ ...baseFilter, eventStatus: "upcoming" })
+            .populate("eventBanner")
+            .populate("eventGallery")
+            .populate({
+              path: "eventGuests.guestId",
+              model: "Guest",
+              select: "guestName guestEmail guestCompany guestDesignation",
+            })
+            .sort({ eventDate: 1 });
+            
+          // Only take as many as we need to fill the limit
+          upcomingEvents = upcomingEvents.slice(0, remainingSlots);
+          remainingSlots -= upcomingEvents.length;
+        }
+        
+        let completedEvents = [];
+        if (remainingSlots > 0) {
+          completedEvents = await Event.find({ 
+              ...baseFilter, 
+              eventStatus: { $in: ["completed", "cancelled"] } 
+            })
+            .populate("eventBanner")
+            .populate("eventGallery")
+            .populate({
+              path: "eventGuests.guestId",
+              model: "Guest",
+              select: "guestName guestEmail guestCompany guestDesignation",
+            })
+            .sort({ eventDate: -1 })
+            .limit(remainingSlots);
+        }
+        
+        // Combine the events in priority order
+        events = [...ongoingEvents, ...upcomingEvents, ...completedEvents];
+      } 
+      else {
+        // For subsequent pages, calculate how many events to skip
+        // We already showed all ongoing events and a portion of upcoming or completed on page 1
+        
+        // First, determine how many ongoing and upcoming were shown on page 1
+        const shownOngoingCount = Math.min(totalOngoing, limitNum);
+        const remainingSlotsAfterOngoing = limitNum - shownOngoingCount;
+        const shownUpcomingCount = Math.min(totalUpcoming, remainingSlotsAfterOngoing);
+        
+        // Total shown on page 1
+        const totalShownOnFirstPage = shownOngoingCount + shownUpcomingCount;
+        
+        // If remaining slots after showing ongoing and upcoming on first page, some completed were shown too
+        const completedShownOnFirstPage = limitNum - totalShownOnFirstPage > 0 
+          ? Math.min(limitNum - totalShownOnFirstPage, totalCompleted + totalCancelled)
+          : 0;
+        
+        // For page 2+, we're showing completed/cancelled events
+        // Skip the ones already shown on page 1
+        const skip = completedShownOnFirstPage + (pageNum - 2) * limitNum;
+        
+        // Only get completed/cancelled events for remaining pages
+        events = await Event.find({ 
+            ...baseFilter, 
+            eventStatus: { $in: ["completed", "cancelled"] } 
+          })
+          .populate("eventBanner")
+          .populate("eventGallery")
+          .populate({
+            path: "eventGuests.guestId",
+            model: "Guest",
+            select: "guestName guestEmail guestCompany guestDesignation",
+          })
+          .sort({ eventDate: -1 })
+          .skip(skip)
+          .limit(limitNum);
+      }
+    }
+
+    // Calculate total pages
+    // For status filter, it's simple
+    let totalPages = 1; // minimum 1 page
+    
+    if (status) {
+      const statusCount = 
+        status === "ongoing" ? totalOngoing :
+        status === "upcoming" ? totalUpcoming :
+        status === "completed" ? totalCompleted :
+        status === "cancelled" ? totalCancelled : 0;
+        
+      totalPages = Math.max(1, Math.ceil(statusCount / limitNum));
+    } else {
+      // For non-filtered view, we have one page for ongoing+upcoming (as much as fits)
+      // and then additional pages for completed/cancelled
+      const totalFirstPageItems = Math.min(limitNum, totalOngoing + totalUpcoming);
+      const remainingCompletedCancelled = totalCompleted + totalCancelled - 
+        Math.max(0, limitNum - (totalOngoing + totalUpcoming));
+      
+      if (remainingCompletedCancelled <= 0) {
+        totalPages = 1;
+      } else {
+        totalPages = 1 + Math.ceil(remainingCompletedCancelled / limitNum);
+      }
+    }
 
     res.status(200).json({
       success: true,
       count: events.length,
       total,
-      currentPage: Number(page),
-      totalPages: Math.ceil(total / limit),
+      totalOngoing,
+      totalUpcoming,
+      totalCompleted,
+      totalCancelled,
+      currentPage: pageNum,
+      totalPages,
       events,
     });
   } catch (error) {
@@ -1269,8 +1429,7 @@ export const addEventExpense = async (req, res) => {
     ) {
       return res.status(400).json({
         success: false,
-        message:
-          "Valid event ID, category, title, and amount are required",
+        message: "Valid event ID, category, title, and amount are required",
       });
     }
 
@@ -1309,8 +1468,7 @@ export const addEventExpense = async (req, res) => {
     // Prepare budget update if the expense is completed
     let budgetUpdate = {};
     if (expense.paymentStatus === "completed") {
-      const newTotalSpent =
-        (event.budget.totalSpent || 0) + Number(amount);
+      const newTotalSpent = (event.budget.totalSpent || 0) + Number(amount);
       const newRemaining = (event.budget.totalAllocated || 0) - newTotalSpent;
       budgetUpdate = {
         "budget.totalSpent": newTotalSpent,
@@ -1408,18 +1566,14 @@ export const updateExpenseStatus = async (req, res) => {
       if (event.budget.remaining < expenseAmount) {
         return res.status(400).json({
           success: false,
-          message:
-            "Insufficient budget to mark this expense as completed",
+          message: "Insufficient budget to mark this expense as completed",
           budget: event.budget,
         });
       }
       newBudgetTotalSpent += expenseAmount;
     }
     // If switching from completed to pending, subtract expense amount
-    else if (
-      currentStatus === "completed" &&
-      paymentStatus === "pending"
-    ) {
+    else if (currentStatus === "completed" && paymentStatus === "pending") {
       newBudgetTotalSpent -= expenseAmount;
     }
 
@@ -1621,7 +1775,7 @@ export const addBudgetAllocation = async (req, res) => {
         $push: {
           budgetAllocations: allocation,
           budgetHistory: historyEntry,
-        }
+        },
       },
       { new: true }
     );
@@ -1712,7 +1866,7 @@ export const deleteBudgetAllocation = async (req, res) => {
       success: true,
       message: "Budget allocation deleted successfully",
       allocations: updatedEvent.budgetAllocations,
-      budget: updatedEvent.budget
+      budget: updatedEvent.budget,
     });
   } catch (error) {
     console.error("Error deleting budget allocation:", error);
@@ -1770,7 +1924,7 @@ export const getEventBudgetSummary = async (req, res) => {
       }
       sponsorsByType[sponsor.type] += sponsor.amount;
     });
-    
+
     // Use the already populated arrays directly
     const sponsors = event.sponsors;
     const expenses = event.expenses;
@@ -1963,7 +2117,7 @@ export const deleteEventSponsor = async (req, res) => {
     // Prepare update operation - only adjust budget if sponsor status is not pending
     const updateOperation = {
       $pull: { sponsors: { _id: sponsorId } },
-      $push: { budgetHistory: historyEntry }
+      $push: { budgetHistory: historyEntry },
     };
 
     // Only deduct from budget if sponsor status is not pending
@@ -1975,11 +2129,9 @@ export const deleteEventSponsor = async (req, res) => {
     }
 
     // Remove sponsor and adjust budget if needed
-    const updatedEvent = await Event.findByIdAndUpdate(
-      id,
-      updateOperation,
-      { new: true }
-    );
+    const updatedEvent = await Event.findByIdAndUpdate(id, updateOperation, {
+      new: true,
+    });
 
     res.status(200).json({
       success: true,
