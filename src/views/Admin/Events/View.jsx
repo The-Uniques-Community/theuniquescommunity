@@ -28,6 +28,15 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Autocomplete,
+  Tooltip,
+  Fade,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@mui/material";
 import {
   Edit,
@@ -42,6 +51,8 @@ import {
   AttachMoney,
   PhotoLibrary,
   ContactMail,
+  Add,
+  PersonAdd,
 } from "@mui/icons-material";
 import { useParams, useNavigate } from "react-router-dom";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -70,6 +81,12 @@ const Gallery = ({ images, onAddImage, onRemoveImage, readOnly }) => {
             variant="contained"
             startIcon={<PhotoCamera />}
             component="label"
+            sx={{ 
+              background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+              boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
+              transition: 'transform 0.2s',
+              '&:hover': { transform: 'scale(1.02)' }
+            }}
           >
             Add Images
             <input
@@ -87,11 +104,24 @@ const Gallery = ({ images, onAddImage, onRemoveImage, readOnly }) => {
         {images && images.length > 0 ? (
           images.map((image, index) => (
             <Grid item xs={6} md={4} lg={3} key={index}>
-              <Card sx={{ position: "relative", height: 200 }}>
+              <Card 
+                sx={{ 
+                  position: "relative", 
+                  height: 200, 
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  transition: 'transform 0.3s, box-shadow 0.3s',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: '0 6px 16px rgba(0,0,0,0.15)'
+                  }
+                }}
+              >
                 <CardMedia
                   component="img"
                   height="200"
-                  image={image.url || URL.createObjectURL(image)}
+                  image={image.url || '/placeholder-image.png'}
                   alt={`Gallery image ${index}`}
                   sx={{ objectFit: "cover" }}
                 />
@@ -121,11 +151,12 @@ const Gallery = ({ images, onAddImage, onRemoveImage, readOnly }) => {
                 p: 4,
                 textAlign: "center",
                 bgcolor: "background.paper",
-                borderRadius: 1,
+                borderRadius: 2,
+                boxShadow: 'inset 0 0 8px rgba(0,0,0,0.05)',
               }}
             >
               <PhotoLibrary
-                sx={{ fontSize: 40, color: "text.secondary", mb: 1 }}
+                sx={{ fontSize: 60, color: "text.secondary", mb: 1 }}
               />
               <Typography color="text.secondary">
                 No images in gallery
@@ -150,6 +181,10 @@ const EventView = () => {
   const [editedEvent, setEditedEvent] = useState({});
   const [gallery, setGallery] = useState([]);
   const [formResponses, setFormResponses] = useState([]);
+  const [guestDialogOpen, setGuestDialogOpen] = useState(false);
+  const [availableGuests, setAvailableGuests] = useState([]);
+  const [selectedGuest, setSelectedGuest] = useState(null);
+  const [guestTag, setGuestTag] = useState("");
 
   // Fetch event data
   useEffect(() => {
@@ -182,6 +217,20 @@ const EventView = () => {
 
     fetchEvent();
   }, [id]);
+
+  // Fetch available guests
+  const fetchAvailableGuests = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/guests`);
+      const data = await response.json();
+
+      if (data.success) {
+        setAvailableGuests(data.guests || []);
+      }
+    } catch (error) {
+      console.error("Error fetching available guests:", error);
+    }
+  };
 
   // Fetch form responses
   const fetchFormResponses = async (eventId) => {
@@ -224,10 +273,10 @@ const EventView = () => {
 
   // Handle date change
   const handleDateChange = (date) => {
-	setEditedEvent({
-	  ...editedEvent,
-	  eventDate: date ? date.format('YYYY-MM-DD') : null
-	});
+    setEditedEvent({
+      ...editedEvent,
+      eventDate: date ? date.format('YYYY-MM-DD') : null
+    });
   };
 
   // Handle time change
@@ -276,6 +325,16 @@ const EventView = () => {
   const handleAddImage = async (e) => {
     try {
       const files = Array.from(e.target.files);
+      if (files.length === 0) return;
+      
+      // Show temporary local images while uploading
+      const tempImages = files.map(file => ({
+        _id: `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        url: URL.createObjectURL(file),
+        isTemp: true
+      }));
+      
+      setGallery(prevGallery => [...prevGallery, ...tempImages]);
 
       // Upload images first to get their IDs
       const formData = new FormData();
@@ -317,8 +376,16 @@ const EventView = () => {
         const galleryResult = await galleryResponse.json();
 
         if (galleryResult.success) {
+          // Replace the temporary images with the real ones
           setGallery(galleryResult.gallery);
         }
+        
+        // Clean up any object URLs to prevent memory leaks
+        tempImages.forEach(image => {
+          if (image.isTemp && image.url) {
+            URL.revokeObjectURL(image.url);
+          }
+        });
       }
     } catch (error) {
       console.error("Error adding images:", error);
@@ -355,6 +422,119 @@ const EventView = () => {
   // Handle budget navigation
   const handleNavigateToBudget = () => {
     navigate(`/admin/events-overview/${id}/budget`);
+  };
+  
+  // Handle event registration
+  const handleRegisterForEvent = async () => {
+    try {
+      // Check if user is logged in
+      const token = localStorage.getItem("token");
+      if (!token) {
+        // Redirect to login or show login dialog
+        navigate("/login", { 
+          state: { 
+            redirectTo: `/admin/events-overview/${id}`,
+            message: "Please log in to register for this event" 
+          } 
+        });
+        return;
+      }
+
+      // If event has a form, redirect to the form submission page
+      if (event.eventForm && event.eventForm.formId) {
+        const formUrl = `http://localhost:5000/api/forms/${event.eventForm.formId}/submit?eventId=${id}`;
+        window.open(formUrl, "_blank");
+      } else {
+        // Simple registration without form
+        const response = await fetch(`http://localhost:5000/api/events/${id}/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          }
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+          // Show success notification or update UI
+          alert("Successfully registered for this event!");
+        }
+      }
+    } catch (error) {
+      console.error("Error registering for event:", error);
+    }
+  };
+
+  // Open manage guests dialog
+  const handleOpenGuestDialog = async () => {
+    await fetchAvailableGuests();
+    setGuestDialogOpen(true);
+  };
+
+  // Close manage guests dialog
+  const handleCloseGuestDialog = () => {
+    setGuestDialogOpen(false);
+    setSelectedGuest(null);
+    setGuestTag("");
+  };
+
+  // Add guest to event
+  const handleAddGuest = async () => {
+    if (!selectedGuest) return;
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/events/${id}/guests`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          guestId: selectedGuest._id,
+          guestTag: guestTag || selectedGuest.guestDesignation,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Update event with new guest list
+        setEvent({
+          ...event,
+          eventGuests: result.guests,
+        });
+
+        // Reset form fields
+        setSelectedGuest(null);
+        setGuestTag("");
+      }
+    } catch (error) {
+      console.error("Error adding guest:", error);
+    }
+  };
+
+  // Remove guest from event
+  const handleRemoveGuest = async (guestId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/events/${id}/guests/${guestId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Update event with new guest list
+        setEvent({
+          ...event,
+          eventGuests: result.guests,
+        });
+      }
+    } catch (error) {
+      console.error("Error removing guest:", error);
+    }
   };
 
   // Format date for display
@@ -403,11 +583,23 @@ const EventView = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          mb: 3,
+          mb: 4,
+          background: 'linear-gradient(to right, rgba(255,255,255,0.9), rgba(255,255,255,0.7))',
+          p: 2,
+          borderRadius: 2,
+          boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
         }}
       >
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+          <Typography 
+            variant="h4" 
+            sx={{ 
+              fontWeight: "bold",
+              background: 'linear-gradient(45deg, #1976d2, #42a5f5)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+             }}
+          >
             {editMode ? "Edit Event" : event.eventName}
           </Typography>
           {!editMode && (
@@ -417,11 +609,39 @@ const EventView = () => {
           )}
         </Box>
         <Box sx={{ display: "flex", gap: 1 }}>
+          {/* Register button beside heading */}
+          {event.eventForm && event.eventForm.formId && !editMode && (
+            <Button
+              variant="contained"
+              color="secondary"
+              startIcon={<ContactMail />}
+              onClick={handleRegisterForEvent}
+              sx={{ 
+                background: 'linear-gradient(45deg, #FF5722 30%, #FFA726 90%)',
+                boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+                transition: 'transform 0.2s',
+                '&:hover': { transform: 'scale(1.02)' }
+              }}
+            >
+              Register Now
+            </Button>
+          )}
+
           <Button
             variant={editMode ? "outlined" : "contained"}
             color={editMode ? "error" : "primary"}
             onClick={handleToggleEditMode}
             startIcon={editMode ? <Close /> : <Edit />}
+            sx={{ 
+              transition: 'all 0.2s',
+              ...(editMode ? {} : {
+                background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
+              }),
+              '&:hover': {
+                transform: 'translateY(-2px)'
+              }
+            }}
           >
             {editMode ? "Cancel" : "Edit Event"}
           </Button>
@@ -432,6 +652,12 @@ const EventView = () => {
               color="primary"
               startIcon={<Save />}
               onClick={handleSaveChanges}
+              sx={{ 
+                background: 'linear-gradient(45deg, #4CAF50 30%, #8BC34A 90%)',
+                boxShadow: '0 3px 5px 2px rgba(76, 175, 80, .3)',
+                transition: 'transform 0.2s',
+                '&:hover': { transform: 'translateY(-2px)' }
+              }}
             >
               Save Changes
             </Button>
@@ -441,6 +667,16 @@ const EventView = () => {
             variant="outlined"
             startIcon={<AttachMoney />}
             onClick={handleNavigateToBudget}
+            sx={{ 
+              borderColor: '#4CAF50', 
+              color: '#4CAF50',
+              transition: 'all 0.2s',
+              '&:hover': {
+                borderColor: '#4CAF50',
+                backgroundColor: 'rgba(76, 175, 80, 0.08)',
+                transform: 'translateY(-2px)'
+              }
+            }}
           >
             Manage Budget
           </Button>
@@ -451,21 +687,30 @@ const EventView = () => {
       <Grid container spacing={3}>
         {/* Left column */}
         <Grid item xs={12} md={8}>
-          <Paper sx={{ p: 3, mb: 3, borderRadius: 2, boxShadow: "md" }}>
+          <Paper 
+            sx={{ 
+              p: 3, 
+              mb: 3, 
+              borderRadius: 3, 
+              boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
+              overflow: 'hidden',
+            }}
+            elevation={2}
+          >
             {/* Banner image */}
-            <Box sx={{ position: "relative", mb: 2 }}>
+            <Box sx={{ position: "relative", mb: 3 }}>
               {event.eventBanner ? (
                 <CardMedia
                   component="img"
-                  height="300"
+                  height="350"
                   image={event.eventBanner.url}
                   alt={event.eventName}
-                  sx={{ borderRadius: 2 }}
+                  sx={{ borderRadius: 2, boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
                 />
               ) : (
                 <Box
                   sx={{
-                    height: 300,
+                    height: 350,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -486,6 +731,10 @@ const EventView = () => {
                     position: "absolute",
                     bottom: 16,
                     right: 16,
+                    background: 'rgba(0,0,0,0.7)',
+                    '&:hover': {
+                      background: 'rgba(0,0,0,0.9)',
+                    }
                   }}
                 >
                   Change Banner
@@ -501,12 +750,30 @@ const EventView = () => {
                 onChange={handleTabChange}
                 variant="scrollable"
                 scrollButtons="auto"
+                sx={{
+                  '& .MuiTabs-indicator': {
+                    height: 3,
+                    borderRadius: 2,
+                    backgroundColor: 'primary.main',
+                  },
+                  '& .MuiTab-root': {
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    fontSize: '0.95rem',
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                      color: 'primary.main',
+                    },
+                  },
+                  mb: 1,
+                }}
               >
                 <Tab label="Details" />
                 <Tab label="Gallery" />
                 <Tab label="Form Responses" />
-                <Tab label="Members" />
               </Tabs>
+
+              <Divider sx={{ mb: 3 }} />
 
               <Box sx={{ py: 2 }}>
                 {/* Details Tab */}
@@ -522,6 +789,8 @@ const EventView = () => {
                             onChange={handleInputChange}
                             fullWidth
                             required
+                            variant="outlined"
+                            sx={{ mb: 2 }}
                           />
                         </Grid>
 
@@ -534,11 +803,13 @@ const EventView = () => {
                             multiline
                             rows={4}
                             fullWidth
+                            variant="outlined"
+                            sx={{ mb: 2 }}
                           />
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
-                          <LocalizationProvider dateAdapter={AdapterDateFns}>
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
                               label="Event Date"
                               value={
@@ -547,12 +818,14 @@ const EventView = () => {
                                   : null
                               }
                               onChange={handleDateChange}
+                              slotProps={{ textField: { fullWidth: true, variant: 'outlined' } }}
+                              sx={{ mb: 2 }}
                             />
                           </LocalizationProvider>
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
-                          <LocalizationProvider dateAdapter={AdapterDateFns}>
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <TimePicker
                               label="Event Time"
                               value={
@@ -561,6 +834,8 @@ const EventView = () => {
                                   : null
                               }
                               onChange={handleTimeChange}
+                              slotProps={{ textField: { fullWidth: true, variant: 'outlined' } }}
+                              sx={{ mb: 2 }}
                             />
                           </LocalizationProvider>
                         </Grid>
@@ -572,6 +847,8 @@ const EventView = () => {
                             value={editedEvent.eventVenue || ""}
                             onChange={handleInputChange}
                             fullWidth
+                            variant="outlined"
+                            sx={{ mb: 2 }}
                           />
                         </Grid>
 
@@ -582,11 +859,13 @@ const EventView = () => {
                             value={editedEvent.eventType || ""}
                             onChange={handleInputChange}
                             fullWidth
+                            variant="outlined"
+                            sx={{ mb: 2 }}
                           />
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
-                          <FormControl fullWidth>
+                          <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
                             <InputLabel>Event Status</InputLabel>
                             <Select
                               value={editedEvent.eventStatus || "upcoming"}
@@ -608,6 +887,8 @@ const EventView = () => {
                             value={editedEvent.eventOrganizerBatch || ""}
                             onChange={handleInputChange}
                             fullWidth
+                            variant="outlined"
+                            sx={{ mb: 2 }}
                           />
                         </Grid>
                       </Grid>
@@ -617,11 +898,11 @@ const EventView = () => {
                         <Typography
                           variant="subtitle1"
                           fontWeight="bold"
-                          sx={{ mt: 2, mb: 1 }}
+                          sx={{ mt: 2, mb: 1, fontSize: '1.1rem' }}
                         >
                           Description
                         </Typography>
-                        <Typography variant="body1" paragraph>
+                        <Typography variant="body1" paragraph sx={{ lineHeight: 1.7, color: 'text.primary' }}>
                           {event.eventDescription ||
                             "No description available."}
                         </Typography>
@@ -630,19 +911,23 @@ const EventView = () => {
                         <Typography
                           variant="subtitle1"
                           fontWeight="bold"
-                          sx={{ mt: 3, mb: 1 }}
+                          sx={{ mt: 4, mb: 2, fontSize: '1.1rem' }}
                         >
                           Event Details
                         </Typography>
 
-                        <Grid container spacing={2}>
+                        <Grid container spacing={3}>
                           <Grid item xs={12} sm={6}>
                             <Card
                               sx={{
                                 bgcolor: "background.paper",
-                                boxShadow: "none",
-                                border: "1px solid",
-                                borderColor: "divider",
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                borderRadius: 2,
+                                transition: 'transform 0.2s',
+                                '&:hover': {
+                                  transform: 'translateY(-3px)',
+                                  boxShadow: '0 6px 16px rgba(0,0,0,0.1)'
+                                }
                               }}
                             >
                               <CardContent
@@ -652,19 +937,20 @@ const EventView = () => {
                                 }}
                               >
                                 <Schedule
-                                  sx={{ mr: 1, color: "primary.main" }}
+                                  sx={{ mr: 2, color: "primary.main", fontSize: 28 }}
                                 />
                                 <Box>
                                   <Typography
                                     variant="body2"
                                     color="text.secondary"
+                                    sx={{ mb: 0.5 }}
                                   >
                                     Date & Time
                                   </Typography>
-                                  <Typography variant="body1">
+                                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
                                     {formatDate(event.eventDate)}
                                   </Typography>
-                                  <Typography variant="body2">
+                                  <Typography variant="body2" sx={{ color: 'text.primary', mt: 0.5 }}>
                                     {event.eventTime}
                                   </Typography>
                                 </Box>
@@ -676,9 +962,13 @@ const EventView = () => {
                             <Card
                               sx={{
                                 bgcolor: "background.paper",
-                                boxShadow: "none",
-                                border: "1px solid",
-                                borderColor: "divider",
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                borderRadius: 2,
+                                transition: 'transform 0.2s',
+                                '&:hover': {
+                                  transform: 'translateY(-3px)',
+                                  boxShadow: '0 6px 16px rgba(0,0,0,0.1)'
+                                }
                               }}
                             >
                               <CardContent
@@ -688,16 +978,17 @@ const EventView = () => {
                                 }}
                               >
                                 <LocationOn
-                                  sx={{ mr: 1, color: "primary.main" }}
+                                  sx={{ mr: 2, color: "primary.main", fontSize: 28 }}
                                 />
                                 <Box>
                                   <Typography
                                     variant="body2"
                                     color="text.secondary"
+                                    sx={{ mb: 0.5 }}
                                   >
                                     Venue
                                   </Typography>
-                                  <Typography variant="body1">
+                                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
                                     {event.eventVenue || "Venue not specified"}
                                   </Typography>
                                 </Box>
@@ -709,9 +1000,13 @@ const EventView = () => {
                             <Card
                               sx={{
                                 bgcolor: "background.paper",
-                                boxShadow: "none",
-                                border: "1px solid",
-                                borderColor: "divider",
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                borderRadius: 2,
+                                transition: 'transform 0.2s',
+                                '&:hover': {
+                                  transform: 'translateY(-3px)',
+                                  boxShadow: '0 6px 16px rgba(0,0,0,0.1)'
+                                }
                               }}
                             >
                               <CardContent
@@ -721,16 +1016,17 @@ const EventView = () => {
                                 }}
                               >
                                 <EventNote
-                                  sx={{ mr: 1, color: "primary.main" }}
+                                  sx={{ mr: 2, color: "primary.main", fontSize: 28 }}
                                 />
                                 <Box>
                                   <Typography
                                     variant="body2"
                                     color="text.secondary"
+                                    sx={{ mb: 0.5 }}
                                   >
                                     Event Type
                                   </Typography>
-                                  <Typography variant="body1">
+                                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
                                     {event.eventType || "Not specified"}
                                   </Typography>
                                 </Box>
@@ -742,9 +1038,13 @@ const EventView = () => {
                             <Card
                               sx={{
                                 bgcolor: "background.paper",
-                                boxShadow: "none",
-                                border: "1px solid",
-                                borderColor: "divider",
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                borderRadius: 2,
+                                transition: 'transform 0.2s',
+                                '&:hover': {
+                                  transform: 'translateY(-3px)',
+                                  boxShadow: '0 6px 16px rgba(0,0,0,0.1)'
+                                }
                               }}
                             >
                               <CardContent
@@ -753,15 +1053,16 @@ const EventView = () => {
                                   alignItems: "flex-start",
                                 }}
                               >
-                                <Group sx={{ mr: 1, color: "primary.main" }} />
+                                <Group sx={{ mr: 2, color: "primary.main", fontSize: 28 }} />
                                 <Box>
                                   <Typography
                                     variant="body2"
                                     color="text.secondary"
+                                    sx={{ mb: 0.5 }}
                                   >
                                     Organizer Batch
                                   </Typography>
-                                  <Typography variant="body1">
+                                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
                                     {event.eventOrganizerBatch ||
                                       "Not specified"}
                                   </Typography>
@@ -773,20 +1074,19 @@ const EventView = () => {
 
                         {/* Budget summary */}
                         {event.budget && event.budget.totalAllocated > 0 && (
-                          <Box sx={{ mt: 3 }}>
+                          <Box sx={{ mt: 4 }}>
                             <Typography
                               variant="subtitle1"
                               fontWeight="bold"
-                              sx={{ mb: 1 }}
+                              sx={{ mb: 2, fontSize: '1.1rem' }}
                             >
                               Budget Overview
                             </Typography>
                             <Card
                               sx={{
                                 bgcolor: "background.paper",
-                                boxShadow: "none",
-                                border: "1px solid",
-                                borderColor: "divider",
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                borderRadius: 2,
                               }}
                             >
                               <CardContent>
@@ -798,7 +1098,7 @@ const EventView = () => {
                                     >
                                       Total Budget
                                     </Typography>
-                                    <Typography variant="h6">
+                                    <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>
                                       ₹
                                       {event.budget.totalAllocated.toLocaleString()}
                                     </Typography>
@@ -810,7 +1110,7 @@ const EventView = () => {
                                     >
                                       Total Spent
                                     </Typography>
-                                    <Typography variant="h6">
+                                    <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>
                                       ₹
                                       {event.budget.totalSpent.toLocaleString()}
                                     </Typography>
@@ -824,6 +1124,7 @@ const EventView = () => {
                                     </Typography>
                                     <Typography
                                       variant="h6"
+                                      sx={{ fontWeight: 600 }}
                                       color={
                                         event.budget.remaining >= 0
                                           ? "success.main"
@@ -866,77 +1167,109 @@ const EventView = () => {
                   <Box>
                     {event.eventForm && event.eventForm.formId ? (
                       <Box>
-                        <Typography variant="h6" sx={{ mb: 2 }}>
-                          Form Responses
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                            Form Responses
+                          </Typography>
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            startIcon={<ContactMail />}
+                            onClick={handleRegisterForEvent}
+                            sx={{ 
+                              background: 'linear-gradient(45deg, #FF5722 30%, #FFA726 90%)',
+                              boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+                              transition: 'transform 0.2s',
+                              '&:hover': { transform: 'scale(1.02)' }
+                            }}
+                          >
+                            Register for Event
+                          </Button>
+                        </Box>
+
+                        {/* Form Preview Section */}
+                        <Box sx={{ mb: 4 }}>
+                          <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
+                            Form Preview
+                          </Typography>
+                          <Box sx={{ 
+                            border: '1px solid', 
+                            borderColor: 'divider', 
+                            borderRadius: 2, 
+                            mb: 2,
+                            overflow: 'hidden',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                          }}>
+                            <iframe
+                              src={`http://localhost:5000/api/forms/${event.eventForm.formId}/preview`}
+                              style={{ width: '100%', height: '400px', border: 'none' }}
+                              title="Form Preview"
+                            />
+                          </Box>
+                        </Box>
+
+                        <Divider sx={{ my: 3 }} />
+
+                        <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
+                          Submissions ({formResponses.length})
                         </Typography>
 
                         {formResponses.length > 0 ? (
-                          <List>
-                            {formResponses.map((response, index) => (
-                              <React.Fragment key={response._id || index}>
-                                <ListItem alignItems="flex-start">
-                                  <ListItemAvatar>
-                                    <Avatar>
-                                      <ContactMail />
-                                    </Avatar>
-                                  </ListItemAvatar>
-                                  <ListItemText
-                                    primary={
-                                      response.respondent?.member?.memberName ||
-                                      "Anonymous"
-                                    }
-                                    secondary={
-                                      <React.Fragment>
-                                        <Typography
-                                          component="span"
-                                          variant="body2"
-                                          color="text.primary"
-                                        >
-                                          {response.respondent?.member
-                                            ?.memberEmail || "No email"}
-                                        </Typography>
-                                        <Typography
-                                          component="div"
-                                          variant="body2"
-                                        >
-                                          Status:
-                                          <Chip
-                                            size="small"
-                                            label={response.status}
-                                            color={
-                                              response.status === "approved"
-                                                ? "success"
-                                                : response.status === "rejected"
-                                                ? "error"
-                                                : "default"
-                                            }
-                                            sx={{ ml: 1 }}
-                                          />
-                                        </Typography>
-                                        <Typography
-                                          variant="caption"
-                                          component="div"
-                                        >
-                                          Submitted:{" "}
-                                          {new Date(
-                                            response.metadata?.submittedAt
-                                          ).toLocaleString()}
-                                        </Typography>
-                                      </React.Fragment>
-                                    }
-                                  />
-                                </ListItem>
-                                <Divider variant="inset" component="li" />
-                              </React.Fragment>
-                            ))}
-                          </List>
+                          <TableContainer component={Paper} sx={{ boxShadow: '0 4px 12px rgba(0,0,0,0.05)', borderRadius: 2, overflow: 'hidden' }}>
+                            <Table>
+                              <TableHead sx={{ bgcolor: 'rgba(0,0,0,0.02)' }}>
+                                <TableRow>
+                                  <TableCell>Name</TableCell>
+                                  <TableCell>Email</TableCell>
+                                  <TableCell>Status</TableCell>
+                                  <TableCell>Submission Date</TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {formResponses.map((response, index) => (
+                                  <TableRow 
+                                    key={response._id || index}
+                                    sx={{ 
+                                      '&:hover': { backgroundColor: 'rgba(0,0,0,0.02)' },
+                                      transition: 'background-color 0.2s'
+                                    }}
+                                  >
+                                    <TableCell>
+                                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <Avatar sx={{ mr: 1, width: 32, height: 32 }}>
+                                          {(response.respondent?.member?.memberName || "A").charAt(0)}
+                                        </Avatar>
+                                        {response.respondent?.member?.memberName || "Anonymous"}
+                                      </Box>
+                                    </TableCell>
+                                    <TableCell>{response.respondent?.member?.memberEmail || "No email"}</TableCell>
+                                    <TableCell>
+                                      <Chip
+                                        size="small"
+                                        label={response.status}
+                                        color={
+                                          response.status === "approved"
+                                            ? "success"
+                                            : response.status === "rejected"
+                                            ? "error"
+                                            : "default"
+                                        }
+                                      />
+                                    </TableCell>
+                                    <TableCell>{new Date(response.metadata?.submittedAt).toLocaleString()}</TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </TableContainer>
                         ) : (
                           <Box
                             sx={{
                               p: 4,
                               textAlign: "center",
                               bgcolor: "background.paper",
-                              borderRadius: 1,
+                              borderRadius: 2,
+                              boxShadow: 'inset 0 0 8px rgba(0,0,0,0.05)',
                             }}
                           >
                             <Typography color="text.secondary">
@@ -951,51 +1284,12 @@ const EventView = () => {
                           p: 4,
                           textAlign: "center",
                           bgcolor: "background.paper",
-                          borderRadius: 1,
+                          borderRadius: 2,
+                          boxShadow: 'inset 0 0 8px rgba(0,0,0,0.05)',
                         }}
                       >
                         <Typography color="text.secondary">
                           No registration form attached to this event
-                        </Typography>
-                      </Box>
-                    )}
-                  </Box>
-                )}
-
-                {/* Members Tab */}
-                {tabValue === 3 && (
-                  <Box>
-                    <Typography variant="h6" sx={{ mb: 2 }}>
-                      Event Members
-                    </Typography>
-
-                    {event.eventMembers && event.eventMembers.length > 0 ? (
-                      <List>
-                        {event.eventMembers.map((member, index) => (
-                          <ListItem key={index}>
-                            <ListItemAvatar>
-                              <Avatar src={member.memberImage?.url}>
-                                {member.memberName?.charAt(0) || "M"}
-                              </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                              primary={member.memberName}
-                              secondary={member.memberEmail}
-                            />
-                          </ListItem>
-                        ))}
-                      </List>
-                    ) : (
-                      <Box
-                        sx={{
-                          p: 4,
-                          textAlign: "center",
-                          bgcolor: "background.paper",
-                          borderRadius: 1,
-                        }}
-                      >
-                        <Typography color="text.secondary">
-                          No members assigned to this event
                         </Typography>
                       </Box>
                     )}
@@ -1009,12 +1303,19 @@ const EventView = () => {
         {/* Right column - Side panel */}
         <Grid item xs={12} md={4}>
           {/* Event Status Card */}
-          <Card sx={{ mb: 3, borderRadius: 2 }}>
+          <Card 
+            sx={{ 
+              mb: 3, 
+              borderRadius: 3, 
+              boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
+              overflow: 'hidden',
+            }}
+          >
             <CardContent>
-              <Typography variant="h6" sx={{ mb: 2 }}>
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
                 Event Status
               </Typography>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
                 <Box
                   sx={{
                     width: 12,
@@ -1029,7 +1330,7 @@ const EventView = () => {
                         ? "#8c8c8c"
                         : "#faad14",
                     mr: 1,
-                    boxShadow: `0 0 5px ${
+                    boxShadow: `0 0 8px ${
                       event.eventStatus === "ongoing"
                         ? "#ff4d4f"
                         : event.eventStatus === "completed"
@@ -1060,7 +1361,7 @@ const EventView = () => {
               </Box>
 
               {!editMode && (
-                <FormControl fullWidth size="small">
+                <FormControl fullWidth size="small" variant="outlined">
                   <InputLabel>Update Status</InputLabel>
                   <Select
                     value=""
@@ -1105,11 +1406,26 @@ const EventView = () => {
           </Card>
 
           {/* Guests Card */}
-          <Card sx={{ mb: 3, borderRadius: 2 }}>
+          <Card 
+            sx={{ 
+              mb: 3, 
+              borderRadius: 3, 
+              boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
+              overflow: 'hidden',
+            }}
+          >
             <CardContent>
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Event Guests
-              </Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                  Event Guests
+                </Typography>
+                <Chip 
+                  label={`${event.eventGuests?.length || 0} guests`} 
+                  size="small" 
+                  color="primary" 
+                  sx={{ fontWeight: 500 }}
+                />
+              </Box>
 
               {event.eventGuests && event.eventGuests.length > 0 ? (
                 <List>
@@ -1117,10 +1433,35 @@ const EventView = () => {
                     <ListItem
                       key={index}
                       alignItems="flex-start"
-                      sx={{ px: 0 }}
+                      sx={{ 
+                        px: 0, 
+                        transition: 'background-color 0.2s',
+                        '&:hover': { backgroundColor: 'rgba(0,0,0,0.02)' },
+                        borderRadius: 1,
+                      }}
+                      secondaryAction={
+                        !editMode && (
+                          <IconButton 
+                            edge="end" 
+                            size="small"
+                            onClick={() => handleRemoveGuest(guest.guestId?._id)}
+                            sx={{ 
+                              opacity: 0.6,
+                              '&:hover': { opacity: 1, color: 'error.main' }
+                            }}
+                          >
+                            <Delete fontSize="small" />
+                          </IconButton>
+                        )
+                      }
                     >
                       <ListItemAvatar>
-                        <Avatar src={guest.guestId?.guestImage?.url}>
+                        <Avatar 
+                          src={guest.guestId?.guestImage?.url}
+                          sx={{
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                          }}
+                        >
                           {guest.guestId?.guestName?.charAt(0) || "G"}
                         </Avatar>
                       </ListItemAvatar>
@@ -1128,7 +1469,7 @@ const EventView = () => {
                         primary={guest.guestId?.guestName || "Unknown Guest"}
                         secondary={
                           <React.Fragment>
-                            <Typography variant="body2" component="span">
+                            <Typography variant="body2" component="span" sx={{ display: 'block' }}>
                               {guest.guestId?.guestDesignation}
                               {guest.guestId?.guestCompany && (
                                 <>, {guest.guestId.guestCompany}</>
@@ -1138,7 +1479,7 @@ const EventView = () => {
                               <Chip
                                 label={guest.guestTag}
                                 size="small"
-                                sx={{ ml: 1 }}
+                                sx={{ mt: 0.5, fontSize: '0.7rem' }}
                                 variant="outlined"
                               />
                             )}
@@ -1149,17 +1490,37 @@ const EventView = () => {
                   ))}
                 </List>
               ) : (
-                <Typography variant="body2" color="text.secondary">
-                  No guests added to this event
-                </Typography>
+                <Box
+                  sx={{
+                    p: 3,
+                    textAlign: "center",
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                    boxShadow: 'inset 0 0 8px rgba(0,0,0,0.05)',
+                  }}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    No guests added to this event yet
+                  </Typography>
+                </Box>
               )}
 
               {!editMode && (
                 <Button
                   variant="outlined"
-                  size="small"
-                  sx={{ mt: 2 }}
-                  fullWidth
+                  startIcon={<PersonAdd />}
+                  size="medium"
+                  sx={{ 
+                    mt: 2, 
+                    width: '100%',
+                    borderColor: 'primary.main',
+                    color: 'primary.main',
+                    '&:hover': {
+                      backgroundColor: 'rgba(33, 150, 243, 0.08)',
+                      borderColor: 'primary.main',
+                    }
+                  }}
+                  onClick={handleOpenGuestDialog}
                 >
                   Manage Guests
                 </Button>
@@ -1168,65 +1529,220 @@ const EventView = () => {
           </Card>
 
           {/* Quick Stats Card */}
-          <Card sx={{ borderRadius: 2 }}>
+          <Card 
+            sx={{ 
+              borderRadius: 3, 
+              boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
+              overflow: 'hidden',
+              background: 'linear-gradient(to right bottom, #f9f9f9, #ffffff)',
+            }}
+          >
             <CardContent>
-              <Typography variant="h6" sx={{ mb: 2 }}>
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
                 Quick Stats
               </Typography>
 
               <Grid container spacing={2}>
                 {event.eventForm && (
                   <Grid item xs={6}>
-                    <Box sx={{ textAlign: "center", p: 1 }}>
-                      <Typography variant="h4" color="primary.main">
-                        {formResponses.length}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Registrations
-                      </Typography>
-                    </Box>
+                    <Card sx={{ 
+                      boxShadow: 'none', 
+                      backgroundColor: 'rgba(33, 150, 243, 0.04)', 
+                      borderRadius: 2,
+                      transition: 'transform 0.3s',
+                      '&:hover': {
+                        transform: 'translateY(-4px)'
+                      }
+                    }}>
+                      <CardContent sx={{ textAlign: "center", p: 2 }}>
+                        <Typography variant="h4" color="primary.main" sx={{ fontWeight: 700 }}>
+                          {formResponses.length}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Registrations
+                        </Typography>
+                      </CardContent>
+                    </Card>
                   </Grid>
                 )}
 
                 {event.eventGallery && (
                   <Grid item xs={6}>
-                    <Box sx={{ textAlign: "center", p: 1 }}>
-                      <Typography variant="h4" color="primary.main">
-                        {gallery.length}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Gallery Images
-                      </Typography>
-                    </Box>
+                    <Card sx={{ 
+                      boxShadow: 'none', 
+                      backgroundColor: 'rgba(76, 175, 80, 0.04)', 
+                      borderRadius: 2,
+                      transition: 'transform 0.3s',
+                      '&:hover': {
+                        transform: 'translateY(-4px)'
+                      }
+                    }}>
+                      <CardContent sx={{ textAlign: "center", p: 2 }}>
+                        <Typography variant="h4" sx={{ color: '#4caf50', fontWeight: 700 }}>
+                          {gallery.length}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Gallery Images
+                        </Typography>
+                      </CardContent>
+                    </Card>
                   </Grid>
                 )}
 
                 <Grid item xs={6}>
-                  <Box sx={{ textAlign: "center", p: 1 }}>
-                    <Typography variant="h4" color="primary.main">
-                      {event.eventMembers?.length || 0}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Team Members
-                    </Typography>
-                  </Box>
+                  <Card sx={{ 
+                    boxShadow: 'none', 
+                    backgroundColor: 'rgba(255, 152, 0, 0.04)', 
+                    borderRadius: 2,
+                    transition: 'transform 0.3s',
+                    '&:hover': {
+                      transform: 'translateY(-4px)'
+                    }
+                  }}>
+                    <CardContent sx={{ textAlign: "center", p: 2 }}>
+                      <Typography variant="h4" sx={{ color: '#ff9800', fontWeight: 700 }}>
+                        {event.eventMembers?.length || 0}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Team Members
+                      </Typography>
+                    </CardContent>
+                  </Card>
                 </Grid>
 
                 <Grid item xs={6}>
-                  <Box sx={{ textAlign: "center", p: 1 }}>
-                    <Typography variant="h4" color="primary.main">
-                      {event.eventGuests?.length || 0}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Guests
-                    </Typography>
-                  </Box>
+                  <Card sx={{ 
+                    boxShadow: 'none', 
+                    backgroundColor: 'rgba(156, 39, 176, 0.04)', 
+                    borderRadius: 2,
+                    transition: 'transform 0.3s',
+                    '&:hover': {
+                      transform: 'translateY(-4px)'
+                    }
+                  }}>
+                    <CardContent sx={{ textAlign: "center", p: 2 }}>
+                      <Typography variant="h4" sx={{ color: '#9c27b0', fontWeight: 700 }}>
+                        {event.eventGuests?.length || 0}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Guests
+                      </Typography>
+                    </CardContent>
+                  </Card>
                 </Grid>
               </Grid>
             </CardContent>
           </Card>
         </Grid>
       </Grid>
+
+      {/* Manage Guests Dialog */}
+      <Dialog 
+        open={guestDialogOpen} 
+        onClose={handleCloseGuestDialog}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          Manage Event Guests
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>
+              Add New Guest
+            </Typography>
+            <Autocomplete
+              options={availableGuests || []}
+              getOptionLabel={(option) => 
+                option.guestName ? `${option.guestName} - ${option.guestDesignation || 'No designation'}` : ''
+              }
+              renderInput={(params) => 
+                <TextField {...params} label="Select Guest" variant="outlined" fullWidth />
+              }
+              value={selectedGuest}
+              onChange={(e, newValue) => setSelectedGuest(newValue)}
+              sx={{ mb: 2 }}
+            />
+            <TextField 
+              label="Guest Tag (Optional)" 
+              variant="outlined" 
+              fullWidth 
+              value={guestTag}
+              onChange={(e) => setGuestTag(e.target.value)}
+              placeholder="Speaker, Judge, Mentor, etc."
+              helperText="How would you like to describe this guest's role?"
+            />
+            <Button 
+              variant="contained" 
+              color="primary" 
+              startIcon={<Add />}
+              onClick={handleAddGuest}
+              disabled={!selectedGuest}
+              sx={{ mt: 2 }}
+            >
+              Add Guest
+            </Button>
+          </Box>
+
+          <Divider sx={{ my: 3 }} />
+          
+          <Typography variant="subtitle2" sx={{ mb: 2 }}>
+            Current Guests
+          </Typography>
+          
+          <List sx={{ bgcolor: 'background.paper', borderRadius: 1 }}>
+            {event.eventGuests && event.eventGuests.length > 0 ? (
+              event.eventGuests.map((guest, index) => (
+                <ListItem
+                  key={index}
+                  secondaryAction={
+                    <IconButton 
+                      edge="end"
+                      onClick={() => handleRemoveGuest(guest.guestId?._id)}
+                      color="error"
+                    >
+                      <Delete />
+                    </IconButton>
+                  }
+                >
+                  <ListItemAvatar>
+                    <Avatar src={guest.guestId?.guestImage?.url}>
+                      {guest.guestId?.guestName?.charAt(0) || "G"}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={guest.guestId?.guestName || "Unknown Guest"}
+                    secondary={
+                      <>
+                        {guest.guestId?.guestDesignation}
+                        {guest.guestTag && (
+                          <Chip
+                            label={guest.guestTag}
+                            size="small"
+                            sx={{ ml: 1, fontSize: '0.7rem' }}
+                            variant="outlined"
+                          />
+                        )}
+                      </>
+                    }
+                  />
+                </ListItem>
+              ))
+            ) : (
+              <ListItem>
+                <ListItemText 
+                  primary="No guests added" 
+                  secondary="Add guests from the form above"
+                  sx={{ textAlign: 'center', color: 'text.secondary' }}
+                />
+              </ListItem>
+            )}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseGuestDialog}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
