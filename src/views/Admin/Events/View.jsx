@@ -221,7 +221,7 @@ const EventView = () => {
   // Fetch available guests
   const fetchAvailableGuests = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/guests`);
+      const response = await fetch(`http://localhost:5000/api/guest/get-all-guests`);
       const data = await response.json();
 
       if (data.success) {
@@ -300,10 +300,7 @@ const EventView = () => {
     try {
       const response = await fetch(`http://localhost:5000/api/events/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        credentials: "include",
         body: JSON.stringify(editedEvent),
       });
 
@@ -343,12 +340,10 @@ const EventView = () => {
       }
 
       const uploadResponse = await fetch(
-        "http://localhost:5000/api/uploads/images",
+        "http://localhost:5000/upload/event_file_upload",
         {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          credentials: "include",
           body: formData,
         }
       );

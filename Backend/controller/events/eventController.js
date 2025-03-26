@@ -23,7 +23,8 @@ export const createEvent = async (req, res) => {
       eventType,
       eventStatus,
       eventForm,
-      eventGallery, // Add this line
+      eventGallery,
+      sponsors, // Add this line to extract sponsors from request body
     } = req.body;
 
     // Validate required fields
@@ -58,7 +59,7 @@ export const createEvent = async (req, res) => {
       formId = savedForm._id;
     }
 
-    // Create new event
+    // Create new event with sponsors
     const newEvent = new Event({
       eventName,
       eventDescription,
@@ -74,8 +75,42 @@ export const createEvent = async (req, res) => {
         formId,
         formFeilds: eventForm?.formFeilds || [],
       },
-      eventGallery: eventGallery || [], // Add this line
+      eventGallery: eventGallery || [],
+      sponsors: sponsors || [], // Add sponsors to the event
     });
+
+    // Initialize budget fields if sponsors are provided
+    if (sponsors && sponsors.length > 0) {
+      // Calculate total amount from sponsors
+      const totalSponsorship = sponsors.reduce((total, sponsor) => total + (sponsor.amount || 0), 0);
+      
+      // Initialize budget with sponsor amounts
+      newEvent.budget = {
+        totalAllocated: totalSponsorship,
+        totalSpent: 0,
+        remaining: totalSponsorship,
+        currency: 'INR',
+        status: 'active',
+        lastUpdatedBy: {
+          userId: req.user?._id || null,
+          role: req.user?.role || 'admin',
+          timestamp: new Date()
+        }
+      };
+
+      // Add entry to budget history
+      newEvent.budgetHistory = [{
+        action: 'created',
+        amount: totalSponsorship,
+        category: 'sponsorship',
+        note: 'Initial budget from sponsors',
+        performedBy: {
+          userId: req.user?._id || null,
+          role: req.user?.role || 'admin'
+        },
+        timestamp: new Date()
+      }];
+    }
 
     await newEvent.save();
 
@@ -97,7 +132,7 @@ export const createEvent = async (req, res) => {
     // Populate relevant fields for response
     const populatedEvent = await Event.findById(newEvent._id)
       .populate("eventBanner")
-      .populate("eventGallery") // Add this line
+      .populate("eventGallery")
       .populate({
         path: "eventGuests.guestId",
         model: "Guest",
@@ -119,7 +154,6 @@ export const createEvent = async (req, res) => {
     });
   }
 };
-
 /**
  * Get all events with optional filtering
  * @route GET /api/events

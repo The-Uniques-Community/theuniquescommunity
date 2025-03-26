@@ -2,106 +2,209 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Event from './Componant/Event';
 import CommunityCard from '@/utils/Card/CommunityCard';
-import Header from "@/utils/Header/index";
+import Header from '@/utils/Header/index';
 import CallToAction from '../homComponents/CallToAction';
+import { TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import EventForm from '@/utils/event/EventForm';
 
 const Index = () => {
   const [events, setEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showEvent, setShowEvent] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [eventType, setEventType] = useState('');
+  const [month, setMonth] = useState('');
+  const [year, setYear] = useState('');
+  const [eventTypes, setEventTypes] = useState([]);
+  const [years, setYears] = useState([]);
 
-  // Updated title and subtitle for the Event Page
-  const title = "Join the Biggest Event of the Year 🎉";
-  const subtitle = "Don't miss out!";
-  const chipLabel = "Exclusive Event"; 
-
-  // Fetch events from the backend
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         setLoading(true);
         const response = await axios.get('http://localhost:5000/api/events');
         
-        console.log("API Response:", response.data);
-        
-        // Handle different response formats
-        if (response.data && response.data.success && Array.isArray(response.data.data)) {
-          setEvents(response.data.data);
-        } else if (Array.isArray(response.data)) {
-          setEvents(response.data);
-        } else if (response.data && Array.isArray(response.data.events)) {
-          setEvents(response.data.events);
+        if (response.data && Array.isArray(response.data.events)) {
+          const eventsData = response.data.events;
+          setEvents(eventsData);
+          setFilteredEvents(eventsData);
+
+          // Log the first event to understand structure
+          if (eventsData.length > 0) {
+            console.log('Sample event structure:', eventsData[0]);
+          }
+
+          // Extract unique event types from eventType field
+          const types = [...new Set(eventsData
+            .filter(event => event.eventType) // Only include events with eventType
+            .map(event => event.eventType))];
+          console.log('Available event types:', types);
+          setEventTypes(types);
+          
+          // Extract unique years from eventDate field
+          const uniqueYears = [...new Set(eventsData
+            .filter(event => event.eventDate)
+            .map(event => {
+              try {
+                return new Date(event.eventDate).getFullYear();
+              } catch(e) {
+                console.warn('Invalid date:', event.eventDate);
+                return null;
+              }
+            })
+            .filter(Boolean))]; // Remove null values
+            
+          setYears(uniqueYears.sort((a, b) => b - a));
         } else {
-          console.error("Invalid response format:", response.data);
-          setError("Received unexpected data format from server");
-          setEvents([]); // Set to empty array as fallback
+          setError('Invalid response format');
         }
       } catch (error) {
-        console.error("Error fetching events:", error);
-        setError("Failed to load events");
-        setEvents([]); // Set to empty array as fallback
+        console.error('Error fetching events:', error);
+        setError('Failed to load events');
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchEvents();
   }, []);
+
+  useEffect(() => {
+    let filtered = events;
+    
+    console.log('Filtering with:', { searchTerm, eventType, month, year });
+    console.log('Initial events count:', events.length);
   
+    if (searchTerm.trim()) {
+      filtered = filtered.filter(event => {
+        // Try multiple potential property names that might contain the event title
+        // Based on your schema, eventName is the correct field
+        return event.eventName && 
+          event.eventName.toLowerCase().includes(searchTerm.trim().toLowerCase());
+      });
+      console.log('After name filter:', filtered.length);
+    }
+  
+    if (eventType) {
+      filtered = filtered.filter(event => {
+        console.log(`Comparing event type: "${event.eventType}" with selected: "${eventType}"`);
+        return event.eventType === eventType;
+      });
+      console.log('After type filter:', filtered.length);
+    }
+
+    if (month) {
+      filtered = filtered.filter(event => {
+        try {
+          if (!event.eventDate) return false;
+          
+          const eventDate = new Date(event.eventDate);
+          if (isNaN(eventDate.getTime())) return false;
+          
+          const eventMonth = eventDate.getMonth() + 1; // JavaScript months are 0-indexed
+          console.log(`Event date: ${event.eventDate}, parsed month: ${eventMonth}, filter month: ${month}`);
+          return eventMonth === parseInt(month);
+        } catch (e) {
+          console.error('Error parsing date:', e);
+          return false;
+        }
+      });
+      console.log('After month filter:', filtered.length);
+    }
+
+    if (year) {
+      filtered = filtered.filter(event => {
+        try {
+          if (!event.eventDate) return false;
+          
+          const eventDate = new Date(event.eventDate);
+          if (isNaN(eventDate.getTime())) return false;
+          
+          return eventDate.getFullYear() === parseInt(year);
+        } catch (e) {
+          console.error('Error parsing date:', e);
+          return false;
+        }
+      });
+      console.log('After year filter:', filtered.length);
+    }
+
+    setFilteredEvents(filtered);
+  }, [searchTerm, eventType, month, year, events]);
 
   return (
     <>
-      {/* Header with event-specific title and subtitle */}
-      <Header title={title} subtitle={subtitle} chipLabel={chipLabel}/>
+      <Header title="Join the Biggest Event of the Year 🎉" subtitle="Don't miss out!" chipLabel="Exclusive Event" />
+      
+      <div className="flex flex-wrap justify-center gap-4 p-5">
+        <TextField
+          label="Search by Name"
+          variant="outlined"
+          size="small"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        
+        <FormControl variant="outlined" size="small" style={{ minWidth: 150 }}>
+          <InputLabel>Event Type</InputLabel>
+          <Select 
+            value={eventType} 
+            onChange={(e) => {
+              console.log('Selected event type:', e.target.value);
+              setEventType(e.target.value);
+            }} 
+            label="Event Type"
+          >
+            <MenuItem value="">All</MenuItem>
+            {eventTypes.map(type => (
+              <MenuItem key={type} value={type}>{type}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-      {/* Loading State */}
-      {loading && (
-        <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
-        </div>
-      )}
+        <FormControl variant="outlined" size="small" style={{ minWidth: 150 }}>
+          <InputLabel>Month</InputLabel>
+          <Select value={month} onChange={(e) => setMonth(e.target.value)} label="Month">
+            <MenuItem value="">All</MenuItem>
+            {[...Array(12)].map((_, i) => (
+              <MenuItem key={i + 1} value={i + 1}>{new Date(0, i).toLocaleString('default', { month: 'long' })}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-      {/* Error State */}
-      {error && !loading && (
-        <div className="text-center text-red-500 p-6">
-          <p className="text-xl">{error}</p>
-          <p className="mt-2">Please try again later or contact support.</p>
-        </div>
-      )}
-
-      {/* Display All Community Cards */}
-      {!loading && !error && Array.isArray(events) && (
-        <div className="grid my-20 max-w-6xl mx-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 place-items-center gap-6 p-5">
-          {events.length > 0 ? (
-            events.map((event) => (
-              <div 
-                key={event._id || `event-${Math.random()}`} 
-                onClick={() => {
-                  setSelectedEvent(event);
-                  setShowEvent(true);
-                }} 
-                className="cursor-pointer"
-              >
-                <CommunityCard event={event}/>
-              </div>
-            ))
-          ) : (
-            <div className="col-span-full text-center py-8 text-gray-500">
-              No events found. Check back soon for upcoming events!
+        <FormControl variant="outlined" size="small" style={{ minWidth: 150 }}>
+          <InputLabel>Year</InputLabel>
+          <Select value={year} onChange={(e) => setYear(e.target.value)} label="Year">
+            <MenuItem value="">All</MenuItem>
+            {years.map(y => (
+              <MenuItem key={y} value={y}>{y}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
+      
+      {loading && <div className="text-center py-12">Loading...</div>}
+      {error && !loading && <div className="text-center text-red-500">{error}</div>}
+      
+      <div className="grid my-10 max-w-6xl mx-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 p-5">
+        {filteredEvents.length > 0 ? (
+          filteredEvents.map(event => (
+            <div key={event._id} onClick={() => { setSelectedEvent(event); setShowEvent(true); }} className="cursor-pointer">
+              <CommunityCard event={event} />
             </div>
-          )}
-        </div>
-      )}
-
-      {/* CallToAction below CommunityCard */}
+          ))
+        ) : (
+          <div className="col-span-full text-center py-8 text-gray-500">No events found.</div>
+        )}
+      </div>
+      <EventForm />
+      
       <CallToAction />
-
-      {/* Full-Screen Popup Modal */}
-      {showEvent && selectedEvent && (
-        <Event event={selectedEvent} onClose={() => setShowEvent(false)} />
-      )}
+      
+      {showEvent && selectedEvent && <Event event={selectedEvent} onClose={() => setShowEvent(false)} />}
     </>
   );
 };
