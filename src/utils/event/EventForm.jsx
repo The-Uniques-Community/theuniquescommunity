@@ -301,7 +301,7 @@ const EventForm = ({ event, onSuccess }) => {
           
           setSuccessMessage(message);
           setShowSuccess(true);
-          
+          formik.resetForm();
           if (onSuccess) {
             onSuccess(response.data.event);
           }
