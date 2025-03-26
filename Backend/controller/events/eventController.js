@@ -1483,8 +1483,8 @@ export const deleteEventExpense = async (req, res) => {
     }
 
     let newBudgetTotalSpent = event.budget.totalSpent || 0;
-    // If the expense was completed, subtract its amount from totalSpent
-    if (expense.paymentStatus === "completed") {
+    // Only adjust the budget if the expense status is not pending
+    if (expense.paymentStatus !== "pending") {
       newBudgetTotalSpent -= expense.amount;
     }
     const newRemaining =
@@ -1926,17 +1926,24 @@ export const deleteEventSponsor = async (req, res) => {
       timestamp: new Date(),
     };
 
-    // Remove sponsor and adjust budget
+    // Prepare update operation - only adjust budget if sponsor status is not pending
+    const updateOperation = {
+      $pull: { sponsors: { _id: sponsorId } },
+      $push: { budgetHistory: historyEntry }
+    };
+
+    // Only deduct from budget if sponsor status is not pending
+    if (sponsor.receivedStatus !== "pending") {
+      updateOperation.$inc = {
+        "budget.totalAllocated": -sponsor.amount,
+        "budget.remaining": -sponsor.amount,
+      };
+    }
+
+    // Remove sponsor and adjust budget if needed
     const updatedEvent = await Event.findByIdAndUpdate(
       id,
-      {
-        $pull: { sponsors: { _id: sponsorId } },
-        $push: { budgetHistory: historyEntry },
-        $inc: {
-          "budget.totalAllocated": -sponsor.amount,
-          "budget.remaining": -sponsor.amount,
-        },
-      },
+      updateOperation,
       { new: true }
     );
 
