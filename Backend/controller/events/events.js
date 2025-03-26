@@ -339,7 +339,7 @@ const commingEvents = [
       eventStatus: "completed"
     },
     {
-      eventName: "Code Quest",
+      eventName: "Code Quest",  
       eventDescription: "Code Quest is an in-house hackathon designed to foster creativity, technical prowess, and a competitive spirit among students. With the motto Craft. Code. Conquer. this event aims to provide participants with an immersive experience mirroring real-world hackathons. It is specifically tailored for students from the Uniques 2.0, Uniques 3.0, and Super60 batches, offering them a platform to enhance their competitive and technical skills.",
       eventBanner: "https://utfs.io/f/fbba036f-3ccd-4d8d-aacd-d888c32f822a-vlrxtb.jpg",
       eventDate: new Date("2023-04-23"),
