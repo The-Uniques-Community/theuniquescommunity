@@ -18,14 +18,14 @@ export default function Example() {
                             </radialGradient>
                         </defs>
                     </svg>
-                    <div className="mx-auto max-w-md text-center lg:mx-0 lg:flex-auto lg:py-32 lg:text-left">
+                    <div className="mx-auto max-w-md text-left lg:mx-0 lg:flex-auto lg:py-32 lg:text-left">
                         <h2 className="text-3xl font-semibold tracking-tight text-balance text-white sm:text-4xl">
                             Become a Campus Ambassador Today!
                         </h2>
                         <p className="mt-6 text-lg/8 text-pretty text-gray-300">
                             Join our exclusive program, represent our brand, and gain incredible experience while building your leadership skills.
                         </p>
-                        <div className="mt-10 flex items-center justify-center gap-x-6 lg:justify-start">
+                        <div className="mt-10 flex items-center justify-start gap-x-6 lg:justify-start">
                             <a
                                 href="#"
                                 className="rounded-md bg-red-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
@@ -37,7 +37,7 @@ export default function Example() {
                             </a>
                         </div>
                     </div>
-                    <div className="relative mt-16 h-80 lg:mt-8">
+                    <div className="relative flex justify-center items-center mt-16 h-80 lg:mt-8">
                         <img
                             alt="Campus Ambassador Program"
                             src={DoubleQuotes}

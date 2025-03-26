@@ -28,18 +28,17 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
-} from "@mui/material";
-import { ArrowBack } from "@mui/icons-material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
-import SaveIcon from "@mui/icons-material/Save";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { useNavigate } from "react-router";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import ImageIcon from "@mui/icons-material/Image";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import axios from "axios";
+  InputAdornment
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import SaveIcon from '@mui/icons-material/Save';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import ImageIcon from '@mui/icons-material/Image';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import axios from 'axios';
 
 const EVENT_TYPES = [
   "Workshop",
@@ -110,6 +109,9 @@ const guestValidationSchema = Yup.object({
 });
 
 const EventForm = ({ event, onSuccess }) => {
+  // First define isEdit before using it in state declarations
+  const isEdit = Boolean(event);
+
   const [formFields, setFormFields] = useState(
     event?.eventForm?.formFeilds || []
   );
@@ -128,7 +130,6 @@ const EventForm = ({ event, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
-  const navigate = useNavigate();
 
   const isEdit = Boolean(event);
 
@@ -329,8 +330,10 @@ const EventForm = ({ event, onSuccess }) => {
           eventBanner: bannerId,
           eventGallery: galleryIds,
           eventForm: {
-            formFeilds: formFields,
+            formFeilds: formFields
           },
+          // Include sponsors data if hasSponsors is true
+          sponsors: hasSponsors ? sponsors : []
         };
 
         // Step 4: Create or update the event
@@ -1203,69 +1206,69 @@ const EventForm = ({ event, onSuccess }) => {
                   {["select", "radio", "checkbox"].includes(
                     field.fieldType
                   ) && (
-                    <>
-                      <Divider sx={{ my: 1 }}>Options</Divider>
+                      <>
+                        <Divider sx={{ my: 1 }}>Options</Divider>
 
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          mb: 1,
-                        }}
-                      >
-                        <Typography variant="body2" fontWeight={500}>
-                          Field Options
-                        </Typography>
-                        <Button
-                          startIcon={<AddIcon />}
-                          onClick={() => addOption(fieldIndex)}
-                          variant="text"
-                          size="small"
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            mb: 1,
+                          }}
                         >
-                          Add Option
-                        </Button>
-                      </Box>
-
-                      {field.options?.map((option, optionIndex) => (
-                        <Box key={optionIndex} sx={{ display: "flex", mb: 1 }}>
-                          <TextField
-                            fullWidth
+                          <Typography variant="body2" fontWeight={500}>
+                            Field Options
+                          </Typography>
+                          <Button
+                            startIcon={<AddIcon />}
+                            onClick={() => addOption(fieldIndex)}
+                            variant="text"
                             size="small"
-                            value={option}
-                            onChange={(e) =>
-                              updateOption(
-                                fieldIndex,
-                                optionIndex,
-                                e.target.value
-                              )
-                            }
-                            placeholder={`Option ${optionIndex + 1}`}
-                          />
-                          <IconButton
-                            size="small"
-                            onClick={() =>
-                              removeOption(fieldIndex, optionIndex)
-                            }
-                            color="error"
                           >
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
+                            Add Option
+                          </Button>
                         </Box>
-                      ))}
 
-                      {(!field.options || field.options.length === 0) && (
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{ fontStyle: "italic", mt: 1 }}
-                        >
-                          No options added. Click "Add Option" to add field
-                          options.
-                        </Typography>
-                      )}
-                    </>
-                  )}
+                        {field.options?.map((option, optionIndex) => (
+                          <Box key={optionIndex} sx={{ display: "flex", mb: 1 }}>
+                            <TextField
+                              fullWidth
+                              size="small"
+                              value={option}
+                              onChange={(e) =>
+                                updateOption(
+                                  fieldIndex,
+                                  optionIndex,
+                                  e.target.value
+                                )
+                              }
+                              placeholder={`Option ${optionIndex + 1}`}
+                            />
+                            <IconButton
+                              size="small"
+                              onClick={() =>
+                                removeOption(fieldIndex, optionIndex)
+                              }
+                              color="error"
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
+                        ))}
+
+                        {(!field.options || field.options.length === 0) && (
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ fontStyle: "italic", mt: 1 }}
+                          >
+                            No options added. Click "Add Option" to add field
+                            options.
+                          </Typography>
+                        )}
+                      </>
+                    )}
                 </Stack>
               </Box>
             ))}

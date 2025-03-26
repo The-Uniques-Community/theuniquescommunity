@@ -37,7 +37,7 @@ const About = (props) => (
         </div>
         <div className="md:w-1/2 p-4">
             <div className="md:w-[80%] text-left">
-                <p className="bg-[#ca0019] md:text-left p-2 text-2xl text-white rounded-xl">
+                <p className="bg-[#ca0019] md:text-left p-2 text-2xl text-white">
                     What is the Criteria for Being an Ambassador?
                 </p>
                 <p className="text-black text-sm text-left my-4">
