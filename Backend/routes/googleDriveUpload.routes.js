@@ -574,6 +574,9 @@ router.post("/budget_file_upload", upload.single("file"), async (req, res) => {
       });
     }
 
+    const currentItem = itemArray[itemIndex];
+    const itemAmount = currentItem.amount || 0;
+
     // Create folder structure: Main Folder -> Event Folder -> Budget -> ItemType
     const folderStructure = await createFolderStructure(
       "The Uniques Event",
@@ -605,18 +608,53 @@ router.post("/budget_file_upload", upload.single("file"), async (req, res) => {
     const updatePath = `${itemType}s.${itemIndex}.receiptId`;
     const updateObj = { [updatePath]: fileRecord._id };
     
-    // If this is a sponsorship being marked as received, update status and date
-    if (itemType === "sponsor") {
+    // Initialize budget updates object
+    const budgetUpdates = {};
+    
+    // Update budget totals based on item type
+    if (itemType === "sponsor" && currentItem.receivedStatus !== "received") {
+      // This is a new sponsorship being marked as received
       updateObj[`${itemType}s.${itemIndex}.receivedStatus`] = "received";
       updateObj[`${itemType}s.${itemIndex}.dateReceived`] = new Date();
-    }
-    // If this is an expense being marked as completed, update status and date
-    else if (itemType === "expense") {
+      
+      // Update budget totals - increase total allocation/income
+      const currentAllocation = event.budget?.totalAllocation || 0;
+      budgetUpdates["budget.totalAllocation"] = currentAllocation + itemAmount;
+    } 
+    else if (itemType === "expense" && currentItem.paymentStatus !== "completed") {
+      // This is a new expense being marked as completed
       updateObj[`${itemType}s.${itemIndex}.paymentStatus`] = "completed";
       updateObj[`${itemType}s.${itemIndex}.paidOn`] = new Date();
+      
+      // Update budget totals - increase total spent
+      const currentSpent = event.budget?.totalSpent || 0;
+      budgetUpdates["budget.totalSpent"] = currentSpent + itemAmount;
     }
     
-    await Event.findByIdAndUpdate(eventId, updateObj);
+    // Calculate remaining budget
+    if (Object.keys(budgetUpdates).length > 0) {
+      const updatedAllocation = 
+        budgetUpdates["budget.totalAllocation"] !== undefined 
+        ? budgetUpdates["budget.totalAllocation"] 
+        : (event.budget?.totalAllocation || 0);
+        
+      const updatedSpent = 
+        budgetUpdates["budget.totalSpent"] !== undefined
+        ? budgetUpdates["budget.totalSpent"]
+        : (event.budget?.totalSpent || 0);
+        
+      budgetUpdates["budget.remaining"] = updatedAllocation - updatedSpent;
+    }
+    
+    // Merge all updates
+    const finalUpdateObj = {...updateObj, ...budgetUpdates};
+    
+    // Update the event with all changes
+    const updatedEvent = await Event.findByIdAndUpdate(
+      eventId, 
+      finalUpdateObj, 
+      { new: true }
+    );
     
     // Send response
     res.status(200).json({
@@ -628,7 +666,8 @@ router.post("/budget_file_upload", upload.single("file"), async (req, res) => {
       eventId: eventId,
       itemType: itemType,
       itemId: itemId,
-      status: itemType === "sponsor" ? "received" : "completed"
+      status: itemType === "sponsor" ? "received" : "completed",
+      budget: updatedEvent.budget
     });
 
   } catch (error) {

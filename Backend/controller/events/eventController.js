@@ -1067,6 +1067,7 @@ export const addEventSponsor = async (req, res) => {
       contactPerson,
       contactEmail,
       contactPhone,
+      logoUrl,
       notes,
       receiptId,
       status = "pending", // Add status with default "pending"
@@ -1097,6 +1098,7 @@ export const addEventSponsor = async (req, res) => {
       contactPhone,
       notes,
       receiptId,
+      logoUrl,
       status: status, // Add status field
       dateReceived: new Date(),
     };
@@ -1148,13 +1150,16 @@ export const updateReceiptId = async (req, res) => {
     const { id } = req.params;
     const { itemId, itemType, receiptId } = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(id) || 
-        !mongoose.Types.ObjectId.isValid(itemId) || 
-        !receiptId ||
-        !["sponsor", "expense"].includes(itemType)) {
+    if (
+      !mongoose.Types.ObjectId.isValid(id) ||
+      !mongoose.Types.ObjectId.isValid(itemId) ||
+      !receiptId ||
+      !["sponsor", "expense"].includes(itemType)
+    ) {
       return res.status(400).json({
         success: false,
-        message: "Valid event ID, item ID, receipt ID, and item type are required",
+        message:
+          "Valid event ID, item ID, receipt ID, and item type are required",
       });
     }
 
@@ -1170,28 +1175,25 @@ export const updateReceiptId = async (req, res) => {
     let updateQuery = {};
     if (itemType === "sponsor") {
       updateQuery = {
-        $set: { "sponsors.$[elem].receiptId": receiptId }
+        $set: { "sponsors.$[elem].receiptId": receiptId },
       };
     } else {
       updateQuery = {
-        $set: { "expenses.$[elem].receiptId": receiptId }
+        $set: { "expenses.$[elem].receiptId": receiptId },
       };
     }
 
     // Update the receipt ID without changing budget
-    const updatedEvent = await Event.findByIdAndUpdate(
-      id,
-      updateQuery,
-      {
-        arrayFilters: [{ "elem._id": itemId }],
-        new: true,
-      }
-    );
+    const updatedEvent = await Event.findByIdAndUpdate(id, updateQuery, {
+      arrayFilters: [{ "elem._id": itemId }],
+      new: true,
+    });
 
     res.status(200).json({
       success: true,
       message: `Receipt updated for ${itemType}`,
-      [itemType + "s"]: itemType === "sponsor" ? updatedEvent.sponsors : updatedEvent.expenses,
+      [itemType + "s"]:
+        itemType === "sponsor" ? updatedEvent.sponsors : updatedEvent.expenses,
     });
   } catch (error) {
     console.error(`Error updating receipt:`, error);
@@ -1223,7 +1225,6 @@ export const addEventExpense = async (req, res) => {
       notes,
     } = req.body;
 
-    // Both admin and coordinator can add expenses
     const userRole = req.user?.role || "coordinator";
 
     if (
@@ -1234,10 +1235,12 @@ export const addEventExpense = async (req, res) => {
     ) {
       return res.status(400).json({
         success: false,
-        message: "Valid event ID, category, title, and amount are required",
+        message:
+          "Valid event ID, category, title, and amount are required",
       });
     }
 
+    // Get the event document
     const event = await Event.findById(id);
     if (!event) {
       return res.status(404).json({
@@ -1246,7 +1249,7 @@ export const addEventExpense = async (req, res) => {
       });
     }
 
-    // Create new expense object with user info
+    // Build the expense object
     const expense = {
       category,
       title,
@@ -1269,18 +1272,24 @@ export const addEventExpense = async (req, res) => {
       createdAt: new Date(),
     };
 
-    // Calculate budget impact
+    // Prepare budget update if the expense is completed
     let budgetUpdate = {};
-    if (paymentStatus === "completed") {
+    if (expense.paymentStatus === "completed") {
+      const newTotalSpent =
+        (event.budget.totalSpent || 0) + Number(amount);
+      const newRemaining = (event.budget.totalAllocated || 0) - newTotalSpent;
       budgetUpdate = {
-        $inc: {
-          "budget.totalSpent": Number(amount),
-          "budget.remaining": Number(amount),
+        "budget.totalSpent": newTotalSpent,
+        "budget.remaining": newRemaining,
+        "budget.lastUpdatedBy": {
+          userId: req.user?._id,
+          role: userRole,
+          timestamp: new Date(),
         },
       };
     }
 
-    // Create budget history entry
+    // Create a budget history entry
     const historyEntry = {
       action: "expense_added",
       amount: Number(amount),
@@ -1293,7 +1302,7 @@ export const addEventExpense = async (req, res) => {
       timestamp: new Date(),
     };
 
-    // Add expense and update budget if necessary
+    // Update the event: push expense and history; update budget if necessary
     const updatedEvent = await Event.findByIdAndUpdate(
       id,
       {
@@ -1301,7 +1310,7 @@ export const addEventExpense = async (req, res) => {
           expenses: expense,
           budgetHistory: historyEntry,
         },
-        ...budgetUpdate,
+        $set: budgetUpdate,
       },
       { new: true }
     );
@@ -1323,13 +1332,13 @@ export const addEventExpense = async (req, res) => {
 };
 
 /**
- * Update expense status
- * @route PATCH /api/events/:id/expenses/:expenseId
+ * Update expense status.
+ * For this simplified model, only the paymentStatus is updated.
  */
 export const updateExpenseStatus = async (req, res) => {
   try {
     const { id, expenseId } = req.params;
-    const { paymentStatus, approved } = req.body;
+    const { paymentStatus } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
@@ -1346,7 +1355,7 @@ export const updateExpenseStatus = async (req, res) => {
       });
     }
 
-    // Find the expense
+    // Find the expense to update
     const expense = event.expenses.id(expenseId);
     if (!expense) {
       return res.status(404).json({
@@ -1355,67 +1364,69 @@ export const updateExpenseStatus = async (req, res) => {
       });
     }
 
-    // Check if changing from pending to completed
-    const increaseBudgetSpent =
-      expense.paymentStatus === "pending" && paymentStatus === "completed";
+    const currentStatus = expense.paymentStatus;
+    let newBudgetTotalSpent = event.budget.totalSpent || 0;
+    const expenseAmount = expense.amount;
 
-    // Check if changing from completed to pending
-    const decreaseBudgetSpent =
-      expense.paymentStatus === "completed" && paymentStatus === "pending";
-
-    // Check sufficient budget if marking as completed
-    if (increaseBudgetSpent && event.budget.remaining < expense.amount) {
-      return res.status(400).json({
-        success: false,
-        message: "Insufficient budget to mark this expense as completed",
-        budget: event.budget,
-      });
-    }
-
-    // Prepare update
-    const updates = {};
-    if (paymentStatus) {
-      updates["expenses.$[elem].paymentStatus"] = paymentStatus;
-      if (increaseBudgetSpent) {
-        updates["expenses.$[elem].paidOn"] = new Date();
+    // If switching from pending to completed, add expense amount
+    if (currentStatus === "pending" && paymentStatus === "completed") {
+      // Check if budget is sufficient
+      if (event.budget.remaining < expenseAmount) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Insufficient budget to mark this expense as completed",
+          budget: event.budget,
+        });
       }
+      newBudgetTotalSpent += expenseAmount;
+    }
+    // If switching from completed to pending, subtract expense amount
+    else if (
+      currentStatus === "completed" &&
+      paymentStatus === "pending"
+    ) {
+      newBudgetTotalSpent -= expenseAmount;
     }
 
-    if (approved !== undefined) {
-      updates["expenses.$[elem].approved"] = approved;
-      if (approved) {
-        updates["expenses.$[elem].approvedBy"] = req.user?._id;
-        updates["expenses.$[elem].approvedOn"] = new Date();
-      } else {
-        updates["expenses.$[elem].approvedBy"] = null;
-        updates["expenses.$[elem].approvedOn"] = null;
-      }
+    const newRemaining =
+      (event.budget.totalAllocated || 0) - newBudgetTotalSpent;
+
+    // Prepare the update operations
+    const expenseUpdates = {
+      "expenses.$[elem].paymentStatus": paymentStatus,
+    };
+    // If moving to completed and there was no paidOn date, set it
+    if (currentStatus === "pending" && paymentStatus === "completed") {
+      expenseUpdates["expenses.$[elem].paidOn"] = new Date();
     }
 
-    // Calculate budget impact
-    let budgetUpdate = {};
-    if (increaseBudgetSpent) {
-      budgetUpdate = {
-        $inc: {
-          "budget.totalSpent": expense.amount,
-          "budget.remaining": -expense.amount,
-        },
-      };
-    } else if (decreaseBudgetSpent) {
-      budgetUpdate = {
-        $inc: {
-          "budget.totalSpent": -expense.amount,
-          "budget.remaining": expense.amount,
-        },
-      };
-    }
-
-    // Update the expense
     const updatedEvent = await Event.findByIdAndUpdate(
       id,
       {
-        $set: updates,
-        ...budgetUpdate,
+        $set: {
+          ...expenseUpdates,
+          "budget.totalSpent": newBudgetTotalSpent,
+          "budget.remaining": newRemaining,
+          "budget.lastUpdatedBy": {
+            userId: req.user?._id,
+            role: req.user?.role || "coordinator",
+            timestamp: new Date(),
+          },
+        },
+        $push: {
+          budgetHistory: {
+            action: "expense_updated",
+            amount: expenseAmount,
+            category: expense.category,
+            note: `Updated expense status to ${paymentStatus}`,
+            performedBy: {
+              userId: req.user?._id,
+              role: req.user?.role || "coordinator",
+            },
+            timestamp: new Date(),
+          },
+        },
       },
       {
         arrayFilters: [{ "elem._id": expenseId }],
@@ -1440,15 +1451,12 @@ export const updateExpenseStatus = async (req, res) => {
 };
 
 /**
- * Delete expense - both admin and coordinator can do this now
- * @route DELETE /api/events/:id/expenses/:expenseId
+ * Delete an expense.
  */
 export const deleteEventExpense = async (req, res) => {
   try {
     const { id, expenseId } = req.params;
     const userRole = req.user?.role || "coordinator";
-
-    // Removed the admin-only check
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
@@ -1465,7 +1473,7 @@ export const deleteEventExpense = async (req, res) => {
       });
     }
 
-    // Find the expense
+    // Find the expense to delete
     const expense = event.expenses.id(expenseId);
     if (!expense) {
       return res.status(404).json({
@@ -1474,18 +1482,15 @@ export const deleteEventExpense = async (req, res) => {
       });
     }
 
-    // If expense was completed, update budget
-    let budgetUpdate = {};
+    let newBudgetTotalSpent = event.budget.totalSpent || 0;
+    // If the expense was completed, subtract its amount from totalSpent
     if (expense.paymentStatus === "completed") {
-      budgetUpdate = {
-        $inc: {
-          "budget.totalSpent": -expense.amount,
-          "budget.remaining": expense.amount,
-        },
-      };
+      newBudgetTotalSpent -= expense.amount;
     }
+    const newRemaining =
+      (event.budget.totalAllocated || 0) - newBudgetTotalSpent;
 
-    // Create history entry
+    // Create a budget history entry for deletion
     const historyEntry = {
       action: "expense_deleted",
       amount: expense.amount,
@@ -1498,13 +1503,21 @@ export const deleteEventExpense = async (req, res) => {
       timestamp: new Date(),
     };
 
-    // Remove expense and update budget
+    // Remove the expense and update the budget
     const updatedEvent = await Event.findByIdAndUpdate(
       id,
       {
         $pull: { expenses: { _id: expenseId } },
         $push: { budgetHistory: historyEntry },
-        ...budgetUpdate,
+        $set: {
+          "budget.totalSpent": newBudgetTotalSpent,
+          "budget.remaining": newRemaining,
+          "budget.lastUpdatedBy": {
+            userId: req.user?._id,
+            role: userRole,
+            timestamp: new Date(),
+          },
+        },
       },
       { new: true }
     );
@@ -1567,17 +1580,13 @@ export const addBudgetAllocation = async (req, res) => {
       timestamp: new Date(),
     };
 
-    // Add allocation and history entry AND increment total budget
+    // Add allocation and history entry WITHOUT changing the total budget
     const updatedEvent = await Event.findByIdAndUpdate(
       id,
       {
         $push: {
           budgetAllocations: allocation,
           budgetHistory: historyEntry,
-        },
-        $inc: {
-          "budget.totalAllocated": Number(amount),
-          "budget.remaining": Number(amount),
         }
       },
       { new: true }
@@ -1614,8 +1623,6 @@ export const deleteBudgetAllocation = async (req, res) => {
   try {
     const { id, allocationId } = req.params;
     const userRole = req.user?.role || "coordinator";
-
-    // Removed the admin-only check
 
     if (
       !mongoose.Types.ObjectId.isValid(id) ||
@@ -1657,7 +1664,7 @@ export const deleteBudgetAllocation = async (req, res) => {
       timestamp: new Date(),
     };
 
-    // Remove allocation
+    // Remove allocation without changing the total budget
     const updatedEvent = await Event.findByIdAndUpdate(
       id,
       {
@@ -1671,6 +1678,7 @@ export const deleteBudgetAllocation = async (req, res) => {
       success: true,
       message: "Budget allocation deleted successfully",
       allocations: updatedEvent.budgetAllocations,
+      budget: updatedEvent.budget
     });
   } catch (error) {
     console.error("Error deleting budget allocation:", error);
@@ -1733,11 +1741,9 @@ export const getEventBudgetSummary = async (req, res) => {
     const sponsors = event.sponsors;
     const expenses = event.expenses;
 
-    const total_budget = event.budget.totalAllocated; 
-
     res.status(200).json({
       success: true,
-      budget: event.budget ,
+      budget: event.budget,
       sponsors: sponsors,
       expenses: expenses,
       budgetAllocations: event.budgetAllocations,
@@ -1974,5 +1980,5 @@ export default {
   getEventBudgetSummary,
   updateEventGallery,
   getEventGallery,
-  updateReceiptId // not used
+  updateReceiptId, // not used
 };
