@@ -272,7 +272,7 @@ const Batches = () => {
           </div>
 
           {/* Members Grid - Limited to 3 Members */}
-          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 place-items-center sm:gap-x-0 gap-x-4 gap-y-6 h-auto">
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 place-items-center sm:gap-x-0 gap-x-4 gap-y-6 h-auto">
             {loading ? (
               <div className="col-span-full flex flex-col items-center justify-center py-12">
                 <div className="w-12 h-12 border-4 border-gray-300 border-t-[#ca0019] rounded-full animate-spin"></div>

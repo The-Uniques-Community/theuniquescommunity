@@ -204,38 +204,27 @@ export const updateMemberProfile = async (req, res) => {
   // Get all members with pagination
   export const getAllMembers = async (req, res) => {
     try {
-      const { page = 1, limit = 10, sortBy = 'createdAt', order = 'desc' } = req.query;
-      
-      // Convert page and limit to numbers
-      const pageNum = parseInt(page);
-      const limitNum = parseInt(limit);
-      
-      // Calculate skip value for pagination
-      const skip = (pageNum - 1) * limitNum;
+      const { sortBy = 'createdAt', order = 'desc' } = req.query;
       
       // Create sort object
       const sortOptions = {};
       sortOptions[sortBy] = order === 'desc' ? -1 : 1;
       
-      // Get total count for pagination info
+      // Get total count
       const total = await Member.countDocuments();
       
-      // Fetch members with pagination
+      // Fetch all members without pagination and populate needed fields
       const members = await Member.find()
         .select('-password')
-        .sort(sortOptions)
-        .skip(skip)
-        .limit(limitNum);
+        .populate('certifications')
+        .populate('profilePic')
+        .populate('event_participation')
+        .sort(sortOptions);
       
       return res.status(200).json({
         success: true,
         data: members,
-        pagination: {
-          total,
-          page: pageNum,
-          limit: limitNum,
-          pages: Math.ceil(total / limitNum)
-        }
+        count: total
       });
     } catch (error) {
       console.error('Error fetching members:', error);

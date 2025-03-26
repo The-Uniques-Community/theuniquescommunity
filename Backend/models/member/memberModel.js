@@ -15,7 +15,7 @@ const memberSchema = new mongoose.Schema(
       type: String,
       sparse: true,
       unique: true,
-      match: [/^[0-9]{4}(BTCS|BTCSD)[0-9]{3}$/],
+      match: [/^[0-9]{4}(BTCS|BTCED)[0-9]{3}$/],
     },
     email: {
       type: String,
@@ -64,14 +64,32 @@ const memberSchema = new mongoose.Schema(
       default: "inactive",
       enum: ["inactive", "active", "pending", "blocked"],
     },
-    fineStatus: {
-      type: String,
-      default: "0",
-    },
-    fineReason:{
-      type:String,
-      default:""
-    },
+    // Replacing simple fine fields with structured array
+    fines: [
+      {
+        amount: {
+          type: Number,
+          required: true,
+        },
+        dateImposed: {
+          type: Date,
+          default: Date.now,
+        },
+        status: {
+          type: String,
+          enum: ["pending", "paid", "waived"],
+          default: "pending",
+        },
+        reason: {
+          type: String,
+          required: true,
+        },
+        proofOfPayment: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "File",
+        }
+      }
+    ],
     
     // New semesterSGPA field to track SGPA by semester
     semesterSGPA: [
@@ -222,6 +240,15 @@ memberSchema.virtual('pendingSupplementary').get(function() {
     return total + (sem.subjects ? 
       sem.subjects.filter(subj => subj.status === 'pending').length : 0);
   }, 0);
+});
+
+// Virtual to calculate total pending fines
+memberSchema.virtual('totalPendingFines').get(function() {
+  if (!this.fines || this.fines.length === 0) return 0;
+  
+  return this.fines
+    .filter(fine => fine.status === 'pending')
+    .reduce((total, fine) => total + fine.amount, 0);
 });
 
 // Compare candidatePassword with the hashed password

@@ -1,19 +1,29 @@
 import express from "express";
 import { 
   searchMembers,
-  imposeFine,
-  clearFine,
-  getFineHistory
+  imposeFine, 
+  updateFineStatus, 
+  removeFine, 
+  getPendingFines, 
+  getFineHistory,
+  getFineStatistics,
+  getMembersWithPendingFines
 } from "../../controller/admin/fineController.js";
 
 const fineRouter = express.Router();
 
 // Search members route
-fineRouter.get("/search", searchMembers);
+fineRouter.get('/members/search', searchMembers);
 
-// Fine management routes
-fineRouter.post("/:memberId/impose", imposeFine);
-fineRouter.post("/:memberId/clear", clearFine);
-fineRouter.get("/:memberId/history", getFineHistory);
+// Fine management for a specific member
+fineRouter.post('/members/:memberId/fines', imposeFine);
+fineRouter.patch('/members/:memberId/fines/:fineId', updateFineStatus);
+fineRouter.delete('/members/:memberId/fines/:fineId', removeFine);
+fineRouter.get('/members/:memberId/fines/pending', getPendingFines);
+fineRouter.get('/members/:memberId/fines', getFineHistory);
+
+// Fine statistics and aggregate data
+fineRouter.get('/fines/statistics', getFineStatistics);
+fineRouter.get('/fines/pending/members', getMembersWithPendingFines);
 
 export default fineRouter;

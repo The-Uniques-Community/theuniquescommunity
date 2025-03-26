@@ -92,10 +92,28 @@ const index = () => {
         const fineRes = await axios.get('http://localhost:5000/api/admin/member/fines/all');
         setFineMembers(fineRes.data.data);
         
-        // Calculate total fine amount
-        const totalFineAmount = fineRes.data.data.reduce((total, member) => {
-          return total + parseInt(member.fineStatus || 0);
-        }, 0);
+        // Calculate total fine amount - improved calculation
+        let totalFineAmount = 0;
+        if (Array.isArray(fineRes.data.data)) {
+          totalFineAmount = fineRes.data.data.reduce((total, member) => {
+            // Make sure fineStatus is converted to a number and has a default of 0
+            const fineAmount = member.fineStatus ? Number(member.fineStatus) : 0;
+            return total + (isNaN(fineAmount) ? 0 : fineAmount);
+          }, 0);
+        }
+        
+        // Alternative: fetch total fine directly if API supports it
+        try {
+          // Try to get the total fine from a dedicated API endpoint
+          const fineStatsRes = await axios.get('http://localhost:5000/api/admin/fine/fines/statistics');
+          if (fineStatsRes.data && fineStatsRes.data.success && fineStatsRes.data.data) {
+            // Use the total pending amount as the fine amount for the dashboard
+            totalFineAmount = fineStatsRes.data.data.totalPendingAmount || totalFineAmount;
+          }
+        } catch (error) {
+          console.log("Using calculated fine total instead of API stats");
+          // Continue with the calculated total if the API call fails
+        }
         
         // Fetch events from the correct API endpoint
         try {

@@ -46,20 +46,20 @@ const ProfileCard = ({ isOpen, onClose }) => {
 
   const books = [
     {
-      title: "The Digital Revolution",
-      cover: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500",
+      title: "The Art of Giving",
+      cover: "https://bmnmsbiymz.ufs.sh/f/1V3V2P4kpAumlhBlWJ7u4P3qMiabZeUz87wrEkVfCgNntQHS",
       description: "A comprehensive guide to navigating the digital age",
       link: "#"
     },
     {
-      title: "Community Building 101",
-      cover: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=500",
+      title: "Empowering Youth",
+      cover: "https://bmnmsbiymz.ufs.sh/f/1V3V2P4kpAumx3mamjn96rMwa3N4fR0hndkIVipFyKUB8bHc",
       description: "Essential strategies for building thriving communities",
       link: "#"
     },
     {
-      title: "Future of Learning",
-      cover: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=500",
+      title: "From Sacrifice to Success",
+      cover: "https://bmnmsbiymz.ufs.sh/f/1V3V2P4kpAumrJWVY51tqLi810a5BU7mZyDEfnuXpQgMYRIT",
       description: "Transforming education in the digital era",
       link: "#"
     }
@@ -99,7 +99,7 @@ const ProfileCard = ({ isOpen, onClose }) => {
                 <image
                   href="https://bmnmsbiymz.ufs.sh/f/1V3V2P4kpAumGEtCTEIoeyaO1d7xYQMuBsK0zrR9WmSiLvEN"
                   width="342"
-                  height="265"
+                  height="315"
                   preserveAspectRatio="xMidYMid slice"
                   clipPath="url(#aboutClip)"
                   filter="url(#glow)"
