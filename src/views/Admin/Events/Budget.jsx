@@ -32,6 +32,7 @@ import {
   Tooltip,
   Alert,
   Avatar,
+  Input,
 } from "@mui/material";
 import {
   Add,
@@ -47,6 +48,8 @@ import {
   Cancel,
   PictureAsPdf,
   ArrowBack,
+  CloudUpload,
+  Visibility,
 } from "@mui/icons-material";
 import { useParams, useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
@@ -130,6 +133,8 @@ const EventBudget = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const reportRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const sponsorFileInputRef = useRef(null);
 
   // Add user role state
   const [userRole, setUserRole] = useState(null);
@@ -140,18 +145,24 @@ const EventBudget = () => {
     totalSpent: 0,
     remaining: 0,
     currency: "INR",
-    status: "active", // Changed from "pending" to "active" as per model update
+    status: "active",
   });
   const [sponsors, setSponsors] = useState([]);
   const [expenses, setExpenses] = useState([]);
   const [allocations, setAllocations] = useState([]);
   const [tabValue, setTabValue] = useState(0);
+  const [uploadingReceipt, setUploadingReceipt] = useState(false);
+  const [currentItemForReceipt, setCurrentItemForReceipt] = useState(null);
 
   // Dialog states
   const [budgetDialog, setBudgetDialog] = useState(false);
   const [sponsorDialog, setSponsorDialog] = useState(false);
   const [expenseDialog, setExpenseDialog] = useState(false);
   const [allocationDialog, setAllocationDialog] = useState(false);
+  const [receiptDialog, setReceiptDialog] = useState(false);
+  const [viewReceiptDialog, setViewReceiptDialog] = useState(false);
+  const [viewingReceiptUrl, setViewingReceiptUrl] = useState("");
+  console.log("viewingReceiptUrl", viewingReceiptUrl);
 
   // Form states
   const [newBudget, setNewBudget] = useState({
@@ -167,13 +178,14 @@ const EventBudget = () => {
     contactEmail: "",
     contactPhone: "",
     notes: "",
-    sponsorImage: "", // Add this field for the image URL
   });
   const [newExpense, setNewExpense] = useState({
     category: "",
     title: "",
     amount: 0,
     vendor: "",
+    paymentMethod: "cash",
+    paymentStatus: "pending",
     paidBy: "",
     notes: "",
   });
@@ -188,10 +200,10 @@ const EventBudget = () => {
   const fetchUserRole = () => {
     try {
       const user = JSON.parse(localStorage.getItem("user")) || {};
-      setUserRole(user.role || "coordinator"); // Default to coordinator for safety
+      setUserRole(user.role || "coordinator");
     } catch (error) {
       console.error("Error determining user role:", error);
-      setUserRole("coordinator"); // Default fallback
+      setUserRole("coordinator");
     }
   };
 
@@ -202,6 +214,71 @@ const EventBudget = () => {
     fetchEvent();
     fetchBudgetData();
   }, [id]);
+
+  // Upload receipt for expense or sponsor
+  const handleUploadReceipt = async (itemId, itemType) => {
+    setCurrentItemForReceipt({ id: itemId, type: itemType });
+    setReceiptDialog(true);
+    console.log("Uploading receipt for", itemId, itemType);
+  };
+
+  // Submit the receipt file
+  const handleSubmitReceipt = async (e) => {
+    e.preventDefault();
+
+    if (!currentItemForReceipt) return;
+
+    const fileInput =
+      currentItemForReceipt.type === "expense"
+        ? fileInputRef.current
+        : sponsorFileInputRef.current;
+    const file = fileInput.files[0];
+
+    if (!file) {
+      toast.error("Please select a file to upload");
+      return;
+    }
+
+    setUploadingReceipt(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("eventId", id);
+      formData.append("itemType", currentItemForReceipt.type);
+      formData.append("itemId", currentItemForReceipt.id);
+
+      const response = await fetch(
+        "http://localhost:5000/upload/budget_file_upload",
+        {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success(`Receipt uploaded successfully`);
+        setReceiptDialog(false);
+        fetchBudgetData(); // Refresh data
+      } else {
+        toast.error(data.message || "Failed to upload receipt");
+      }
+    } catch (error) {
+      console.error("Error uploading receipt:", error);
+      toast.error("An error occurred while uploading the receipt");
+    } finally {
+      setUploadingReceipt(false);
+    }
+  };
+
+  // View receipt
+  const handleViewReceipt = async (fileUrl) => {
+    setViewingReceiptUrl(fileUrl);
+    setViewReceiptDialog(true);
+  };
 
   const handleDeleteExpense = async (expenseId) => {
     try {
@@ -335,6 +412,21 @@ const EventBudget = () => {
         setSponsors(data.sponsors || []);
         setExpenses(data.expenses || []);
         setAllocations(data.budgetAllocations || []);
+
+        // Calculate actual budget with sponsorships included
+        const totalSponsorship = (data.sponsors || [])
+          .filter((sponsor) => sponsor.receivedStatus === "received")
+          .reduce((sum, sponsor) => sum + sponsor.amount, 0);
+
+        const totalAllocated = data.budget?.totalAllocated || 0;
+        const totalSpent = data.budget?.totalSpent || 0;
+
+        // Update budget with sponsorship
+        setBudget((prev) => ({
+          ...prev,
+          totalWithSponsorships: totalAllocated + totalSponsorship,
+          remaining: totalAllocated + totalSponsorship - totalSpent,
+        }));
       } else {
         console.error("Error fetching budget data:", data.message);
       }
@@ -376,6 +468,9 @@ const EventBudget = () => {
           currency: "INR",
           note: "",
         });
+
+        // Refresh budget data to include sponsorships
+        fetchBudgetData();
       } else {
         console.error("Error updating budget:", data.message);
       }
@@ -423,6 +518,7 @@ const EventBudget = () => {
       console.error("Error adding sponsor:", error);
     }
   };
+
   const handleDeleteSponsor = async (sponsorId) => {
     try {
       const response = await fetch(
@@ -456,6 +552,7 @@ const EventBudget = () => {
       toast.error("An error occurred while deleting the sponsor");
     }
   };
+
   // Add expense
   const handleAddExpense = async () => {
     try {
@@ -478,6 +575,8 @@ const EventBudget = () => {
         setExpenseDialog(false);
         // Update budget after adding expense
         setBudget(data.budget);
+        // Refresh to update calculations
+        fetchBudgetData();
         // Reset form
         setNewExpense({
           category: "",
@@ -519,6 +618,7 @@ const EventBudget = () => {
       if (data.success) {
         setExpenses(data.expenses);
         setBudget(data.budget);
+        fetchBudgetData();
       } else {
         console.error("Error updating expense status:", data.message);
       }
@@ -551,13 +651,31 @@ const EventBudget = () => {
       doc.setTextColor(40);
       doc.text("Budget Summary", 20, 45);
 
+      // Calculate total received sponsors
+      const totalReceivedSponsorship = sponsors
+        .filter((sponsor) => sponsor.receivedStatus === "received")
+        .reduce((sum, sponsor) => sum + sponsor.amount, 0);
+
+      const totalPendingSponsorship = sponsors
+        .filter((sponsor) => sponsor.receivedStatus === "pending")
+        .reduce((sum, sponsor) => sum + sponsor.amount, 0);
+
       doc.autoTable({
         startY: 50,
         head: [["Item", "Amount (₹)"]],
         body: [
-          ["Total Budget", budget.totalAllocated.toLocaleString()],
+          ["Total Budget Allocation", budget.totalAllocated.toLocaleString()],
+          [
+            "Total Received Sponsorships",
+            totalReceivedSponsorship.toLocaleString(),
+          ],
+          [
+            "Total Available Budget",
+            (budget.totalAllocated + totalReceivedSponsorship).toLocaleString(),
+          ],
           ["Total Spent", budget.totalSpent.toLocaleString()],
           ["Remaining", budget.remaining.toLocaleString()],
+          ["Pending Sponsorships", totalPendingSponsorship.toLocaleString()],
         ],
         theme: "grid",
       });
@@ -570,11 +688,21 @@ const EventBudget = () => {
       if (sponsors.length > 0) {
         doc.autoTable({
           startY: doc.autoTable.previous.finalY + 20,
-          head: [["Name", "Type", "Amount (₹)", "Contact Person", "Contact"]],
+          head: [
+            [
+              "Name",
+              "Type",
+              "Amount (₹)",
+              "Status",
+              "Contact Person",
+              "Contact",
+            ],
+          ],
           body: sponsors.map((sponsor) => [
             sponsor.name,
             sponsor.type,
             sponsor.amount.toLocaleString(),
+            sponsor.receivedStatus || "pending",
             sponsor.contactPerson || "-",
             sponsor.contactEmail || sponsor.contactPhone || "-",
           ]),
@@ -677,6 +805,13 @@ const EventBudget = () => {
       .reduce((sum, sponsor) => sum + sponsor.amount, 0);
   };
 
+  // Calculate received sponsorships amount
+  const getReceivedSponsorshipsTotal = () => {
+    return sponsors
+      .filter((sponsor) => sponsor.receivedStatus === "received")
+      .reduce((sum, sponsor) => sum + sponsor.amount, 0);
+  };
+
   // Calculate expenses by category
   const getExpensesByCategory = (category) => {
     return expenses
@@ -693,20 +828,12 @@ const EventBudget = () => {
     return allocation ? allocation.amount : 0;
   };
 
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "80vh",
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
+  // Calculate total available budget with sponsorships
+  const getTotalAvailableBudget = () => {
+    const allocatedBudget = budget.totalAllocated || 0;
+    const receivedSponsorships = getReceivedSponsorshipsTotal();
+    return allocatedBudget + receivedSponsorships;
+  };
 
   if (loading) {
     return (
@@ -803,14 +930,27 @@ const EventBudget = () => {
                 color="text.secondary"
                 gutterBottom
               >
-                Total Budget
+                Total Available Budget
               </Typography>
               <Typography
-                variant="h3"
+                variant="h5"
                 component="div"
                 sx={{ fontWeight: "bold" }}
               >
                 ₹{budget.totalAllocated.toLocaleString()}
+                {getReceivedSponsorshipsTotal() > 0 && (
+                  <Typography variant="body2" color="primary" sx={{ mt: 0.5 }}>
+                    + ₹{getReceivedSponsorshipsTotal().toLocaleString()}{" "}
+                    (sponsorships)
+                  </Typography>
+                )}
+              </Typography>
+              <Typography
+                variant="h3"
+                component="div"
+                sx={{ fontWeight: "bold", mt: 1 }}
+              >
+                ₹{getTotalAvailableBudget().toLocaleString()}
               </Typography>
               <Box sx={{ mt: 1, display: "flex", alignItems: "center" }}>
                 <Chip
@@ -843,7 +983,7 @@ const EventBudget = () => {
               <Box sx={{ mt: 1 }}>
                 <Typography variant="body2" color="text.secondary">
                   {Math.round(
-                    (budget.totalSpent / budget.totalAllocated) * 100
+                    (budget.totalSpent / getTotalAvailableBudget()) * 100
                   ) || 0}
                   % of budget used
                 </Typography>
@@ -851,7 +991,7 @@ const EventBudget = () => {
                   variant="determinate"
                   value={
                     Math.min(
-                      (budget.totalSpent / budget.totalAllocated) * 100,
+                      (budget.totalSpent / getTotalAvailableBudget()) * 100,
                       100
                     ) || 0
                   }
@@ -867,7 +1007,10 @@ const EventBudget = () => {
             sx={{
               borderRadius: 2,
               height: "100%",
-              bgcolor: budget.remaining >= 0 ? "background.paper" : "#fff1f0",
+              bgcolor:
+                getTotalAvailableBudget() - budget.totalSpent >= 0
+                  ? "background.paper"
+                  : "#fff1f0",
             }}
           >
             <CardContent>
@@ -883,15 +1026,23 @@ const EventBudget = () => {
                 component="div"
                 sx={{
                   fontWeight: "bold",
-                  color: budget.remaining < 0 ? "error.main" : "inherit",
+                  color:
+                    getTotalAvailableBudget() - budget.totalSpent < 0
+                      ? "error.main"
+                      : "inherit",
                 }}
               >
-                ₹{budget.remaining.toLocaleString()}
+                ₹
+                {(
+                  getTotalAvailableBudget() - budget.totalSpent
+                ).toLocaleString()}
               </Typography>
-              {budget.remaining < 0 ? (
+              {getTotalAvailableBudget() - budget.totalSpent < 0 ? (
                 <Typography variant="body2" color="error" sx={{ mt: 1 }}>
                   Budget exceeded by{" "}
-                  {Math.abs(budget.remaining).toLocaleString()}
+                  {Math.abs(
+                    getTotalAvailableBudget() - budget.totalSpent
+                  ).toLocaleString()}
                 </Typography>
               ) : (
                 <Typography
@@ -900,7 +1051,9 @@ const EventBudget = () => {
                   sx={{ mt: 1 }}
                 >
                   {Math.round(
-                    (budget.remaining / budget.totalAllocated) * 100
+                    ((getTotalAvailableBudget() - budget.totalSpent) /
+                      getTotalAvailableBudget()) *
+                      100
                   ) || 0}
                   % of budget remaining
                 </Typography>
@@ -961,11 +1114,23 @@ const EventBudget = () => {
                     </TableHead>
                     <TableBody>
                       <TableRow>
+                        <TableCell>Budget Allocation</TableCell>
+                        <TableCell align="right">
+                          {budget.totalAllocated.toLocaleString()}
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
                         <TableCell>Total Sponsorships</TableCell>
                         <TableCell align="right">
                           {sponsors
                             .reduce((sum, sponsor) => sum + sponsor.amount, 0)
                             .toLocaleString()}
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Received Sponsorships</TableCell>
+                        <TableCell align="right">
+                          {getReceivedSponsorshipsTotal().toLocaleString()}
                         </TableCell>
                       </TableRow>
                       <TableRow>
@@ -984,6 +1149,16 @@ const EventBudget = () => {
                         <TableCell>Service Sponsorships</TableCell>
                         <TableCell align="right">
                           {getSponsorTotalByType("services").toLocaleString()}
+                        </TableCell>
+                      </TableRow>
+                      <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
+                        <TableCell>
+                          <strong>Total Available Budget</strong>
+                        </TableCell>
+                        <TableCell align="right">
+                          <strong>
+                            {getTotalAvailableBudget().toLocaleString()}
+                          </strong>
                         </TableCell>
                       </TableRow>
                       <TableRow sx={{ backgroundColor: "#f8f9fa" }}>
@@ -1008,7 +1183,9 @@ const EventBudget = () => {
                       <TableRow
                         sx={{
                           backgroundColor:
-                            budget.remaining >= 0 ? "#f6ffed" : "#fff1f0",
+                            getTotalAvailableBudget() - budget.totalSpent >= 0
+                              ? "#f6ffed"
+                              : "#fff1f0",
                         }}
                       >
                         <TableCell>
@@ -1018,13 +1195,17 @@ const EventBudget = () => {
                           align="right"
                           sx={{
                             color:
-                              budget.remaining < 0
+                              getTotalAvailableBudget() - budget.totalSpent < 0
                                 ? "error.main"
                                 : "success.main",
                             fontWeight: "bold",
                           }}
                         >
-                          <strong>{budget.remaining.toLocaleString()}</strong>
+                          <strong>
+                            {(
+                              getTotalAvailableBudget() - budget.totalSpent
+                            ).toLocaleString()}
+                          </strong>
                         </TableCell>
                       </TableRow>
                     </TableBody>
@@ -1060,9 +1241,9 @@ const EventBudget = () => {
                     <TableCell>Name</TableCell>
                     <TableCell>Type</TableCell>
                     <TableCell align="right">Amount (₹)</TableCell>
+                    <TableCell>Status</TableCell>
                     <TableCell>Contact Person</TableCell>
                     <TableCell>Contact</TableCell>
-                    <TableCell>Notes</TableCell>
                     <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
@@ -1074,13 +1255,46 @@ const EventBudget = () => {
                       <TableCell align="right">
                         {sponsor.amount.toLocaleString()}
                       </TableCell>
+                      <TableCell>
+                        <Chip
+                          label={sponsor.receivedStatus || "pending"}
+                          color={
+                            sponsor.receivedStatus === "received"
+                              ? "success"
+                              : "warning"
+                          }
+                          size="small"
+                        />
+                      </TableCell>
                       <TableCell>{sponsor.contactPerson}</TableCell>
                       <TableCell>
                         {sponsor.contactEmail || sponsor.contactPhone}
                       </TableCell>
-                      <TableCell>{sponsor.notes}</TableCell>
-
                       <TableCell>
+                        {sponsor.receivedStatus === "pending" && (
+                          <Tooltip title="Upload Receipt">
+                            <IconButton
+                              size="small"
+                              onClick={() =>
+                                handleUploadReceipt(sponsor._id, "sponsor")
+                              }
+                            >
+                              <CloudUpload />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                        {sponsor.receiptId && (
+                          <Tooltip title="View Receipt">
+                            <IconButton
+                              size="small"
+                              onClick={() =>
+                                handleViewReceipt(sponsor.receiptId.fileId)
+                              }
+                            >
+                              <Visibility />
+                            </IconButton>
+                          </Tooltip>
+                        )}
                         <Tooltip title="Delete">
                           <IconButton
                             size="small"
@@ -1153,33 +1367,30 @@ const EventBudget = () => {
                       </TableCell>
                       <TableCell>{expense.paidBy}</TableCell>
                       <TableCell>
-                        <Tooltip title="Mark as Paid">
-                          <IconButton
-                            size="small"
-                            onClick={() =>
-                              handleUpdateExpenseStatus(
-                                expense._id,
-                                "completed"
-                              )
-                            }
-                            disabled={expense.paymentStatus === "completed"}
-                          >
-                            <CheckCircle />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Mark as Pending">
-                          <IconButton
-                            size="small"
-                            onClick={() =>
-                              handleUpdateExpenseStatus(expense._id, "pending")
-                            }
-                            disabled={expense.paymentStatus === "pending"}
-                          >
-                            <Cancel />
-                          </IconButton>
-                        </Tooltip>
-                        {/* Only admin can delete expenses */}
-
+                        {expense.paymentStatus === "pending" && (
+                          <Tooltip title="Upload Receipt">
+                            <IconButton
+                              size="small"
+                              onClick={() =>
+                                handleUploadReceipt(expense._id, "expense")
+                              }
+                            >
+                              <CloudUpload />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                        {expense.receiptId && (
+                          <Tooltip title="View Receipt">
+                            <IconButton
+                              size="small"
+                              onClick={() =>
+                                handleViewReceipt(expense.receiptId.fileId)
+                              }
+                            >
+                              <Visibility />
+                            </IconButton>
+                          </Tooltip>
+                        )}
                         <Tooltip title="Delete">
                           <IconButton
                             size="small"
@@ -1405,116 +1616,111 @@ const EventBudget = () => {
       </Dialog>
 
       {/* Expense Dialog */}
-        <Dialog open={expenseDialog} onClose={() => setExpenseDialog(false)}>
-          <DialogTitle>Add Expense</DialogTitle>
-          <DialogContent sx={{ minWidth: 400 }}>
-            <TextField
-          label="Title"
-          fullWidth
-          margin="normal"
-          value={newExpense.title}
-          onChange={(e) =>
-            setNewExpense({ ...newExpense, title: e.target.value })
-          }
-            />
-            <FormControl fullWidth margin="normal">
-          <InputLabel>Category</InputLabel>
-          <Select
-            value={newExpense.category}
+      <Dialog open={expenseDialog} onClose={() => setExpenseDialog(false)}>
+        <DialogTitle>Add Expense</DialogTitle>
+        <DialogContent sx={{ minWidth: 400 }}>
+          <TextField
+            label="Title"
+            fullWidth
+            margin="normal"
+            value={newExpense.title}
             onChange={(e) =>
-              setNewExpense({ ...newExpense, category: e.target.value })
+              setNewExpense({ ...newExpense, title: e.target.value })
             }
-          >
-           {
-           event.expense.map((expense) => (
-            <MenuItem value={expense.category}>{expense.category}</MenuItem>
-            ))
-           }
-          </Select>
-            </FormControl>
-            <TextField
-          label="Amount"
-          type="number"
-          fullWidth
-          margin="normal"
-          value={newExpense.amount}
-          onChange={(e) =>
-            setNewExpense({
-              ...newExpense,
-              amount: parseFloat(e.target.value) || 0,
-            })
-          }
-            />
-            <TextField
-          label="Vendor"
-          fullWidth
-          margin="normal"
-          value={newExpense.vendor}
-          onChange={(e) =>
-            setNewExpense({ ...newExpense, vendor: e.target.value })
-          }
-            />
-            <FormControl fullWidth margin="normal">
-          <InputLabel>Payment Method</InputLabel>
-          <Select
-            value={newExpense.paymentMethod}
-            onChange={(e) =>
-              setNewExpense({ ...newExpense, paymentMethod: e.target.value })
-            }
-          >
-            <MenuItem value="cash">Cash</MenuItem>
-            <MenuItem value="card">Card</MenuItem>
-            <MenuItem value="bankTransfer">Bank Transfer</MenuItem>
-            <MenuItem value="upi">UPI</MenuItem>
-            <MenuItem value="other">Other</MenuItem>
-          </Select>
-            </FormControl>
-            <FormControl fullWidth margin="normal">
-          <InputLabel>Payment Status</InputLabel>
-          <Select
-            value={newExpense.paymentStatus}
-            onChange={(e) =>
-              setNewExpense({ ...newExpense, paymentStatus: e.target.value })
-            }
-          >
-            <MenuItem value="pending">Pending</MenuItem>
-            <MenuItem value="completed">Completed</MenuItem>
-          </Select>
-            </FormControl>
-            <TextField
-          label="Paid By"
-          fullWidth
-          margin="normal"
-          value={newExpense.paidBy}
-          onChange={(e) =>
-            setNewExpense({ ...newExpense, paidBy: e.target.value })
-          }
-            />
-            <TextField
-          label="Notes"
-          multiline
-          rows={3}
-          fullWidth
-          margin="normal"
-          value={newExpense.notes}
-          onChange={(e) =>
-            setNewExpense({ ...newExpense, notes: e.target.value })
-          }
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setExpenseDialog(false)}>Cancel</Button>
-            <Button
-          variant="contained"
-          onClick={handleAddExpense}
-          startIcon={<Save />}
+          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Category</InputLabel>
+            <Select
+              value={newExpense.category}
+              onChange={(e) =>
+                setNewExpense({ ...newExpense, category: e.target.value })
+              }
             >
-          Add Expense
-            </Button>
-          </DialogActions>
-        </Dialog>
+              {allocations.map((allocation) => (
+                <MenuItem key={allocation._id} value={allocation.category}>
+                  {allocation.category}
+                </MenuItem>
+              ))}
+              {
+                sponsors.map((sponsor)=>(
+                  <MenuItem key={sponsor._id} value={sponsor.name}>
+                    {sponsor.name}
+                  </MenuItem>
+                ))
+              }
+            </Select>
+          </FormControl>
+          <TextField
+            label="Amount"
+            type="number"
+            fullWidth
+            margin="normal"
+            value={newExpense.amount}
+            onChange={(e) =>
+              setNewExpense({
+                ...newExpense,
+                amount: parseFloat(e.target.value) || 0,
+              })
+            }
+          />
+          <TextField
+            label="Vendor"
+            fullWidth
+            margin="normal"
+            value={newExpense.vendor}
+            onChange={(e) =>
+              setNewExpense({ ...newExpense, vendor: e.target.value })
+            }
+          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Payment Method</InputLabel>
+            <Select
+              value={newExpense.paymentMethod}
+              onChange={(e) =>
+                setNewExpense({ ...newExpense, paymentMethod: e.target.value })
+              }
+            >
+              <MenuItem value="cash">Cash</MenuItem>
+              <MenuItem value="card">Card</MenuItem>
+              <MenuItem value="bank">Bank Transfer</MenuItem>
+              <MenuItem value="upi">UPI</MenuItem>
+              <MenuItem value="other">Other</MenuItem>
+            </Select>
+          </FormControl>
+          <TextField
+            label="Paid By"
+            fullWidth
+            margin="normal"
+            value={newExpense.paidBy}
+            onChange={(e) =>
+              setNewExpense({ ...newExpense, paidBy: e.target.value })
+            }
+          />
+          <TextField
+            label="Notes"
+            multiline
+            rows={3}
+            fullWidth
+            margin="normal"
+            value={newExpense.notes}
+            onChange={(e) =>
+              setNewExpense({ ...newExpense, notes: e.target.value })
+            }
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setExpenseDialog(false)}>Cancel</Button>
+          <Button
+            variant="contained"
+            onClick={handleAddExpense}
+            startIcon={<Save />}
+          >
+            Add Expense
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-        {/* Allocation Dialog */}
+      {/* Allocation Dialog */}
       <Dialog
         open={allocationDialog}
         onClose={() => setAllocationDialog(false)}
@@ -1563,6 +1769,71 @@ const EventBudget = () => {
             startIcon={<Save />}
           >
             Add Allocation
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Receipt Upload Dialog */}
+      <Dialog open={receiptDialog} onClose={() => setReceiptDialog(false)}>
+        <DialogTitle>Upload Receipt</DialogTitle>
+        <DialogContent sx={{ minWidth: 400 }}>
+          <Box sx={{ p: 2 }}>
+            <Typography variant="body2" sx={{ mb: 2 }}>
+              Please upload a receipt document for this{" "}
+              {currentItemForReceipt?.type}
+            </Typography>
+            <input
+              type="file"
+              accept="image/*,application/pdf"
+              ref={
+                currentItemForReceipt?.type === "expense"
+                  ? fileInputRef
+                  : sponsorFileInputRef
+              }
+              style={{ display: "block", marginTop: "10px" }}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setReceiptDialog(false)}>Cancel</Button>
+          <Button
+            variant="contained"
+            onClick={handleSubmitReceipt}
+            startIcon={<CloudUpload />}
+            disabled={uploadingReceipt}
+          >
+            {uploadingReceipt ? "Uploading..." : "Upload Receipt"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* View Receipt Dialog */}
+      <Dialog
+        open={viewReceiptDialog}
+        onClose={() => setViewReceiptDialog(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Receipt Document</DialogTitle>
+        <DialogContent>
+          {viewingReceiptUrl && (
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <iframe
+                src={`https://drive.google.com/file/d/${viewingReceiptUrl}/preview`}
+                style={{ width: "100%", height: "500px" }}
+                alt="Receipt"
+              />
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setViewReceiptDialog(false)}>Close</Button>
+          <Button
+            variant="contained"
+            startIcon={<Download />}
+            onClick={() => window.open(viewingReceiptUrl, "_blank")}
+          >
+            Download
           </Button>
         </DialogActions>
       </Dialog>

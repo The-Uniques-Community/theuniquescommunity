@@ -1068,7 +1068,8 @@ export const addEventSponsor = async (req, res) => {
       contactEmail,
       contactPhone,
       notes,
-      sponsorImage // Add support for sponsor image
+      receiptId,
+      status = "pending", // Add status with default "pending"
     } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(id) || !name || !amount) {
@@ -1086,83 +1087,117 @@ export const addEventSponsor = async (req, res) => {
       });
     }
 
-    // Check if sponsor with same email already exists
-    let existingSponsorIndex = -1;
-    if (contactEmail) {
-      existingSponsorIndex = event.sponsors.findIndex(
-        sponsor => sponsor.contactEmail === contactEmail
-      );
-    }
+    // Create new sponsor object with status
+    const sponsor = {
+      name,
+      amount: Number(amount),
+      type: type || "cash",
+      contactPerson,
+      contactEmail,
+      contactPhone,
+      notes,
+      receiptId,
+      status: status, // Add status field
+      dateReceived: new Date(),
+    };
 
     // Update budget history
     const historyEntry = {
       action: "sponsor_added",
       amount: Number(amount),
-      note: existingSponsorIndex >= 0 ? `Updated sponsor amount: ${name}` : `Added sponsor: ${name}`,
+      note: `Added sponsor: ${name} (${status})`,
       performedBy: {
         userId: req.user?._id,
-        role: req.user?.role || 'coordinator',
+        role: req.user?.role || "coordinator",
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    let updatedEvent;
-
-    if (existingSponsorIndex >= 0) {
-      // Update existing sponsor
-      const updatedAmount = event.sponsors[existingSponsorIndex].amount + Number(amount);
-      
-      updatedEvent = await Event.findByIdAndUpdate(
-        id,
-        {
-          $set: { [`sponsors.${existingSponsorIndex}.amount`]: updatedAmount },
-          $push: { budgetHistory: historyEntry },
-          $inc: {
-            "budget.totalAllocated": Number(amount),
-            "budget.remaining": Number(amount),
-          }
-        },
-        { new: true }
-      );
-    } else {
-      // Create new sponsor object
-      const sponsor = {
-        name,
-        amount: Number(amount),
-        type: type || "cash",
-        contactPerson,
-        contactEmail,
-        contactPhone,
-        sponsorImage, // Add sponsor image support
-        notes,
-        dateReceived: new Date(),
-      };
-
-      // Add sponsor and update total budget
-      updatedEvent = await Event.findByIdAndUpdate(
-        id,
-        {
-          $push: { sponsors: sponsor, budgetHistory: historyEntry },
-          $inc: {
-            "budget.totalAllocated": Number(amount),
-            "budget.remaining": Number(amount),
-          }
-        },
-        { new: true }
-      );
-    }
+    // Add sponsor without updating budget (since it's pending)
+    const updatedEvent = await Event.findByIdAndUpdate(
+      id,
+      {
+        $push: { sponsors: sponsor, budgetHistory: historyEntry },
+        // No budget updates since sponsor is pending
+      },
+      { new: true }
+    );
 
     res.status(201).json({
       success: true,
-      message: existingSponsorIndex >= 0 ? "Sponsor amount updated successfully" : "Sponsor added successfully",
+      message: "Sponsor added successfully",
       sponsors: updatedEvent.sponsors,
-      budget: updatedEvent.budget
+      budget: updatedEvent.budget,
     });
   } catch (error) {
     console.error("Error adding sponsor:", error);
     res.status(500).json({
       success: false,
       message: "Error adding sponsor",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * Update sponsor or expense receipt
+ * @route PATCH /api/events/:id/update-receipt
+ */
+export const updateReceiptId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { itemId, itemType, receiptId } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id) || 
+        !mongoose.Types.ObjectId.isValid(itemId) || 
+        !receiptId ||
+        !["sponsor", "expense"].includes(itemType)) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid event ID, item ID, receipt ID, and item type are required",
+      });
+    }
+
+    const event = await Event.findById(id);
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: "Event not found",
+      });
+    }
+
+    // Update based on item type
+    let updateQuery = {};
+    if (itemType === "sponsor") {
+      updateQuery = {
+        $set: { "sponsors.$[elem].receiptId": receiptId }
+      };
+    } else {
+      updateQuery = {
+        $set: { "expenses.$[elem].receiptId": receiptId }
+      };
+    }
+
+    // Update the receipt ID without changing budget
+    const updatedEvent = await Event.findByIdAndUpdate(
+      id,
+      updateQuery,
+      {
+        arrayFilters: [{ "elem._id": itemId }],
+        new: true,
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: `Receipt updated for ${itemType}`,
+      [itemType + "s"]: itemType === "sponsor" ? updatedEvent.sponsors : updatedEvent.expenses,
+    });
+  } catch (error) {
+    console.error(`Error updating receipt:`, error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating receipt",
       error: error.message,
     });
   }
@@ -1240,7 +1275,7 @@ export const addEventExpense = async (req, res) => {
       budgetUpdate = {
         $inc: {
           "budget.totalSpent": Number(amount),
-          "budget.remaining": -Number(amount),
+          "budget.remaining": Number(amount),
         },
       };
     }
@@ -1271,15 +1306,11 @@ export const addEventExpense = async (req, res) => {
       { new: true }
     );
 
-    // Update allocation spending
-    const updatedAllocations = await updateAllocationSpending(updatedEvent);
-    
     res.status(201).json({
       success: true,
       message: "Expense added successfully",
       expenses: updatedEvent.expenses,
       budget: updatedEvent.budget,
-      allocations: updatedAllocations
     });
   } catch (error) {
     console.error("Error adding expense:", error);
@@ -1495,7 +1526,7 @@ export const deleteEventExpense = async (req, res) => {
 };
 
 /**
- * Add budget allocation - makes allocations functional for tracking category budgets
+ * Add budget allocation - both admin and coordinator can do this now
  * @route POST /api/events/:id/budget-allocations
  */
 export const addBudgetAllocation = async (req, res) => {
@@ -1503,107 +1534,74 @@ export const addBudgetAllocation = async (req, res) => {
     const { id } = req.params;
     const { category, amount, notes } = req.body;
     const userRole = req.user?.role || "coordinator";
-    
+
     if (!mongoose.Types.ObjectId.isValid(id) || !category || !amount) {
       return res.status(400).json({
         success: false,
-        message: "Valid event ID, category, and amount are required"
+        message: "Valid event ID, category, and amount are required",
       });
     }
-    
-    const event = await Event.findById(id);
-    if (!event) {
-      return res.status(404).json({
-        success: false,
-        message: "Event not found"
-      });
-    }
-    
-    // Check if allocation for this category already exists
-    const existingAllocationIndex = event.budgetAllocations.findIndex(
-      a => a.category.toLowerCase() === category.toLowerCase()
-    );
-    
+
+    // Create allocation object with user info
+    const allocation = {
+      category,
+      amount: Number(amount),
+      notes,
+      createdBy: {
+        userId: req.user?._id,
+        role: userRole,
+      },
+      createdAt: new Date(),
+    };
+
     // Create history entry
     const historyEntry = {
-      action: existingAllocationIndex >= 0 ? "allocation_updated" : "allocated",
+      action: "allocated",
       amount: Number(amount),
       category,
-      note: existingAllocationIndex >= 0 ? 
-        `Updated budget allocation for ${category}` : 
-        `Added budget allocation for ${category}`,
+      note: `Added budget allocation for ${category}`,
       performedBy: {
         userId: req.user?._id,
-        role: userRole
+        role: userRole,
       },
-      timestamp: new Date()
+      timestamp: new Date(),
     };
-    
-    let updatedEvent;
-    
-    if (existingAllocationIndex >= 0) {
-      // Update existing allocation
-      const newAmount = Number(amount);
-      const oldAmount = event.budgetAllocations[existingAllocationIndex].amount;
-      
-      updatedEvent = await Event.findByIdAndUpdate(
-        id,
-        {
-          $set: { 
-            [`budgetAllocations.${existingAllocationIndex}.amount`]: newAmount,
-            [`budgetAllocations.${existingAllocationIndex}.notes`]: notes || event.budgetAllocations[existingAllocationIndex].notes,
-            [`budgetAllocations.${existingAllocationIndex}.updatedBy`]: {
-              userId: req.user?._id,
-              role: userRole,
-              timestamp: new Date()
-            }
-          },
-          $push: { budgetHistory: historyEntry }
+
+    // Add allocation and history entry AND increment total budget
+    const updatedEvent = await Event.findByIdAndUpdate(
+      id,
+      {
+        $push: {
+          budgetAllocations: allocation,
+          budgetHistory: historyEntry,
         },
-        { new: true }
-      );
-    } else {
-      // Create new allocation
-      const allocation = {
-        category,
-        amount: Number(amount),
-        notes,
-        spent: 0, // Track how much has been spent in this category
-        remaining: Number(amount), // Track remaining budget for this category
-        createdBy: {
-          userId: req.user?._id,
-          role: userRole
-        },
-        createdAt: new Date()
-      };
-      
-      updatedEvent = await Event.findByIdAndUpdate(
-        id,
-        { 
-          $push: { 
-            budgetAllocations: allocation,
-            budgetHistory: historyEntry 
-          } 
-        },
-        { new: true }
-      );
+        $inc: {
+          "budget.totalAllocated": Number(amount),
+          "budget.remaining": Number(amount),
+        }
+      },
+      { new: true }
+    );
+
+    if (!updatedEvent) {
+      return res.status(404).json({
+        success: false,
+        message: "Event not found",
+      });
     }
-    
-    // Update category expense tracking
-    // Calculate how much has been spent in each category
-    const updatedAllocations = await updateAllocationSpending(updatedEvent);
-    
+
     res.status(201).json({
       success: true,
-      message: existingAllocationIndex >= 0 ? "Budget allocation updated successfully" : "Budget allocation added successfully",
-      allocations: updatedAllocations
+      message: "Budget allocation added successfully",
+      allocations: updatedEvent.budgetAllocations,
+      budget: updatedEvent.budget,
     });
   } catch (error) {
     console.error("Error adding budget allocation:", error);
     res.status(500).json({
       success: false,
       message: "Error adding budget allocation",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -1699,8 +1697,10 @@ export const getEventBudgetSummary = async (req, res) => {
       });
     }
 
-    // Simplified query to avoid User model references
-    const event = await Event.findById(id);
+    // Populate receipt references when fetching the event
+    const event = await Event.findById(id)
+      .populate("sponsors.receiptId")
+      .populate("expenses.receiptId");
 
     if (!event) {
       return res.status(404).json({
@@ -1709,63 +1709,48 @@ export const getEventBudgetSummary = async (req, res) => {
       });
     }
 
-    // Update allocation spending first
-    const updatedAllocations = await updateAllocationSpending(event);
-    
     // Calculate expense summary by category
     const expensesByCategory = {};
-    event.expenses.forEach(expense => {
+    event.expenses.forEach((expense) => {
       if (!expensesByCategory[expense.category]) {
         expensesByCategory[expense.category] = 0;
       }
-      if (expense.paymentStatus === 'completed') {
+      if (expense.paymentStatus === "completed") {
         expensesByCategory[expense.category] += expense.amount;
       }
     });
-    
+
     // Calculate sponsors by type
     const sponsorsByType = {};
-    event.sponsors.forEach(sponsor => {
+    event.sponsors.forEach((sponsor) => {
       if (!sponsorsByType[sponsor.type]) {
         sponsorsByType[sponsor.type] = 0;
       }
       sponsorsByType[sponsor.type] += sponsor.amount;
     });
     
-    // Calculate budget utilization metrics
-    const totalAllocated = updatedAllocations.reduce((sum, a) => sum + a.amount, 0);
-    const allocatedVsTotal = event.budget.totalAllocated > 0 ? 
-      (totalAllocated / event.budget.totalAllocated) * 100 : 0;
-    
-    // Add spending percent to categories
-    const categoriesWithMetrics = {};
-    updatedAllocations.forEach(allocation => {
-      categoriesWithMetrics[allocation.category] = {
-        allocated: allocation.amount,
-        spent: allocation.spent,
-        remaining: allocation.remaining,
-        percentUtilized: allocation.amount > 0 ? 
-          Math.round((allocation.spent / allocation.amount) * 100) : 0
-      };
-    });
-    
+    // Use the already populated arrays directly
+    const sponsors = event.sponsors;
+    const expenses = event.expenses;
+
+    const total_budget = event.budget.totalAllocated; 
+
     res.status(200).json({
       success: true,
-      budget: event.budget,
-      sponsors: event.sponsors,
-      expenses: event.expenses,
-      budgetAllocations: updatedAllocations,
+      budget: event.budget ,
+      sponsors: sponsors,
+      expenses: expenses,
+      budgetAllocations: event.budgetAllocations,
       budgetHistory: event.budgetHistory,
       summary: {
         expensesByCategory,
         sponsorsByType,
-        categoriesWithMetrics,
         totalSponsors: event.sponsors.length,
         totalExpenses: event.expenses.length,
-        pendingExpenses: event.expenses.filter(e => e.paymentStatus === 'pending').length,
-        allocatedVsTotal: Math.round(allocatedVsTotal),
-        unallocatedAmount: event.budget.totalAllocated - totalAllocated
-      }
+        pendingExpenses: event.expenses.filter(
+          (e) => e.paymentStatus === "pending"
+        ).length,
+      },
     });
   } catch (error) {
     console.error("Error fetching budget summary:", error);
@@ -1965,47 +1950,6 @@ export const deleteEventSponsor = async (req, res) => {
   }
 };
 
-// Helper function to update allocation spending based on expenses
-async function updateAllocationSpending(event) {
-  // Calculate spending by category
-  const expensesByCategory = {};
-  
-  event.expenses.forEach(expense => {
-    if (expense.paymentStatus === "completed") {
-      const category = expense.category;
-      if (!expensesByCategory[category]) {
-        expensesByCategory[category] = 0;
-      }
-      expensesByCategory[category] += expense.amount;
-    }
-  });
-  
-  // Update allocations with spending
-  const updatedAllocations = event.budgetAllocations.map(allocation => {
-    const spent = expensesByCategory[allocation.category] || 0;
-    const remaining = allocation.amount - spent;
-    
-    return {
-      ...allocation.toObject(),
-      spent,
-      remaining
-    };
-  });
-  
-  // Update allocations in the database
-  const updates = {};
-  updatedAllocations.forEach((allocation, index) => {
-    updates[`budgetAllocations.${index}.spent`] = allocation.spent;
-    updates[`budgetAllocations.${index}.remaining`] = allocation.remaining;
-  });
-  
-  if (Object.keys(updates).length > 0) {
-    await Event.findByIdAndUpdate(event._id, { $set: updates });
-  }
-  
-  return updatedAllocations;
-}
-
 export default {
   createEvent,
   getAllEvents,
@@ -2030,5 +1974,5 @@ export default {
   getEventBudgetSummary,
   updateEventGallery,
   getEventGallery,
-  deleteEventSponsor,
+  updateReceiptId // not used
 };
