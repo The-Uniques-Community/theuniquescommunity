@@ -1668,11 +1668,6 @@ const EventBudget = () => {
                   {allocation.category}
                 </MenuItem>
               ))}
-              {sponsors.map((sponsor) => (
-                <MenuItem key={sponsor._id} value={sponsor.name}>
-                  {sponsor.name}
-                </MenuItem>
-              ))}
             </Select>
           </FormControl>
           <TextField
