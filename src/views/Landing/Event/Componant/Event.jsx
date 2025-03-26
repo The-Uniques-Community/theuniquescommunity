@@ -57,7 +57,7 @@ export default function Eventmodel({ event, onClose }) {
         setActiveTab(newValue);
         
         // Filter events based on selected tab
-        if (newValue !== "about" && newValue !== "guests" && newValue !== "organizers" && newValue !== "gallery") {
+        if (newValue !== "about" && newValue !== "guests" && newValue !== "organizers" && newValue !== "gallery" && newValue !== "sponsors") {
             const filtered = allEvents.filter(e => 
                 e.eventType === newValue && e._id !== event._id
             );
