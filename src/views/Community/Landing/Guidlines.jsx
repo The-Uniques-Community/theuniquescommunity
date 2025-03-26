@@ -167,15 +167,15 @@ const Guidelines = () => {
     return (
         <div>
             <section className="mx-auto container py-10" id="whyH2s ">
-                <div className="pt-[30px] md:px-6 max-sm:mt-6">
+                <div className="pt-[30px] max-sm:mt-6">
                     <h2
-                        className="max-sm:text-[24px] sm:text-[40px] text-[#212B36] text-center sm:mb-4 p-4"
+                        className="max-sm:text-[24px] sm:text-[40px] text-[#212B36] text-left sm:mb-4 py-4"
 
                     >
                         Community Guidelines
                     </h2>
                     <p
-                        className="text-center mt-2 my-14 max-sm:px-4 max-sm:my-6 max-sm:mt-[-20px] md:w-4/5 px-2 md:px-8 lg:px-12 mx-auto max-sm:text-[14px] md:text-[16px] font-[400] text-[#919EAB]"
+                        className="text-left mt-2 my-14  max-sm:my-6 max-sm:mt-[-20px] md:w-4/5 py-2 mx-auto max-sm:text-[14px] md:text-[16px] font-[400] text-[#919EAB]"
 
                     >
                         Innovate effortlessly. Our leading innovation management platform and a network of 5 million innovators will help you find the perfect solutions and bring them to market faster.

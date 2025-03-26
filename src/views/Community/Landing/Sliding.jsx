@@ -10,8 +10,8 @@ import '@/utils/scrollbar.css'
 const WeirdCard = ({ title, description }) => {
   return (
     <div className="card group hover:cursor-pointer z-10 duration-100 mb-6">
-      <div className="top-section bg-slate-200 p-4 rounded-lg relative">
-        <div className="absolute flex justify-center items-center top-0 left-3 w-10 h-10 bg-black/80 rounded-full">
+      <div className="top-section bg-slate-200 py-4 rounded-lg relative">
+        <div className="absolute flex justify-center items-center top-0 left-0 w-10 h-10 bg-black/80 rounded-full">
           <img className="w-6 object-contain h-6" src={tu_red || "/placeholder.svg"} alt="logo" />
         </div>
         <div className="border2"></div>
@@ -44,7 +44,7 @@ export default function SplitLayout() {
   return (
     <div className="container mx-auto mb-32 flex flex-col md:flex-row w-full">
       {/* Left section - Fixed */}
-      <div className="w-full md:w-1/2 p-8 bg-white sticky top-0 flex flex-col justify-start items-start">
+      <div className="w-full md:w-1/2 py-8 bg-white sticky top-0 flex flex-col justify-start items-start">
         <div className="space-y-4">
           <h1 className="text-4xl font-bold">
             Join <span className="text-[#ca0019]">The Uniques Community</span> Today!
@@ -84,6 +84,7 @@ export default function SplitLayout() {
 
 
       {/* Right section - Scrollable with SimpleBar - LEFT SIDE SCROLLBAR */}
+
       <SimpleBar
         ref={scrollRef}
         className="w-full md:w-[50%] p-6 md:p-8 h-[400px] custom-simplebar"
