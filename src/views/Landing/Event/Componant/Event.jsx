@@ -5,8 +5,8 @@ import Button from "@/utils/Buttons/Button";
 import { Tabs, Tab } from '@mui/material';
 import { CircularProgress, TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText, RadioGroup, FormControlLabel, Radio, Checkbox } from '@mui/material';
 import { toast } from 'react-toastify';
-import {Dialog ,DialogContent,Typography,Box , DialogTitle , IconButton } from '@mui/material';
-import { Close   } from '@mui/icons-material';
+import { Dialog, DialogContent, Typography, Box, DialogTitle, IconButton } from '@mui/material';
+import { Close } from '@mui/icons-material';
 // Add these imports at the top with your other imports
 import { Alert, DialogActions } from '@mui/material';
 import { ContactMail } from '@mui/icons-material';
@@ -247,7 +247,7 @@ export default function Eventmodel({ event, onClose }) {
             };
 
             const response = await fetch(
-                `http://localhost:5000/api/events/${id}/form-response`,
+                `http://localhost:5000/api/events/${event._id}/form-response`,
                 {
                     method: "POST",
                     headers: {
@@ -304,156 +304,156 @@ export default function Eventmodel({ event, onClose }) {
         const fieldType = field.type || field.fieldType;
         const fieldName = field.name || field.fieldName;
         const fieldLabel = field.label || field.fieldLabel;
-      
+
         switch (fieldType) {
-          case "text":
-          case "email":
-          case "number":
-          case "tel":
-          case "url":
-            return (
-              <TextField
-                key={fieldName}
-                name={fieldName}
-                label={fieldLabel}
-                type={fieldType}
-                value={formValues[fieldName] || ""}
-                onChange={handleFormInputChange}
-                fullWidth
-                required={field.required}
-                placeholder={field.placeholder || ""}
-                error={!!formErrors[fieldName]}
-                helperText={formErrors[fieldName] || field.helperText}
-                margin="normal"
-                variant="outlined"
-              />
-            );
-      
-          case "textarea":
-            return (
-              <TextField
-                key={fieldName}
-                name={fieldName}
-                label={fieldLabel}
-                multiline
-                rows={4}
-                value={formValues[fieldName] || ""}
-                onChange={handleFormInputChange}
-                fullWidth
-                required={field.required}
-                placeholder={field.placeholder || ""}
-                error={!!formErrors[fieldName]}
-                helperText={formErrors[fieldName] || field.helperText}
-                margin="normal"
-                variant="outlined"
-              />
-            );
-      
-          case "select":
-            return (
-              <FormControl
-                key={fieldName}
-                fullWidth
-                margin="normal"
-                error={!!formErrors[fieldName]}
-                required={field.required}
-              >
-                <InputLabel>{fieldLabel}</InputLabel>
-                <Select
-                  name={fieldName}
-                  value={formValues[fieldName] || ""}
-                  onChange={handleFormInputChange}
-                  label={fieldLabel}
-                >
-                  {field.options?.map((option) => (
-                    <MenuItem
-                      key={option.value || option}
-                      value={option.value || option}
-                    >
-                      {option.label || option}
-                    </MenuItem>
-                  ))}
-                </Select>
-                {(formErrors[fieldName] || field.helperText) && (
-                  <FormHelperText>
-                    {formErrors[fieldName] || field.helperText}
-                  </FormHelperText>
-                )}
-              </FormControl>
-            );
-      
-          case "radio":
-            return (
-              <FormControl
-                key={fieldName}
-                component="fieldset"
-                margin="normal"
-                error={!!formErrors[fieldName]}
-                required={field.required}
-                fullWidth
-              >
-                <Typography component="legend">{fieldLabel}</Typography>
-                <RadioGroup
-                  name={fieldName}
-                  value={formValues[fieldName] || ""}
-                  onChange={handleFormInputChange}
-                >
-                  {field.options?.map((option) => (
-                    <FormControlLabel
-                      key={option.value || option}
-                      value={option.value || option}
-                      control={<Radio />}
-                      label={option.label || option}
-                    />
-                  ))}
-                </RadioGroup>
-                {(formErrors[fieldName] || field.helperText) && (
-                  <FormHelperText>
-                    {formErrors[fieldName] || field.helperText}
-                  </FormHelperText>
-                )}
-              </FormControl>
-            );
-      
-          case "checkbox":
-            return (
-              <FormControl
-                key={fieldName}
-                component="fieldset"
-                margin="normal"
-                error={!!formErrors[fieldName]}
-                required={field.required}
-                fullWidth
-              >
-                <Typography component="legend">{fieldLabel}</Typography>
-                {field.options?.map((option) => (
-                  <FormControlLabel
-                    key={option.value || option}
-                    control={
-                      <Checkbox
+            case "text":
+            case "email":
+            case "number":
+            case "tel":
+            case "url":
+                return (
+                    <TextField
+                        key={fieldName}
                         name={fieldName}
-                        value={option.value || option}
-                        checked={(formValues[fieldName] || []).includes(
-                          option.value || option
-                        )}
+                        label={fieldLabel}
+                        type={fieldType}
+                        value={formValues[fieldName] || ""}
                         onChange={handleFormInputChange}
-                      />
-                    }
-                    label={option.label || option}
-                  />
-                ))}
-                {(formErrors[fieldName] || field.helperText) && (
-                  <FormHelperText>
-                    {formErrors[fieldName] || field.helperText}
-                  </FormHelperText>
-                )}
-              </FormControl>
-            );
-      
-          default:
-            return null;
+                        fullWidth
+                        required={field.required}
+                        placeholder={field.placeholder || ""}
+                        error={!!formErrors[fieldName]}
+                        helperText={formErrors[fieldName] || field.helperText}
+                        margin="normal"
+                        variant="outlined"
+                    />
+                );
+
+            case "textarea":
+                return (
+                    <TextField
+                        key={fieldName}
+                        name={fieldName}
+                        label={fieldLabel}
+                        multiline
+                        rows={4}
+                        value={formValues[fieldName] || ""}
+                        onChange={handleFormInputChange}
+                        fullWidth
+                        required={field.required}
+                        placeholder={field.placeholder || ""}
+                        error={!!formErrors[fieldName]}
+                        helperText={formErrors[fieldName] || field.helperText}
+                        margin="normal"
+                        variant="outlined"
+                    />
+                );
+
+            case "select":
+                return (
+                    <FormControl
+                        key={fieldName}
+                        fullWidth
+                        margin="normal"
+                        error={!!formErrors[fieldName]}
+                        required={field.required}
+                    >
+                        <InputLabel>{fieldLabel}</InputLabel>
+                        <Select
+                            name={fieldName}
+                            value={formValues[fieldName] || ""}
+                            onChange={handleFormInputChange}
+                            label={fieldLabel}
+                        >
+                            {field.options?.map((option) => (
+                                <MenuItem
+                                    key={option.value || option}
+                                    value={option.value || option}
+                                >
+                                    {option.label || option}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                        {(formErrors[fieldName] || field.helperText) && (
+                            <FormHelperText>
+                                {formErrors[fieldName] || field.helperText}
+                            </FormHelperText>
+                        )}
+                    </FormControl>
+                );
+
+            case "radio":
+                return (
+                    <FormControl
+                        key={fieldName}
+                        component="fieldset"
+                        margin="normal"
+                        error={!!formErrors[fieldName]}
+                        required={field.required}
+                        fullWidth
+                    >
+                        <Typography component="legend">{fieldLabel}</Typography>
+                        <RadioGroup
+                            name={fieldName}
+                            value={formValues[fieldName] || ""}
+                            onChange={handleFormInputChange}
+                        >
+                            {field.options?.map((option) => (
+                                <FormControlLabel
+                                    key={option.value || option}
+                                    value={option.value || option}
+                                    control={<Radio />}
+                                    label={option.label || option}
+                                />
+                            ))}
+                        </RadioGroup>
+                        {(formErrors[fieldName] || field.helperText) && (
+                            <FormHelperText>
+                                {formErrors[fieldName] || field.helperText}
+                            </FormHelperText>
+                        )}
+                    </FormControl>
+                );
+
+            case "checkbox":
+                return (
+                    <FormControl
+                        key={fieldName}
+                        component="fieldset"
+                        margin="normal"
+                        error={!!formErrors[fieldName]}
+                        required={field.required}
+                        fullWidth
+                    >
+                        <Typography component="legend">{fieldLabel}</Typography>
+                        {field.options?.map((option) => (
+                            <FormControlLabel
+                                key={option.value || option}
+                                control={
+                                    <Checkbox
+                                        name={fieldName}
+                                        value={option.value || option}
+                                        checked={(formValues[fieldName] || []).includes(
+                                            option.value || option
+                                        )}
+                                        onChange={handleFormInputChange}
+                                    />
+                                }
+                                label={option.label || option}
+                            />
+                        ))}
+                        {(formErrors[fieldName] || field.helperText) && (
+                            <FormHelperText>
+                                {formErrors[fieldName] || field.helperText}
+                            </FormHelperText>
+                        )}
+                    </FormControl>
+                );
+
+            default:
+                return null;
         }
-      };
+    };
 
     useEffect(() => {
         // Fetch all events to populate related events and tabs
@@ -1052,6 +1052,12 @@ export default function Eventmodel({ event, onClose }) {
                 onClose={() => !registrationLoading && setRegistrationModalOpen(false)}
                 fullWidth
                 maxWidth="md"
+                sx={{
+                    zIndex: 99999999, // Higher than the parent modal's z-index
+                    '& .MuiBackdrop-root': {
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)' // Making backdrop darker for better visibility
+                    }
+                }}
             >
                 <DialogTitle>
                     Registration Form: {event?.eventName}
@@ -1104,6 +1110,8 @@ export default function Eventmodel({ event, onClose }) {
                 </DialogContent>
                 <DialogActions>
                     <Button
+                        color="white"
+                        bgColor="#ca0019" border={4} borderColor="#ca0019" iconColor="black"
                         onClick={() =>
                             !registrationLoading && setRegistrationModalOpen(false)
                         }
@@ -1113,7 +1121,8 @@ export default function Eventmodel({ event, onClose }) {
                     </Button>
                     {!registrationSuccess && formFields.length > 0 && (
                         <Button
-                            variant="contained"
+                            color="white"
+                            bgColor="#ca0019" border={4} borderColor="#ca0019" iconColor="black"
                             onClick={handleSubmitRegistrationForm}
                             disabled={registrationLoading}
                             startIcon={
