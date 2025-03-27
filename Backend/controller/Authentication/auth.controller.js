@@ -88,6 +88,16 @@ export const emailLogin = async (req, res) => {
       }
     }
 
+     // If not found in any model, check if the email belongs to a coordinator
+     if (!member) {
+      // Example: Check if the email matches a predefined coordinator email pattern
+      const coordinatorEmails = ["coordinator1@example.com", "coordinator2@example.com"];
+      if (coordinatorEmails.includes(email)) {
+        role = "coordinator";
+        member = { email, role }; // Mock member object for coordinators
+      }
+    }
+
     // If still not found in any model
     if (!member) {
       return res
@@ -108,6 +118,10 @@ export const emailLogin = async (req, res) => {
         );
         if (member.password) {
           isMatch = await bcrypt.compare(password, member.password);
+        }
+        else if (role === "coordinator") {
+          // For coordinators, you can use a predefined password or skip password validation
+          isMatch = password === process.env.COORDINATOR_PASSWORD; // Example: Use an environment variable
         } else {
           return res
             .status(401)

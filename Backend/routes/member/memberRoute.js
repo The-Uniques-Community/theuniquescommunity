@@ -7,7 +7,7 @@ memberRoute.post('/register', register);
 memberRoute.post('/login', login);
 memberRoute.post('/logout', logout);
 memberRoute.post('/editProfile', editProfile);
-memberRoute.post('/getProfile', getProfile);
+memberRoute.get('/getProfile', getProfile);
 memberRoute.post('/bulk-upload', uploadDummyMembers)
 memberRoute.post("/update-fine-data", async (req, res) => {
     try {

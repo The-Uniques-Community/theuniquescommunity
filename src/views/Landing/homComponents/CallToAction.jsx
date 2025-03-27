@@ -10,14 +10,14 @@ const CallToAction = () => {
                 <h1 className='text-4xl font-bold py-2 text-white'>Join Us Today</h1>
                 <p className='text-white p-3 text-lg'>Join the community of unique individuals and learn from the best</p>
                 <Button
-                  path="/register"
+                  path="/auth/login"
                   color={"white"}
                   bgColor={"#ca0019"}
                   border={4}
                   borderColor={"#ca0019"}
                   iconColor={"black"}
                 >
-                  <span>Register</span>
+                  <span>Login</span>
                 </Button>
 
           </div>

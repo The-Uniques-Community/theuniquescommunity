@@ -7,14 +7,15 @@ import {
   getPendingFines, 
   getFineHistory,
   getFineStatistics,
-  getMembersWithPendingFines
+  getMembersWithPendingFines,
+  getAllMembersWithFines
 } from "../../controller/admin/fineController.js";
 
 const fineRouter = express.Router();
 
 // Search members route
 fineRouter.get('/members/search', searchMembers);
-
+fineRouter.get('/fines/members', getAllMembersWithFines);
 // Fine management for a specific member
 fineRouter.post('/members/:memberId/fines', imposeFine);
 fineRouter.patch('/members/:memberId/fines/:fineId', updateFineStatus);
@@ -24,6 +25,7 @@ fineRouter.get('/members/:memberId/fines', getFineHistory);
 
 // Fine statistics and aggregate data
 fineRouter.get('/fines/statistics', getFineStatistics);
+
 fineRouter.get('/fines/pending/members', getMembersWithPendingFines);
 
 export default fineRouter;
