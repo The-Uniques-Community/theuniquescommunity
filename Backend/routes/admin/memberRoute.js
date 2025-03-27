@@ -11,6 +11,7 @@ import {
   toggleBlockStatus,
   updateMemberProfile,
 } from '../../controller/admin/memberController.js';
+import { getAllMembersWithFines } from '../../controller/admin/fineController.js';
 
 const memberAdminRouter = express.Router();
 
@@ -39,6 +40,7 @@ memberAdminRouter.patch('/:id/block', toggleBlockStatus);
 
 // Suspend/unsuspend member
 memberAdminRouter.patch('/:id/suspend', toggleSuspendStatus);
+memberAdminRouter.get('/get-all-fine-history', getAllMembersWithFines)
 
 // Update member profile
 memberAdminRouter.put('/:id', updateMemberProfile);
