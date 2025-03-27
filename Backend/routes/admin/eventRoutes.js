@@ -28,6 +28,7 @@ import {
 } from '../../controller/events/eventController.js';
 import verifyRole from '../../middlewares/verifyRole.js';
 import verifyToken from '../../middlewares/verifyToken.js';
+import ifTokenVerify from '../../middlewares/ifTokenVerify.js';
 
 const eventRouter = express.Router();
 
@@ -38,7 +39,7 @@ eventRouter.get('/:id', getEventById);
 eventRouter.get('/status/:status', getEventsByStatus);
 
 // Form response submission - public or authenticated
-eventRouter.post('/:eventId/form-response', submitFormResponse);
+eventRouter.post('/:eventId/form-response', ifTokenVerify ,submitFormResponse);
 
 // Protected routes (authentication required)
 // Admin/Coordinator only routes - using verifyRole middleware

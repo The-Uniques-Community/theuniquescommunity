@@ -20,6 +20,11 @@ const Index = () => {
   const [year, setYear] = useState('');
   const [eventTypes, setEventTypes] = useState([]);
   const [years, setYears] = useState([]);
+  
+  // State variables for categorized events
+  const [ongoingEvents, setOngoingEvents] = useState([]);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [completedEvents, setCompletedEvents] = useState([]);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -32,14 +37,9 @@ const Index = () => {
           setEvents(eventsData);
           setFilteredEvents(eventsData);
 
-          // Log the first event to understand structure
-          if (eventsData.length > 0) {
-            console.log('Sample event structure:', eventsData[0]);
-          }
-
           // Extract unique event types from eventType field
           const types = [...new Set(eventsData
-            .filter(event => event.eventType) // Only include events with eventType
+            .filter(event => event.eventType)
             .map(event => event.eventType))];
           console.log('Available event types:', types);
           setEventTypes(types);
@@ -55,7 +55,7 @@ const Index = () => {
                 return null;
               }
             })
-            .filter(Boolean))]; // Remove null values
+            .filter(Boolean))];
             
           setYears(uniqueYears.sort((a, b) => b - a));
         } else {
@@ -75,25 +75,17 @@ const Index = () => {
   useEffect(() => {
     let filtered = events;
     
-    console.log('Filtering with:', { searchTerm, eventType, month, year });
-    console.log('Initial events count:', events.length);
-  
     if (searchTerm.trim()) {
       filtered = filtered.filter(event => {
-        // Try multiple potential property names that might contain the event title
-        // Based on your schema, eventName is the correct field
         return event.eventName && 
           event.eventName.toLowerCase().includes(searchTerm.trim().toLowerCase());
       });
-      console.log('After name filter:', filtered.length);
     }
   
     if (eventType) {
       filtered = filtered.filter(event => {
-        console.log(`Comparing event type: "${event.eventType}" with selected: "${eventType}"`);
         return event.eventType === eventType;
       });
-      console.log('After type filter:', filtered.length);
     }
 
     if (month) {
@@ -105,14 +97,11 @@ const Index = () => {
           if (isNaN(eventDate.getTime())) return false;
           
           const eventMonth = eventDate.getMonth() + 1; // JavaScript months are 0-indexed
-          console.log(`Event date: ${event.eventDate}, parsed month: ${eventMonth}, filter month: ${month}`);
           return eventMonth === parseInt(month);
         } catch (e) {
-          console.error('Error parsing date:', e);
           return false;
         }
       });
-      console.log('After month filter:', filtered.length);
     }
 
     if (year) {
@@ -125,15 +114,100 @@ const Index = () => {
           
           return eventDate.getFullYear() === parseInt(year);
         } catch (e) {
-          console.error('Error parsing date:', e);
           return false;
         }
       });
-      console.log('After year filter:', filtered.length);
     }
 
     setFilteredEvents(filtered);
   }, [searchTerm, eventType, month, year, events]);
+
+  // Categorize events based on date and status
+  useEffect(() => {
+    const currentDate = new Date();
+    const ongoing = [];
+    const upcoming = [];
+    const completed = [];
+    
+    filteredEvents.forEach(event => {
+      try {
+        // First check if the event has an explicit status
+        if (event.eventStatus) {
+          const status = event.eventStatus.toLowerCase();
+          
+          if (status === 'ongoing') {
+            ongoing.push(event);
+            return;
+          } else if (status === 'upcoming') {
+            upcoming.push(event);
+            return;
+          } else if (status === 'completed' || status === 'cancelled') {
+            completed.push(event);
+            return;
+          }
+        }
+        
+        // If no explicit status or it's not recognized, use date logic
+        if (!event.eventDate) {
+          // If no date is provided, consider it as completed
+          completed.push(event);
+          return;
+        }
+        
+        const eventDate = new Date(event.eventDate);
+        if (isNaN(eventDate.getTime())) {
+          // If the date is invalid, consider it as completed
+          completed.push(event);
+          return;
+        }
+        
+        // Calculate event end date (assuming events last for one day if not specified)
+        const eventEndDate = event.eventEndDate ? new Date(event.eventEndDate) : 
+                            new Date(eventDate.getTime() + 24 * 60 * 60 * 1000);
+        
+        // Set to end of day
+        eventEndDate.setHours(23, 59, 59, 999);
+        
+        // For date comparison, use only the date part
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const eventDateOnly = new Date(eventDate);
+        eventDateOnly.setHours(0, 0, 0, 0);
+        
+        if (today >= eventDateOnly && today <= eventEndDate) {
+          ongoing.push(event);
+        } else if (today < eventDateOnly) {
+          upcoming.push(event);
+        } else {
+          completed.push(event);
+        }
+      } catch (e) {
+        // Default to completed if there's any error in processing
+        completed.push(event);
+      }
+    });
+    
+    // Sort events by date within each category
+    const sortByDate = (a, b) => {
+      try {
+        if (!a.eventDate) return 1;
+        if (!b.eventDate) return -1;
+        
+        return new Date(a.eventDate) - new Date(b.eventDate);
+      } catch (e) {
+        return 0;
+      }
+    };
+    
+    ongoing.sort(sortByDate);
+    upcoming.sort(sortByDate);
+    completed.sort((a, b) => sortByDate(b, a)); // Reverse for completed (newest first)
+    
+    setOngoingEvents(ongoing);
+    setUpcomingEvents(upcoming);
+    setCompletedEvents(completed);
+  }, [filteredEvents]);
 
   return (
     <>
@@ -153,7 +227,6 @@ const Index = () => {
           <Select 
             value={eventType} 
             onChange={(e) => {
-              console.log('Selected event type:', e.target.value);
               setEventType(e.target.value);
             }} 
             label="Event Type"
@@ -189,18 +262,66 @@ const Index = () => {
       {loading && <div className="text-center py-12">Loading...</div>}
       {error && !loading && <div className="text-center text-red-500">{error}</div>}
       
-      <div className="grid my-10 max-w-6xl mx-auto grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 p-5">
-        {filteredEvents.length > 0 ? (
-          filteredEvents.map(event => (
-            <div key={event._id} onClick={() => { setSelectedEvent(event); setShowEvent(true); }} className="cursor-pointer">
-              <CommunityCard event={event} />
+      {!loading && !error && (
+        <div className="max-w-6xl mx-auto px-5">
+          {/* Ongoing Events Section - Only show if there are events */}
+          {ongoingEvents.length > 0 && (
+            <div className="my-10">
+              <div className="flex mb-2 md:mb-5 items-center">
+                <span className="border-l-4 border-[#e03232] h-6 mr-3"></span>
+                <h1 className="text-lg font-bold">Ongoing Events</h1>
+              </div> 
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+                {ongoingEvents.map(event => (
+                  <div key={event._id} onClick={() => { setSelectedEvent(event); setShowEvent(true); }} className="cursor-pointer">
+                    <CommunityCard event={event} />
+                  </div>
+                ))}
+              </div>
             </div>
-          ))
-        ) : (
-          <div className="col-span-full text-center py-8 text-gray-500">No events found.</div>
-        )}
-      </div>
-      <EventForm />
+          )}
+
+          {/* Upcoming Events Section - Only show if there are events */}
+          {upcomingEvents.length > 0 && (
+            <div className="my-10">
+              <div className="flex mb-2 md:mb-5 items-center">
+                <span className="border-l-4 border-orange-500 h-6 mr-3"></span>
+                <h1 className="text-lg font-bold">Upcoming Events</h1>
+              </div> 
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+                {upcomingEvents.map(event => (
+                  <div key={event._id} onClick={() => { setSelectedEvent(event); setShowEvent(true); }} className="cursor-pointer">
+                    <CommunityCard event={event} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Completed Events Section - Always show if there are events */}
+          {completedEvents.length > 0 && (
+            <div className="my-10">
+              <div className="flex mb-2 md:mb-5 items-center">
+                <span className="border-l-4 border-green-600 h-6 mr-3"></span>
+                <h1 className="text-lg font-bold">Completed Events</h1>
+              </div>  
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+                {completedEvents.map(event => (
+                  <div key={event._id} onClick={() => { setSelectedEvent(event); setShowEvent(true); }} className="cursor-pointer">
+                    <CommunityCard event={event} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Show message when no events match the filters */}
+          {ongoingEvents.length === 0 && upcomingEvents.length === 0 && completedEvents.length === 0 && (
+            <div className="text-center py-12 text-gray-500">No events match your search criteria.</div>
+          )}
+        </div>
+      )}
+      
       
       <CallToAction />
       
