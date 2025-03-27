@@ -590,7 +590,7 @@ export default function Eventmodel({ event, onClose }) {
                         </div>
                     </div>
                     <div className="flex space-x-3 w-full sm:w-auto justify-end">
-                        <Button color="white" bgColor="#ca0019" border={4} borderColor="#ca0019" iconColor="black">Share</Button>
+            
                         {event.eventForm && event.eventForm.formId && event.eventStatus === 'upcoming' && (
                             <Button
 
