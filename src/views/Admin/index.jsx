@@ -119,11 +119,11 @@ const index = () => {
         try {
           const eventsRes = await axios.get('http://localhost:5000/api/events');
           // Handle API response based on its structure (data property or direct array)
-          const eventsList = eventsRes.data.data || eventsRes.data;
+          const eventsList = eventsRes.data.events 
           setEvents(eventsList.slice(0, 3));
           
           // Update total events count from API response
-          const totalEventsCount = eventsRes.data.pagination?.total || eventsList.length;
+          const totalEventsCount = eventsRes.data.total;
           setStats(prev => ({
             ...prev,
             totalEvents: totalEventsCount
@@ -268,7 +268,11 @@ const index = () => {
           <div className="mb-5">
             <Calender />
           </div>
-          <div className="mb-5">
+          <div className="mb-5 overflow-auto h-[500px]" style={{
+            scrollbarWidth: 'thin',
+            scrollbarColor: '#d4d4d4 #f3f3f3',
+            scrollbarTrackColor: '#f3f3f3'
+          }} >
             {loading ? (
               <div className="flex justify-center py-8">
                 <CircularProgress size={24} />
