@@ -38,7 +38,8 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ImageIcon from '@mui/icons-material/Image';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';            
+import { ArrowBack } from "@mui/icons-material";
+import * as Yup from 'yup';
 import axios from 'axios';
 import { ArrowBack } from "@mui/icons-material";
 
@@ -112,7 +113,7 @@ const guestValidationSchema = Yup.object({
 
 const EventForm = ({ event, onSuccess }) => {
   // First define isEdit before using it in state declarations
-  const isEdit = Boolean(event);
+  // const isEdit = Boolean(event);
 
   const [formFields, setFormFields] = useState(
     event?.eventForm?.formFeilds || []
@@ -133,7 +134,7 @@ const EventForm = ({ event, onSuccess }) => {
   const [successMessage, setSuccessMessage] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
 
-
+  // const isEdit = Boolean(event);
 
   // Fetch all guests on component mount
   useEffect(() => {

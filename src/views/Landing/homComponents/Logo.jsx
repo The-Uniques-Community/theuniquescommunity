@@ -28,6 +28,8 @@ function Logo() {
 <Note className="pl-2 border-l-4 border-red-800 text-xl">
   Explore the companies we collaborate with, delivering cutting-edge solutions and real-world impact.
 </Note>
+<div className="container mx-auto overflow-hidden">
+
         <Marquee>
           <MarqueeGroup>
             {row1.map((el, index) => (
@@ -60,6 +62,7 @@ function Logo() {
             ))}
           </MarqueeGroup2>
         </Marquee>
+</div>
       </Wrapper>
     </AppContainer>
   );

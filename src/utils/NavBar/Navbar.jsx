@@ -18,6 +18,7 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import SchoolIcon from "@mui/icons-material/School";
 import ArticleIcon from "@mui/icons-material/Article";
 import ScienceIcon from "@mui/icons-material/Science";
+import { LogIn } from "lucide-react";
 
 const Navbar = () => {
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
@@ -50,6 +51,7 @@ const Navbar = () => {
           { text: "Community", icon: <GroupsIcon />, link: "/community-page" },
           { text: "Blogs", icon: <ArticleIcon />, link: "/blogs" },
           { text: "Contact", icon: <ContactMailIcon />, link: "/contact" },
+          {text: "Login", icon: <LogIn/>, link:"/auth/login"}
         ].map((item) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton component={Link} to={item.link}>
