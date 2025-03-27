@@ -167,19 +167,16 @@ const Guidelines = () => {
     return (
         <div>
             <section className="mx-auto container py-10" id="whyH2s ">
-                <div className="pt-[30px] max-sm:mt-6">
-                    <h2
-                        className="max-sm:text-[24px] sm:text-[40px] text-[#212B36] text-left sm:mb-4 py-4"
+                <div className="pt-[30px] max-sm:mt-6 ">
+                    <div className="w-full md:w-4/5 mx-auto">
+                        <h2 className="max-sm:text-[24px] sm:text-[40px] text-[#212B36] text-left sm:mb-4 py-4">
+                            Community Guidelines
+                        </h2>
+                        <p className="text-left mt-2 my-6 py-2 max-sm:text-[14px] md:text-[16px] font-[400] text-[#919EAB]">
+                            Innovate effortlessly. Our leading innovation management platform and a network of 5 million innovators will help you find the perfect solutions and bring them to market faster.
+                        </p>
+                    </div>
 
-                    >
-                        Community Guidelines
-                    </h2>
-                    <p
-                        className="text-left mt-2 my-14  max-sm:my-6 max-sm:mt-[-20px] md:w-4/5 py-2 mx-auto max-sm:text-[14px] md:text-[16px] font-[400] text-[#919EAB]"
-
-                    >
-                        Innovate effortlessly. Our leading innovation management platform and a network of 5 million innovators will help you find the perfect solutions and bring them to market faster.
-                    </p>
                     <div className="flex flex-col md:flex-row justify-center items-center lg:flex" id="card-container">
                         {cardData.map((card) => (
                             <div key={card.id} className="">

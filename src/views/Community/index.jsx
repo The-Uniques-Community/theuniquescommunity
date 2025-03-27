@@ -9,6 +9,7 @@ import CTA from "./Landing/CallToAction"
 
 import Sliding from "./Landing/Sliding"
 import SpotCard from './Landing/SpotCard'
+import Flight from '../Landing/HowItStarted/components/Flight'
 
 const index = () => {
 	return (
@@ -20,6 +21,7 @@ const index = () => {
 			<SlideCard />
 			<Sliding />
 			<Eligiblity />
+			{/* <Flight /> */}
 			<div className='p-10'></div>
 		</div>
 	)
