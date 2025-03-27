@@ -322,7 +322,6 @@ const Index = () => {
         </div>
       )}
       
-      <EventForm />
       
       <CallToAction />
       
