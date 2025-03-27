@@ -11,6 +11,23 @@ export default function Eventmodel({ event, onClose }) {
     const [eventTypes, setEventTypes] = useState([]);
     const [eventLeaders, setEventLeaders] = useState([]);
     const [selectedDetailEvent, setSelectedDetailEvent] = useState(null);
+
+    // Helper function to get initials from name
+    const getNameInitials = (name) => {
+        if (!name) return "??";
+        const names = name.split(' ');
+        if (names.length === 1) {
+            return names[0].substring(0, 2).toUpperCase();
+        }
+        return (names[0].charAt(0) + names[1].charAt(0)).toUpperCase();
+    };
+    
+    // Helper function to generate initials avatar URL
+    const getInitialsAvatar = (name) => {
+        const initials = getNameInitials(name);
+        // Using UI Avatars service to generate avatar with brand color background
+        return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=ca0019&color=ffffff&size=150&bold=true`;
+    };
     
     useEffect(() => {
         // Fetch all events to populate related events and tabs
@@ -36,7 +53,8 @@ export default function Eventmodel({ event, onClose }) {
                     setEventLeaders([{
                         name: event.eventOrganizerBatch,
                         role: "Organizer",
-                        image: "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg"
+                        // Use initials avatar for organizer
+                        image: getInitialsAvatar(event.eventOrganizerBatch)
                     }]);
                 }
                 
@@ -258,7 +276,8 @@ export default function Eventmodel({ event, onClose }) {
                                             // Safely access nested properties
                                             const guestId = guest?.guestId || {};
                                             const guestName = guestId?.guestName || "Unknown Guest";
-                                            const guestImage = guestId?.guestImage || "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg";
+                                            // Use initials if no image is available
+                                            const guestImage = guestId?.guestImage || getInitialsAvatar(guestName);
                                             const guestDesignation = guestId?.designation || "";
                                             const guestTag = guest?.guestTag || "guest";
                                             
@@ -406,8 +425,9 @@ export default function Eventmodel({ event, onClose }) {
                                     {safeEventGuests.slice(0, 3).map((guest, index) => {
                                         // Safely access nested properties 
                                         const guestId = guest?.guestId || {};
-                                        const guestName = guestId?.name || "Guest";
-                                        const guestImage = guestId?.image || "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg";
+                                        const guestName = guestId?.guestName || "Guest";
+                                        // Use initials avatar if no image is available
+                                        const guestImage = guestId?.guestImage || getInitialsAvatar(guestName);
                                         const guestTag = guest?.guestTag || "guest";
                                         
                                         return (
