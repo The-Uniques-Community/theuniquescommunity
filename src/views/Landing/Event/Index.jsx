@@ -268,7 +268,7 @@ const Index = () => {
           {ongoingEvents.length > 0 && (
             <div className="my-10">
               <div className="flex mb-2 md:mb-5 items-center">
-                <span className="border-l-2 border-[#e03232] h-6 mr-3"></span>
+                <span className="border-l-4 border-[#e03232] h-6 mr-3"></span>
                 <h1 className="text-lg font-bold">Ongoing Events</h1>
               </div> 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
@@ -285,7 +285,7 @@ const Index = () => {
           {upcomingEvents.length > 0 && (
             <div className="my-10">
               <div className="flex mb-2 md:mb-5 items-center">
-                <span className="border-l-2 border-[#e03232] h-6 mr-3"></span>
+                <span className="border-l-4 border-orange-500 h-6 mr-3"></span>
                 <h1 className="text-lg font-bold">Upcoming Events</h1>
               </div> 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
@@ -302,7 +302,7 @@ const Index = () => {
           {completedEvents.length > 0 && (
             <div className="my-10">
               <div className="flex mb-2 md:mb-5 items-center">
-                <span className="border-l-2 border-[#e03232] h-6 mr-3"></span>
+                <span className="border-l-4 border-green-600 h-6 mr-3"></span>
                 <h1 className="text-lg font-bold">Completed Events</h1>
               </div>  
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
