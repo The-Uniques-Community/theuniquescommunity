@@ -76,7 +76,7 @@ const index = () => {
             });
             
             const batchMembers = batchRes.data.data.members || [];
-            const batchTotal = batchMembers.reduce((sum, m) => sum + (m.totalPendingAmount || 0), 0);
+            const batchTotal = batchMembers.reduce((sum, m) => sum + (m.totalAmount || 0), 0);
             
             batchData.push({
               name: batch,
@@ -87,6 +87,7 @@ const index = () => {
             console.error(`Error fetching batch ${batch}:`, err);
           }
         }
+        console.log("Batch Data:", batchData);
         
         // Update states
         setStats({
