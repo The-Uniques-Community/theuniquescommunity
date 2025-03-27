@@ -4,6 +4,7 @@ import Button from "@/utils/Buttons/Button"
 import Marquee from 'react-fast-marquee';
 import tu from '@/assets/logos/tu.png';
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router';
 
 const images = [
   'https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1rEz8jr2og9AYBbcu0eXTH81rnVdpozvG6K4WI',
@@ -89,7 +90,7 @@ export default function Landing() {
                 
                 // Apply highlight based on distance
                 const maxDistance = 150;
-                const opacity = distance < maxDistance ? (1 - distance / maxDistance) * 0.2 : 0;
+                const opacity = distance < maxDistance ? (1 - distance / maxDistance) * 0.3 : 0;
                 
                 return (
                   <div 
@@ -120,7 +121,9 @@ export default function Landing() {
           <span className='text-[#ca0019]'>The</span> Uniques Community
         </div>
         <div className="text-center px-6 pt-12 pb-10">
-          <p className="text-sm font-medium px-2 py-1 border rounded-full w-max mx-auto text-red-500 mb-2">@brightness-dreams ✨</p>
+            <Link to="/events">
+          <p className="text-sm font-medium px-2 py-1 border rounded-full w-max mx-auto text-red-500 mb-2">View Our Vibrant Events ✨</p>
+             </Link>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
           A Community of Creators, <br /> Dreamers & Doers.
           </h1>
