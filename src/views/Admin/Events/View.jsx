@@ -1,4 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify"; // Make sure this is installed
+import dayjs from "dayjs"; // Make sure this is installed
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import {
   Box,
   Typography,
@@ -44,32 +51,25 @@ import {
   Checkbox,
   Alert,
 } from "@mui/material";
+
+// Material UI Icons
 import {
+  PhotoCamera,
+  Delete,
+  PhotoLibrary,
   Edit,
   Save,
   Close,
-  Delete,
-  PhotoCamera,
-  EventNote,
-  LocationOn,
-  Schedule,
-  Group,
   AttachMoney,
-  PhotoLibrary,
-  ContactMail,
+  Schedule,
+  LocationOn,
+  EventNote,
+  Group,
   Add,
   PersonAdd,
-  CheckCircle,
+  ContactMail,
+  X,
 } from "@mui/icons-material";
-import { useParams, useNavigate } from "react-router-dom";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import {
-  LocalizationProvider,
-  DatePicker,
-  TimePicker,
-} from "@mui/x-date-pickers";
-import dayjs from "dayjs";
-import { toast } from "react-toastify";
 
 // Image gallery component
 const Gallery = ({ images, onAddImage, onRemoveImage, readOnly }) => {
