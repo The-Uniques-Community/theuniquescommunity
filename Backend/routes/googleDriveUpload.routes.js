@@ -2,6 +2,7 @@
 import express from "express";
 import multer from "multer";
 import fs from "fs";
+import mongoose from "mongoose";
 import Member from "../models/member/memberModel.js";
 import Event from "../models/member/eventModel.js";
 import File from "../models/member/fileModel.js";
@@ -683,6 +684,121 @@ router.post("/budget_file_upload", upload.single("file"), async (req, res) => {
         if (err) console.error("Error deleting temp file:", tempFile.path, err);
       });
     }
+  }
+});
+
+/**
+ * POST /upload/fine_file_upload
+ * Uploads files related to fines without updating fine status
+ * 
+ * Expected form-data:
+ * - memberId: MongoDB ID of the member
+ * - fineId: ID of the fine in member.fines array
+ * - fileType: Type of file (receipt, proof, waiver, other)
+ * - files: One or more files to upload
+ */
+router.post("/fine_file_upload", upload.array("files", 5), async (req, res) => {
+  const tempFiles = req.files || [];
+  
+  try {
+    const { memberId, fineId, fileType } = req.body;
+    const mainFolderName = "The Uniques Fines";
+
+    if (tempFiles.length === 0 || !memberId || !fileType) {
+      return res.status(400).json({ 
+        message: "Missing required fields or files." 
+      });
+    }
+
+    // Validate member ID
+    if (!mongoose.Types.ObjectId.isValid(memberId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid member ID format'
+      });
+    }
+
+    // Valid file types for fines
+    const validFileTypes = ['receipt', 'proof', 'waiver', 'other'];
+    if (!validFileTypes.includes(fileType)) {
+      return res.status(400).json({
+        message: `Invalid fileType. Must be one of: ${validFileTypes.join(', ')}`
+      });
+    }
+
+    // Get member information for folder naming
+    const member = await Member.findById(memberId);
+    if (!member) {
+      return res.status(404).json({
+        message: `Member with ID ${memberId} not found`
+      });
+    }
+    
+    const memberName = member.fullName || member.admno || memberId;
+    const fineFolderName = fineId ? `fine-${fineId.substring(0, 8)}` : `fine-${Date.now()}`;
+
+    // Create folder structure: Main Folder -> MemberName -> Fine-ID
+    const folderStructure = await createFolderStructure(
+      mainFolderName,
+      memberName,
+      [fineFolderName]
+    );
+    
+    const targetFolderId = folderStructure.subfolders[fineFolderName].id;
+    const uploadedFiles = [];
+
+    // Upload all files
+    for (const file of tempFiles) {
+      const fileUploadResult = await uploadFile(file.path, targetFolderId, {
+        memberId,
+        fineId,
+        category: `fine-${fileType}`,
+        customPrefix: `${fileType}-${file.originalname.substring(0, 15).replace(/[^a-zA-Z0-9-_]/g, '')}`
+      });
+      
+      // Create new File document
+      const fileRecord = new File({
+        fileName: fileUploadResult.fileName,
+        fileUrl: fileUploadResult.fileUrl,
+        fileId: fileUploadResult.fileId,
+        fileType: `fine-${fileType}`,
+        relatedTo: "fine",
+        relatedId: fineId || null,
+        fileOwner: memberId
+      });
+      await fileRecord.save();
+      
+      uploadedFiles.push({
+        ...fileUploadResult,
+        _id: fileRecord._id,
+        type: fileType
+      });
+    }
+
+    // Send response with file data that can be used in subsequent requests
+    res.status(200).json({
+      success: true,
+      message: `File(s) uploaded successfully`,
+      files: uploadedFiles,
+      count: uploadedFiles.length,
+      fineId: fineId,
+      memberId: memberId,
+      fileType: fileType
+    });
+  } catch (error) {
+    console.error("Error in fine file upload:", error);
+    res.status(500).json({ 
+      success: false,
+      message: "Error during fine file upload.",
+      error: error.message
+    });
+  } finally {
+    // Clean up all temporary files
+    tempFiles.forEach(file => {
+      fs.unlink(file.path, (err) => {
+        if (err) console.error("Error deleting temp file:", file.path, err);
+      });
+    });
   }
 });
 
