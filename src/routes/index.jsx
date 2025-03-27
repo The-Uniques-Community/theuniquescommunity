@@ -17,8 +17,6 @@ import BatchesPage from "@/views/Landing/Batches/index"
 const Landing = Loader(lazy(() => import("@/views/Landing/index")));
 
 
-
-
 const BlogPage = Loader(lazy(() => import("@/views/Landing/Blog/index")));
 const Contact = Loader(lazy(() => import("@/views/Landing/Contact/index")));
 const Training = Loader(lazy(() => import("@/views/Landing/Training-model/Training")));

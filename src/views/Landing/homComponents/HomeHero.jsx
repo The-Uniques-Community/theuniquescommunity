@@ -1,69 +1,167 @@
-import React from "react";
-import "./style.css";
-import HeroClip from "@/assets/img/Community/Sample1.png";
-import Button from "@/utils/Buttons/Button";
-import DoubleQuotes from "@/assets/img/Community/Double.png"
+// import { Button } from '@mui/material';
+import { ArrowForward } from '@mui/icons-material';
+import Button from "@/utils/Buttons/Button"
+import Marquee from 'react-fast-marquee';
+import tu from '@/assets/logos/tu.png';
+import { useEffect, useRef, useState } from 'react';
 
-const HomeHero = () => {
-    return (
-        <div className="relative container  mx-auto">
-            {/* Hidden SVG clipPath definition */}
-            <svg width="0" height="0" style={{ position: "absolute" }}>
-                <defs>
-                    <clipPath id="heroClip" clipPathUnits="objectBoundingBox">
-                        <path d="M0.704,1 H0.024 C0.0114,1 0.00115,0.9844 0.00115,0.9653 V0.0347 C0.00115,0.0156 0.0114,0 0.024,0 H0.6117 C0.617,0 0.622,0.00358 0.627,0.00998 L0.687,0.0994 C0.691,0.1058 0.697,0.1094 0.704,0.1094 H0.977 C0.989,0.1094 1,0.125 1,0.144 V0.7604 C1,0.7805 0.989,0.794 0.977,0.794 H0.725 C0.709,0.794 0.698,0.817 0.703,0.840 L0.727,0.955 C0.731,0.978 0.719,1 0.704,1 Z" />
-                    </clipPath>
-                </defs>
-            </svg>
+const images = [
+  'https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1rEz8jr2og9AYBbcu0eXTH81rnVdpozvG6K4WI',
+  'https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1rHptqDVpF2pQE4PFU7NAMVr6YeWicz5h1KuJt',
+  'https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1rSSl9pOoaFDA2LEeO4I3rP8jBzJb7cltWkQRY',
+  'https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1rPoSO9PtUGhDgAYWEQrmjToyf265tVLilMXkq',
+  'https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1rAWGbiBcYnIQDTmzWgy0bcOvPRLxFCXr97NJo',
+  'https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1rAlEKhmxcYnIQDTmzWgy0bcOvPRLxFCXr97NJ',
+  'https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1r5DgQ6rMC9pHMzvDGXT0OePm1Af7nSFktqrKE',
+  'https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1rQYCb4jAIOoVhWP9E5DamsTHKt6ZeSc3LAJly'
+];
 
-            <div className="svg-shaped-div flex flex-col md:flex-row items-center justify-between p-6">
-                <div className="text-content z-0 p-5">
-                    <h1
-                        className="text-black max-w-5xl w-full pb-6 md:text-7xl tracking-wide text-2xl font-semibold"
-                        style={{ lineHeight: "1.2" }}
-                    >
-                        Discover your <span className="text-[#ca0019]">community, join us</span> and thrive.
-                    </h1>
+export default function Landing() {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const heroRef = useRef(null);
+  
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (heroRef.current) {
+        setDimensions({
+          width: heroRef.current.offsetWidth,
+          height: heroRef.current.offsetHeight
+        });
+      }
+    };
+    
+    const handleMouseMove = (event) => {
+      if (heroRef.current) {
+        const rect = heroRef.current.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        setMousePosition({ x, y });
+      }
+    };
 
-                    <div className="text-black md:pb-5 pb-6 text-lg max-w-lg flex items-center justify-center gap-2">
-                        <span className="opacity-25">
-                            <img src={DoubleQuotes} alt="icon" />
-                        </span>
-                        <span>
-                            Join the community of unique individuals and learn from the best
-                        </span>
-                    </div>
-                    <Button className="z-[999]"
-                        path="/register"
-                        color="white"
-                        bgColor="#ca0019"
-                        border={4}
-                        borderColor="#ca0019"
-                        iconColor="black"
-                    >
-                        <span>Register</span>
-                    </Button>
-                </div>
-                <div className="image-container absolute md:left-[40%] left-0 bottom-[0%] z-[999] w-full md:w-8/12 mt-10 md:mt-0">
-                    <img className="w-full h-auto" src={HeroClip} alt="Clipped Image" />
-                </div>
+    const heroElement = heroRef.current;
+    if (heroElement) {
+      heroElement.addEventListener('mousemove', handleMouseMove);
+      updateDimensions();
+      
+      // Update dimensions on window resize
+      window.addEventListener('resize', updateDimensions);
+    }
+    
+    return () => {
+      if (heroElement) {
+        heroElement.removeEventListener('mousemove', handleMouseMove);
+      }
+      window.removeEventListener('resize', updateDimensions);
+    };
+  }, []);
+  
+  const cellSize = 50;
+  
+  // Calculate number of columns and rows needed to cover the entire container
+  const columns = Math.ceil(dimensions.width / cellSize) + 1;
+  const rows = Math.ceil(dimensions.height / cellSize) + 1;
+  
+  return (
+    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-white relative" ref={heroRef}>
+      {/* Grid Background Overlay */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <div className="grid-bg w-full h-full" 
+          style={{
+            backgroundSize: '50px 50px',
+            backgroundImage: 'linear-gradient(to right, rgba(202, 0, 25, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(202, 0, 25, 0.03) 1px, transparent 1px)',
+          }}
+        >
+          {/* Dynamic hover effect grid cells */}
+          {dimensions.width > 0 && Array.from({ length: rows }).map((_, rowIndex) => (
+            <div key={`row-${rowIndex}`} className="flex">
+              {Array.from({ length: columns }).map((_, colIndex) => {
+                // Calculate cell position
+                const cellX = colIndex * cellSize;
+                const cellY = rowIndex * cellSize;
+                
+                // Calculate distance from mouse
+                const distance = Math.sqrt(
+                  Math.pow(mousePosition.x - (cellX + cellSize/2), 2) + 
+                  Math.pow(mousePosition.y - (cellY + cellSize/2), 2)
+                );
+                
+                // Apply highlight based on distance
+                const maxDistance = 150;
+                const opacity = distance < maxDistance ? (1 - distance / maxDistance) * 0.2 : 0;
+                
+                return (
+                  <div 
+                    key={`${rowIndex}-${colIndex}`}
+                    className="absolute"
+                    style={{
+                      left: `${cellX}px`,
+                      top: `${cellY}px`,
+                      width: `${cellSize}px`,
+                      height: `${cellSize}px`,
+                      border: '1px solid rgba(202, 0, 25, 0)',
+                      borderColor: `rgba(202, 0, 25, ${opacity})`,
+                      transition: 'border-color 0.15s ease',
+                      pointerEvents: 'none'
+                    }}
+                  />
+                );
+              })}
             </div>
-            <div className="absolute bottom-2 right-16 flex flex-col place-items-end md:block hidden">
-                <h3 className="max-w-xl text-4xl font-semibold text-[#ca0019] text-right pt-3 pb-3">Be the part of it.</h3>
-                <Button
-                    className="pt-10 w-48"
-                    path="/register"
-                    color="white"
-                    bgColor="black"
-                    border={4}
-                    borderColor="black"
-                    iconColor="black"
-                >
-                    <span>Join Community</span>
-                </Button>
-            </div>
+          ))}
         </div>
-    );
-};
+      </div>
+      
+      {/* Content (z-index to place above grid) */}
+      <div className="relative z-10 w-full flex flex-col items-center">
+        <div className='text-lg font-medium'>
+          <img className="w-10 h-10 object-center mx-auto object-contain" src={tu} alt="" />
+          <span className='text-[#ca0019]'>The</span> Uniques Community
+        </div>
+        <div className="text-center px-6 pt-12 pb-10">
+          <p className="text-sm font-medium px-2 py-1 border rounded-full w-max mx-auto text-red-500 mb-2">@brightness-dreams ✨</p>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+          A Community of Creators, <br /> Dreamers & Doers.
+          </h1>
+          <p className="text-gray-600 my-4 max-w-2xl mx-auto">
+          Experience tech like never before with The UNIQUES Community — vibrant events, hands-on sessions, and pure innovation.
+          </p>
+          <Button path="#" bgColor="#ca0019" color="white" iconColor="black">
+              Join Us
+          </Button>
+        </div>
 
-export default HomeHero;
+        {/* Partner Logos */}
+        <div className="flex flex-wrap justify-center gap-6 text-gray-400 text-sm mb-8">
+          {[
+            'Retool', 'remote', 'ARC', 'Raycast', 'runway',
+            'ramp', 'HEX', 'Vercel', 'descript', 'CashApp',
+          ].map((brand, i) => (
+            <span key={i}>{brand}</span>
+          ))}
+        </div>
+      </div>
+
+      {/* Image Carousel */}
+      <div className="w-full overflow-hidden bg-gradient-to-t from-slate-100 to-white py-6 relative z-10">
+        <Marquee gradient={false} speed={40}>
+          <div className="flex gap-4">
+            {images.concat(images).map((src, i) => (
+              <div
+                key={i}
+                className="min-w-[280px] max-w-[290px] mx-3 h-[200px] rounded-xl overflow-hidden shadow-md bg-white"
+              >
+                <img
+                  src={src}
+                  alt={`carousel-${i}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </Marquee>
+      </div>
+    </div>
+  );
+}
