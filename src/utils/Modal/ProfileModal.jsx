@@ -54,7 +54,7 @@ import DoneIcon from "@mui/icons-material/Done";
 import ErrorIcon from "@mui/icons-material/Error";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-
+import userIcon from "@/assets/img/user-icon.png"
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
   return (
@@ -217,7 +217,7 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
             <div className="xl:col-span-1 lg:col-span-1 col-span-1 flex gap-x-5 items-center">
               <div className="bg-black w-36 h-36 overflow-hidden rounded-full relative">
                 <img
-                  src={`https://drive.google.com/uc?id=${user?.profilePic?.fileId}`}
+                  src={user.profilePic?.fileUrl || userIcon}
                   alt="Profile"
                   className="w-full h-full object-contain"
                 />
@@ -342,14 +342,7 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
             </div>
             <div className="col-span-1">
               <div className="flex flex-wrap items-center h-full gap-3">
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  size="medium"
-                  startIcon={<EditIcon />}
-                >
-                  Edit
-                </Button>
+            
                 <Button
                   variant="contained"
                   color="primary"
@@ -1088,7 +1081,7 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
               </Typography>
               <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-md">
                 <Avatar
-                  src={user.profilePic}
+                  src={user.profilePic?.fileUrl || userIcon}
                   alt={user.fullName}
                   sx={{ width: 40, height: 40 }}
                 />

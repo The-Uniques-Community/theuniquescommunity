@@ -1,7 +1,8 @@
 import { useTheme } from "@mui/material";
-import { FaLinkedinIn, FaTwitter, FaInstagram, FaGithub } from "react-icons/fa";
+import { FaLinkedinIn, FaTwitter, FaInstagram, FaGithub, FaWhatsapp } from "react-icons/fa";
 import logo from '../../assets/logos/theuniquesCommunity.png'
 import { Link } from "react-router";
+import { WhatsApp } from "@mui/icons-material";
 
 const Footer = () => {
     const theme = useTheme();
@@ -49,7 +50,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto mt-6 grid grid-cols-1 gap-4">
+      <div className="max-w-7xl mx-auto mt-6 grid grid-cols-1 gap-4">
         {/* Copyright */}
         <div className="text-sm text-center md:text-left">
           © {new Date().getFullYear()} The Uniques Community. All rights reserved.
@@ -72,9 +73,9 @@ const Footer = () => {
                 </Link>
             </div>
             <div className="w-8 h-8 rounded-full bg-slate-200">
-                <Link to="https://twitter.com/theuniquescomm" target="_blank" rel="noopener noreferrer">
+                <Link to="https://chat.whatsapp.com/HYOloogGXKcIkR83DnOjFj" target="_blank" rel="noopener noreferrer">
                 <div style={{backgroundColor:theme.palette.primary.dark}} className="w-8 h-8 rounded-full flex justify-center items-center">
-                    <FaTwitter className="cursor-pointer" size={20} color="white" />
+                    <FaWhatsapp className="cursor-pointer" size={20} color="white" />
                 </div>
                 </Link>
             </div>

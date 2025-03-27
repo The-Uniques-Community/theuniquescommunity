@@ -471,14 +471,15 @@ const FineTable = () => {
   };
 
   // Fetch members with fines
+  // Fetch members with fines - FIXED VERSION to show ALL statuses
   const fetchFines = async () => {
     try {
       setLoading(true);
       
-      // Use the pending/members endpoint for all fines
-      const endpoint = `${API_BASE_URL}/fines/pending/members`;
+      // Use this generic endpoint instead of the specific "pending" one
+      const endpoint = `${API_BASE_URL}/fines/members`;
       
-      // Create query parameters object - only add filters with values
+      // Create query parameters object
       const params = {
         page,
         limit: rowsPerPage
@@ -492,6 +493,7 @@ const FineTable = () => {
         params.search = search.trim();
       }
       
+      // Only add status filter if not "All"
       if (statusFilter !== "All") {
         params.status = statusFilter.toLowerCase();
       }

@@ -367,7 +367,42 @@ export const getAllEvents = async (req, res) => {
 /**
  * Get event by ID
  * @route GET /api/events/:id
+ * 
  */
+export const getEventCount = async (req, res) => {
+  try {
+    // Count all events
+    const totalCount = await Event.countDocuments();
+    
+    // Count upcoming events
+    const upcomingCount = await Event.countDocuments({
+      eventDate: { $gte: new Date() }
+    });
+    
+    // Count past events
+    const pastCount = await Event.countDocuments({
+      eventDate: { $lt: new Date() }
+    });
+    
+    return res.status(200).json({
+      success: true,
+      message: 'Event counts retrieved successfully',
+      data: {
+        totalCount,
+        upcomingCount,
+        pastCount
+      }
+    });
+  } catch (error) {
+    console.error('Error retrieving event counts:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error retrieving event counts',
+      error: error.message
+    });
+  }
+};
+
 export const getEventById = async (req, res) => {
   try {
     const eventId = req.params.id;

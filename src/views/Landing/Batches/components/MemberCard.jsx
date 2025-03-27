@@ -1,26 +1,44 @@
-import React, { useState } from 'react';
-import { ArrowUpRight, Award, FileText, Briefcase, Globe, X } from 'lucide-react';
-import { FaLinkedinIn, FaInstagram } from 'react-icons/fa';
-import { FaXTwitter, FaGithub } from 'react-icons/fa6';
-import { Link, useNavigate } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-import { useTheme } from '@mui/material/styles';
-import Button from '@/utils/Buttons/Button';
+import React, { useState } from "react";
+import {
+  ArrowUpRight,
+  Award,
+  FileText,
+  Briefcase,
+  Globe,
+  X,
+} from "lucide-react";
+import { FaLinkedinIn, FaInstagram } from "react-icons/fa";
+import { FaXTwitter, FaGithub } from "react-icons/fa6";
+import AssignmentIcon from "@mui/icons-material/Assignment"; // Add this import
+import { Link, useNavigate } from "react-router-dom";
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
+import { useTheme } from "@mui/material/styles";
+import Button from "@/utils/Buttons/Button";
 
+// Helper function for formatting dates
+const formatDate = (dateString) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  bgcolor: 'background.paper',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  bgcolor: "background.paper",
   boxShadow: 24,
   p: 4,
-  borderRadius: '8px',
-  maxWidth: '100%',
-  width: '1200px',
-  maxHeight: '95vh',
-  overflow: 'auto'
+  borderRadius: "8px",
+  maxWidth: "100%",
+  width: "1200px",
+  maxHeight: "95vh",
+  overflow: "auto",
 };
 
 const MemberCard = ({ member }) => {
@@ -40,18 +58,20 @@ const MemberCard = ({ member }) => {
     achievements = [],
     certifications = [],
     projects = [],
-    eventContributionType = []
+    eventContributionType = [],
   } = member;
 
   // Format position (displayed role/status)
-  const position = member.isPlaced ? 
-    `Placed - ${course || ""}` : 
-    course || "Member";
+  const position = member.isPlaced
+    ? `Placed - ${course || ""}`
+    : course || "Member";
 
   // Format profile image - handle both object reference and direct URL
-  const profileImg = member.profilePic?.url || 
-                    (typeof member.profilePic === 'string' ? member.profilePic : 
-                    `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}`);
+  const profileImg =
+    member.profilePic?.url ||
+    (typeof member.profilePic === "string"
+      ? member.profilePic
+      : `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}`);
 
   // Format social links
   const socialLinks = {
@@ -59,53 +79,60 @@ const MemberCard = ({ member }) => {
     linkedin: member.linkedinProfile || null,
     twitter: member.twitterProfile || null,
     instagram: member.instagramProfile || null,
-    website: member.personalWebsite || null
+    website: member.personalWebsite || null,
   };
 
   // Format achievements for display
-  const formattedAchievements = Array.isArray(achievements) ? 
-    achievements.map((achievement, index) => ({
-      id: achievement.id || index,
-      title: achievement.title || achievement.name || achievement,
-      description: achievement.description || "",
-      date: achievement.date || "",
-      color: achievement.color || "bg-gray-700",
-      icon: achievement.icon || null
-    })) : [];
+  const formattedAchievements = Array.isArray(achievements)
+    ? achievements.map((achievement, index) => ({
+        id: achievement.id || index,
+        title: achievement.title || achievement.name || achievement,
+        description: achievement.description || "",
+        date: achievement.date || "",
+        color: achievement.color || "bg-gray-700",
+        icon: achievement.icon || null,
+      }))
+    : [];
 
   // Format certificates for display
-  const formattedCertificates = Array.isArray(certifications) ? 
-    certifications.map((cert, index) => ({
-      id: cert._id || index,
-      title: cert.title || cert.name || "Certification",
-      issuer: cert.issuer || cert.organization || "",
-      date: cert.date || cert.issuedDate || "",
-      imageUrl: cert.imageUrl || cert.url || null
-    })) : [];
+  const formattedCertificates = Array.isArray(certifications)
+    ? certifications.map((cert, index) => ({
+        id: cert._id || index,
+        title: cert.title || cert.name || "Certification",
+        issuer: cert.issuer || cert.organization || "",
+        date: cert.date || cert.issuedDate || "",
+        imageUrl: cert.imageUrl || cert.url || null,
+      }))
+    : [];
 
   // Format projects for display
-  const formattedProjects = Array.isArray(projects) ? 
-    projects.map((project, index) => ({
-      id: project.id || index,
-      title: project.title || project.name || "Project",
-      description: project.description || "",
-      link: project.link || project.url || null,
-      imageUrl: project.imageUrl || project.image || null,
-      technologies: Array.isArray(project.technologies) ? 
-        project.technologies : 
-        (project.tech ? [project.tech] : [])
-    })) : [];
+  const formattedProjects = Array.isArray(projects)
+    ? projects.map((project, index) => ({
+        id: project.id || index,
+        title: project.title || project.name || "Project",
+        description: project.description || "",
+        link: project.link || project.url || null,
+        imageUrl: project.imageUrl || project.image || null,
+        technologies: Array.isArray(project.technologies)
+          ? project.technologies
+          : project.tech
+          ? [project.tech]
+          : [],
+      }))
+    : [];
 
   // Format contributions from eventContributionType
-  const contributions = Array.isArray(eventContributionType) ? 
-    eventContributionType : [];
+  const contributions = Array.isArray(eventContributionType)
+    ? eventContributionType
+    : [];
 
   // Format skills as objects if they're strings
-  const formattedSkills = Array.isArray(skills) ? 
-    skills.map((skill, index) => {
-      if (typeof skill === 'object') return skill;
-      return { name: skill, id: index };
-    }) : [];
+  const formattedSkills = Array.isArray(skills)
+    ? skills.map((skill, index) => {
+        if (typeof skill === "object") return skill;
+        return { name: skill, id: index };
+      })
+    : [];
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -132,34 +159,44 @@ const MemberCard = ({ member }) => {
 
         {/* Card Content */}
         <div className="py-4 flex flex-col flex-grow">
-          <h3 className="text-xl font-bold border-b border-gray-300 pb-1">{fullName}</h3>
+          <h3 className="text-xl font-bold border-b border-gray-300 pb-1">
+            {fullName}
+          </h3>
           <p className="text-gray-600 text-sm mt-1">{position}</p>
 
           {/* Skills Count */}
-          <div className=''>
-
-          <div className="mt-3 w-3/4 flex flex-wrap items-center gap-2">
-            <span className="text-xs bg-gray-100 px-3 py-1 rounded-full flex items-center">
-              <span className="font-medium mr-1">{formattedSkills.length}</span> Skills
-            </span>
-
-            {/* Achievements Count */}
-            {formattedAchievements.length > 0 && (
+          <div className="">
+            <div className="mt-3 w-3/4 flex flex-wrap items-center gap-2">
               <span className="text-xs bg-gray-100 px-3 py-1 rounded-full flex items-center">
-                <Award className="w-3 h-3 mr-1 text-[#ca0019]" />
-                <span className="font-medium mr-1">{formattedAchievements.length}</span> Achievements
+                <span className="font-medium mr-1">
+                  {formattedSkills.length}
+                </span>{" "}
+                Skills
               </span>
-            )}
-            
-            {/* Projects Count - Optional */}
-            {formattedProjects.length > 0 && (
-              <span className="text-xs bg-gray-100 px-3 py-1 rounded-full flex items-center">
-                <Briefcase className="w-3 h-3 mr-1 text-[#ca0019]" />
-                <span className="font-medium mr-1">{formattedProjects.length}</span> Projects
-              </span>
-            )}
-          </div>
+
+              {/* Achievements Count */}
+              {formattedAchievements.length > 0 && (
+                <span className="text-xs bg-gray-100 px-3 py-1 rounded-full flex items-center">
+                  <Award className="w-3 h-3 mr-1 text-[#ca0019]" />
+                  <span className="font-medium mr-1">
+                    {formattedAchievements.length}
+                  </span>{" "}
+                  Achievements
+                </span>
+              )}
+
+              {/* Projects Count - Optional */}
+              {formattedProjects.length > 0 && (
+                <span className="text-xs bg-gray-100 px-3 py-1 rounded-full flex items-center">
+                  <Briefcase className="w-3 h-3 mr-1 text-[#ca0019]" />
+                  <span className="font-medium mr-1">
+                    {formattedProjects.length}
+                  </span>{" "}
+                  Projects
+                </span>
+              )}
             </div>
+          </div>
         </div>
 
         {/* Social Media Links */}
@@ -221,7 +258,10 @@ const MemberCard = ({ member }) => {
           onClick={handleOpen}
           className="absolute bottom-4 right-4 w-10 h-10 bg-black rounded-full flex items-center justify-center text-white group-hover:bg-[#ca0019] transition-colors"
         >
-          <ArrowUpRight size={18} className="group-hover:rotate-45 transition-transform duration-300" />
+          <ArrowUpRight
+            size={18}
+            className="group-hover:rotate-45 transition-transform duration-300"
+          />
         </button>
       </div>
 
@@ -246,7 +286,11 @@ const MemberCard = ({ member }) => {
             <div className="md:col-span-1">
               <div className="relative mb-5">
                 <img
-                  src={profileImg || "https://ui-avatars.com/api/?name=" + encodeURIComponent(fullName)}
+                  src={
+                    profileImg ||
+                    "https://ui-avatars.com/api/?name=" +
+                      encodeURIComponent(fullName)
+                  }
                   alt={`${fullName}'s profile`}
                   className="w-full h-64 rounded-lg object-cover shadow-md"
                 />
@@ -256,7 +300,9 @@ const MemberCard = ({ member }) => {
               </div>
 
               <div className="mb-6">
-                <h3 className="text-xl font-bold text-gray-900 border-b border-gray-200 pb-1">{fullName}</h3>
+                <h3 className="text-xl font-bold text-gray-900 border-b border-gray-200 pb-1">
+                  {fullName}
+                </h3>
                 <p className="text-gray-600 mt-1 italic">{position}</p>
               </div>
 
@@ -327,9 +373,16 @@ const MemberCard = ({ member }) => {
                 <h4 className="font-semibold mb-3 text-gray-800">Skills</h4>
                 <div className="flex flex-wrap gap-2">
                   {formattedSkills.map((skill, index) => (
-                    <span key={index} className="text-sm bg-gray-100 px-3 py-1.5 rounded-full">
+                    <span
+                      key={index}
+                      className="text-sm bg-gray-100 px-3 py-1.5 rounded-full"
+                    >
                       {skill.name}
-                      {skill.level && <span className="ml-1 text-xs text-gray-500">• {skill.level}</span>}
+                      {skill.level && (
+                        <span className="ml-1 text-xs text-gray-500">
+                          • {skill.level}
+                        </span>
+                      )}
                     </span>
                   ))}
                 </div>
@@ -397,13 +450,21 @@ const MemberCard = ({ member }) => {
                               <div
                                 className={`${achievement.color} text-white p-2 rounded-full flex items-center justify-center`}
                               >
-                                {achievement.icon || <Award className="w-4 h-4" />}
+                                {achievement.icon || (
+                                  <Award className="w-4 h-4" />
+                                )}
                               </div>
                               <div>
-                                <h5 className="font-medium text-gray-900">{achievement.title}</h5>
-                                <p className="text-sm text-gray-600 mt-1">{achievement.description}</p>
+                                <h5 className="font-medium text-gray-900">
+                                  {achievement.title}
+                                </h5>
+                                <p className="text-sm text-gray-600 mt-1">
+                                  {achievement.description}
+                                </p>
                                 {achievement.date && (
-                                  <p className="text-xs text-gray-500 mt-1.5">{achievement.date}</p>
+                                  <p className="text-xs text-gray-500 mt-1.5">
+                                    {achievement.date}
+                                  </p>
                                 )}
                               </div>
                             </div>
@@ -416,17 +477,20 @@ const MemberCard = ({ member }) => {
                   {/* Contributions */}
                   {contributions && contributions.length > 0 && (
                     <div>
-                      <h4 className="font-semibold mb-3 text-gray-800">Community Contributions</h4>
+                      <h4 className="font-semibold mb-3 text-gray-800">
+                        Community Contributions
+                      </h4>
                       <ul className="list-disc list-inside text-gray-700 space-y-2 pl-1">
                         {contributions.map((contribution, index) => (
-                          <li key={index} className="leading-relaxed">{contribution}</li>
+                          <li key={index} className="leading-relaxed">
+                            {contribution}
+                          </li>
                         ))}
                       </ul>
                     </div>
                   )}
                 </div>
               )}
-
               {activeTab === "certificates" && (
                 <div>
                   <h4 className="font-semibold mb-4 flex items-center gap-1.5 text-gray-800">
@@ -434,27 +498,130 @@ const MemberCard = ({ member }) => {
                   </h4>
                   <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-5">
                     {formattedCertificates.length > 0 ? (
-                      formattedCertificates.map((certificate) => (
-                        <div
-                          key={certificate.id}
-                          className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-                        >
-                          <div className="aspect-[16/9] overflow-hidden bg-gray-50 flex items-center justify-center">
-                            <img
-                              src={certificate.imageUrl || "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"}
-                              alt={certificate.title}
-                              className="w-full h-full object-contain"
-                            />
-                          </div>
-                          <div className="p-4">
-                            <h5 className="font-medium text-gray-900">{certificate.title}</h5>
-                            <p className="text-sm text-gray-600 mt-1">{certificate.issuer}</p>
-                            <p className="text-xs text-gray-500 mt-1.5">{certificate.date}</p>
-                          </div>
+                      formattedCertificates.map((certificate, idx) => {
+                        // Convert Drive URL to preview URL for iframe embedding
+                        const getPreviewUrl = (url) => {
+                          if (!url) return null;
+
+                          // For uc?id= format (direct download links)
+                          if (url.includes("drive.google.com/uc?id=")) {
+                            const fileId = url.split("id=")[1]?.split("&")[0];
+                            if (fileId) {
+                              return `https://drive.google.com/file/d/${fileId}/preview`;
+                            }
+                          }
+
+                          // For file/d/ format
+                          if (url.includes("drive.google.com/file/d/")) {
+                            const fileId = url
+                              .split("file/d/")[1]
+                              ?.split("/")[0];
+                            if (fileId) {
+                              return `https://drive.google.com/file/d/${fileId}/preview`;
+                            }
+                          }
+
+                          return url;
+                        };
+
+                        // Handle multiple certificate URL field names
+                        const fileUrl =
+                          certificate.fileUrl ||
+                          certificate.imageUrl ||
+                          certificate.url ||
+                          null;
+                        const previewUrl = fileUrl
+                          ? getPreviewUrl(fileUrl)
+                          : null;
+
+                        // Handle multiple certificate title field names
+                        const certTitle =
+                          certificate.fileName ||
+                          certificate.title ||
+                          certificate.name ||
+                          `Certificate ${idx + 1}`;
+
+                        // Handle multiple certificate date field names
+                        const certDate =
+                          certificate.createdAt ||
+                          certificate.date ||
+                          certificate.issuedDate;
+
+                        return (
+                          <div
+                            key={certificate.id || idx}
+                            className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                          >
+                            <div className="aspect-[16/9] overflow-hidden bg-gray-50">
+                              {previewUrl ? (
+                                <iframe
+                                  src={previewUrl}
+                                  className="w-full h-full"
+                                  frameBorder="0"
+                                  allowFullScreen
+                                  loading="lazy"
+                                  title={certTitle}
+                                  onError={(e) => {
+                                    e.target.style.display = "none";
+                                    const parent = e.target.parentNode;
+                                    const fallback =
+                                      document.createElement("div");
+                                    fallback.className =
+                                      "flex flex-col items-center justify-center h-full";
+                                    fallback.innerHTML = `
+                        <div class="text-gray-400">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                          <p class="mt-2 text-sm">Unable to preview certificate</p>
                         </div>
-                      ))
+                      `;
+                                    parent.appendChild(fallback);
+                                  }}
+                                />
+                              ) : (
+                                <div className="flex flex-col items-center justify-center h-full text-gray-400">
+                                  <AssignmentIcon style={{ fontSize: 40 }} />
+                                  <p className="mt-2 text-sm">
+                                    Preview not available
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                            <div className="p-4">
+                              <h5 className="font-medium text-gray-900">
+                                {certTitle}
+                              </h5>
+                              {certificate.issuer && (
+                                <p className="text-sm text-gray-600 mt-1">
+                                  {certificate.issuer}
+                                </p>
+                              )}
+
+                              <div className="flex justify-between items-center mt-2">
+                                <p className="text-xs text-gray-500">
+                                  {certDate
+                                    ? formatDate(certDate)
+                                    : "Date not available"}
+                                </p>
+
+                                {fileUrl && (
+                                  <a
+                                    href={fileUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-[#ca0019] text-sm font-medium flex items-center gap-1 hover:underline"
+                                  >
+                                    View <ArrowUpRight size={14} />
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })
                     ) : (
-                      <p className="text-gray-500 col-span-3">No certificates added yet.</p>
+                      <p className="text-gray-500 col-span-3 text-center py-8">
+                        No certificates added yet.
+                      </p>
                     )}
                   </div>
                 </div>
@@ -475,21 +642,32 @@ const MemberCard = ({ member }) => {
                           {project.imageUrl && (
                             <div className="aspect-[21/9] overflow-hidden bg-gray-50">
                               <img
-                                src={project.imageUrl || "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"}
+                                src={
+                                  project.imageUrl ||
+                                  "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+                                }
                                 alt={project.title}
                                 className="w-full h-full object-cover"
                               />
                             </div>
                           )}
                           <div className="p-5">
-                            <h5 className="font-medium text-lg text-gray-900">{project.title}</h5>
-                            <p className="text-gray-700 my-3 leading-relaxed">{project.description}</p>
+                            <h5 className="font-medium text-lg text-gray-900">
+                              {project.title}
+                            </h5>
+                            <p className="text-gray-700 my-3 leading-relaxed">
+                              {project.description}
+                            </p>
                             <div className="flex flex-wrap gap-2 mb-4">
-                              {project.technologies && project.technologies.map((tech, index) => (
-                                <span key={index} className="text-xs bg-gray-100 px-2.5 py-1 rounded-full">
-                                  {tech}
-                                </span>
-                              ))}
+                              {project.technologies &&
+                                project.technologies.map((tech, index) => (
+                                  <span
+                                    key={index}
+                                    className="text-xs bg-gray-100 px-2.5 py-1 rounded-full"
+                                  >
+                                    {tech}
+                                  </span>
+                                ))}
                             </div>
                             {project.link && (
                               <a

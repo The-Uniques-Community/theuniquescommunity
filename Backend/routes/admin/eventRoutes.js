@@ -23,7 +23,8 @@ import {
   getEventBudgetSummary,
   updateEventGallery,
   getEventGallery,
-  deleteEventSponsor
+  deleteEventSponsor,
+  getEventCount
 } from '../../controller/events/eventController.js';
 import verifyRole from '../../middlewares/verifyRole.js';
 import verifyToken from '../../middlewares/verifyToken.js';
@@ -31,6 +32,7 @@ import verifyToken from '../../middlewares/verifyToken.js';
 const eventRouter = express.Router();
 
 // Public routes (no auth required)
+eventRouter.get('/counts', getEventCount);
 eventRouter.get('/', getAllEvents);
 eventRouter.get('/:id', getEventById);
 eventRouter.get('/status/:status', getEventsByStatus);

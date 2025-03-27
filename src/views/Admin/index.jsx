@@ -75,10 +75,8 @@ const index = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
         // Fetch all members
         const membersRes = await axios.get('http://localhost:5000/api/admin/member?page=1&limit=10');
-        
         // Get recently added members (sorted by creation date)
         const sortedMembers = [...membersRes.data.data].sort((a, b) => 
           new Date(b.createdAt) - new Date(a.createdAt)

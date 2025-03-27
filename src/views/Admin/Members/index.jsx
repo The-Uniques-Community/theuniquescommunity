@@ -171,6 +171,7 @@ const MembersIndex = () => {
       
       // Filter the results again on the client side to ensure only appropriate members are shown
       let filteredMembers = response.data.data || [];
+      console.log(filteredMembers);
       
       // Additional client-side filtering to ensure correct members in each tab
       if (value === "2") {
