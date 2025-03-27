@@ -36,9 +36,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ImageIcon from '@mui/icons-material/Image';
-import ArrowBack from '@mui/icons-material/ArrowBack';
 import { useFormik } from 'formik';
-import { ArrowBack } from "@mui/icons-material";
 import * as Yup from 'yup';
 import axios from 'axios';
 import { ArrowBack } from "@mui/icons-material";
@@ -134,7 +132,7 @@ const EventForm = ({ event, onSuccess }) => {
   const [successMessage, setSuccessMessage] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
 
-  // const isEdit = Boolean(event);
+  const isEdit = Boolean(event);
 
   // Fetch all guests on component mount
   useEffect(() => {
