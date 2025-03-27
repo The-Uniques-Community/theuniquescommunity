@@ -37,8 +37,9 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ImageIcon from '@mui/icons-material/Image';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
+import * as Yup from 'yup';            
 import axios from 'axios';
+import { ArrowBack } from "@mui/icons-material";
 
 const EVENT_TYPES = [
   "Workshop",
@@ -131,7 +132,7 @@ const EventForm = ({ event, onSuccess }) => {
   const [successMessage, setSuccessMessage] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const isEdit = Boolean(event);
+ 
 
   // Fetch all guests on component mount
   useEffect(() => {
