@@ -132,7 +132,7 @@ const EventForm = ({ event, onSuccess }) => {
   const [successMessage, setSuccessMessage] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const isEdit = Boolean(event);
+  // const isEdit = Boolean(event);
 
   // Fetch all guests on component mount
   useEffect(() => {
