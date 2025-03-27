@@ -132,12 +132,6 @@ const EventForm = ({ event, onSuccess }) => {
   const [successMessage, setSuccessMessage] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
 
-<<<<<<<<< Temporary merge branch 1
-  // const isEdit = Boolean(event);
-=========
-
->>>>>>>>> Temporary merge branch 2
-
   // Fetch all guests on component mount
   useEffect(() => {
     fetchGuests();
