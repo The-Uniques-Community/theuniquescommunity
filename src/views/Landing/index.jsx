@@ -1,34 +1,23 @@
 import React, { useState } from "react";
 import { useTheme } from "@mui/material/styles";
-import { Modal, Box, IconButton, Chip } from "@mui/material";
-import BlogCard from "@/utils/Card/BlogCard";
-import { blogData } from "@/assets/dummyData/blogData";
-import CloseIcon from "@mui/icons-material/Close";
-import { reviews } from "@/assets/dummyData/reviewData";
-import tu from "@/assets/logos/theuniquesCommunity.png";
+
 import CallToAction from "./homComponents/CallToAction";
-import LandingStats from "./homComponents/LandingStats";
+
 import AboutSection from "./homComponents/AboutSection";
 import TrainingTabs from "./homComponents/TrainingTabs";
-import ReviewCard from "@/utils/Card/ReviewCard";
+
 // import ShapedCard from "@/utils/Card/ShapedCard";
-import CorporateCultureSection from "./homComponents/CorporateCultureSection";
-import HoverCard from "@/utils/Card/HoverCard";
-import { events } from "@/assets/dummyData/eventsData";
-import CommunityCard from "@/utils/Card/CommunityCard";
+
 import Gallery from "./homComponents/Gallery";
 import Counts from "./homComponents/Counts";
-import Logo from "./homComponents/logo";
+
 import Startups from "./homComponents/Startups";
 import WhyUs from "./homComponents/WhyUs";
 import TestimonialSectionCarousel from "./homComponents/TestimonialCard";
 import Batches from "./homComponents/Batches";
-import EventForm from "@/utils/event/EventForm";
+
 import HomeHero from "./homComponents/HomeHero";
 import BlogSection from "./homComponents/BlogSection";
-
-
-
 
 const index = () => {
   const theme = useTheme();
@@ -79,7 +68,7 @@ const index = () => {
       <section>
         <Startups />
       </section>
-   
+
       <div className="spacer py-10"></div>
       <section>
         <WhyUs />
