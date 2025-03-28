@@ -99,9 +99,10 @@ const Navbar = () => {
                 sx={{
                   transition: 'all 0.3s ease',
                   position: 'relative',
+                  overflow:'hidden',
                   pl: 2,
                   '&:hover': {
-                    backgroundColor: '#000',
+                    backgroundColor: '#CA0019',
                     color: '#fff',
                     pl: 3,
                     '& .MuiListItemIcon-root': {
@@ -113,7 +114,7 @@ const Navbar = () => {
                     }
                   },
                   ...(activeLink === item.text && {
-                    backgroundColor: '#000',
+                    backgroundColor: '#CA0019',
                     color: '#fff',
                     '& .MuiListItemIcon-root': {
                       color: '#fff',
@@ -187,6 +188,7 @@ const Navbar = () => {
                   justifyContent: 'center',
                   backgroundColor: '#f5f5f5',
                   borderRadius: '50%',
+                  
                   color: social.color,
                   transition: 'all 0.3s ease',
                   '&:hover': {
@@ -206,8 +208,7 @@ const Navbar = () => {
   );
 
   return (
-    <div className="lg:px-12 py-4 md:px-12 sm:px-8 px-5 flex justify-between sticky top-0 z-[100] bg-white items-center shadow-sm">
-      {/* <div className='w-full h-full bg-transparent blur-lg absolute'></div> */}
+    <div className="lg:px-12 py-4 md:px-12 sm:px-8 px-5 flex justify-between sticky top-0 z-[100] bg-white bg-opacity-90 items-center shadow-sm backdrop-blur-sm">
       <div>
         <div className="grid grid-cols-6 gap-x-5">
           <div className="lg:col-span-2 md:col-span-2 sm:col-span-4 col-span-5">
@@ -251,7 +252,16 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer(false)}>
+      <Drawer 
+        anchor="right" 
+        open={isDrawerOpen} 
+        onClose={toggleDrawer(false)}
+        sx={{
+          '& .MuiDrawer-paper': { boxSizing: 'border-box' },
+          '& .MuiPaper-root': { boxShadow: '0 0 15px rgba(0,0,0,0.1)' },
+          overflow:'hidden'
+        }}
+      >
         {drawerContent}
       </Drawer>
     </div>
