@@ -9,6 +9,8 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import WorkIcon from "@mui/icons-material/Work";
@@ -18,9 +20,14 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import SchoolIcon from "@mui/icons-material/School";
 import ArticleIcon from "@mui/icons-material/Article";
 import ScienceIcon from "@mui/icons-material/Science";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import { LogIn } from "lucide-react";
 
 const Navbar = () => {
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
+  const [activeLink, setActiveLink] = React.useState("");
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -32,39 +39,176 @@ const Navbar = () => {
     setDrawerOpen(open);
   };
 
+  const handleLinkClick = (linkText) => {
+    setActiveLink(linkText);
+  };
+
+  const navItems = [
+    { text: "Home", icon: <HomeIcon />, link: "/" },
+    { text: "About Us", icon: <InfoIcon />, link: "/about" },
+    { text: "How it started", icon: <WorkIcon />, link: "/howitstarted" },
+    { text: "Batches", icon: <SchoolIcon />, link: "/batches" },
+    { text: "Training Model", icon: <ScienceIcon />, link: "/training" },
+    { text: "Events", icon: <EventIcon />, link: "/events" },
+    { text: "Community", icon: <GroupsIcon />, link: "/community-page" },
+    { text: "Blogs", icon: <ArticleIcon />, link: "/blogs" },
+    { text: "Contact", icon: <ContactMailIcon />, link: "/contact" },
+    { text: "Login", icon: <LogIn />, link: "/auth/login" }
+  ];
+
+  // Social media links - update these URLs with actual links
+  const socialLinks = [
+    { 
+      icon: <WhatsAppIcon />, 
+      link: "https://chat.whatsapp.com/HYOloogGXKcIkR83DnOjFj", 
+      color: "#25D366",
+      name: "WhatsApp" 
+    },
+    { 
+      icon: <LinkedInIcon />, 
+      link: "https://www.linkedin.com/company/theuniquesofflicial", 
+      color: "#0A66C2",
+      name: "LinkedIn" 
+    },
+    { 
+      icon: <InstagramIcon />, 
+      link: "https://www.instagram.com/theuniquesofficial?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==", 
+      color: "#E4405F",
+      name: "Instagram" 
+    },
+  ];
+
   const drawerContent = (
     <Box
-      sx={{ width: 270 }}
+      sx={{ 
+        width: 270,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
+      }}
       role="presentation"
-      onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
     >
-      <List>
-        {[
-          { text: "Home", icon: <HomeIcon />, link: "/" },
-          { text: "About Us", icon: <InfoIcon />, link: "/about" },
-          { text: "How it started", icon: <WorkIcon />, link: "/howitstarted" },
-          { text: "Batches", icon: <SchoolIcon />, link: "/batches" },
-          { text: "Training Model", icon: <ScienceIcon />, link: "/training" },
-          { text: "Events", icon: <EventIcon />, link: "/events" },
-          { text: "Community", icon: <GroupsIcon />, link: "/community-page" },
-          { text: "Blogs", icon: <ArticleIcon />, link: "/blogs" },
-          { text: "Contact", icon: <ContactMailIcon />, link: "/contact" },
-        ].map((item) => (
-          <ListItem key={item.text} disablePadding>
-            <ListItemButton component={Link} to={item.link}>
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          </ListItem>
+      <List sx={{ flexGrow: 1 }} onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
+        {navItems.map((item, index) => (
+          <React.Fragment key={item.text}>
+            <ListItem disablePadding>
+              <ListItemButton 
+                component={Link} 
+                to={item.link}
+                onClick={() => handleLinkClick(item.text)}
+                sx={{
+                  transition: 'all 0.3s ease',
+                  position: 'relative',
+                  overflow:'hidden',
+                  pl: 2,
+                  '&:hover': {
+                    backgroundColor: '#CA0019',
+                    color: '#fff',
+                    pl: 3,
+                    '& .MuiListItemIcon-root': {
+                      color: '#fff',
+                    },
+                    '& .MuiTypography-root': {
+                      transform: 'translateX(10px)',
+                      transition: 'transform 0.3s ease',
+                    }
+                  },
+                  ...(activeLink === item.text && {
+                    backgroundColor: '#CA0019',
+                    color: '#fff',
+                    '& .MuiListItemIcon-root': {
+                      color: '#fff',
+                    },
+                    '& .MuiTypography-root': {
+                      transform: 'translateX(10px)',
+                    }
+                  })
+                }}
+              >
+                <ListItemIcon 
+                  sx={{ 
+                    minWidth: '45px',
+                    color: activeLink === item.text ? '#fff' : 'inherit',
+                    transition: 'color 0.3s ease'
+                  }}
+                >
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText 
+                  primary={item.text} 
+                  sx={{ 
+                    transition: 'transform 0.3s ease',
+                    transform: activeLink === item.text ? 'translateX(10px)' : 'translateX(0)'
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+            {/* Add divider after Contact item */}
+            {item.text === "Contact" && <Divider sx={{ my: 1 }} />}
+          </React.Fragment>
         ))}
       </List>
+      
+      {/* Social Media Section at Bottom */}
+      <Box sx={{ p: 2, mt: 'auto' }}>
+        <Divider sx={{ mb: 2 }} />
+        <Typography 
+          variant="subtitle2" 
+          sx={{ 
+            mb: 1.5, 
+            paddingLeft:1,
+            fontWeight: 500, 
+            color: 'text.secondary',
+            textAlign: 'start'
+          }}
+        >
+          Connect With Us
+        </Typography>
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            justifyContent: 'start',
+            gap: 2
+          }}
+        >
+          {socialLinks.map((social, index) => (
+            <a 
+              key={index}
+              href={social.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: 'none' }}
+            >
+              <Box 
+                sx={{ 
+                  width: 40, 
+                  height: 40, 
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#f5f5f5',
+                  borderRadius: '50%',
+                  
+                  color: social.color,
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    backgroundColor: social.color,
+                    color: 'white',
+                    transform: 'translateY(-3px)'
+                  }
+                }}
+              >
+                {social.icon}
+              </Box>
+            </a>
+          ))}
+        </Box>
+      </Box>
     </Box>
   );
 
   return (
-    <div className="lg:px-12 py-4 md:px-12 sm:px-8 px-5 flex justify-between sticky top-0 z-[100] bg-white items-center shadow-sm">
-      {/* <div className='w-full h-full bg-transparent blur-lg absolute'></div> */}
+    <div className="lg:px-12 py-4 md:px-12 sm:px-8 px-5 flex justify-between sticky top-0 z-[100] bg-white bg-opacity-90 items-center shadow-sm backdrop-blur-sm">
       <div>
         <div className="grid grid-cols-6 gap-x-5">
           <div className="lg:col-span-2 md:col-span-2 sm:col-span-4 col-span-5">
@@ -82,7 +226,7 @@ const Navbar = () => {
               <span>ABOUT US</span>
             </div>
           </Link>
-          <Link to="/community-page">
+          <Link to="/community-main">
             <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
               <span>COMMUNITY</span>
             </div>
@@ -108,7 +252,16 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer(false)}>
+      <Drawer 
+        anchor="right" 
+        open={isDrawerOpen} 
+        onClose={toggleDrawer(false)}
+        sx={{
+          '& .MuiDrawer-paper': { boxSizing: 'border-box' },
+          '& .MuiPaper-root': { boxShadow: '0 0 15px rgba(0,0,0,0.1)' },
+          overflow:'hidden'
+        }}
+      >
         {drawerContent}
       </Drawer>
     </div>

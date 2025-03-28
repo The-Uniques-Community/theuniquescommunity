@@ -27,14 +27,15 @@ import uniques_white from "@/assets/logos/uniqueswhite.png";
 import { AccountBalance } from "@mui/icons-material";
 import Brightness4Icon from "@mui/icons-material/Brightness4"; // Dark Mode Icon
 import Brightness7Icon from "@mui/icons-material/Brightness7"; // Light Mode Icon
-
+import AnnouncementIcon from '@mui/icons-material/Announcement';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 // Navigation items with full paths
 const ADMIN_NAVIGATION = [
   { segment: "", title: "Dashboard", icon: <DashboardIcon /> },
   { segment: "members-overview", title: "Members", icon: <GroupIcon /> },
   { segment: "events-overview", title: "Events", icon: <EventIcon /> },
-  { segment: "community-overview", title: "Community", icon: <Groups3Icon /> },
   { segment: "accounts", title: "Accounts", icon: <AccountBalance/> },
+  { segment: "enquiry", title: "Enquiry", icon: <AnnouncementIcon/> },
 ];
 
 function Branding() {
@@ -63,7 +64,7 @@ function DashboardLayoutAppBar() {
   const [isOpen, setIsOpen] = React.useState(false);
   const onClose = () => setIsOpen(false);
   const onConfirm = () => {
-    fetch("http://localhost:5000/auth/logout", {
+    fetch("https://theuniquesbackend.vercel.app/auth/logout", {
       method: "POST",
       credentials: "include",
     })
@@ -106,6 +107,7 @@ function DashboardLayoutAppBar() {
           width: isMobile ? "auto" : drawerOpen ? 240 : 75,
           flexShrink: 0,
           zIndex: '2000',
+          
           ml: 2, // Adds margin-left to create space
           "& .MuiDrawer-paper": {
             width: isMobile ? "auto" : drawerOpen ? 240 : 75,

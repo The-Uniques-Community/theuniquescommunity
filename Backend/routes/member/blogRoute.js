@@ -9,3 +9,4 @@ blogRouter.get("/:id", getBlogById);       // Get a single blog by ID
 
 
 export default blogRouter;
+
