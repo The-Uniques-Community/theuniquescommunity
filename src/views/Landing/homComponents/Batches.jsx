@@ -175,7 +175,7 @@ const Batches = () => {
 
       {/* Batch Selection */}
       <div className="w-[85%] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-wrap gap-4 mb-8 justify-center">
+        <div className="flex flex-wrap gap-4 mb-8 justify-center items-center">
           {batchesData.map((batch) => (
             <motion.button
               key={batch.id}
