@@ -90,7 +90,7 @@ export default function Landing() {
                 
                 // Apply highlight based on distance
                 const maxDistance = 150;
-                const opacity = distance < maxDistance ? (1 - distance / maxDistance) * 0.3 : 0;
+                const opacity = distance < maxDistance ? (1 - distance / maxDistance) * 0.36 : 0;
                 
                 return (
                   <div 
@@ -122,7 +122,7 @@ export default function Landing() {
         </div>
         <div className="text-center px-6 pt-12 pb-10">
             <Link to="/events">
-          <p className="text-sm font-medium px-2 py-1 border rounded-full w-max mx-auto text-red-500 mb-2">View Our Vibrant Events ✨</p>
+          <p className="text-sm font-medium px-2 py-1 border border-slate-400 bg-white rounded-full w-max mx-auto text-red-500 mb-2">View Our Vibrant Events ✨</p>
              </Link>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
           A Community of Creators, <br /> Dreamers & Doers.
@@ -138,8 +138,8 @@ export default function Landing() {
         {/* Partner Logos */}
         <div className="flex flex-wrap justify-center gap-6 text-gray-400 text-sm mb-8">
           {[
-            'Retool', 'remote', 'ARC', 'Raycast', 'runway',
-            'ramp', 'HEX', 'Vercel', 'descript', 'CashApp',
+            'Corporate Culture', 'Fullstack Developers', 'Future Leaders', 'Graphic Designers', 'Philanthropists',
+            'Tech Enthusiasts', 'Visionaries', 'Web Developers', 'UI/UX Designers'
           ].map((brand, i) => (
             <span key={i}>{brand}</span>
           ))}
