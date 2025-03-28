@@ -6,7 +6,7 @@ import GridBackground from "./utils/GridBackground.jsx/GridBackground";
 
 const App = () => {
   return (
-    <div className="relative">
+    <div className="relative overflow-hidden">
       {/* Global grid hover effect */}
       <GridBackground/>
       
