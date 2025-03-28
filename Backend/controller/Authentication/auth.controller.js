@@ -28,7 +28,7 @@ export const googleCallback = (req, res, next) => {
   // Set an HTTP‑only cookie for the token on the backend domain.
   res.cookie("token", token, {
     httpOnly: true,
-    secure: req.secure, // set to true in production
+    secure: false, // set to true in production
     sameSite: "lax", // adjust as needed
     // domain: '.example.com',  // if you want to share across subdomains
   });
@@ -140,7 +140,7 @@ export const emailLogin = async (req, res) => {
     const token = generateToken(member);
     res.cookie("token", token, {
       httpOnly: true,
-      secure: req.secure,
+      secure: false,
       sameSite: "lax",
     });
 
@@ -166,7 +166,7 @@ export const getCurrentUser = (req, res) => {
 export const logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: req.secure, // Set true in production
+    secure: false, // Set true in production
     sameSite: "lax", // Adjust as needed
   });
   return res.status(200).json({ message: "Logged out successfully" });
