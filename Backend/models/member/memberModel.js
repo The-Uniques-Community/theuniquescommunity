@@ -2,7 +2,32 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import File from "./fileModel.js";
-
+const projectSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true, // Project title is mandatory
+  },
+  description: {
+    type: String,
+    default: "", // Optional description
+  },
+  technologies: {
+    type: [String], // Array of strings for technologies used
+    default: [], // Default to an empty array
+  },
+  link: {
+    type: String, // Link to the project (e.g., GitHub, live demo)
+    default: "",
+  },
+  imageUrl: {
+    type: mongoose.Schema.Types.ObjectId, // URL for the project image
+    default: "",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now, // Automatically set the creation date
+  },
+});
 const memberSchema = new mongoose.Schema(
   {
     fullName: {
@@ -150,10 +175,8 @@ const memberSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
-    projects: {
-      type: Array,
-      default: [],
-    },
+    projects:[projectSchema],
+    
     internships: {
       type: Array,
       default: [],
