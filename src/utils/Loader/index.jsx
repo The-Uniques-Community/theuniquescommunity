@@ -1,12 +1,9 @@
-import { Suspense } from "react";
+import React from 'react';
+// Make sure the file name matches exactly (case-sensitive)
+import CustomLoader from './customLoader.jsx';
 
-import CustomLoader from "./customLoader";
+const Loader = (props) => {
+  return <CustomLoader {...props} />;
+};
 
-const index = (Component) => (props) =>
-  (
-    <Suspense fallback={<CustomLoader />}>
-      <Component {...props} />
-    </Suspense>
-  );
-
-export default index;
+export default Loader;
