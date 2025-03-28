@@ -64,7 +64,7 @@ const index = () => {
         setCountsLoading(true);
         console.log("Fetching batch counts...");
         
-        const response = await axios.get("http://localhost:5000/api/public/members/counts");
+        const response = await axios.get("https://theuniquesbackend.vercel.app/api/public/members/counts");
         
         if (response.data.success) {
           console.log("Batch counts received:", response.data.data);
@@ -122,7 +122,7 @@ const index = () => {
 
         // Fetch all members for the selected batch without search parameter
         // We'll handle search client-side for better filtering of incomplete profiles
-        const response = await axios.get("http://localhost:5000/api/public/members", {
+        const response = await axios.get("https://theuniquesbackend.vercel.app/api/public/members", {
           params: {
             batch: selectedBatch !== "All" ? selectedBatch : undefined
           }
@@ -260,13 +260,13 @@ const index = () => {
     const fetchAll = async () => {
       try {
         // First fetch counts
-        const countsResponse = await axios.get("http://localhost:5000/api/public/members/counts");
+        const countsResponse = await axios.get("https://theuniquesbackend.vercel.app/api/public/members/counts");
         if (countsResponse.data.success) {
           setBatchCounts(countsResponse.data.data);
         }
         
         // Then fetch members
-        const membersResponse = await axios.get("http://localhost:5000/api/public/members", {
+        const membersResponse = await axios.get("https://theuniquesbackend.vercel.app/api/public/members", {
           params: {
             batch: selectedBatch !== "All" ? selectedBatch : undefined
           }

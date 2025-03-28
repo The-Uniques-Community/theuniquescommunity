@@ -62,7 +62,7 @@ const Login = () => {
 
   // Google login using a popup
   const handleGoogleLogin = () => {
-    const googleLoginUrl = "http://localhost:5000/auth/google";
+    const googleLoginUrl = "https://theuniquesbackend.vercel.app/auth/google";
     const width = 500;
     const height = 600;
     const left = window.innerWidth / 2 - width / 2;
@@ -153,7 +153,7 @@ const Login = () => {
           })}
           onSubmit={async (values, { setErrors, setSubmitting }) => {
             try {
-              const res = await fetch("http://localhost:5000/auth/emaillogin", {
+              const res = await fetch("https://theuniquesbackend.vercel.app/auth/emaillogin", {
                 method: "POST",
                 credentials: "include", // include cookie with the request
                 headers: { "Content-Type": "application/json" },
