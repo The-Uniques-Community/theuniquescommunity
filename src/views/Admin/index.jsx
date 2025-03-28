@@ -33,7 +33,19 @@ import {
   ListItemText,
   ListItemAvatar,
   Card,
-  CardContent
+  CardContent,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormControl,
+  InputAdornment,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import SchoolIcon from '@mui/icons-material/School';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
@@ -49,8 +61,356 @@ import ClearIcon from '@mui/icons-material/Clear';
 import PendingIcon from '@mui/icons-material/Pending';
 import PaidIcon from '@mui/icons-material/Paid';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import CloudUpload from '@mui/icons-material/CloudUpload';
+import InsertDriveFile from '@mui/icons-material/InsertDriveFile';
+import UploadFile from '@mui/icons-material/UploadFile';
+import RemoveCircle from '@mui/icons-material/RemoveCircle';
+import Preview from '@mui/icons-material/Preview';
+import Close from '@mui/icons-material/Close';
 
-const index = () => {
+// Fine Payment Modal Component
+const FinePaymentModal = ({ open, onClose, memberId, fine, onPaymentComplete }) => {
+  const [files, setFiles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('upi');
+  const [reference, setReference] = useState('');
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [error, setError] = useState('');
+
+  // Handle file selection
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    if (selectedFiles.length > 0) {
+      setFiles(selectedFiles);
+      
+      // Create preview for image files
+      if (selectedFiles[0].type.startsWith('image/')) {
+        const url = URL.createObjectURL(selectedFiles[0]);
+        setPreviewUrl(url);
+      }
+    }
+  };
+  
+  // Remove selected file
+  const handleRemoveFile = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setFiles([]);
+    setPreviewUrl(null);
+  };
+
+  // Submit the form
+  const handleSubmit = async () => {
+    try {
+      if (files.length === 0) {
+        setError('Please upload a payment receipt');
+        return;
+      }
+
+      setLoading(true);
+      setError('');
+
+      // 1. First upload the file(s)
+      const formData = new FormData();
+      formData.append('memberId', memberId);
+      formData.append('fineId', fine._id || memberId); // Fallback to memberId if no specific fine ID
+      formData.append('fileType', 'receipt');
+      
+      files.forEach(file => {
+        formData.append('files', file);
+      });
+
+      // Upload the file - make sure the URL is correct
+      const uploadResponse = await axios.post(
+        'http://localhost:5000/upload/fine_file_upload',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      if (!uploadResponse.data.success) {
+        throw new Error(uploadResponse.data.message || 'Failed to upload receipt');
+      }
+
+      // 2. Now update the fine with the file reference
+      if (uploadResponse.data.files && uploadResponse.data.files.length > 0) {
+        const fileId = uploadResponse.data.files[0]._id;
+        
+        // API endpoint for updating fine status - this needs to match your backend routes
+        const updateEndpoint = `http://localhost:5000/api/admin/fine/members/${memberId}/fines`;
+        
+        // Update the fine status and attach the proof
+        const updateResponse = await axios.patch(updateEndpoint, {
+          status: 'paid',
+          proofOfPaymentId: fileId,
+          paymentMethod: paymentMethod,
+          paymentReference: reference,
+          amount: fine.amount || fine.fineStatus // Use appropriate amount field
+        });
+
+        if (updateResponse.data.success) {
+          if (onPaymentComplete) {
+            onPaymentComplete({
+              ...updateResponse.data.data,
+              proofFile: uploadResponse.data.files[0]
+            });
+          }
+          handleClose();
+        }
+      }
+    } catch (err) {
+      console.error('Error processing payment:', err);
+      setError(err.message || 'Failed to process payment');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Reset state when closing
+  const handleClose = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setFiles([]);
+    setPreviewUrl(null);
+    setError('');
+    setPaymentMethod('upi');
+    setReference('');
+    onClose();
+  };
+
+  return (
+    <Dialog 
+      open={open} 
+      onClose={loading ? null : handleClose}
+      fullWidth
+      maxWidth="sm"
+    >
+      <DialogTitle>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6">
+            Mark Fine as Paid
+          </Typography>
+          {!loading && (
+            <IconButton onClick={handleClose}>
+              <Close />
+            </IconButton>
+          )}
+        </Box>
+      </DialogTitle>
+      
+      <DialogContent>
+        {fine && (
+          <>
+            <Box mb={3}>
+              <Alert severity="info" sx={{ mb: 2 }}>
+                Please upload proof of payment to mark this fine as paid.
+              </Alert>
+
+              <Typography variant="subtitle1" fontWeight="bold">
+                Fine Details
+              </Typography>
+              
+              <Typography variant="body1">
+                Amount: ₹{fine.amount || fine.fineStatus}
+              </Typography>
+              
+              {fine.reason && (
+                <Typography variant="body2" color="textSecondary">
+                  Reason: {fine.reason}
+                </Typography>
+              )}
+              
+              {fine.dateImposed && (
+                <Typography variant="body2" color="textSecondary">
+                  Date Imposed: {new Date(fine.dateImposed).toLocaleDateString()}
+                </Typography>
+              )}
+            </Box>
+            
+            <Divider sx={{ mb: 3 }} />
+            
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="payment-method-label">Payment Method</InputLabel>
+              <Select
+                labelId="payment-method-label"
+                value={paymentMethod}
+                label="Payment Method"
+                onChange={(e) => setPaymentMethod(e.target.value)}
+                disabled={loading}
+              >
+                <MenuItem value="upi">UPI</MenuItem>
+                <MenuItem value="bank_transfer">Bank Transfer</MenuItem>
+                <MenuItem value="cash">Cash</MenuItem>
+                <MenuItem value="other">Other</MenuItem>
+              </Select>
+            </FormControl>
+            
+            <TextField
+              margin="normal"
+              fullWidth
+              label="Payment Reference (Optional)"
+              placeholder="Transaction ID / Reference Number"
+              value={reference}
+              onChange={(e) => setReference(e.target.value)}
+              disabled={loading}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <ReceiptIcon fontSize="small" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            
+            <Box 
+              mt={3} 
+              p={3} 
+              border="1px dashed #ccc" 
+              borderRadius={1} 
+              textAlign="center"
+              bgcolor={files.length > 0 ? 'rgba(0,0,0,0.02)' : 'transparent'}
+            >
+              {files.length > 0 ? (
+                <Box>
+                  {previewUrl ? (
+                    <Box mb={2} position="relative">
+                      <img 
+                        src={previewUrl} 
+                        alt="Receipt preview" 
+                        style={{ 
+                          maxWidth: '100%', 
+                          maxHeight: '200px',
+                          borderRadius: '4px'
+                        }} 
+                      />
+                    </Box>
+                  ) : (
+                    <Box mb={2} display="flex" alignItems="center" justifyContent="center">
+                      <InsertDriveFile sx={{ mr: 1 }} />
+                      <Typography variant="body2">{files[0].name}</Typography>
+                    </Box>
+                  )}
+                  <Button 
+                    variant="outlined" 
+                    color="error" 
+                    onClick={handleRemoveFile}
+                    startIcon={<RemoveCircle />}
+                  >
+                    Remove File
+                  </Button>
+                </Box>
+              ) : (
+                <Box>
+                  <Button
+                    component="label"
+                    variant="contained"
+                    startIcon={<CloudUpload />}
+                    disabled={loading}
+                  >
+                    Upload Receipt
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*,.pdf"
+                      onChange={handleFileChange}
+                    />
+                  </Button>
+                  <Typography variant="caption" display="block" mt={1} color="textSecondary">
+                    Supported formats: JPG, PNG, PDF
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+            
+            {error && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {error}
+              </Alert>
+            )}
+          </>
+        )}
+      </DialogContent>
+      
+      <DialogActions sx={{ px: 3, pb: 3 }}>
+        <Button onClick={handleClose} disabled={loading}>
+          Cancel
+        </Button>
+        <Button 
+          variant="contained" 
+          onClick={handleSubmit}
+          disabled={loading || files.length === 0}
+          startIcon={loading ? <CircularProgress size={16} /> : <UploadFile />}
+        >
+          {loading ? 'Processing...' : 'Submit Payment'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
+// Receipt Preview Modal Component
+const ReceiptPreviewModal = ({ open, onClose, receiptUrl }) => {
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="md"
+    >
+      <DialogTitle>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6">Payment Receipt</Typography>
+          <IconButton onClick={onClose}>
+            <Close />
+          </IconButton>
+        </Box>
+      </DialogTitle>
+      <DialogContent>
+        {receiptUrl && (
+          <Box textAlign="center" py={2}>
+            {receiptUrl.endsWith('.pdf') ? (
+              <Box>
+                <iframe 
+                  src={`${receiptUrl}#view=FitH`} 
+                  width="100%" 
+                  height="500px" 
+                  title="PDF Receipt"
+                  style={{ border: '1px solid #ddd' }}
+                />
+              </Box>
+            ) : (
+              <img 
+                src={receiptUrl} 
+                alt="Payment Receipt" 
+                style={{ 
+                  maxWidth: '100%',
+                  maxHeight: '70vh',
+                  objectFit: 'contain',
+                }} 
+              />
+            )}
+            <Button
+              variant="contained" 
+              startIcon={<Preview />}
+              sx={{ mt: 2 }}
+              onClick={() => window.open(receiptUrl, '_blank')}
+            >
+              Open in New Tab
+            </Button>
+          </Box>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const Index = () => {
   // State for storing fetched data
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -70,15 +430,22 @@ const index = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
   
+  // NEW: Fine Payment Modal state
+  const [openPaymentModal, setOpenPaymentModal] = useState(false);
+  const [fineToUpdate, setFineToUpdate] = useState(null);
+  const [paymentComplete, setPaymentComplete] = useState(false);
+  
+  // NEW: Receipt Preview Modal state
+  const [receiptPreviewUrl, setReceiptPreviewUrl] = useState(null);
+  const [openReceiptPreview, setOpenReceiptPreview] = useState(false);
+  
   // Fetch data when component mounts
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
         // Fetch all members
         const membersRes = await axios.get('http://localhost:5000/api/admin/member?page=1&limit=10');
-        
         // Get recently added members (sorted by creation date)
         const sortedMembers = [...membersRes.data.data].sort((a, b) => 
           new Date(b.createdAt) - new Date(a.createdAt)
@@ -119,11 +486,11 @@ const index = () => {
         try {
           const eventsRes = await axios.get('http://localhost:5000/api/events');
           // Handle API response based on its structure (data property or direct array)
-          const eventsList = eventsRes.data.data || eventsRes.data;
+          const eventsList = eventsRes.data.events || [];
           setEvents(eventsList.slice(0, 3));
           
           // Update total events count from API response
-          const totalEventsCount = eventsRes.data.pagination?.total || eventsList.length;
+          const totalEventsCount = eventsRes.data.total || eventsList.length;
           setStats(prev => ({
             ...prev,
             totalEvents: totalEventsCount
@@ -169,7 +536,7 @@ const index = () => {
         
         // Fetch members with supplementary exams for semester 1
         const supplementaryRes = await axios.get(`http://localhost:5000/api/admin/member/supplementary/semester/${currentSemester}`);
-        setSupplementaryMembers(supplementaryRes.data.data);
+        setSupplementaryMembers(supplementaryRes.data.data || []);
         
         setLoading(false);
       } catch (error) {
@@ -186,11 +553,23 @@ const index = () => {
     try {
       setLoading(true);
       setCurrentSemester(semester);
+      
       const res = await axios.get(`http://localhost:5000/api/admin/member/supplementary/semester/${semester}`);
-      setSupplementaryMembers(res.data.data);
+      
+      // Debug the API response
+      console.log(`Supplementary data for semester ${semester}:`, res.data);
+      
+      if (res.data && res.data.data) {
+        setSupplementaryMembers(res.data.data);
+      } else {
+        console.error("Invalid API response format:", res.data);
+        setSupplementaryMembers([]);
+      }
+      
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching supplementary data:", error);
+      console.error(`Error fetching supplementary data for semester ${semester}:`, error);
+      setSupplementaryMembers([]);
       setLoading(false);
     }
   };
@@ -209,6 +588,47 @@ const index = () => {
   const handleCloseModal = () => {
     setModalOpen(false);
     setSelectedMember(null);
+  };
+
+  // NEW: Handle payment completion
+  const handlePaymentComplete = async () => {
+    setPaymentComplete(true);
+    setOpenPaymentModal(false);
+    
+    // Refresh the data
+    try {
+      const fineRes = await axios.get('http://localhost:5000/api/admin/member/fines/all');
+      
+      if (fineRes.data && fineRes.data.data) {
+        setFineMembers(fineRes.data.data);
+        
+        // Recalculate total fine amount
+        if (Array.isArray(fineRes.data.data)) {
+          const totalFineAmount = fineRes.data.data.reduce((total, member) => {
+            const fineAmount = member.fineStatus ? Number(member.fineStatus) : 0;
+            return total + (isNaN(fineAmount) ? 0 : fineAmount);
+          }, 0);
+          
+          setStats(prev => ({
+            ...prev,
+            totalFine: totalFineAmount
+          }));
+        }
+      }
+    } catch (error) {
+      console.error("Error refreshing fine data:", error);
+    }
+    
+    // Reset state after a delay
+    setTimeout(() => {
+      setPaymentComplete(false);
+    }, 3000);
+  };
+
+  // NEW: Handle opening receipt preview
+  const handleOpenReceipt = (fileUrl) => {
+    setReceiptPreviewUrl(fileUrl);
+    setOpenReceiptPreview(true);
   };
 
   return (
@@ -268,7 +688,11 @@ const index = () => {
           <div className="mb-5">
             <Calender />
           </div>
-          <div className="mb-5">
+          <div className="mb-5 overflow-auto h-[500px]" style={{
+            scrollbarWidth: 'thin',
+            scrollbarColor: '#d4d4d4 #f3f3f3',
+            scrollbarTrackColor: '#f3f3f3'
+          }} >
             {loading ? (
               <div className="flex justify-center py-8">
                 <CircularProgress size={24} />
@@ -559,6 +983,23 @@ const index = () => {
                       <Typography variant="body2" className="text-gray-600 italic">
                         Fine must be paid before the end of the semester to avoid exam restrictions.
                       </Typography>
+
+                      {/* NEW: Show payment receipt if available */}
+                      {selectedMember.proofOfPayment && (
+                        <Box mt={2} p={2} border="1px solid #eee" borderRadius={1}>
+                          <Typography variant="subtitle2" gutterBottom>
+                            Payment Receipt
+                          </Typography>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            startIcon={<ReceiptIcon />}
+                            onClick={() => handleOpenReceipt(selectedMember.proofOfPayment.fileUrl)}
+                          >
+                            View Receipt
+                          </Button>
+                        </Box>
+                      )}
                     </CardContent>
                   </Card>
                   
@@ -584,9 +1025,26 @@ const index = () => {
                     >
                       Close
                     </Button>
+                    {/* UPDATED: This button now opens the payment modal */}
                     <Button 
                       variant="contained" 
                       style={{ backgroundColor: '#ca0019' }}
+                      onClick={() => {
+                        // Create a simplified fine object with the necessary properties
+                        const simpleFine = {
+                          _id: selectedMember._id, // Use memberId as fineId
+                          fineStatus: selectedMember.fineStatus,
+                          amount: Number(selectedMember.fineStatus),
+                          reason: "Outstanding Fine"
+                        };
+                        
+                        setFineToUpdate({
+                          memberId: selectedMember._id,
+                          fine: simpleFine
+                        });
+                        
+                        setOpenPaymentModal(true);
+                      }}
                     >
                       Mark as Paid
                     </Button>
@@ -719,8 +1177,36 @@ const index = () => {
           )}
         </Box>
       </Modal>
+
+      {/* NEW: Fine Payment Modal */}
+      <FinePaymentModal
+        open={openPaymentModal}
+        onClose={() => setOpenPaymentModal(false)}
+        memberId={fineToUpdate?.memberId}
+        fine={fineToUpdate?.fine}
+        onPaymentComplete={handlePaymentComplete}
+      />
+
+      {/* NEW: Receipt Preview Modal */}
+      <ReceiptPreviewModal
+        open={openReceiptPreview}
+        onClose={() => setOpenReceiptPreview(false)}
+        receiptUrl={receiptPreviewUrl}
+      />
+
+      {/* NEW: Success notification */}
+      <Snackbar
+        open={paymentComplete}
+        autoHideDuration={4000}
+        onClose={() => setPaymentComplete(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity="success">
+          Payment recorded successfully!
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
 
-export default index;
+export default Index;

@@ -24,11 +24,15 @@ const EventOverView = ({ event }) => {
   } = event || {};
 
   // Format date for display if it's a Date object
-  const formattedDate = eventDate ? 
-    (eventDate instanceof Date ? 
-      eventDate.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : 
-      eventDate) : 
-    '---';
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "";
+
+    return date.toISOString().split("T")[0]; // Returns YYYY-MM-DD
+  };
+
 
   return (
     <div className="w-[96%] relative my-2 mx-auto rounded-md border border-slate-200 p-2">
@@ -94,7 +98,7 @@ const EventOverView = ({ event }) => {
       <div className="flex flex-wrap justify-start gap-x-5 items-center px-3 py-2">
         <div className="flex items-center gap-x-1">
           <CalendarMonthOutlinedIcon sx={{ fontSize: 14, color: "#64748b" }} />
-          <p className="text-sm text-slate-500">{formattedDate}</p>
+          <p className="text-sm text-slate-500">{formatDateForInput(eventDate)}</p>
         </div>
         {eventTime && (
           <div className="flex items-center gap-x-1">

@@ -77,12 +77,8 @@ const index = () => {
         });
 
         // Calculate stats
-        const ongoing = data.events.filter(
-          (event) => event.eventStatus === "ongoing"
-        ).length;
-        const upcoming = data.events.filter(
-          (event) => event.eventStatus === "upcoming"
-        ).length;
+        const ongoing = data?.totalOngoing || 0
+        const upcoming = data?.totalUpcoming || 0
         const completed = data.events.filter(
           (event) => event.eventStatus === "completed"
         ).length;
@@ -160,7 +156,7 @@ const index = () => {
   const handleCreateEvent = () => {
     navigate("/admin/events-overview/create");
   };
-
+ 
   const handleViewEvent = (eventId) => {
     navigate(`/admin/events-overview/view/${eventId}`);
   };

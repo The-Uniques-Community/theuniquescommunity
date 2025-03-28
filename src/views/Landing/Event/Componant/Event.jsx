@@ -3,6 +3,14 @@ import axios from 'axios';
 import { Users, X, Calendar, Clock, MapPin, User, Users as UsersIcon } from 'lucide-react';
 import Button from "@/utils/Buttons/Button";
 import { Tabs, Tab } from '@mui/material';
+import { CircularProgress, TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText, RadioGroup, FormControlLabel, Radio, Checkbox } from '@mui/material';
+import { toast } from 'react-toastify';
+import { Dialog, DialogContent, Typography, Box, DialogTitle, IconButton } from '@mui/material';
+import { Close } from '@mui/icons-material';
+// Add these imports at the top with your other imports
+import { Alert, DialogActions } from '@mui/material';
+import { ContactMail } from '@mui/icons-material';
+
 
 export default function Eventmodel({ event, onClose }) {
     const [activeTab, setActiveTab] = useState("about");
@@ -11,21 +19,456 @@ export default function Eventmodel({ event, onClose }) {
     const [eventTypes, setEventTypes] = useState([]);
     const [eventLeaders, setEventLeaders] = useState([]);
     const [selectedDetailEvent, setSelectedDetailEvent] = useState(null);
-    
+    // State for registration functionality
+    const [registrationModalOpen, setRegistrationModalOpen] = useState(false);
+    const [formFields, setFormFields] = useState([]);
+    const [formValues, setFormValues] = useState({});
+    const [formErrors, setFormErrors] = useState({});
+    const [registrationLoading, setRegistrationLoading] = useState(false);
+    const [registrationSuccess, setRegistrationSuccess] = useState(false);
+
+    // Helper function to get initials from name
+    const getNameInitials = (name) => {
+        if (!name) return "??";
+        const names = name.split(' ');
+        if (names.length === 1) {
+            return names[0].substring(0, 2).toUpperCase();
+        }
+        return (names[0].charAt(0) + names[1].charAt(0)).toUpperCase();
+    };
+
+    // Helper function to generate initials avatar URL
+    const getInitialsAvatar = (name) => {
+        const initials = getNameInitials(name);
+        // Using UI Avatars service to generate avatar with brand color background
+        return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=ca0019&color=ffffff&size=150&bold=true`;
+    };
+
+    // Handle event registration when button is clicked
+    const handleRegisterForEvent = async () => {
+        try {
+            // If event has a form, open modal with form fields
+            if (event.eventForm && event.eventForm.formId) {
+                const formLoaded = await fetchFormFields();
+                if (formLoaded) {
+                    setRegistrationModalOpen(true);
+                } else {
+                    // If form couldn't be loaded, show an alert
+                    toast.error("Could not load registration form. Please try again later.");
+                }
+            } else {
+                // Simple registration without form
+                setRegistrationLoading(true);
+
+                try {
+                    const response = await fetch(
+                        `http://localhost:5000/api/events/${id}/register`,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            credentials: "include",
+                        }
+                    );
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(
+                            `Registration failed: ${response.status} ${errorText}`
+                        );
+                    }
+
+                    const result = await response.json();
+                    if (result.success) {
+                        toast.success("Successfully registered for this event!");
+                    } else {
+                        throw new Error(result.message || "Registration failed");
+                    }
+                } catch (error) {
+                    console.error("Registration API error:", error);
+                    toast.error(`Registration failed: ${error.message}`);
+                } finally {
+                    setRegistrationLoading(false);
+                }
+            }
+        } catch (error) {
+            console.error("Error registering for event:", error);
+            toast.error(`Error: ${error.message}`);
+            setRegistrationLoading(false);
+        }
+    };
+
+    // Fetch form fields from the event
+    const fetchFormFields = async () => {
+        try {
+            // Reset any previous form data
+            setFormErrors({});
+
+            // Check if event has form data
+            if (!event?.eventForm?.formId) {
+                setFormErrors({
+                    submit: "This event doesn't have a registration form.",
+                });
+                return false;
+            }
+
+            // Extract form fields directly from event object
+            // Handle both cases: form fields in formId object or in formFeilds array
+            let fields = [];
+
+            if (
+                event.eventForm.formId.fields &&
+                event.eventForm.formId.fields.length > 0
+            ) {
+                // Fields from the formId object
+                fields = event.eventForm.formId.fields.map((field) => ({
+                    name: field.fieldName,
+                    label: field.fieldLabel,
+                    type: field.fieldType,
+                    placeholder: field.placeholder,
+                    required: field.required,
+                    options: field.options || [],
+                    helperText: "",
+                }));
+            } else if (
+                event.eventForm.formFeilds &&
+                event.eventForm.formFeilds.length > 0
+            ) {
+                // Fields from the formFeilds array (note: handling the typo in "Feilds")
+                fields = event.eventForm.formFeilds.map((field) => ({
+                    name: field.fieldName,
+                    label: field.fieldLabel,
+                    type: field.fieldType,
+                    placeholder: field.placeholder,
+                    required: field.required,
+                    options: field.options || [],
+                    helperText: "",
+                }));
+            }
+
+            if (fields.length === 0) {
+                setFormErrors({
+                    submit: "No form fields found for this event.",
+                });
+                return false;
+            }
+
+            setFormFields(fields);
+
+            // Initialize form values
+            const initialValues = {};
+            fields.forEach((field) => {
+                if (field.type === "checkbox") {
+                    initialValues[field.name] = [];
+                } else {
+                    initialValues[field.name] = "";
+                }
+            });
+
+            setFormValues(initialValues);
+            return true;
+        } catch (error) {
+            console.error("Error setting up form fields:", error);
+            setFormErrors({
+                submit: "An error occurred while preparing the form.",
+            });
+            return false;
+        }
+    };
+
+    // Handle form input changes
+    const handleFormInputChange = (e) => {
+        const { name, value, type, checked } = e.target;
+
+        if (type === "checkbox") {
+            const updatedValues = formValues[name] || [];
+            if (checked) {
+                setFormValues({
+                    ...formValues,
+                    [name]: [...updatedValues, value],
+                });
+            } else {
+                setFormValues({
+                    ...formValues,
+                    [name]: updatedValues.filter((item) => item !== value),
+                });
+            }
+        } else {
+            setFormValues({
+                ...formValues,
+                [name]: value,
+            });
+        }
+
+        // Clear error when user types
+        if (formErrors[name]) {
+            setFormErrors({
+                ...formErrors,
+                [name]: "",
+            });
+        }
+    };
+
+    // Validate form before submission
+    const validateForm = () => {
+        const errors = {};
+        formFields.forEach((field) => {
+            if (
+                field.required &&
+                (!formValues[field.name] ||
+                    (Array.isArray(formValues[field.name]) &&
+                        formValues[field.name].length === 0))
+            ) {
+                errors[field.name] = "This field is required";
+            }
+        });
+
+        setFormErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    // Submit form response
+    const handleSubmitRegistrationForm = async () => {
+        if (!validateForm()) return;
+
+        try {
+            setRegistrationLoading(true);
+
+            // Prepare the request body according to the API expectations
+            const requestBody = {
+                responses: formValues,
+                // Include respondent info if user is not authenticated
+                respondentInfo: {
+                    name: formValues.name || "",
+                    email: formValues.email || "",
+                    phone: formValues.phone || "",
+                },
+            };
+
+            const response = await fetch(
+                `http://localhost:5000/api/events/${event._id}/form-response`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "include",
+                    body: JSON.stringify(requestBody),
+                }
+            );
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(
+                    `Form submission failed (${response.status}): ${errorText}`
+                );
+            }
+
+            const result = await response.json();
+
+            if (result.success) {
+                setRegistrationSuccess(true);
+                setTimeout(() => {
+                    setRegistrationModalOpen(false);
+                    setRegistrationSuccess(false); // Reset for future submissions
+                    // Clear form values for new submissions
+                    const initialValues = {};
+                    formFields.forEach((field) => {
+                        if (field.type === "checkbox") {
+                            initialValues[field.name] = [];
+                        } else {
+                            initialValues[field.name] = "";
+                        }
+                    });
+                    setFormValues(initialValues);
+                }, 2000);
+            } else {
+                throw new Error(result.message || "Registration failed");
+            }
+        } catch (error) {
+            console.error("Error submitting form response:", error);
+            setFormErrors({
+                submit:
+                    error.message ||
+                    "An error occurred while submitting your registration. Please try again.",
+            });
+        } finally {
+            setRegistrationLoading(false);
+        }
+    };
+
+    // Render form field based on type
+    const renderFormField = (field) => {
+        // Map fieldType to appropriate input type
+        const fieldType = field.type || field.fieldType;
+        const fieldName = field.name || field.fieldName;
+        const fieldLabel = field.label || field.fieldLabel;
+
+        switch (fieldType) {
+            case "text":
+            case "email":
+            case "number":
+            case "tel":
+            case "url":
+                return (
+                    <TextField
+                        key={fieldName}
+                        name={fieldName}
+                        label={fieldLabel}
+                        type={fieldType}
+                        value={formValues[fieldName] || ""}
+                        onChange={handleFormInputChange}
+                        fullWidth
+                        required={field.required}
+                        placeholder={field.placeholder || ""}
+                        error={!!formErrors[fieldName]}
+                        helperText={formErrors[fieldName] || field.helperText}
+                        margin="normal"
+                        variant="outlined"
+                    />
+                );
+
+            case "textarea":
+                return (
+                    <TextField
+                        key={fieldName}
+                        name={fieldName}
+                        label={fieldLabel}
+                        multiline
+                        rows={4}
+                        value={formValues[fieldName] || ""}
+                        onChange={handleFormInputChange}
+                        fullWidth
+                        required={field.required}
+                        placeholder={field.placeholder || ""}
+                        error={!!formErrors[fieldName]}
+                        helperText={formErrors[fieldName] || field.helperText}
+                        margin="normal"
+                        variant="outlined"
+                    />
+                );
+
+            case "select":
+                return (
+                    <FormControl
+                        key={fieldName}
+                        fullWidth
+                        margin="normal"
+                        error={!!formErrors[fieldName]}
+                        required={field.required}
+                    >
+                        <InputLabel>{fieldLabel}</InputLabel>
+                        <Select
+                            name={fieldName}
+                            value={formValues[fieldName] || ""}
+                            onChange={handleFormInputChange}
+                            label={fieldLabel}
+                        >
+                            {field.options?.map((option) => (
+                                <MenuItem
+                                    key={option.value || option}
+                                    value={option.value || option}
+                                >
+                                    {option.label || option}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                        {(formErrors[fieldName] || field.helperText) && (
+                            <FormHelperText>
+                                {formErrors[fieldName] || field.helperText}
+                            </FormHelperText>
+                        )}
+                    </FormControl>
+                );
+
+            case "radio":
+                return (
+                    <FormControl
+                        key={fieldName}
+                        component="fieldset"
+                        margin="normal"
+                        error={!!formErrors[fieldName]}
+                        required={field.required}
+                        fullWidth
+                    >
+                        <Typography component="legend">{fieldLabel}</Typography>
+                        <RadioGroup
+                            name={fieldName}
+                            value={formValues[fieldName] || ""}
+                            onChange={handleFormInputChange}
+                        >
+                            {field.options?.map((option) => (
+                                <FormControlLabel
+                                    key={option.value || option}
+                                    value={option.value || option}
+                                    control={<Radio />}
+                                    label={option.label || option}
+                                />
+                            ))}
+                        </RadioGroup>
+                        {(formErrors[fieldName] || field.helperText) && (
+                            <FormHelperText>
+                                {formErrors[fieldName] || field.helperText}
+                            </FormHelperText>
+                        )}
+                    </FormControl>
+                );
+
+            case "checkbox":
+                return (
+                    <FormControl
+                        key={fieldName}
+                        component="fieldset"
+                        margin="normal"
+                        error={!!formErrors[fieldName]}
+                        required={field.required}
+                        fullWidth
+                    >
+                        <Typography component="legend">{fieldLabel}</Typography>
+                        {field.options?.map((option) => (
+                            <FormControlLabel
+                                key={option.value || option}
+                                control={
+                                    <Checkbox
+                                        name={fieldName}
+                                        value={option.value || option}
+                                        checked={(formValues[fieldName] || []).includes(
+                                            option.value || option
+                                        )}
+                                        onChange={handleFormInputChange}
+                                    />
+                                }
+                                label={option.label || option}
+                            />
+                        ))}
+                        {(formErrors[fieldName] || field.helperText) && (
+                            <FormHelperText>
+                                {formErrors[fieldName] || field.helperText}
+                            </FormHelperText>
+                        )}
+                    </FormControl>
+                );
+
+            default:
+                return null;
+        }
+    };
+
     useEffect(() => {
         // Fetch all events to populate related events and tabs
         axios.get('http://localhost:5000/api/events')
             .then(response => {
                 const events = response.data.data || response.data || [];
                 setAllEvents(events);
-                
+
                 // Extract unique event types for tabs
                 const types = [...new Set(events.map(e => e.eventType).filter(Boolean))];
                 setEventTypes(types);
-                
+
                 // Filter events by current event type
                 if (event && event.eventType) {
-                    const filtered = events.filter(e => 
+                    const filtered = events.filter(e =>
                         e.eventType === event.eventType && e._id !== event._id
                     );
                     setFilteredEvents(filtered);
@@ -36,10 +479,11 @@ export default function Eventmodel({ event, onClose }) {
                     setEventLeaders([{
                         name: event.eventOrganizerBatch,
                         role: "Organizer",
-                        image: "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg"
+                        // Use initials avatar for organizer
+                        image: getInitialsAvatar(event.eventOrganizerBatch)
                     }]);
                 }
-                
+
                 // If the current event doesn't have populated gallery data, you might need to fetch it
                 if (event && (!event.eventGallery || event.eventGallery.length === 0)) {
                     axios.get(`http://localhost:5000/api/events/${event._id}/gallery`)
@@ -55,10 +499,10 @@ export default function Eventmodel({ event, onClose }) {
 
     const handleChange = (event, newValue) => {
         setActiveTab(newValue);
-        
+
         // Filter events based on selected tab
         if (newValue !== "about" && newValue !== "guests" && newValue !== "organizers" && newValue !== "gallery" && newValue !== "sponsors") {
-            const filtered = allEvents.filter(e => 
+            const filtered = allEvents.filter(e =>
                 e.eventType === newValue && e._id !== event._id
             );
             setFilteredEvents(filtered);
@@ -77,7 +521,7 @@ export default function Eventmodel({ event, onClose }) {
     // Helper function to extract Google Drive file ID from event banner
     const extractBannerFileId = (banner) => {
         if (!banner) return '1OSWCFdMnh8Y1wZoepQuup8HXzmcpxxKu'; // Default fallback
-        
+
         if (typeof banner === 'string') {
             return banner;
         } else {
@@ -106,7 +550,7 @@ export default function Eventmodel({ event, onClose }) {
     return (
         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-[9999999] p-2 sm:p-4 overflow-hidden">
             <div className="bg-white w-full max-w-7xl mx-auto h-[90vh] sm:h-[85vh] md:h-[90vh] overflow-auto rounded-xl shadow-lg relative p-3 sm:p-4 md:p-6">
-                
+
                 {/* Close Button */}
                 <button onClick={onClose} className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-red-500 text-white p-2 rounded-full hover:bg-red-700 z-10">
                     <X size={20} />
@@ -114,7 +558,7 @@ export default function Eventmodel({ event, onClose }) {
 
                 {/* Header Banner - Dynamic from backend */}
                 <div className="w-full h-40 sm:h-60 md:h-96 border-b border-gray-300 rounded-xl">
-                    <iframe  
+                    <iframe
                         src={`https://drive.google.com/file/d/${bannerFileId}/preview`}
                         className="w-full h-full object-cover rounded-xl"
                         title="Event banner"
@@ -126,7 +570,7 @@ export default function Eventmodel({ event, onClose }) {
                 {/* Profile Section */}
                 <div className="px-2 sm:px-4 md:px-6 py-4 flex flex-col sm:flex-row justify-between items-start border-gray-300">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center w-full sm:w-auto mb-4 sm:mb-0">
-                      
+
                         <div className="sm:ml-6">
                             <h1 className="text-2xl sm:text-3xl font-bold">{event.eventName}</h1>
                             <h2 className="text-lg sm:text-xl text-gray-500">{event.eventVenue}</h2>
@@ -146,17 +590,33 @@ export default function Eventmodel({ event, onClose }) {
                         </div>
                     </div>
                     <div className="flex space-x-3 w-full sm:w-auto justify-end">
-                        <Button color="white" bgColor="#ca0019" border={4} borderColor="#ca0019" iconColor="black">Share</Button>
-                        <Button color="white" bgColor="#ca0019" border={4} borderColor="#ca0019" iconColor="black">Register</Button>
+            
+                        {event.eventForm && event.eventForm.formId && event.eventStatus === 'upcoming' && (
+                            <Button
+
+                                color="white"
+                                bgColor="#ca0019" border={4} borderColor="#ca0019" iconColor="black"
+                                startIcon={<ContactMail />}
+                                onClick={handleRegisterForEvent}
+                                disabled={registrationLoading}
+                            >
+                                {registrationLoading ? (
+                                    <CircularProgress size={24} color="inherit" />
+                                ) : (
+                                    "Register Now"
+                                )}
+                            </Button>
+                        )}
+
                     </div>
                 </div>
 
                 {/* Dynamic Tabs */}
-                <Tabs 
-                    value={activeTab} 
-                    onChange={handleChange} 
-                    textColor="primary" 
-                    indicatorColor="primary" 
+                <Tabs
+                    value={activeTab}
+                    onChange={handleChange}
+                    textColor="primary"
+                    indicatorColor="primary"
                     className="px-2 sm:px-4 md:px-6"
                     variant="scrollable"
                     scrollButtons="auto"
@@ -173,14 +633,14 @@ export default function Eventmodel({ event, onClose }) {
 
                 {/* Main Content */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 p-2 sm:p-4 md:p-6">
-                    
+
                     {/* Dynamic Content */}
                     <div className="md:col-span-2 border-b border-t border-gray-300 p-3 sm:p-4">
                         {activeTab === "about" ? (
                             <>
                                 <h2 className="text-xl sm:text-2xl font-bold mb-4">About This Event</h2>
                                 <p className="text-gray-600 whitespace-pre-line text-sm sm:text-base">{event.eventDescription}</p>
-                                
+
                                 <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="bg-gray-100 p-3 sm:p-4 rounded-lg">
                                         <div className="flex items-center">
@@ -196,7 +656,7 @@ export default function Eventmodel({ event, onClose }) {
                                             })}
                                         </p>
                                     </div>
-                                    
+
                                     <div className="bg-gray-100 p-3 sm:p-4 rounded-lg">
                                         <div className="flex items-center">
                                             <Clock className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-700" />
@@ -204,7 +664,7 @@ export default function Eventmodel({ event, onClose }) {
                                         </div>
                                         <p className="mt-1 text-gray-600 ml-6 sm:ml-7 text-xs sm:text-sm">{event.eventTime}</p>
                                     </div>
-                                    
+
                                     <div className="bg-gray-100 p-3 sm:p-4 rounded-lg">
                                         <div className="flex items-center">
                                             <MapPin className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-700" />
@@ -212,7 +672,7 @@ export default function Eventmodel({ event, onClose }) {
                                         </div>
                                         <p className="mt-1 text-gray-600 ml-6 sm:ml-7 text-xs sm:text-sm">{event.eventVenue}</p>
                                     </div>
-                                    
+
                                     <div className="bg-gray-100 p-3 sm:p-4 rounded-lg">
                                         <div className="flex items-center">
                                             <User className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-700" />
@@ -229,12 +689,12 @@ export default function Eventmodel({ event, onClose }) {
                                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                         {safeEventGallery.map((image, index) => {
                                             // Extract the Google Drive file ID from the image object
-                                            const driveFileId = typeof image === 'string' ? image : 
-                                                            (image.fileId || image._id || '');
-                                            
+                                            const driveFileId = typeof image === 'string' ? image :
+                                                (image.fileId || image._id || '');
+
                                             return (
                                                 <div key={index} className="w-full h-48 sm:h-56 md:h-64 border border-gray-200 rounded-xl overflow-hidden">
-                                                    <iframe 
+                                                    <iframe
                                                         src={`https://drive.google.com/file/d/${driveFileId}/preview`}
                                                         className="w-full h-full object-cover rounded-xl"
                                                         loading="lazy"
@@ -258,15 +718,16 @@ export default function Eventmodel({ event, onClose }) {
                                             // Safely access nested properties
                                             const guestId = guest?.guestId || {};
                                             const guestName = guestId?.guestName || "Unknown Guest";
-                                            const guestImage = guestId?.guestImage || "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg";
+                                            // Use initials if no image is available
+                                            const guestImage = guestId?.guestImage || getInitialsAvatar(guestName);
                                             const guestDesignation = guestId?.designation || "";
                                             const guestTag = guest?.guestTag || "guest";
-                                            
+
                                             return (
                                                 <div key={index} className="border rounded-lg p-3 sm:p-4 flex items-center">
-                                                    <img 
-                                                        src={guestImage} 
-                                                        className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover" 
+                                                    <img
+                                                        src={guestImage}
+                                                        className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover"
                                                         alt={guestName}
                                                     />
                                                     <div className="ml-3 sm:ml-4">
@@ -289,9 +750,9 @@ export default function Eventmodel({ event, onClose }) {
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         {safeEventSponsors.map((sponsor, index) => (
                                             <div key={index} className="border rounded-lg p-3 sm:p-4 flex items-center">
-                                                <img 
-                                                    src={sponsor.logoUrl || "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg"} 
-                                                    className="w-12 h-12 sm:w-16 sm:h-16 object-cover" 
+                                                <img
+                                                    src={sponsor.logoUrl || "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg"}
+                                                    className="w-12 h-12 sm:w-16 sm:h-16 object-cover"
                                                     alt={sponsor.name}
                                                 />
                                                 <div className="ml-3 sm:ml-4">
@@ -324,12 +785,12 @@ export default function Eventmodel({ event, onClose }) {
                                         {filteredEvents.map(relatedEvent => {
                                             // Extract banner ID for related events
                                             const relatedBannerId = extractBannerFileId(relatedEvent.eventBanner);
-                                            
+
                                             return (
                                                 <li key={relatedEvent._id} className="p-3 sm:p-4 border rounded-md shadow-md">
                                                     <div className="flex flex-col sm:flex-row">
                                                         <div className="w-full sm:w-20 h-32 sm:h-20 mb-2 sm:mb-0 rounded-md overflow-hidden">
-                                                            <iframe 
+                                                            <iframe
                                                                 src={`https://drive.google.com/file/d/${relatedBannerId}/preview`}
                                                                 className="w-full h-full object-cover"
                                                                 loading="lazy"
@@ -349,8 +810,8 @@ export default function Eventmodel({ event, onClose }) {
                                                                     {relatedEvent.eventTime}
                                                                 </div>
                                                             </div>
-                                                            <button 
-                                                                onClick={() => fetchEventDetails(relatedEvent._id)} 
+                                                            <button
+                                                                onClick={() => fetchEventDetails(relatedEvent._id)}
                                                                 className="mt-2 text-blue-500 hover:underline text-xs sm:text-sm"
                                                             >
                                                                 Know More
@@ -372,26 +833,25 @@ export default function Eventmodel({ event, onClose }) {
                     <div className="border border-gray-300 p-3 sm:p-4 rounded-2xl">
                         <div className="mb-4 sm:mb-6">
                             <h2 className="text-lg sm:text-xl font-bold mb-2">Event Status</h2>
-                            <div className={`inline-block px-2 sm:px-3 py-1 rounded-full text-white text-xs sm:text-sm ${
-                                event.eventStatus === 'upcoming' ? 'bg-blue-500' : 
+                            <div className={`inline-block px-2 sm:px-3 py-1 rounded-full text-white text-xs sm:text-sm ${event.eventStatus === 'upcoming' ? 'bg-blue-500' :
                                 event.eventStatus === 'ongoing' ? 'bg-green-500' : 'bg-gray-500'
-                            }`}>
+                                }`}>
                                 {(event.eventStatus || "").charAt(0).toUpperCase() + (event.eventStatus || "").slice(1)}
                             </div>
                         </div>
-                        
+
                         <h2 className="text-lg sm:text-xl font-bold mb-2 sm:mb-4">Community Leaders</h2>
                         <div className="space-y-3 sm:space-y-4">
                             {eventLeaders.map((leader, index) => (
                                 <div key={index} className="flex justify-between items-center border-b pb-2">
                                     <div className="flex items-center">
-                                        <img 
-                                            src={leader.image} 
-                                            className="rounded-full w-10 h-10 sm:w-12 sm:h-12 border border-gray-300 object-cover" 
+                                        <img
+                                            src={leader.image}
+                                            className="rounded-full w-10 h-10 sm:w-12 sm:h-12 border border-gray-300 object-cover"
                                             alt={leader.name}
                                         />
                                         <div className="ml-2 sm:ml-3">
-                                            <h3 className="font-medium text-sm sm:text-base">{leader.name}</h3> 
+                                            <h3 className="font-medium text-sm sm:text-base">{leader.name}</h3>
                                             <p className="text-xs sm:text-sm text-gray-500">{leader.role}</p>
                                         </div>
                                     </div>
@@ -406,15 +866,16 @@ export default function Eventmodel({ event, onClose }) {
                                     {safeEventGuests.slice(0, 3).map((guest, index) => {
                                         // Safely access nested properties 
                                         const guestId = guest?.guestId || {};
-                                        const guestName = guestId?.name || "Guest";
-                                        const guestImage = guestId?.image || "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg";
+                                        const guestName = guestId?.guestName || "Guest";
+                                        // Use initials avatar if no image is available
+                                        const guestImage = guestId?.guestImage || getInitialsAvatar(guestName);
                                         const guestTag = guest?.guestTag || "guest";
-                                        
+
                                         return (
                                             <div key={index} className="flex items-center">
-                                                <img 
-                                                    src={guestImage} 
-                                                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover" 
+                                                <img
+                                                    src={guestImage}
+                                                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover"
                                                     alt={guestName}
                                                 />
                                                 <div className="ml-2 sm:ml-3">
@@ -425,7 +886,7 @@ export default function Eventmodel({ event, onClose }) {
                                         );
                                     })}
                                     {safeEventGuests.length > 3 && (
-                                        <button 
+                                        <button
                                             onClick={() => setActiveTab("guests")}
                                             className="text-blue-500 text-xs sm:text-sm hover:underline mt-1 sm:mt-2"
                                         >
@@ -442,9 +903,9 @@ export default function Eventmodel({ event, onClose }) {
                                 <div className="space-y-2 sm:space-y-3">
                                     {safeEventSponsors.slice(0, 3).map((sponsor, index) => (
                                         <div key={index} className="flex items-center">
-                                            <img 
-                                                src={sponsor.logoUrl || "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg"} 
-                                                className="w-8 h-8 sm:w-10 sm:h-10 object-cover" 
+                                            <img
+                                                src={sponsor.logoUrl || "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg"}
+                                                className="w-8 h-8 sm:w-10 sm:h-10 object-cover"
                                                 alt={sponsor.name}
                                             />
                                             <div className="ml-2 sm:ml-3">
@@ -454,7 +915,7 @@ export default function Eventmodel({ event, onClose }) {
                                         </div>
                                     ))}
                                     {safeEventSponsors.length > 3 && (
-                                        <button 
+                                        <button
                                             onClick={() => setActiveTab("sponsors")}
                                             className="text-blue-500 text-xs sm:text-sm hover:underline mt-1 sm:mt-2"
                                         >
@@ -472,7 +933,7 @@ export default function Eventmodel({ event, onClose }) {
                                 <div className="space-y-2">
                                     <div className="h-32 border border-gray-200 rounded-xl overflow-hidden">
                                         {safeEventGallery[0] && (
-                                            <iframe 
+                                            <iframe
                                                 src={`https://drive.google.com/file/d/${typeof safeEventGallery[0] === 'string' ? safeEventGallery[0] : (safeEventGallery[0].fileId || safeEventGallery[0]._id || '')}/preview`}
                                                 className="w-full h-full object-cover"
                                                 loading="lazy"
@@ -482,7 +943,7 @@ export default function Eventmodel({ event, onClose }) {
                                         )}
                                     </div>
                                     {safeEventGallery.length > 1 && (
-                                        <button 
+                                        <button
                                             onClick={() => setActiveTab("gallery")}
                                             className="text-blue-500 text-xs sm:text-sm hover:underline mt-1"
                                         >
@@ -499,16 +960,16 @@ export default function Eventmodel({ event, onClose }) {
                 {selectedDetailEvent && (
                     <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50 p-2 sm:p-4">
                         <div className="bg-white w-11/12 md:w-2/3 lg:w-1/2 p-3 sm:p-6 rounded-xl shadow-lg relative max-h-[80vh] overflow-y-auto">
-                            <button 
-                                onClick={() => setSelectedDetailEvent(null)} 
+                            <button
+                                onClick={() => setSelectedDetailEvent(null)}
                                 className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-red-500 text-white p-2 rounded-full hover:bg-red-700"
                             >
                                 <X size={20} />
                             </button>
-                            
+
                             <div className="flex flex-col md:flex-row gap-4 sm:gap-6">
                                 <div className="md:w-1/3 h-40 sm:h-48 md:h-64 rounded-lg overflow-hidden">
-                                    <iframe 
+                                    <iframe
                                         src={`https://drive.google.com/file/d/${extractBannerFileId(selectedDetailEvent.eventBanner)}/preview`}
                                         className="w-full h-full object-cover"
                                         loading="lazy"
@@ -516,22 +977,21 @@ export default function Eventmodel({ event, onClose }) {
                                         allow="autoplay"
                                     ></iframe>
                                 </div>
-                                
+
                                 <div className="md:w-2/3">
                                     <h2 className="text-xl sm:text-2xl font-bold">{selectedDetailEvent.eventName}</h2>
-                                    
+
                                     <div className="flex flex-wrap gap-2 mt-2">
                                         <span className="bg-gray-200 text-gray-800 px-2 py-1 rounded text-xs sm:text-sm">
                                             {selectedDetailEvent.eventType}
                                         </span>
-                                        <span className={`px-2 py-1 rounded text-xs sm:text-sm text-white ${
-                                            selectedDetailEvent.eventStatus === 'upcoming' ? 'bg-blue-500' : 
+                                        <span className={`px-2 py-1 rounded text-xs sm:text-sm text-white ${selectedDetailEvent.eventStatus === 'upcoming' ? 'bg-blue-500' :
                                             selectedDetailEvent.eventStatus === 'ongoing' ? 'bg-green-500' : 'bg-gray-500'
-                                        }`}>
+                                            }`}>
                                             {selectedDetailEvent.eventStatus}
                                         </span>
                                     </div>
-                                    
+
                                     <div className="mt-4 space-y-2 text-gray-700">
                                         <div className="flex items-center">
                                             <Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-500" />
@@ -542,34 +1002,34 @@ export default function Eventmodel({ event, onClose }) {
                                                 day: 'numeric'
                                             })}</span>
                                         </div>
-                                        
+
                                         <div className="flex items-center">
                                             <Clock className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-500" />
                                             <span className="text-xs sm:text-sm">{selectedDetailEvent.eventTime}</span>
                                         </div>
-                                        
+
                                         <div className="flex items-center">
                                             <MapPin className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-500" />
                                             <span className="text-xs sm:text-sm">{selectedDetailEvent.eventVenue}</span>
                                         </div>
-                                        
+
                                         <div className="flex items-center">
                                             <UsersIcon className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-500" />
                                             <span className="text-xs sm:text-sm">{selectedDetailEvent.eventOrganizerBatch}</span>
                                         </div>
                                     </div>
-                                    
+
                                     <div className="mt-4">
                                         <h3 className="font-semibold text-base sm:text-lg mb-2">Description</h3>
                                         <p className="text-gray-600 text-xs sm:text-sm">{selectedDetailEvent.eventDescription}</p>
                                     </div>
-                                    
+
                                     <div className="mt-6 flex justify-end gap-3">
-                                        <Button 
-                                            color="white" 
-                                            bgColor="#ca0019" 
-                                            border={4} 
-                                            borderColor="#ca0019" 
+                                        <Button
+                                            color="white"
+                                            bgColor="#ca0019"
+                                            border={4}
+                                            borderColor="#ca0019"
                                             iconColor="black"
                                             onClick={() => {
                                                 setSelectedDetailEvent(null);
@@ -586,6 +1046,94 @@ export default function Eventmodel({ event, onClose }) {
                     </div>
                 )}
             </div>
+            {/* Registration Form Modal */}
+            <Dialog
+                open={registrationModalOpen}
+                onClose={() => !registrationLoading && setRegistrationModalOpen(false)}
+                fullWidth
+                maxWidth="md"
+                sx={{
+                    zIndex: 99999999, // Higher than the parent modal's z-index
+                    '& .MuiBackdrop-root': {
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)' // Making backdrop darker for better visibility
+                    }
+                }}
+            >
+                <DialogTitle>
+                    Registration Form: {event?.eventName}
+                    <IconButton
+                        aria-label="close"
+                        onClick={() =>
+                            !registrationLoading && setRegistrationModalOpen(false)
+                        }
+                        sx={{ position: "absolute", right: 8, top: 8 }}
+                    >
+                        <Close />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent dividers>
+                    {registrationSuccess ? (
+                        <Alert severity="success" sx={{ mb: 2 }}>
+                            Your form has been submitted successfully! Thank you for your
+                            response.
+                        </Alert>
+                    ) : (
+                        <>
+                            {formErrors.submit && (
+                                <Alert severity="error" sx={{ mb: 2 }}>
+                                    {formErrors.submit}
+                                </Alert>
+                            )}
+
+                            <Typography variant="body2" color="text.secondary" paragraph>
+                                Please complete the following form to register for this event.
+                                Fields marked with * are required.
+                            </Typography>
+
+                            {formFields.length > 0 ? (
+                                formFields.map((field) => renderFormField(field))
+                            ) : (
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        alignItems: "center",
+                                        py: 4,
+                                    }}
+                                >
+                                    <CircularProgress sx={{ mb: 2 }} />
+                                    <Typography>Loading form fields...</Typography>
+                                </Box>
+                            )}
+                        </>
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        color="white"
+                        bgColor="#ca0019" border={4} borderColor="#ca0019" iconColor="black"
+                        onClick={() =>
+                            !registrationLoading && setRegistrationModalOpen(false)
+                        }
+                        disabled={registrationLoading}
+                    >
+                        Cancel
+                    </Button>
+                    {!registrationSuccess && formFields.length > 0 && (
+                        <Button
+                            color="white"
+                            bgColor="#ca0019" border={4} borderColor="#ca0019" iconColor="black"
+                            onClick={handleSubmitRegistrationForm}
+                            disabled={registrationLoading}
+                            startIcon={
+                                registrationLoading ? <CircularProgress size={20} /> : null
+                            }
+                        >
+                            {registrationLoading ? "Submitting..." : "Submit Registration"}
+                        </Button>
+                    )}
+                </DialogActions>
+            </Dialog>
         </div>
     );
 }

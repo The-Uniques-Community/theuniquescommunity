@@ -27,7 +27,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import axios from 'axios';
-
+import userIcon from "@/assets/img/user-icon.png"
 import tu from '@/assets/logos/tu.png';
 
 export const NewMember = ({ user, refreshData }) => {
@@ -239,7 +239,7 @@ export const NewMember = ({ user, refreshData }) => {
 
           {/* User Details */}
           <div className="flex items-center gap-3">
-            <Avatar src={user.profilePic} alt={user.fullName} className="w-12 h-12" />
+            <img src={user.profilePic?.fileUrl || userIcon} alt={user.fullName} className="w-12 h-12" />
             <div>
               <h2 className="text-lg font-semibold">{user.fullName}</h2>
               <p className="text-gray-500 text-sm">{user.bio ? (user.bio.slice(0, 36) + "...") : "No bio available"}</p>
@@ -265,7 +265,7 @@ export const NewMember = ({ user, refreshData }) => {
           {/* Profile Header */}
           <div className="flex items-center flex-wrap gap-y-5 justify-between mb-4">
             <div className="flex items-center gap-4">
-              <Avatar src={user.profilePic} alt={user.fullName} className="w-16 h-16 border-2 border-blue-500" />
+              <img src={user.profilePic?.fileUrl || userIcon} alt={user.fullName} className="w-16 h-16 border-2 border-blue-500" />
               <div>
                 <h2 className="text-xl font-semibold">{user.fullName}</h2>
                 <p className="text-gray-500 text-sm">{user.email}</p>

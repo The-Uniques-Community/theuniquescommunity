@@ -473,6 +473,103 @@ export const getFineStatistics = async (req, res) => {
   }
 };
 
+export const getAllMembersWithFines = async (req, res) => {
+  try {
+    const { batch, search, status } = req.query;
+    
+    // Build query filter - starts empty to get all members with fines
+    let filter = { 'fines.0': { $exists: true } }; // Only members who have at least one fine
+    
+    // Filter by status if provided
+    if (status && ['pending', 'paid', 'waived'].includes(status.toLowerCase())) {
+      filter['fines.status'] = status.toLowerCase();
+    }
+    
+    // Filter by batch if provided
+    if (batch && batch !== 'All Batches') {
+      filter.batch = batch;
+    }
+    
+    // Filter by search term if provided
+    if (search && search.trim() !== '') {
+      filter.$or = [
+        { fullName: { $regex: search, $options: 'i' } },
+        { admno: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } }
+      ];
+    }
+    
+    // Fetch all matching members without pagination
+    const members = await Member.find(filter)
+      .select('fullName admno email batch fines profilePic createdAt updatedAt')
+      .sort({ updatedAt: -1 });
+    
+    // Process members to include fine statistics
+    const membersWithDetails = members.map(member => {
+      // Get all fines
+      const allFines = member.fines || [];
+      
+      // Get pending fines
+      const pendingFines = allFines.filter(fine => fine.status === 'pending');
+      // Get paid fines
+      const paidFines = allFines.filter(fine => fine.status === 'paid');
+      // Get waived fines
+      const waivedFines = allFines.filter(fine => fine.status === 'waived');
+      
+      // Calculate total amounts by status
+      const totalPendingAmount = pendingFines.reduce((sum, fine) => sum + fine.amount, 0);
+      const totalPaidAmount = paidFines.reduce((sum, fine) => sum + fine.amount, 0);
+      const totalWaivedAmount = waivedFines.reduce((sum, fine) => sum + fine.amount, 0);
+      
+      return {
+        id: member._id,
+        name: member.fullName,
+        admno: member.admno,
+        email: member.email,
+        batch: member.batch,
+        profilePic: member.profilePic,
+        pendingFinesCount: pendingFines.length,
+        paidFinesCount: paidFines.length,
+        waivedFinesCount: waivedFines.length,
+        totalPendingAmount,
+        totalPaidAmount,
+        totalWaivedAmount,
+        totalFinesCount: allFines.length,
+        updatedAt: member.updatedAt,
+        createdAt: member.createdAt
+      };
+    });
+    
+    // Sort results based on status filter
+    if (status === 'pending') {
+      membersWithDetails.sort((a, b) => b.totalPendingAmount - a.totalPendingAmount);
+    } else if (status === 'paid') {
+      membersWithDetails.sort((a, b) => b.totalPaidAmount - a.totalPaidAmount);
+    } else if (status === 'waived') {
+      membersWithDetails.sort((a, b) => b.totalWaivedAmount - a.totalWaivedAmount);
+    } else {
+      // Default sort - prioritize members with pending fines
+      membersWithDetails.sort((a, b) => b.totalPendingAmount - a.totalPendingAmount);
+    }
+    
+    return res.status(200).json({
+      success: true,
+      message: 'Members with fines retrieved successfully',
+      data: {
+        count: membersWithDetails.length,
+        members: membersWithDetails
+      }
+    });
+  } catch (error) {
+    console.error('Error retrieving members with fines:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error retrieving members with fines',
+      error: error.message
+    });
+  }
+};
+
 /**
  * Get members with pending fines
  * @route GET /api/admin/fines/pending/members

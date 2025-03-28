@@ -19,7 +19,7 @@ import {
 } from "@mui/icons-material";
 import "tailwindcss/tailwind.css";
 import ProfileModal from "../Modal/ProfileModal";
-
+import userIcon from "@/assets/img/user-icon.png"
 const UserProfileModal = ({ open, handleClose, userData }) => {
   const [activeTab, setActiveTab] = useState(0);
 
@@ -48,8 +48,8 @@ const UserProfileModal = ({ open, handleClose, userData }) => {
         {/* Fixed Profile Section */}
         <div className="flex flex-col md:flex-row gap-6 mb-6">
           <div className="flex-shrink-0">
-            <Avatar
-              src={userData?.profilePic}
+            <img
+              src={userData?.profilePic?.fileUrl || userIcon}
               sx={{ width: 120, height: 120 }}
               className="border-2 border-gray-200"
             />
@@ -315,8 +315,8 @@ export const MemberCardDashboard = ({ user }) => {
 
           {/* User Details */}
           <div className="flex items-center gap-3">
-            <Avatar
-              src={user.profilePic}
+            <img
+              src={user.profilePic?.fileUrl || userIcon}
               alt={user.fullName}
               className="w-16 h-16"
             />

@@ -1,8 +1,8 @@
 import * as React from "react";
 
 const About = (props) => (
-    <div className="flex container mx-auto justify-center gap-16 md:flex-nowrap flex-wrap items-center px-3 pt-24">
-        <div className="lg:w-1/2"><div className="lg:ml-auto  lg:mx-0  mx-auto" style={{ width: "80%" }}>
+    <div className="flex container mx-auto justify-center gap-16 md:flex-nowrap flex-wrap items-center pt-24">
+        <div className="lg:w-1/2"><div className="lg:ml-auto  lg:mx-0  mx-auto">
             <svg
                 width="100%"
                 height="auto"
@@ -36,7 +36,7 @@ const About = (props) => (
         </div>
         </div>
         <div className="md:w-1/2 p-4">
-            <div className="md:w-[80%] text-left">
+            <div className=" text-left">
                 <p className="bg-[#ca0019] md:text-left p-2 text-2xl text-white">
                     What is the Criteria for Being an Ambassador?
                 </p>
