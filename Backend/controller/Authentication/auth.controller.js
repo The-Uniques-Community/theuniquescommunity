@@ -28,8 +28,8 @@ export const googleCallback = (req, res, next) => {
   // Set an HTTP‑only cookie for the token on the backend domain.
   res.cookie("token", token, {
     httpOnly: true,
-    secure: false, // set to true in production
-    sameSite: "lax", // adjust as needed
+    secure: process.env.NODE_ENV === "production", // set to true in production
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",// adjust as needed
     // domain: '.example.com',  // if you want to share across subdomains
   });
 
@@ -140,8 +140,8 @@ export const emailLogin = async (req, res) => {
     const token = generateToken(member);
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
 
     return res.json({
@@ -166,8 +166,8 @@ export const getCurrentUser = (req, res) => {
 export const logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: false, // Set true in production
-    sameSite: "lax", // Adjust as needed
+    secure: process.env.NODE_ENV === "production", // Set true in production
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Adjust as needed
   });
   return res.status(200).json({ message: "Logged out successfully" });
 };
