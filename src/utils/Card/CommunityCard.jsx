@@ -3,7 +3,7 @@ import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import ScheduleOutlinedIcon from "@mui/icons-material/ScheduleOutlined";
 import "./communitycard.css";
-import logo from "@/assets/logos/theuniquescommunity.png";
+import logo from "@/assets/logos/theuniquesCommunity.png";
 
 const CommunityCard = ({ event }) => {
   // Function to format the banner URL for Google Drive
