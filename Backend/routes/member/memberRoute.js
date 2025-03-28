@@ -1,5 +1,5 @@
 import express from 'express';
-import multer from 'multer';
+
 import { register, login, logout, editProfile, getProfile, uploadDummyMembers,updateAchievements,
   updateCertifications,
   updateProjects,
@@ -10,7 +10,6 @@ import { register, login, logout, editProfile, getProfile, uploadDummyMembers,up
 import { updateMemberFines } from '../../controller/member/members.js';
 const memberRoute = express.Router()
 // Configure Multer for temporary file storage
-const upload = multer({ dest: "uploads/" });
 import Member from '../../models/member/memberModel.js';
 import verifyToken from '../../middlewares/verifyToken.js';
 memberRoute.post('/register', register);
