@@ -25,6 +25,7 @@ import TestimonialSectionCarousel from "./homComponents/TestimonialCard";
 import Batches from "./homComponents/Batches";
 import EventForm from "@/utils/event/EventForm";
 import HomeHero from "./homComponents/HomeHero";
+import BlogSection from "./homComponents/BlogSection";
 
 const index = () => {
   const theme = useTheme();
@@ -160,6 +161,10 @@ const index = () => {
       <div className="spacer py-10"></div>
       <section>
         {/* <Logo/> */}
+      </section>
+      <div className="spacer py-10"></div>
+      <section>
+          <BlogSection/>
       </section>
       <div className="spacer py-10"></div>
       <section>
