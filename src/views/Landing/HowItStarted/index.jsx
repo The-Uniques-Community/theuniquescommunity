@@ -8,7 +8,7 @@ const index = () => {
     return (
         <div>
             <Header />
-            {/* <TimeLine /> */}
+            <TimeLine />
             <Flight />
             <CallToAction />
         </div>

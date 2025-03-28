@@ -1,7 +1,6 @@
 import React from "react";
 import Person2OutlinedIcon from "@mui/icons-material/Person2Outlined";
 import { Box, Container, Stack, Chip, Typography } from "@mui/material";
-import { Meteors } from "@/components/magicui/meteors";
 
 const CelebrationComponent = ({
     title = "Uniques’ Odyssey → Idea to Impact ✦",
@@ -19,16 +18,13 @@ const CelebrationComponent = ({
                 padding: "2rem 0",
             }}
         >
-         
             <Container maxWidth="lg">
-            <Meteors number={30} />
                 <Stack spacing={4} alignItems="center" sx={{
                     paddingTop: "40px",
                     paddingBottom: "40px",
                     borderBottomLeftRadius: "40px",
                     borderBottomRightRadius: "40px",
                 }}>
-                   
                     {/* Chip Section */}
                     <Chip
                         variant="outlined"
