@@ -525,6 +525,7 @@ export const getAllMembersWithFines = async (req, res) => {
         id: member._id,
         name: member.fullName,
         admno: member.admno,
+        fineId: member.fines.map(fine => fine._id),
         email: member.email,
         batch: member.batch,
         profilePic: member.profilePic,
