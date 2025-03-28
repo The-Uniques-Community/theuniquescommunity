@@ -23,7 +23,7 @@ import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api/admin';
+const API_BASE_URL = 'https://theuniquesbackend.vercel.app/api/admin';
 
 const index = () => {
   // State for statistics

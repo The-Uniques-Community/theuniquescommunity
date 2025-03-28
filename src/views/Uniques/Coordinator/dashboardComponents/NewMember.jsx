@@ -78,7 +78,7 @@ export const NewMember = ({ user, refreshData }) => {
       setBlockLoading(true);
       
       // API call to toggle block status
-      const response = await axios.patch(`http://localhost:5000/api/admin/member/${user._id}/block`);
+      const response = await axios.patch(`https://theuniquesbackend.vercel.app/api/admin/member/${user._id}/block`);
       
       // Show success message
       setAlert({
@@ -127,7 +127,7 @@ export const NewMember = ({ user, refreshData }) => {
       setSuspendLoading(true);
       
       // API call to toggle suspend status
-      const response = await axios.patch(`http://localhost:5000/api/admin/member/${user._id}/suspend`, {
+      const response = await axios.patch(`https://theuniquesbackend.vercel.app/api/admin/member/${user._id}/suspend`, {
         reason: suspendReason
       });
       
@@ -190,7 +190,7 @@ export const NewMember = ({ user, refreshData }) => {
       setLoading(true);
       
       // API call to impose fine
-      const response = await axios.post(`http://localhost:5000/api/admin/fine/members/${user._id}/fines`, {
+      const response = await axios.post(`https://theuniquesbackend.vercel.app/api/admin/fine/members/${user._id}/fines`, {
         amount: Number(fineAmount),
         reason: fineReason.trim()
       });

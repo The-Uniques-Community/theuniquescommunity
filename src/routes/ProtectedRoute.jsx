@@ -10,7 +10,7 @@ const ProtectedRoute = ({ role, element, redirectPath = "/401" }) => {
   // Function to log out the user (clearing the token on the backend)
   const logout = async () => {
     try {
-      await axios.post("http://localhost:5000/auth/logout", {}, { withCredentials: true });
+      await axios.post("https://theuniquesbackend.vercel.app/auth/logout", {}, { withCredentials: true });
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -21,7 +21,7 @@ const ProtectedRoute = ({ role, element, redirectPath = "/401" }) => {
       try {
         if (role) {
           // Call the backend endpoint that verifies the role using the verifyRole middleware
-          await axios.get(`http://localhost:5000/auth/verify_role?role=${role}`, {
+          await axios.get(`https://theuniquesbackend.vercel.app/auth/verify_role?role=${role}`, {
             withCredentials: true,
           });
         }

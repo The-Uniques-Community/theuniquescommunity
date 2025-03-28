@@ -167,7 +167,7 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
 
       // Make API call to impose fine
       await axios.post(
-        `http://localhost:5000/api/admin/member/${user._id}/fine`,
+        `https://theuniquesbackend.vercel.app/api/admin/member/${user._id}/fine`,
         {
           amount: Number(fineAmount),
           reason: fineReason.trim(),

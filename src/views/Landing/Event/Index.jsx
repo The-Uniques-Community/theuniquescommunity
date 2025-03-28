@@ -30,7 +30,7 @@ const Index = () => {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5000/api/events');
+        const response = await axios.get('https://theuniquesbackend.vercel.app/api/events');
         
         if (response.data && Array.isArray(response.data.events)) {
           const eventsData = response.data.events;

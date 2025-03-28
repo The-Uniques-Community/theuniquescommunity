@@ -77,7 +77,7 @@ const index = () => {
         setLoading(true);
         
         // Fetch all members
-        const membersRes = await axios.get('http://localhost:5000/api/admin/member?page=1&limit=10');
+        const membersRes = await axios.get('https://theuniquesbackend.vercel.app/api/admin/member?page=1&limit=10');
         
         // Get recently added members (sorted by creation date)
         const sortedMembers = [...membersRes.data.data].sort((a, b) => 
@@ -89,7 +89,7 @@ const index = () => {
         const totalMembers = membersRes.data.pagination?.total || membersRes.data.data.length;
         
         // Fetch members with fines
-        const fineRes = await axios.get('http://localhost:5000/api/admin/member/fines/all');
+        const fineRes = await axios.get('https://theuniquesbackend.vercel.app/api/admin/member/fines/all');
         setFineMembers(fineRes.data.data);
         
         // Calculate total fine amount - improved calculation
@@ -105,7 +105,7 @@ const index = () => {
         // Alternative: fetch total fine directly if API supports it
         try {
           // Try to get the total fine from a dedicated API endpoint
-          const fineStatsRes = await axios.get('http://localhost:5000/api/admin/fine/fines/statistics');
+          const fineStatsRes = await axios.get('https://theuniquesbackend.vercel.app/api/admin/fine/fines/statistics');
           if (fineStatsRes.data && fineStatsRes.data.success && fineStatsRes.data.data) {
             // Use the total pending amount as the fine amount for the dashboard
             totalFineAmount = fineStatsRes.data.data.totalPendingAmount || totalFineAmount;
@@ -117,7 +117,7 @@ const index = () => {
         
         // Fetch events from the correct API endpoint
         try {
-          const eventsRes = await axios.get('http://localhost:5000/api/events');
+          const eventsRes = await axios.get('https://theuniquesbackend.vercel.app/api/events');
           // Handle API response based on its structure (data property or direct array)
           const eventsList = eventsRes.data.data || eventsRes.data;
           setEvents(eventsList.slice(0, 3));
@@ -168,7 +168,7 @@ const index = () => {
         }));
         
         // Fetch members with supplementary exams for semester 1
-        const supplementaryRes = await axios.get(`http://localhost:5000/api/admin/member/supplementary/semester/${currentSemester}`);
+        const supplementaryRes = await axios.get(`https://theuniquesbackend.vercel.app/api/admin/member/supplementary/semester/${currentSemester}`);
         setSupplementaryMembers(supplementaryRes.data.data);
         
         setLoading(false);
@@ -186,7 +186,7 @@ const index = () => {
     try {
       setLoading(true);
       setCurrentSemester(semester);
-      const res = await axios.get(`http://localhost:5000/api/admin/member/supplementary/semester/${semester}`);
+      const res = await axios.get(`https://theuniquesbackend.vercel.app/api/admin/member/supplementary/semester/${semester}`);
       setSupplementaryMembers(res.data.data);
       setLoading(false);
     } catch (error) {

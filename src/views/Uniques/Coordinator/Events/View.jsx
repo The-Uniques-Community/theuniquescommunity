@@ -191,7 +191,7 @@ const EventView = () => {
     const fetchEvent = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:5000/api/events/${id}`);
+        const response = await fetch(`https://theuniquesbackend.vercel.app/api/events/${id}`);
         const data = await response.json();
 
         if (data.success) {
@@ -221,7 +221,7 @@ const EventView = () => {
   // Fetch available guests
   const fetchAvailableGuests = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/guest/get-all-guests`);
+      const response = await fetch(`https://theuniquesbackend.vercel.app/api/guest/get-all-guests`);
       const data = await response.json();
 
       if (data.success) {
@@ -236,7 +236,7 @@ const EventView = () => {
   const fetchFormResponses = async (eventId) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/events/${eventId}/form-responses`
+        `https://theuniquesbackend.vercel.app/api/events/${eventId}/form-responses`
       );
       const data = await response.json();
 
@@ -298,7 +298,7 @@ const EventView = () => {
   // Save event changes
   const handleSaveChanges = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/events/${id}`, {
+      const response = await fetch(`https://theuniquesbackend.vercel.app/api/events/${id}`, {
         method: "PUT",
         credentials: "include",
         body: JSON.stringify(editedEvent),
@@ -340,7 +340,7 @@ const EventView = () => {
       }
 
       const uploadResponse = await fetch(
-        "http://localhost:5000/upload/event_file_upload",
+        "https://theuniquesbackend.vercel.app/upload/event_file_upload",
         {
           method: "POST",
           credentials: "include",
@@ -355,7 +355,7 @@ const EventView = () => {
         const imageIds = uploadResult.files.map((file) => file._id);
 
         const galleryResponse = await fetch(
-          `http://localhost:5000/api/events/${id}/gallery`,
+          `https://theuniquesbackend.vercel.app/api/events/${id}/gallery`,
           {
             method: "PATCH",
             headers: {
@@ -391,7 +391,7 @@ const EventView = () => {
   const handleRemoveImage = async (imageId) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/events/${id}/gallery`,
+        `https://theuniquesbackend.vercel.app/api/events/${id}/gallery`,
         {
           method: "PATCH",
           headers: {
@@ -437,11 +437,11 @@ const EventView = () => {
 
       // If event has a form, redirect to the form submission page
       if (event.eventForm && event.eventForm.formId) {
-        const formUrl = `http://localhost:5000/api/forms/${event.eventForm.formId}/submit?eventId=${id}`;
+        const formUrl = `https://theuniquesbackend.vercel.app/api/forms/${event.eventForm.formId}/submit?eventId=${id}`;
         window.open(formUrl, "_blank");
       } else {
         // Simple registration without form
-        const response = await fetch(`http://localhost:5000/api/events/${id}/register`, {
+        const response = await fetch(`https://theuniquesbackend.vercel.app/api/events/${id}/register`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -478,7 +478,7 @@ const EventView = () => {
     if (!selectedGuest) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/events/${id}/guests`, {
+      const response = await fetch(`https://theuniquesbackend.vercel.app/api/events/${id}/guests`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -511,7 +511,7 @@ const EventView = () => {
   // Remove guest from event
   const handleRemoveGuest = async (guestId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/events/${id}/guests/${guestId}`, {
+      const response = await fetch(`https://theuniquesbackend.vercel.app/api/events/${id}/guests/${guestId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -1196,7 +1196,7 @@ const EventView = () => {
                             boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                           }}>
                             <iframe
-                              src={`http://localhost:5000/api/forms/${event.eventForm.formId}/preview`}
+                              src={`https://theuniquesbackend.vercel.app/api/forms/${event.eventForm.formId}/preview`}
                               style={{ width: '100%', height: '400px', border: 'none' }}
                               title="Form Preview"
                             />
@@ -1364,7 +1364,7 @@ const EventView = () => {
                     onChange={async (e) => {
                       try {
                         const response = await fetch(
-                          `http://localhost:5000/api/events/${id}/status`,
+                          `https://theuniquesbackend.vercel.app/api/events/${id}/status`,
                           {
                             method: "PATCH",
                             headers: {

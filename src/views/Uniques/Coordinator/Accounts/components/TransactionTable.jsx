@@ -72,7 +72,7 @@ import tu from '@/assets/logos/tu.png';
 import * as XLSX from 'xlsx';
 
 // Base API URL
-const API_BASE_URL = 'http://localhost:5000/api/admin/fine';
+const API_BASE_URL = 'https://theuniquesbackend.vercel.app/api/admin/fine';
 
 const FineTable = () => {
   const theme = useTheme();

@@ -74,7 +74,7 @@
 // import { toast } from "react-toastify";
 
 // // Define the API base URL
-// const API_URL = "http://localhost:5000";
+// const API_URL = "https://theuniquesbackend.vercel.app";
 
 // // Register ChartJS components
 // ChartJS.register(
@@ -3914,7 +3914,7 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents"
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from 'recharts'
 
 // API base URL
-const API_BASE_URL = "http://localhost:5000/api"
+const API_BASE_URL = "https://theuniquesbackend.vercel.app/api"
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props

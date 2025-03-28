@@ -106,27 +106,27 @@ const MembersIndex = () => {
   const fetchTabCounts = async () => {
     try {
       // Get total count
-      const totalResponse = await axios.get("http://localhost:5000/api/admin/member/count");
+      const totalResponse = await axios.get("https://theuniquesbackend.vercel.app/api/admin/member/count");
       
       // Get batch counts
-      const batch1Response = await axios.get("http://localhost:5000/api/admin/member/count", {
+      const batch1Response = await axios.get("https://theuniquesbackend.vercel.app/api/admin/member/count", {
         params: { batch: "The Uniques 1.0" }
       });
       
-      const batch2Response = await axios.get("http://localhost:5000/api/admin/member/count", {
+      const batch2Response = await axios.get("https://theuniquesbackend.vercel.app/api/admin/member/count", {
         params: { batch: "The Uniques 2.0" }
       });
       
-      const batch3Response = await axios.get("http://localhost:5000/api/admin/member/count", {
+      const batch3Response = await axios.get("https://theuniquesbackend.vercel.app/api/admin/member/count", {
         params: { batch: "The Uniques 3.0" }
       });
       
-      const batch4Response = await axios.get("http://localhost:5000/api/admin/member/count", {
+      const batch4Response = await axios.get("https://theuniquesbackend.vercel.app/api/admin/member/count", {
         params: { batch: "The Uniques 4.0" }
       });
       
       // Get blocked count
-      const blockedResponse = await axios.get("http://localhost:5000/api/admin/member/count", {
+      const blockedResponse = await axios.get("https://theuniquesbackend.vercel.app/api/admin/member/count", {
         params: { isSuspended: true }
       });
       
@@ -167,7 +167,7 @@ const MembersIndex = () => {
       }
       
       // Make API call with proper filtering
-      const response = await axios.get("http://localhost:5000/api/admin/member", { params });
+      const response = await axios.get("https://theuniquesbackend.vercel.app/api/admin/member", { params });
       
       // Filter the results again on the client side to ensure only appropriate members are shown
       let filteredMembers = response.data.data || [];
@@ -286,7 +286,7 @@ const MembersIndex = () => {
     try {
       setAddMemberLoading(true);
       
-      const response = await axios.post('http://localhost:5000/api/admin/member/add', newMember);
+      const response = await axios.post('https://theuniquesbackend.vercel.app/api/admin/member/add', newMember);
       
       if (response.data.success) {
         // Store member info in state
