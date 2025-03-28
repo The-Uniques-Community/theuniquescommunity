@@ -27,17 +27,20 @@ import EventForm from "@/utils/event/EventForm";
 import HomeHero from "./homComponents/HomeHero";
 import BlogSection from "./homComponents/BlogSection";
 
+
+
+
 const index = () => {
   const theme = useTheme();
   const [selectedBlog, setSelectedBlog] = useState(null);
   return (
     <div>
       {/* <Navbar /> */}
-      <HomeHero/>
+      <HomeHero />
       <div className="py-20"> </div>
       <section>
         {/* <LandingStats /> */}
-        <Counts/>
+        <Counts />
       </section>
 
       <div className="spacer py-10"></div>
@@ -46,15 +49,13 @@ const index = () => {
       </section>
       <div className="spacer py-10"></div>
       <section>
-        <Batches/>
+        <Batches />
       </section>
       <div className="spacer py-10"></div>
       <section>
         <TrainingTabs />
       </section>
 
-      
-      
       {/* <div className="spacer py-10"></div> */}
       {/* <div>
         <div className="lg:ps-16 px-6">
@@ -73,14 +74,15 @@ const index = () => {
           ))}
         </div>
       </div> */}
-      
+
       <div className="spacer py-10"></div>
       <section>
-        <Startups/>
+        <Startups />
       </section>
+   
       <div className="spacer py-10"></div>
       <section>
-        <WhyUs/>
+        <WhyUs />
       </section>
       <div className="spacer py-8"></div>
       <section>
@@ -154,21 +156,19 @@ const index = () => {
             </div>
           </div>
         </div> */}
-        <Gallery/>
+        <Gallery />
         {/* <HoverCard /> */}
       </section>
-      
+
+      <div className="spacer py-10"></div>
+      <section>{/* <Logo/> */}</section>
       <div className="spacer py-10"></div>
       <section>
-        {/* <Logo/> */}
+        <BlogSection />
       </section>
       <div className="spacer py-10"></div>
       <section>
-          <BlogSection/>
-      </section>
-      <div className="spacer py-10"></div>
-      <section>
-        <TestimonialSectionCarousel/>
+        <TestimonialSectionCarousel />
       </section>
       <div className="spacer py-10"></div>
       <div className="my-6">

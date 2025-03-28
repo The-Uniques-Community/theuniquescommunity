@@ -43,6 +43,7 @@
     "formik": "^2.4.6",
     "fortawesome": "^0.0.1-security",
     "framer-motion": "^11.15.0",
+    "gl-matrix": "^3.4.3",
     "googleapis": "^146.0.0",
     "gsap": "^3.12.7",
     "jspdf": "^3.0.1",
