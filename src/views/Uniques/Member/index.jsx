@@ -3914,7 +3914,7 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents"
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer } from 'recharts'
 
 // API base URL
-const API_BASE_URL = "https://theuniquesbackend.vercel.app/api"
+const API_BASE_URL = "https://theuniquesbackend.vercel.app"
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props
@@ -4050,7 +4050,7 @@ const Index = () => {
     const fetchUserData = async () => {
       try {
         setPageLoading(true)
-        const response = await axios.get(`${API_BASE_URL}/member/getProfile`, {
+        const response = await axios.get(`${API_BASE_URL}/api/member/getProfile`, {
           withCredentials: true,
         })
 
@@ -4075,7 +4075,7 @@ const Index = () => {
   const refreshData = async () => {
     try {
       setLoading(true)
-      const response = await axios.get(`${API_BASE_URL}/member/getProfile`, {
+      const response = await axios.get(`${API_BASE_URL}/api/member/getProfile`, {
         withCredentials: true,
       })
 
@@ -4159,7 +4159,7 @@ const Index = () => {
 
       // Make API call to impose fine
       await axios.post(
-        `${API_BASE_URL}/admin/member/${user._id}/fine`,
+        `${API_BASE_URL}/api/admin/member/${user._id}/fine`,
         {
           amount: Number(fineAmount),
           reason: fineReason.trim(),
@@ -4239,7 +4239,7 @@ const Index = () => {
       }
   
       await axios.put(
-        `${API_BASE_URL}/member/members/${user._id}/editProfile`,
+        `${API_BASE_URL}/api/member/members/${user._id}/editProfile`,
         dataToUpdate,
         { withCredentials: true }
       );
@@ -4330,7 +4330,7 @@ const Index = () => {
 
         // Update profile picture in database
         await axios.put(
-          `${API_BASE_URL}/member/members/${user._id}/editProfile`,
+          `${API_BASE_URL}/api/member/members/${user._id}/editProfile`,
           { profilePic: fileData },
           { withCredentials: true }
         );
@@ -4400,7 +4400,7 @@ const Index = () => {
 
       // Make API call to update achievements
       await axios.put(
-        `${API_BASE_URL}/member/members/${user._id}/achievements`,
+        `${API_BASE_URL}/api/member/members/${user._id}/achievements`,
         { achievements: updatedAchievements },
         {
           withCredentials: true,
@@ -4436,7 +4436,7 @@ const Index = () => {
 
       // Make API call to update achievements
       await axios.put(
-        `${API_BASE_URL}/member/members/${user._id}/achievements`,
+        `${API_BASE_URL}/api/member/members/${user._id}/achievements`,
         { achievements: updatedAchievements },
         {
           withCredentials: true,
@@ -4564,7 +4564,7 @@ const Index = () => {
 
       // Make API call to update certifications
       await axios.put(
-        `${API_BASE_URL}/member/members/${user._id}/certifications`,
+        `${API_BASE_URL}/api/member/members/${user._id}/certifications`,
         { certifications: updatedCertifications },
         {
           withCredentials: true,
@@ -4601,7 +4601,7 @@ const Index = () => {
 
       // Make API call to update certifications
       await axios.put(
-        `${API_BASE_URL}/member/members/${user._id}/certifications`,
+        `${API_BASE_URL}/api/member/members/${user._id}/certifications`,
         { certifications: updatedCertifications },
         {
           withCredentials: true,
@@ -4729,7 +4729,7 @@ const Index = () => {
       }
   
       await axios.put(
-        `${API_BASE_URL}/member/members/${user._id}/projects`,
+        `${API_BASE_URL}/api/member/members/${user._id}/projects`,
         { projects: updatedProjects },
         { withCredentials: true }
       );
@@ -4761,7 +4761,7 @@ const Index = () => {
       updatedProjects.splice(index, 1);
   
       await axios.put(
-        `${API_BASE_URL}/member/members/${user._id}/projects`,
+        `${API_BASE_URL}/api/member/members/${user._id}/projects`,
         { projects: updatedProjects },
         { withCredentials: true }
       );
@@ -4870,7 +4870,7 @@ const Index = () => {
 
       // Make API call to update internships
       await axios.put(
-        `${API_BASE_URL}/member/members/${user._id}/internships`,
+        `${API_BASE_URL}/api/member/members/${user._id}/internships`,
         { internships: updatedInternships },
         {
           withCredentials: true,
@@ -4906,7 +4906,7 @@ const Index = () => {
 
       // Make API call to update internships
       await axios.put(
-        `${API_BASE_URL}/member/members/${user._id}/internships`,
+        `${API_BASE_URL}/api/member/members/${user._id}/internships`,
         { internships: updatedInternships },
         {
           withCredentials: true,
@@ -5009,7 +5009,7 @@ const Index = () => {
   
       // Make API call to update events
       await axios.put(
-        `${API_BASE_URL}/member/members/${user._id}/events`,
+        `${API_BASE_URL}/api/member/members/${user._id}/events`,
         { event_participation: updatedEvents },
         {
           withCredentials: true,
@@ -5045,7 +5045,7 @@ const Index = () => {
   
       // Make API call to update events
       await axios.put(
-        `${API_BASE_URL}/member/members/${user._id}/events`,
+        `${API_BASE_URL}/api/member/members/${user._id}/events`,
         { event_participation: updatedEvents },
         {
           withCredentials: true,
@@ -5139,7 +5139,7 @@ const Index = () => {
 
       // Make API call to update semesters
       await axios.put(
-        `${API_BASE_URL}/member/members/${user._id}/academics`,
+        `${API_BASE_URL}/api/member/members/${user._id}/academics`,
         { semesterSGPA: updatedSemesters },
         {
           withCredentials: true,
@@ -5175,7 +5175,7 @@ const Index = () => {
 
       // Make API call to update semesters
       await axios.put(
-        `${API_BASE_URL}/member/members/${user._id}/academics`,
+        `${API_BASE_URL}/api/member/members/${user._id}/academics`,
         { semesterSGPA: updatedSemesters },
         {
           withCredentials: true,
