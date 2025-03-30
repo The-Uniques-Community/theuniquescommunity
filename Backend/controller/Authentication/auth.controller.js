@@ -29,7 +29,7 @@ export const googleCallback = (req, res, next) => {
   res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production", // set to true in production
-    sameSite: "lax", // adjust as needed
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",// adjust as needed
     // domain: '.example.com',  // if you want to share across subdomains
   });
 
@@ -141,7 +141,7 @@ export const emailLogin = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
 
     return res.json({
@@ -167,7 +167,7 @@ export const logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production", // Set true in production
-    sameSite: "lax", // Adjust as needed
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Adjust as needed
   });
   return res.status(200).json({ message: "Logged out successfully" });
 };

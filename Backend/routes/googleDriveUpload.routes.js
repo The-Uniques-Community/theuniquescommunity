@@ -12,11 +12,96 @@ import {
   createFolderStructure,
   uploadFile,
 } from "../controller/googleDriveService.js";
+import path from "path";
+
+// Clean up temporary directories on startup
+function cleanupTempDirectories() {
+  try {
+    const uploadDir = '/tmp/uploads';
+    if (fs.existsSync(uploadDir)) {
+      const files = fs.readdirSync(uploadDir);
+      files.forEach(file => {
+        try {
+          fs.unlinkSync(path.join(uploadDir, file));
+          console.log(`Cleaned up leftover file: ${file}`);
+        } catch (err) {
+          console.error(`Error cleaning up file ${file}:`, err);
+        }
+      });
+    }
+    
+    // Ensure the directory exists after cleanup
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    
+    console.log("Temporary directory cleanup completed");
+  } catch (error) {
+    console.error("Error during temp directory cleanup:", error);
+  }
+}
+
+// Add after the cleanupTempDirectories function
+
+// Periodically clean old temporary files (files older than 15 minutes)
+function scheduleCleanup() {
+  try {
+    const MAX_AGE_MS = 15 * 60 * 1000; // 15 minutes
+    const uploadDir = '/tmp/uploads';
+    
+    if (fs.existsSync(uploadDir)) {
+      const now = Date.now();
+      const files = fs.readdirSync(uploadDir);
+      
+      files.forEach(file => {
+        const filePath = path.join(uploadDir, file);
+        try {
+          const stats = fs.statSync(filePath);
+          const fileAge = now - stats.mtimeMs;
+          
+          if (fileAge > MAX_AGE_MS) {
+            fs.unlinkSync(filePath);
+            console.log(`Cleaned up old temp file: ${file} (${Math.round(fileAge/1000/60)} min old)`);
+          }
+        } catch (err) {
+          console.error(`Error checking/removing old file ${file}:`, err);
+        }
+      });
+    }
+  } catch (error) {
+    console.error("Error during scheduled cleanup:", error);
+  }
+}
+
+// Run cleanup every 15 minutes if Lambda stays warm
+const cleanupInterval = setInterval(scheduleCleanup, 15 * 60 * 1000);
+
+// Ensure cleanup interval is cleared if the module is unloaded
+process.on('beforeExit', () => {
+  if (cleanupInterval) {
+    clearInterval(cleanupInterval);
+  }
+});
+
+// Call this function when the module is loaded
+cleanupTempDirectories();
+
+// Create the uploads directory in the writable /tmp folder
+const uploadDir = '/tmp/uploads';
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 const router = express.Router();
 
-// Configure Multer to temporarily store uploaded files in the 'uploads/' folder
-const upload = multer({ dest: "uploads/" });
+// Update the multer configuration to use /tmp/uploads
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, '/tmp/uploads')  // Changed from '/var/task/uploads'
+    },
+  })
+})
 
 /**
  * POST /api/create_main_folder
@@ -310,9 +395,14 @@ router.post("/file_upload", upload.array("files", 10), async (req, res) => {
         console.error("Error processing file:", file.filename, fileError);
       } finally {
         // Always remove the temporary file
-        fs.unlink(file.path, (err) => {
-          if (err) console.error("Error deleting temp file:", file.path, err);
-        });
+        try {
+          if (fs.existsSync(file.path)) {
+            fs.unlinkSync(file.path); // Use synchronous delete for reliability
+            console.log(`Successfully removed temp file: ${file.path}`);
+          }
+        } catch (unlinkError) {
+          console.error("Error deleting temp file:", file.path, unlinkError);
+        }
       }
     }
 
@@ -531,9 +621,13 @@ router.post("/event_file_upload", upload.array("files", 10), async (req, res) =>
   } finally {
     // Clean up all temporary files
     tempFiles.forEach(file => {
-      fs.unlink(file.path, (err) => {
-        if (err) console.error("Error deleting temp file:", file.path, err);
-      });
+      try {
+        if (fs.existsSync(file.path)) {
+          fs.unlinkSync(file.path);
+        }
+      } catch (err) {
+        console.error("Error deleting temp file:", file.path, err);
+      }
     });
   }
 });
@@ -679,10 +773,12 @@ router.post("/budget_file_upload", upload.single("file"), async (req, res) => {
     });
   } finally {
     // Clean up temporary file
-    if (tempFile) {
-      fs.unlink(tempFile.path, (err) => {
-        if (err) console.error("Error deleting temp file:", tempFile.path, err);
-      });
+    try {
+      if (fs.existsSync(tempFile.path)) {
+        fs.unlinkSync(tempFile.path);
+      }
+    } catch (err) {
+      console.error("Error deleting temp file:", tempFile.path, err);
     }
   }
 });
@@ -795,9 +891,13 @@ router.post("/fine_file_upload", upload.array("files", 5), async (req, res) => {
   } finally {
     // Clean up all temporary files
     tempFiles.forEach(file => {
-      fs.unlink(file.path, (err) => {
-        if (err) console.error("Error deleting temp file:", file.path, err);
-      });
+      try {
+        if (fs.existsSync(file.path)) {
+          fs.unlinkSync(file.path);
+        }
+      } catch (err) {
+        console.error("Error deleting temp file:", file.path, err);
+      }
     });
   }
 });

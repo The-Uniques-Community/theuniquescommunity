@@ -156,7 +156,7 @@ const EventForm = ({ event, onSuccess }) => {
   const fetchGuests = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/guest/get-all-guests"
+        "https://theuniquesbackend.vercel.app/api/guest/get-all-guests"
       );
       setAllGuests(response.data.guests || []);
     } catch (error) {
@@ -168,7 +168,7 @@ const EventForm = ({ event, onSuccess }) => {
   const fetchEventGallery = async (eventId) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/events/${eventId}?populate=gallery`,
+        `https://theuniquesbackend.vercel.app/api/events/${eventId}?populate=gallery`,
         { withCredentials: true }
       );
       if (response.data.event && response.data.event.eventGallery) {
@@ -261,7 +261,7 @@ const EventForm = ({ event, onSuccess }) => {
 
           try {
             const uploadResponse = await axios.post(
-              "http://localhost:5000/upload/event_file_upload",
+              "https://theuniquesbackend.vercel.app/upload/event_file_upload",
               bannerFormData
             );
 
@@ -304,7 +304,7 @@ const EventForm = ({ event, onSuccess }) => {
 
           try {
             const galleryResponse = await axios.post(
-              "http://localhost:5000/upload/event_file_upload",
+              "https://theuniquesbackend.vercel.app/upload/event_file_upload",
               galleryFormData
             );
 
@@ -335,7 +335,7 @@ const EventForm = ({ event, onSuccess }) => {
 
           try {
             const receiptResponse = await axios.post(
-              "http://localhost:5000/upload/event_file_upload",
+              "https://theuniquesbackend.vercel.app/upload/event_file_upload",
               receiptFormData
             );
 
@@ -377,13 +377,13 @@ const EventForm = ({ event, onSuccess }) => {
         let response;
         if (isEdit) {
           response = await axios.put(
-            `http://localhost:5000/api/events/${eventId}`,
+            `https://theuniquesbackend.vercel.app/api/events/${eventId}`,
             eventData,
             { withCredentials: true }
           );
         } else {
           response = await axios.post(
-            "http://localhost:5000/api/events",
+            "https://theuniquesbackend.vercel.app/api/events",
             eventData,
             { withCredentials: true }
           );
@@ -430,7 +430,7 @@ const EventForm = ({ event, onSuccess }) => {
     onSubmit: async (values) => {
       try {
         const response = await axios.post(
-          "http://localhost:5000/api/guest/add-guest",
+          "https://theuniquesbackend.vercel.app/api/guest/add-guest",
           values
         );
         if (response.data.success) {

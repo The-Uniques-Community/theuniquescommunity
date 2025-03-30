@@ -107,7 +107,7 @@ const ContactForm = () => {
     
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/contact', formData);
+      const response = await axios.post('https://theuniquesbackend.vercel.app/api/contact', formData);
       
       if (response.data.success) {
         // Show success message

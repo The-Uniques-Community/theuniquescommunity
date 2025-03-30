@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import CustomLoader from "./customLoader";
+import CustomLoader from "./CustomLoader";
 
 const index = (Component) => (props) =>
   (

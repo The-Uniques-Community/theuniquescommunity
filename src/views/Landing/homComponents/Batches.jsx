@@ -54,7 +54,7 @@ const Batches = () => {
     const fetchBatchCounts = async () => {
       try {
         setCountsLoading(true);
-        const response = await axios.get("http://localhost:5000/api/public/members/counts");
+        const response = await axios.get("https://theuniquesbackend.vercel.app/api/public/members/counts");
         
         if (response.data.success) {
           setBatchCounts(response.data.data);
@@ -75,7 +75,7 @@ const Batches = () => {
       try {
         setLoading(true);
         
-        const response = await axios.get("http://localhost:5000/api/public/members", {
+        const response = await axios.get("https://theuniquesbackend.vercel.app/api/public/members", {
           params: {
             batch: selectedBatch !== "All" ? selectedBatch : undefined
           }

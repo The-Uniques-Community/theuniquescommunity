@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Effect from "@/assets/img/Community/Effect.png";
+import Effect from "@/assets/img/Community/effect.png";
 
 const cardData = [
     {
