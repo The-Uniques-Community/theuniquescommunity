@@ -5,7 +5,7 @@ import File from "./fileModel.js";
 const projectSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true, // Project title is mandatory
+     // Project title is mandatory
   },
   description: {
     type: String,
@@ -94,7 +94,7 @@ const memberSchema = new mongoose.Schema(
       {
         amount: {
           type: Number,
-          required: true,
+          
         },
         dateImposed: {
           type: Date,
@@ -107,7 +107,7 @@ const memberSchema = new mongoose.Schema(
         },
         reason: {
           type: String,
-          required: true,
+          
         },
         proofOfPayment: {
           type: mongoose.Schema.Types.ObjectId,
@@ -121,13 +121,13 @@ const memberSchema = new mongoose.Schema(
       {
         semester: {
           type: Number,
-          required: true,
+          
           min: 1,
           max: 8
         },
         sgpa: {
           type: Number,
-          required: true,
+          
           min: 0,
           max: 10
         }
@@ -138,7 +138,7 @@ const memberSchema = new mongoose.Schema(
       {
         semester: {
           type: Number,
-          required: true,
+          
           min: 1,
           max: 8
         },
