@@ -15,9 +15,9 @@ const WeirdCard = ({ title, description }) => {
           <img className="w-6 object-contain h-6" src={tu_red || "/placeholder.svg"} alt="logo" />
         </div>
         <div className="border2"></div>
-        <h2 className="text-xl font-bold mt-8 ">{title}</h2>
+        <h2 className="text-xl font-bold mt-8 px-2 ">{title}</h2>
         <div className="bg-[#ca0019] h-[1px] w-0 group-hover:w-1/2 transition-all duration-500"></div>
-        <p className="text-sm font-light text-justify">{description}</p>
+        <p className="text-sm font-light px-2 text-justify">{description}</p>
       </div>
       <div className="relative">
         <div className="px-2 bg-slate-200 flex justify-center items-center py-1 h-5 w-[70px] rounded-xl absolute bottom-0 right-0">

@@ -51,6 +51,7 @@ const MemberCard = ({ member }) => {
   const {
     _id,
     fullName,
+    email,
     batch,
     bio = "",
     course = "Member",
@@ -85,40 +86,40 @@ const MemberCard = ({ member }) => {
   // Format achievements for display
   const formattedAchievements = Array.isArray(achievements)
     ? achievements.map((achievement, index) => ({
-        id: achievement.id || index,
-        title: achievement.title || achievement.name || achievement,
-        description: achievement.description || "",
-        date: achievement.date || "",
-        color: achievement.color || "bg-gray-700",
-        icon: achievement.icon || null,
-      }))
+      id: achievement.id || index,
+      title: achievement.title || achievement.name || achievement,
+      description: achievement.description || "",
+      date: achievement.date || "",
+      color: achievement.color || "bg-gray-700",
+      icon: achievement.icon || null,
+    }))
     : [];
 
   // Format certificates for display
   const formattedCertificates = Array.isArray(certifications)
     ? certifications.map((cert, index) => ({
-        id: cert._id || index,
-        title: cert.title || cert.name || "Certification",
-        issuer: cert.issuer || cert.organization || "",
-        date: cert.date || cert.issuedDate || "",
-        imageUrl: cert.imageUrl || cert.url || null,
-      }))
+      id: cert._id || index,
+      title: cert.title || cert.name || "Certification",
+      issuer: cert.issuer || cert.organization || "",
+      date: cert.date || cert.issuedDate || "",
+      imageUrl: cert.imageUrl || cert.url || null,
+    }))
     : [];
 
   // Format projects for display
   const formattedProjects = Array.isArray(projects)
     ? projects.map((project, index) => ({
-        id: project.id || index,
-        title: project.title || project.name || "Project",
-        description: project.description || "",
-        link: project.link || project.url || null,
-        imageUrl: project.imageUrl || project.image || null,
-        technologies: Array.isArray(project.technologies)
-          ? project.technologies
-          : project.tech
+      id: project.id || index,
+      title: project.title || project.name || "Project",
+      description: project.description || "",
+      link: project.link || project.url || null,
+      imageUrl: project.imageUrl || project.image || null,
+      technologies: Array.isArray(project.technologies)
+        ? project.technologies
+        : project.tech
           ? [project.tech]
           : [],
-      }))
+    }))
     : [];
 
   // Format contributions from eventContributionType
@@ -129,9 +130,9 @@ const MemberCard = ({ member }) => {
   // Format skills as objects if they're strings
   const formattedSkills = Array.isArray(skills)
     ? skills.map((skill, index) => {
-        if (typeof skill === "object") return skill;
-        return { name: skill, id: index };
-      })
+      if (typeof skill === "object") return skill;
+      return { name: skill, id: index };
+    })
     : [];
 
   const handleOpen = () => setOpen(true);
@@ -289,7 +290,7 @@ const MemberCard = ({ member }) => {
                   src={
                     profileImg ||
                     "https://ui-avatars.com/api/?name=" +
-                      encodeURIComponent(fullName)
+                    encodeURIComponent(fullName)
                   }
                   alt={`${fullName}'s profile`}
                   className="w-full h-64 rounded-lg object-cover shadow-md"
@@ -394,31 +395,28 @@ const MemberCard = ({ member }) => {
               {/* Tabs */}
               <div className="flex border-b border-gray-200 mb-6">
                 <button
-                  className={`px-4 py-2 font-medium text-sm ${
-                    activeTab === "about"
+                  className={`px-4 py-2 font-medium text-sm ${activeTab === "about"
                       ? "border-b-2 border-[#ca0019] text-[#ca0019]"
                       : "text-gray-600 hover:text-gray-900"
-                  } transition-colors`}
+                    } transition-colors`}
                   onClick={() => setActiveTab("about")}
                 >
                   About
                 </button>
                 <button
-                  className={`px-4 py-2 font-medium text-sm ${
-                    activeTab === "certificates"
+                  className={`px-4 py-2 font-medium text-sm ${activeTab === "certificates"
                       ? "border-b-2 border-[#ca0019] text-[#ca0019]"
                       : "text-gray-600 hover:text-gray-900"
-                  } transition-colors`}
+                    } transition-colors`}
                   onClick={() => setActiveTab("certificates")}
                 >
                   Certificates
                 </button>
                 <button
-                  className={`px-4 py-2 font-medium text-sm ${
-                    activeTab === "projects"
+                  className={`px-4 py-2 font-medium text-sm ${activeTab === "projects"
                       ? "border-b-2 border-[#ca0019] text-[#ca0019]"
                       : "text-gray-600 hover:text-gray-900"
-                  } transition-colors`}
+                    } transition-colors`}
                   onClick={() => setActiveTab("projects")}
                 >
                   Projects

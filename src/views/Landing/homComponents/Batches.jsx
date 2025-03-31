@@ -55,12 +55,27 @@ const Batches = () => {
       try {
         setCountsLoading(true);
         const response = await axios.get("https://theuniquesbackend.vercel.app/api/public/members/counts");
-        
+
         if (response.data.success) {
-          setBatchCounts(response.data.data);
+          // Transform the response data to ensure proper count format
+          const batchData = response.data.data;
+          const counts = {
+            "The Uniques 1.0": parseInt(batchData["The Uniques 1.0"] || 0),
+            "The Uniques 2.0": parseInt(batchData["The Uniques 2.0"] || 0),
+            "The Uniques 3.0": parseInt(batchData["The Uniques 3.0"] || 0)
+          };
+          setBatchCounts(counts);
+
+          // Debug log to verify counts
+          console.log('Batch counts:', counts);
         }
       } catch (err) {
         console.error("Error fetching batch counts:", err);
+        setBatchCounts({
+          "The Uniques 1.0": 0,
+          "The Uniques 2.0": 0,
+          "The Uniques 3.0": 0
+        });
       } finally {
         setCountsLoading(false);
       }
@@ -74,7 +89,7 @@ const Batches = () => {
     const fetchMembers = async () => {
       try {
         setLoading(true);
-        
+
         const response = await axios.get("https://theuniquesbackend.vercel.app/api/public/members", {
           params: {
             batch: selectedBatch !== "All" ? selectedBatch : undefined
@@ -85,14 +100,14 @@ const Batches = () => {
           // Process members to ensure no null/undefined values
           const processedMembers = response.data.data.map(member => ({
             ...member,
-            fullName: member.fullName || "Anonymous Member",
+            fullName: member.fullName || member.email,
             batch: member.batch || "Unspecified Batch",
             skills: Array.isArray(member.skills) ? member.skills : [],
             projects: Array.isArray(member.projects) ? member.projects : [],
             achievements: Array.isArray(member.achievements) ? member.achievements : [],
             certifications: Array.isArray(member.certifications) ? member.certifications : []
           }));
-          
+
           // Changed from 3 to 4 members
           setMembers(processedMembers.slice(0, 4));
           setError(null);
@@ -117,8 +132,8 @@ const Batches = () => {
 
   // Get achievements for the current batch (still using static data for achievements)
   const batchAchievements = useMemo(
-    () => achievementsData.filter((achievement) => 
-      achievement.batchId === selectedBatch || 
+    () => achievementsData.filter((achievement) =>
+      achievement.batchId === selectedBatch ||
       (selectedBatch === "All" && achievement.batchId === "All")
     ),
     [selectedBatch]
@@ -129,13 +144,13 @@ const Batches = () => {
     if (!searchTerm.trim() || !Array.isArray(members)) {
       return members;
     }
-    
+
     const term = searchTerm.toLowerCase();
     return members.filter(member => {
       const nameMatch = member.fullName && member.fullName.toLowerCase().includes(term);
       const bioMatch = member.bio && member.bio.toLowerCase().includes(term);
       const courseMatch = member.course && member.course.toLowerCase().includes(term);
-      
+
       // Check for skills
       const skillsMatch = Array.isArray(member.skills) && member.skills.some(skill => {
         if (typeof skill === 'string') {
@@ -143,7 +158,7 @@ const Batches = () => {
         }
         return (skill && skill.name && skill.name.toLowerCase().includes(term));
       });
-      
+
       return nameMatch || bioMatch || courseMatch || skillsMatch;
     });
   }, [members, searchTerm]);
@@ -165,7 +180,7 @@ const Batches = () => {
             </h1>
           </div>
           <h1 className="md:w-[100vh] w-full text-xl md:text-3xl font-semibold">
-            Explore the talented members of 
+            Explore the talented members of
             <span className="text-[#ca0019] text-2xl md:text-5xl md:py-2 block mb-5">
               The Uniques Community
             </span>
@@ -179,24 +194,22 @@ const Batches = () => {
           {batchesData.map((batch) => (
             <motion.button
               key={batch.id}
-              className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all ${
-                selectedBatch === batch.id
-                  ? "bg-[#ca0019] text-white shadow-lg"
-                  : "bg-white text-gray-700 hover:bg-gray-100 shadow"
-              }`}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium ${selectedBatch === batch.id
+                ? "bg-[#ca0019] text-white shadow-lg"
+                : "bg-white text-gray-700 hover:bg-gray-100 shadow"
+                }`}
               onClick={() => setSelectedBatch(batch.id)}
-              whileHover={{ scale: 1.05 }}
+
               whileTap={{ scale: 0.95 }}
             >
               {batch.icon}
               <span>{batch.name}</span>
-              <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${
-                countsLoading 
-                  ? "bg-gray-200 text-gray-500 animate-pulse" 
-                  : selectedBatch === batch.id 
-                    ? "bg-white bg-opacity-20 text-white" 
-                    : "bg-black bg-opacity-10"
-              }`}>
+              <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${countsLoading
+                ? "bg-gray-200 text-gray-500 animate-pulse"
+                : selectedBatch === batch.id
+                  ? "bg-white bg-opacity-20 text-white"
+                  : "bg-black bg-opacity-10"
+                }`}>
                 <Users size={12} />
                 {countsLoading ? "..." : batch.memberCount}
               </span>
@@ -251,7 +264,7 @@ const Batches = () => {
               animate={{ opacity: 1, height: "auto" }}
               transition={{ duration: 0.3 }}
             >
-              <div>
+              {/* <div>
                 <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                   <Award className="w-5 h-5 text-[#ca0019]" />
                   Batch Achievements
@@ -267,12 +280,12 @@ const Batches = () => {
                     />
                   ))}
                 </div>
-              </div>
+              </div> */}
             </motion.div>
           </div>
 
           {/* Members Grid - Updated to show 4 Members */}
-          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 place-items-center sm:gap-x-0 gap-x-4 gap-y-6 h-auto">
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 place-items-center sm:gap-x-0 gap-4 gap-y-6 h-auto">
             {loading ? (
               <div className="col-span-full flex flex-col items-center justify-center py-12">
                 <div className="w-12 h-12 border-4 border-gray-300 border-t-[#ca0019] rounded-full animate-spin"></div>
@@ -287,11 +300,11 @@ const Batches = () => {
                 {filteredMembers.map((member) => (
                   <MemberCard key={member._id} member={member} />
                 ))}
-                
+
                 {/* View All Members Link */}
                 <div className="col-span-full mt-8 text-center">
-                  <Link 
-                    to="/batches" 
+                  <Link
+                    to="/batches"
                     className="inline-block px-6 py-3 bg-[#ca0019] text-white rounded-md hover:bg-[#a80015] transition-colors"
                   >
                     View All Members
