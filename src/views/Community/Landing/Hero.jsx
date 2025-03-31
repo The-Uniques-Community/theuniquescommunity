@@ -1,12 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 import "./style.css";
 import HeroClip from "@/assets/img/Community/Sample1.png";
 import Button from "@/utils/Buttons/Button";
-import DoubleQuotes from "@/assets/img/Community/Double.png"
+import DoubleQuotes from "@/assets/img/Community/Double.png";
+import ApplicationForm from '@/components/ApplicationForm';
+
+
+
+const Modal = ({ isOpen, onClose, title, children }) => {
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-lg max-w-2xl w-full p-6">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-2xl font-semibold">{title}</h2>
+                    <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                {children}
+            </div>
+        </div>
+    );
+};
 
 const Hero = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    
+    const openModal = (e) => {
+        e.preventDefault();
+        setIsModalOpen(true);
+    };
+    
     return (
-        <div className="relative container  mx-auto">
+        <div className="relative container mx-auto">
             {/* Hidden SVG clipPath definition */}
             <svg width="0" height="0" style={{ position: "absolute" }}>
                 <defs>
@@ -33,15 +63,16 @@ const Hero = () => {
                             Join the community of unique individuals and learn from the best
                         </span>
                     </div>
-                    <Button className="z-[999]"
-                        path="/register"
+                    <Button 
+                        className="pt-10 w-48"
+                       onClick={openModal}
                         color="white"
                         bgColor="#ca0019"
                         border={4}
-                        borderColor="#ca0019"
+                        borderColor="black"
                         iconColor="black"
                     >
-                        <span>Register</span>
+                        Register
                     </Button>
                 </div>
                 <div className="image-container absolute md:left-[40%] left-0 bottom-[0%] z-[999] w-full md:w-8/12 mt-10 md:mt-0">
@@ -52,7 +83,7 @@ const Hero = () => {
                 <h3 className="max-w-xl text-4xl font-semibold text-[#ca0019] text-right pt-3 pb-3">Be the part of it.</h3>
                 <Button
                     className="pt-10 w-48"
-                    path="/register"
+                    path="https://chat.whatsapp.com/HYOloogGXKcIkR83DnOjFj"
                     color="white"
                     bgColor="black"
                     border={4}
@@ -62,6 +93,15 @@ const Hero = () => {
                     <span>Join Community</span>
                 </Button>
             </div>
+            
+            {/* Application Form Modal */}
+            <Modal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                title="Campus Ambassador Application"
+            >
+                <ApplicationForm onClose={() => setIsModalOpen(false)} />
+            </Modal>
         </div>
     );
 };
