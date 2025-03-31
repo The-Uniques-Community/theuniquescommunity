@@ -164,6 +164,7 @@ export async function uploadFile(filePath, destinationFolderId, options = {}) {
 
   const fileId = file.data.id;
   let fileUrl;
+  console.log(getFile.data);
 
   // Try to get the permanent thumbnail from contentHints
   if (getFile.data.contentHints && 
@@ -172,12 +173,6 @@ export async function uploadFile(filePath, destinationFolderId, options = {}) {
     // This is a base64 encoded image that won't expire
     const thumbnailImage = getFile.data.contentHints.thumbnail.image;
     fileUrl = `data:image/png;base64,${thumbnailImage}`;
-  } else if (getFile.data.thumbnailLink) {
-    // Fall back to thumbnailLink if available (but it will expire)
-    fileUrl = getFile.data.thumbnailLink;
-  } else {
-    // Otherwise use direct download link
-    fileUrl = `https://drive.google.com/uc?id=${fileId}`;
   }
 
   return {
