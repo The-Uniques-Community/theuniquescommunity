@@ -160,6 +160,7 @@ export async function uploadFile(filePath, destinationFolderId, options = {}) {
   const getFile = await drive.files.get({
     fileId: file.data.id,
     fields: 'id, name, contentHints, thumbnailLink',
+    supportsAllDrives: true,
   });
 
   const fileId = file.data.id;
