@@ -30,14 +30,14 @@ import Brightness7Icon from "@mui/icons-material/Brightness7"; // Light Mode Ico
 // Navigation items with full paths
 const STUDENT_NAVIGATION = [
   { segment: "", title: "Dashboard", icon: <DashboardIcon /> },
-  { segment: "JobPosting", title: "Post Job", icon: <PublishIcon /> },
-  { segment: "profile", title: "Profile", icon: <AccountCircleIcon /> },
-  { segment: "applicants", title: "Applicants", icon: <GroupIcon /> },
-  {
-    segment: "joboffers",
-    title: "Manage Offers",
-    icon: <AssignmentTurnedInIcon />,
-  },
+  // { segment: "JobPosting", title: "Post Job", icon: <PublishIcon /> },
+  // { segment: "profile", title: "Profile", icon: <AccountCircleIcon /> },
+  // { segment: "applicants", title: "Applicants", icon: <GroupIcon /> },
+  // {
+  //   segment: "joboffers",
+  //   title: "Manage Offers",
+  //   icon: <AssignmentTurnedInIcon />,
+  // },
 ];
 
 function Branding() {
