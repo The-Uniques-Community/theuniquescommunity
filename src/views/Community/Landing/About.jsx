@@ -20,7 +20,7 @@ const About = (props) => (
                 </defs>
                 {/* Image clipped to the custom path */}
                 <image
-                    href="https://img.freepik.com/premium-photo/silhouettes-red-background-emphasizing-insider-threat-detection-suspect-identification_1019851-7415.jpg?w=2000"
+                    href="https://img.freepik.com/free-photo/red-pawn-chess-stepped-out-line-leading-black-chess-show-different-thinking-ideas-business-technology-change-disruption-new-normal-concept_616485-6.jpg?t=st=1743375246~exp=1743378846~hmac=dc587c0d7137fd0b233b866804eb53f334488b30f625c328433c330f04cc67da&w=1800"
                     width="342"
                     height="265"
                     preserveAspectRatio="xMidYMid slice"

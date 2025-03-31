@@ -18,6 +18,8 @@ import publicMemberRouter from "./routes/landing/publicMemberRouter.js";
 import memberFineRoute from "./routes/member/fineRoute.js";
 import publicEnquiryRouter from "./routes/landing/publicRoute.js";
 import enquiryRoute from "./routes/admin/enquiryRoute.js";
+import { getAuth } from "./controller/googleDriveService.js";
+import { google } from 'googleapis';
 dotenv.config();
 
 const app = express();
@@ -49,6 +51,38 @@ app.use("/api/admin/fine", fineRouter);
 app.use("/api/public/members", publicMemberRouter);
 app.use('/api/contact', publicEnquiryRouter);
 app.use('/api/admin/enquiry', enquiryRoute);
+
+app.use('/api/image-proxy/:fileId', async (req, res) => {
+  try {
+    const fileId = req.params.fileId;
+    if (!fileId) {
+      return res.status(400).send('File ID is required');
+    }
+    
+    // Get the auth client from your existing Google Drive service
+    const auth = await getAuth();
+    const drive = google.drive({ version: 'v3', auth });
+    
+    // Get the file metadata first to verify it exists
+    await drive.files.get({ fileId });
+    
+    // Get the actual file content as a stream
+    const response = await drive.files.get({
+      fileId,
+      alt: 'media'
+    }, { responseType: 'stream' });
+    
+    // Set content type and cache headers
+    res.setHeader('Content-Type', response.headers['content-type']);
+    res.setHeader('Cache-Control', 'public, max-age=86400'); // Cache for 24 hours
+    
+    // Pipe the image data directly to the response
+    response.data.pipe(res);
+  } catch (error) {
+    console.error('Error proxying Google Drive image:', error);
+    res.status(500).send('Error retrieving image');
+  }
+});
 
 
 app.listen(process.env.PORT, () => {

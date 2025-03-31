@@ -62,7 +62,7 @@ export default function Eventmodel({ event, onClose }) {
 
                 try {
                     const response = await fetch(
-                        `http://localhost:5000/api/events/${id}/register`,
+                        `https://theuniquesbackend.vercel.app/api/events/${id}/register`,
                         {
                             method: "POST",
                             headers: {
@@ -247,7 +247,7 @@ export default function Eventmodel({ event, onClose }) {
             };
 
             const response = await fetch(
-                `http://localhost:5000/api/events/${event._id}/form-response`,
+                `https://theuniquesbackend.vercel.app/api/events/${event._id}/form-response`,
                 {
                     method: "POST",
                     headers: {
@@ -457,7 +457,7 @@ export default function Eventmodel({ event, onClose }) {
 
     useEffect(() => {
         // Fetch all events to populate related events and tabs
-        axios.get('http://localhost:5000/api/events')
+        axios.get('https://theuniquesbackend.vercel.app/api/events')
             .then(response => {
                 const events = response.data.data || response.data || [];
                 setAllEvents(events);
@@ -486,7 +486,7 @@ export default function Eventmodel({ event, onClose }) {
 
                 // If the current event doesn't have populated gallery data, you might need to fetch it
                 if (event && (!event.eventGallery || event.eventGallery.length === 0)) {
-                    axios.get(`http://localhost:5000/api/events/${event._id}/gallery`)
+                    axios.get(`https://theuniquesbackend.vercel.app/api/events/${event._id}/gallery`)
                         .catch(err => console.error("Error fetching gallery:", err));
                 }
             })
@@ -511,7 +511,7 @@ export default function Eventmodel({ event, onClose }) {
 
     const fetchEventDetails = async (eventId) => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/events/${eventId}`);
+            const response = await axios.get(`https://theuniquesbackend.vercel.app/api/events/${eventId}`);
             setSelectedDetailEvent(response.data.data || response.data);
         } catch (error) {
             console.error("Error fetching event details:", error);
