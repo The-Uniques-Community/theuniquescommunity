@@ -135,7 +135,7 @@ const index = () => {
           const processedMembers = response.data.data.map(member => ({
             ...member,
             // Ensure all potentially problematic properties have fallbacks
-            fullName: member.fullName || "Anonymous Member",
+            fullName: member.fullName,
             batch: member.batch || "Unspecified Batch",
             skills: Array.isArray(member.skills) ? member.skills : [],
             projects: Array.isArray(member.projects) ? member.projects : [],
@@ -275,7 +275,7 @@ const index = () => {
         if (membersResponse.data.success) {
           const processedMembers = membersResponse.data.data.map(member => ({
             ...member,
-            fullName: member.fullName || "Anonymous Member",
+            fullName: member.fullName ,
             batch: member.batch || "Unspecified Batch",
             skills: Array.isArray(member.skills) ? member.skills : [],
             projects: Array.isArray(member.projects) ? member.projects : [],

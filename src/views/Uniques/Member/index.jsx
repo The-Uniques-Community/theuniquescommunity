@@ -5990,7 +5990,7 @@ const Index = () => {
                 {user.skills && user.skills.length > 0 ? (
                   <Box sx={{ height: 250, display: 'flex', justifyContent: 'center', bgcolor: 'white', p: 2, borderRadius: 2, border: '1px solid #f0f0f0' }}>
                     <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
+                      <PieChart className="ml-40 w-40">
                         <Pie
                           data={prepareSkillsData()}
                           cx="50%"
