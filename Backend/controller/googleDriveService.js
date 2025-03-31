@@ -174,6 +174,9 @@ export async function uploadFile(filePath, destinationFolderId, options = {}) {
     // This is a base64 encoded image that won't expire
     const thumbnailImage = getFile.data.contentHints.thumbnail.image;
     fileUrl = `data:image/png;base64,${thumbnailImage}`;
+  }else if (getFile.data.webContentLink) {
+    // Fallback to the webViewLink if thumbnail is not available
+    fileUrl = getFile.data.webContentLink;
   }
 
   return {
