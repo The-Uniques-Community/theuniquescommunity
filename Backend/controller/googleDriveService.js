@@ -12,6 +12,7 @@ let auth;
 if (process.env.NODE_ENV === 'production') {
   // Load credentials from environment variable
   const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
+  serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n'); 
   auth = new google.auth.GoogleAuth({
     credentials: serviceAccount,
     scopes: SCOPES,
