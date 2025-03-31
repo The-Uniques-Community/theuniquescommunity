@@ -186,3 +186,9 @@ export async function uploadFile(filePath, destinationFolderId, options = {}) {
     fileUrl,
   };
 }
+
+// Add this export if not already present
+export async function getAuth() {
+  // Return the same auth object you use for other Drive operations
+  return auth;
+}

@@ -3944,6 +3944,12 @@ function a11yProps(index) {
   }
 }
 
+// Add this helper function near the top of your component
+const getProxyImageUrl = (fileId) => {
+  if (!fileId) return '/placeholder.svg'; // Fallback image
+  return `${API_BASE_URL}/api/image-proxy/${fileId}`;
+};
+
 const Index = () => {
   const theme = useTheme()
   const [value, setValue] = useState(0)
@@ -5378,13 +5384,15 @@ const Index = () => {
         <Grid container spacing={3}>
           <Grid item xs={12} md={3} lg={2} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Box sx={{ position: 'relative' }}>
-              <iframe
-                src={`${user?.profilePic?.fileUrl}`}
+              <img
+                src={user?.profilePic?.fileId ? 
+                  getProxyImageUrl(user.profilePic.fileId) : 
+                  '/placeholder.svg'
+                }
                 alt={user.fullName}
                 style={{ 
                   width: 120, 
                   height: 120, 
-                  mb: 2,
                   border: '4px solid #f5f5f5',
                   boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
                   cursor: 'pointer',
