@@ -5378,10 +5378,10 @@ const Index = () => {
         <Grid container spacing={3}>
           <Grid item xs={12} md={3} lg={2} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Box sx={{ position: 'relative' }}>
-              <Avatar
-                src={`https://drive.google.com/uc?id=${user?.profilePic?.fileId}`}
+              <iframe
+                src={`${user?.profilePic?.fileUrl}`}
                 alt={user.fullName}
-                sx={{ 
+                style={{ 
                   width: 120, 
                   height: 120, 
                   mb: 2,

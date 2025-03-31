@@ -159,12 +159,27 @@ export async function uploadFile(filePath, destinationFolderId, options = {}) {
   // Get the shareable web link
   const getFile = await drive.files.get({
     fileId: file.data.id,
-    fields: 'thumbnailLink',
+    fields: 'id, name, contentHints, thumbnailLink',
   });
-  
+
   const fileId = file.data.id;
-  const fileUrl = getFile.data.thumbnailLink || `https://drive.google.com/uc?id=${fileId}`;
-  
+  let fileUrl;
+
+  // Try to get the permanent thumbnail from contentHints
+  if (getFile.data.contentHints && 
+      getFile.data.contentHints.thumbnail && 
+      getFile.data.contentHints.thumbnail.image) {
+    // This is a base64 encoded image that won't expire
+    const thumbnailImage = getFile.data.contentHints.thumbnail.image;
+    fileUrl = `data:image/png;base64,${thumbnailImage}`;
+  } else if (getFile.data.thumbnailLink) {
+    // Fall back to thumbnailLink if available (but it will expire)
+    fileUrl = getFile.data.thumbnailLink;
+  } else {
+    // Otherwise use direct download link
+    fileUrl = `https://drive.google.com/uc?id=${fileId}`;
+  }
+
   return {
     fileName: file.data.name,
     originalName: originalFileName,
