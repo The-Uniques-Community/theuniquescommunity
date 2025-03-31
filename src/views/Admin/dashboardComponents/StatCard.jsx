@@ -4,7 +4,7 @@ import { Link } from "react-router";
 
 const StatCard = (props) => {
   return (
-    <Link to={props.link}>
+    <Link to={props.link} style={{width: "100%"}}>
 
     <div
       style={{
@@ -13,7 +13,7 @@ const StatCard = (props) => {
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center", // Ensures a well-positioned background
       }}
-      className="max-w-72 p-3 max-h-max rounded-md border bg-slate-50 border-slate-200"
+      className="lg:max-w-72  w-full p-3 max-h-max rounded-md border bg-slate-50 border-slate-200"
       >
       <div className="grid grid-cols-3">
         <div className="col-span-1">

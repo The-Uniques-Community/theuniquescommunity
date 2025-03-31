@@ -14,7 +14,7 @@ import Community from "@/views/Community/index"
 import Event from "@/views/Landing/Event/Index"
 import BatchesPage from "@/views/Landing/Batches/index"
 import AdvisoryBoard from "@/views/Landing/AdvisoryBoard";
-
+import Notices from "@/views/Landing/Notices/index"
 const Landing = Loader(lazy(() => import("@/views/Landing/index")));
 
 
@@ -42,6 +42,7 @@ const LandingRoutes = {
     { path: "contact", element: <Contact /> },
     { path: "batches", element: <BatchesPage />  },
     { path: "advisoryBoard", element: <AdvisoryBoard />  },
+    { path: "notices", element: <Notices/>  },
     
   ],
 };

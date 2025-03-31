@@ -1234,7 +1234,7 @@ const EventView = () => {
                                         <Avatar sx={{ mr: 1, width: 32, height: 32 }}>
                                           {(response.respondent?.member?.memberName || "A").charAt(0)}
                                         </Avatar>
-                                        {response.respondent?.member?.memberName || "Anonymous"}
+                                        {response.respondent?.member?.memberName || ""}
                                       </Box>
                                     </TableCell>
                                     <TableCell>{response.respondent?.member?.memberEmail || "No email"}</TableCell>
