@@ -20,7 +20,7 @@ const projectSchema = new mongoose.Schema({
     default: "",
   },
   imageUrl: {
-    type: mongoose.Schema.Types.ObjectId, // URL for the project image
+    type: String, // URL for the project image
     default: "",
   },
   createdAt: {
