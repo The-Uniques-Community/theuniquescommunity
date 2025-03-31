@@ -165,7 +165,7 @@ export async function uploadFile(filePath, destinationFolderId, options = {}) {
 
   const fileId = file.data.id;
   let fileUrl;
-  console.log(getFile.data);
+
 
   // Try to get the permanent thumbnail from contentHints
   if (getFile.data.contentHints && 

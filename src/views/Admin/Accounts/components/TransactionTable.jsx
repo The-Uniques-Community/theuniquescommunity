@@ -433,16 +433,9 @@ const FineTable = () => {
   
   // NEW: Receipt preview handler
   const handleOpenReceipt = (fileUrl) => {
-    // If URL is directly provided
-    if (typeof fileUrl === 'string') {
-      setReceiptPreviewUrl(fileUrl);
-      setOpenReceiptPreview(true);
-      return;
-    }
-    
     // If we have a file object reference
     if (fileUrl && fileUrl.fileUrl) {
-      setReceiptPreviewUrl(fileUrl.fileUrl);
+      setReceiptPreviewUrl(fileUrl.fileId);
       setOpenReceiptPreview(true);
       return;
     }
@@ -1648,27 +1641,18 @@ const FineTable = () => {
         <DialogContent>
           {receiptPreviewUrl && (
             <Box textAlign="center" py={2}>
-              {receiptPreviewUrl.endsWith('.pdf') ? (
+              
                 <Box>
                   <iframe 
-                    src={`${receiptPreviewUrl}#view=FitH`} 
+                    src={`https://drive.google.com/file/d/${receiptPreviewUrl}/preview`} 
                     width="100%" 
                     height="500px" 
                     title="PDF Receipt"
                     style={{ border: '1px solid #ddd' }}
                   />
                 </Box>
-              ) : (
-                <img 
-                  src={receiptPreviewUrl} 
-                  alt="Payment Receipt" 
-                  style={{ 
-                    maxWidth: '100%',
-                    maxHeight: '70vh',
-                    objectFit: 'contain',
-                  }} 
-                />
-              )}
+            
+              
               <Button
                 variant="contained"
                 startIcon={<Preview />}
