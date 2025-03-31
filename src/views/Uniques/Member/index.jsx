@@ -6103,12 +6103,12 @@ const Index = () => {
               label="Internships"
               {...a11yProps(5)}
             />
-            <Tab
+            {/* <Tab
               icon={<EventIcon />}
               iconPosition="start"
               label="Events"
               {...a11yProps(6)}
-            />
+            /> */}
           </Tabs>
         </Box>
 
@@ -8049,7 +8049,7 @@ const Index = () => {
               placeholder="https://github.com/username/project"
             />
 
-            <Paper variant="outlined" sx={{ p: 3, borderStyle: "dashed" }}>
+            {/* <Paper variant="outlined" sx={{ p: 3, borderStyle: "dashed" }}>
               <input
                 type="file"
                 id="project-image"
@@ -8106,7 +8106,7 @@ const Index = () => {
                     />
                   </Box>
                 )}
-            </Paper>
+            </Paper> */}
 
             <Box>
               <Typography variant="subtitle2" gutterBottom>
