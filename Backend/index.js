@@ -18,6 +18,7 @@ import publicMemberRouter from "./routes/landing/publicMemberRouter.js";
 import memberFineRoute from "./routes/member/fineRoute.js";
 import publicEnquiryRouter from "./routes/landing/publicRoute.js";
 import enquiryRoute from "./routes/admin/enquiryRoute.js";
+import { getAuth } from "./controller/googleDriveService.js";
 dotenv.config();
 
 const app = express();
