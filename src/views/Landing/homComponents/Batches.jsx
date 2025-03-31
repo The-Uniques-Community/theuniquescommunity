@@ -93,8 +93,8 @@ const Batches = () => {
             certifications: Array.isArray(member.certifications) ? member.certifications : []
           }));
           
-          // Only keep the first 3 members
-          setMembers(processedMembers.slice(0, 3));
+          // Changed from 3 to 4 members
+          setMembers(processedMembers.slice(0, 4));
           setError(null);
         } else {
           setError(response.data.message || "Failed to fetch members");
@@ -149,7 +149,7 @@ const Batches = () => {
   }, [members, searchTerm]);
 
   return (
-    <div className="min-h-screen bg-gray-50 w-full">
+    <div className="min-h-screen bg-transparent w-full">
       {/* Header */}
       <motion.div
         className="bg-white py-12 px-4 sm:px-6 lg:px-8 shadow-sm"
@@ -256,7 +256,7 @@ const Batches = () => {
                   <Award className="w-5 h-5 text-[#ca0019]" />
                   Batch Achievements
                 </h3>
-                <div className="grid lg:grid-cols-3 grid-cols-1 sm:grid-cols-1 gap-4">
+                <div className="grid lg:grid-cols-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-4">
                   {batchAchievements.map((achievement) => (
                     <AchievementCard
                       key={achievement.id}
@@ -271,8 +271,8 @@ const Batches = () => {
             </motion.div>
           </div>
 
-          {/* Members Grid - Limited to 3 Members */}
-          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 place-items-center sm:gap-x-0 gap-x-4 gap-y-6 h-auto">
+          {/* Members Grid - Updated to show 4 Members */}
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 place-items-center sm:gap-x-0 gap-x-4 gap-y-6 h-auto">
             {loading ? (
               <div className="col-span-full flex flex-col items-center justify-center py-12">
                 <div className="w-12 h-12 border-4 border-gray-300 border-t-[#ca0019] rounded-full animate-spin"></div>
