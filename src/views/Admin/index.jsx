@@ -883,6 +883,10 @@ const Index = () => {
       setOpenPaymentModal(true); // Open the payment modal
     }
   };
+  const getProxyImageUrl = (fileId) => {
+    if (!fileId) return '/placeholder.svg'; // Fallback image
+    return `${API_BASE_URL}/api/image-proxy/${fileId}`;
+  };
 
   return (
     <div className="w-full">
@@ -1113,8 +1117,10 @@ const Index = () => {
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <Avatar
-                                src={member.profilePic}
-                                alt={member.fullName}
+                           src={user?.profilePic?.fileId ? 
+                            getProxyImageUrl(user.profilePic.fileId) : 
+                            '/placeholder.svg'
+                          }
                               />
                               <div>
                                 <div className="font-medium">

@@ -199,6 +199,11 @@ const MembersIndex = () => {
     }
   };
   
+  const getProxyImageUrl = (fileId) => {
+    if (!fileId) return '/placeholder.svg'; // Fallback image
+    return `https://theuniquesbackend.vercel.app/api/image-proxy/${fileId}`;
+  };
+
   // Handle search input change
   const handleSearchChange = (e) => {
     const query = e.target.value;

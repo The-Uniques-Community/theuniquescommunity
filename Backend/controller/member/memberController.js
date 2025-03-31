@@ -261,25 +261,37 @@ export const updateCertifications = async (req, res) => {
   };
   // CRUD operations for projects
 export const updateProjects = async (req, res) => {
-    try {
-      const { id } = req.params;
-      const { projects } = req.body;
-  
-      const member = await Member.findByIdAndUpdate(
-        id,
-        { projects },
-        { new: true }
-      );
-  
-      if (!member) {
-        return res.status(404).json({ message: "Member not found" });
-      }
-  
-      res.status(200).json({ message: "Projects updated successfully", projects: member.projects });
-    } catch (error) {
-      res.status(500).json({ message: "Failed to update projects", error: error.message });
+  try {
+    const { id } = req.params;
+    let { projects } = req.body;
+    
+    // Clean up projects data to handle empty imageUrl fields
+    if (Array.isArray(projects)) {
+      projects = projects.map(project => ({
+        ...project,
+        // Convert empty strings to null for imageUrl
+        imageUrl: project.imageUrl === "" ? null : project.imageUrl
+      }));
     }
-  };
+
+    const member = await Member.findByIdAndUpdate(
+      id,
+      { projects },
+      { 
+        new: true,
+        runValidators: false // Skip validation for this update
+      }
+    );
+
+    if (!member) {
+      return res.status(404).json({ message: "Member not found" });
+    }
+
+    res.status(200).json({ message: "Projects updated successfully", projects: member.projects });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update projects", error: error.message });
+  }
+};
   // CRUD operations for internships
 export const updateInternships = async (req, res) => {
     try {
@@ -344,5 +356,4 @@ export const updateAcademics = async (req, res) => {
       res.status(500).json({ message: "Failed to update academic data", error: error.message });
     }
   };
-  
- 
+
