@@ -159,7 +159,7 @@ export async function uploadFile(filePath, destinationFolderId, options = {}) {
   // Get the shareable web link
   const getFile = await drive.files.get({
     fileId: file.data.id,
-    fields: 'id, name, contentHints, thumbnailLink',
+    fields: '*',
     supportsAllDrives: true,
   });
 
