@@ -4587,29 +4587,29 @@ const Index = () => {
 
       const updatedCertifications = [...(user.certifications || [])];
 
-      if (certificationEditIndex >= 0) {
-        // Update existing certification
-        updatedCertifications[certificationEditIndex] = {
-          ...currentCertification,
-          ...(certificationFile ? fileData : {}),
-        };
-      } else {
-        // Add new certification
-        updatedCertifications.push({
-          ...currentCertification,
-          ...fileData,
-          createdAt: new Date().toISOString(),
-        });
-      }
+      // if (certificationEditIndex >= 0) {
+      //   // Update existing certification
+      //   updatedCertifications[certificationEditIndex] = {
+      //     ...currentCertification,
+      //     ...(certificationFile ? fileData : {}),
+      //   };
+      // } else {
+      //   // Add new certification
+      //   updatedCertifications.push({
+      //     ...currentCertification,
+      //     ...fileData,
+      //     createdAt: new Date().toISOString(),
+      //   });
+      // }
 
       // Make API call to update certifications
-      await axios.put(
-        `${API_BASE_URL}/api/member/members/${user._id}/certifications`,
-        { certifications: updatedCertifications },
-        {
-          withCredentials: true,
-        }
-      );
+      // await axios.put(
+      //   `${API_BASE_URL}/api/member/members/${user._id}/certifications`,
+      //   { certifications: updatedCertifications },
+      //   {
+      //     withCredentials: true,
+      //   }
+      // );
 
       // Show success message
       setAlert({

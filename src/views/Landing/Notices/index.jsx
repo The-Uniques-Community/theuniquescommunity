@@ -964,8 +964,8 @@ const index = () => {
                   onClick={() => setViewMode("card")}
                   className={
                     viewMode === "card"
-                      ? "bg-white text-red-600 hover:bg-gray-100"
-                      : "text-white border-white hover:bg-red-700"
+                      ? "bg-white !text-red-600 hover:bg-gray-100"
+                      : "text-white border-white hover:bg-white"
                   }
                 >
                   <Layers className="w-4 h-4 mr-1" />
