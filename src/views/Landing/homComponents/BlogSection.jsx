@@ -23,7 +23,7 @@ export default function BlogSection() {
         {/* Left Column - Base Level */}
         <div className="mt-28 md:mt-28 sm:mt-0 flex flex-col align-middle justify-end">
           <BlogCard2
-            title="UX Review Presentations"
+            title="Placera"
             subtitle="Unveiling the Talent Behind Our Success"
             imgSrc="https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           />
@@ -32,7 +32,7 @@ export default function BlogSection() {
         {/* Middle Column - Slightly Higher */}
         <div className="mt-10 md:mt-10 sm:mt-0 flex flex-col align-middle justify-start">
           <BlogCard2
-            title="Navigating the Migration"
+            title="AlumnLink"
             subtitle="Unveiling the Faces Behind Excellence"
             imgSrc="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           />
@@ -41,7 +41,7 @@ export default function BlogSection() {
         {/* Right Column - Highest */}
         <div className="-mt-10 md:-mt-28 sm:mt-0 flex flex-col align-middle justify-start">
           <BlogCard2
-            title="Building a Robust Inventory"
+            title="Invoiced"
             subtitle="Innovating for a Better Tomorrow"
             imgSrc="https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           />

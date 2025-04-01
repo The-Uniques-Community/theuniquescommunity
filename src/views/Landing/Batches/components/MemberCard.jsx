@@ -46,7 +46,7 @@ const MemberCard = ({ member }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("about");
-
+  console.log(member);
   // Extract member properties
   const {
     _id,
@@ -60,6 +60,7 @@ const MemberCard = ({ member }) => {
     certifications = [],
     projects = [],
     eventContributionType = [],
+    profilePic
   } = member;
 
   // Format position (displayed role/status)
@@ -138,6 +139,11 @@ const MemberCard = ({ member }) => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const getProxyImageUrl = (fileId) => {
+    if (!fileId) return '/placeholder.svg'; // Fallback image
+    return `https://theuniquesbackend.vercel.app/api/image-proxy/${fileId}`;
+  }
+
   return (
     <div className="bg-white group hover:cursor-pointer hover:shadow-lg transition-shadow duration-200 px-2 py-2 border border-gray-200 shadow-md rounded-lg relative max-w-72">
       {/* Main Card Content */}
@@ -146,7 +152,7 @@ const MemberCard = ({ member }) => {
         <div className="relative">
           <div onClick={handleOpen} className="overflow-hidden rounded-lg">
             <img
-              src={profileImg}
+              src={profilePic ? getProxyImageUrl(profilePic?.fileId) : profileImg}
               className="hover:scale-105 duration-300 custom-clip rounded-t-lg rounded-l-lg lg:w-[42vh] w-[70vh] h-56 object-cover"
               alt={`${fullName}'s Profile`}
             />
@@ -287,11 +293,7 @@ const MemberCard = ({ member }) => {
             <div className="md:col-span-1">
               <div className="relative mb-5">
                 <img
-                  src={
-                    profileImg ||
-                    "https://ui-avatars.com/api/?name=" +
-                    encodeURIComponent(fullName)
-                  }
+                  src={profilePic ? getProxyImageUrl(profilePic?.fileId) : profileImg}
                   alt={`${fullName}'s profile`}
                   className="w-full h-64 rounded-lg object-cover shadow-md"
                 />

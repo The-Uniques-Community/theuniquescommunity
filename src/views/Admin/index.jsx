@@ -894,7 +894,7 @@ const Index = () => {
       <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-1 gap-3 md:px-3 px-1 py-5 mb-5">
         <div className="col-span-4">
           <Banner />
-          <div className="grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 grid-cols-1 gap-4">
+          <div className="grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 place-items-center grid-cols-1 gap-4">
             <StatCard
               icon={<Groups2 fontSize="large" />}
               title="Total Members"
