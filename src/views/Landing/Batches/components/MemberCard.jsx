@@ -497,42 +497,44 @@ const MemberCard = ({ member }) => {
                     <FileText className="w-4 h-4" /> Certificates & Credentials
                   </h4>
                   <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-5">
-                    {formattedCertificates.length > 0 ? (
-                      formattedCertificates.map((certificate, idx) => {
+                    {certifications.length > 0 ? (
+                      certifications.map((certificate, idx) => {
                         // Convert Drive URL to preview URL for iframe embedding
-                        const getPreviewUrl = (url) => {
-                          if (!url) return null;
+                        // const getPreviewUrl = (url) => {
+                        //   if (!url) return null;
 
-                          // For uc?id= format (direct download links)
-                          if (url.includes("drive.google.com/uc?id=")) {
-                            const fileId = url.split("id=")[1]?.split("&")[0];
-                            if (fileId) {
-                              return `https://drive.google.com/file/d/${fileId}/preview`;
-                            }
-                          }
+                        //   // For uc?id= format (direct download links)
+                        //   if (url.includes("drive.google.com/uc?id=")) {
+                        //     const fileId = url.split("id=")[1]?.split("&")[0];
+                        //     if (fileId) {
+                        //       return `https://drive.google.com/file/d/${fileId}/preview`;
+                        //     }
+                        //   }
 
-                          // For file/d/ format
-                          if (url.includes("drive.google.com/file/d/")) {
-                            const fileId = url
-                              .split("file/d/")[1]
-                              ?.split("/")[0];
-                            if (fileId) {
-                              return `https://drive.google.com/file/d/${fileId}/preview`;
-                            }
-                          }
+                        //   // For file/d/ format
+                        //   if (url.includes("drive.google.com/file/d/")) {
+                        //     const fileId = url
+                        //       .split("file/d/")[1]
+                        //       ?.split("/")[0];
+                        //     if (fileId) {
+                        //       return `https://drive.google.com/file/d/${fileId}/preview`;
+                        //     }
+                        //   }
 
-                          return url;
-                        };
+                        //   return url;
+                        // };
 
                         // Handle multiple certificate URL field names
                         const fileUrl =
-                          certificate.fileUrl ||
+                          certificate.fileId ||
                           certificate.imageUrl ||
                           certificate.url ||
-                          null;
+                          null;   
                         const previewUrl = fileUrl
-                          ? getPreviewUrl(fileUrl)
+                          ? certificate.fileId
                           : null;
+
+                          console.log(previewUrl, "previewUrl");
 
                         // Handle multiple certificate title field names
                         const certTitle =
@@ -555,27 +557,13 @@ const MemberCard = ({ member }) => {
                             <div className="aspect-[16/9] overflow-hidden bg-gray-50">
                               {previewUrl ? (
                                 <iframe
-                                  src={previewUrl}
+                                  src={`https://drive.google.com/file/d/${previewUrl}/preview`}
                                   className="w-full h-full"
                                   frameBorder="0"
                                   allowFullScreen
                                   loading="lazy"
                                   title={certTitle}
-                                  onError={(e) => {
-                                    e.target.style.display = "none";
-                                    const parent = e.target.parentNode;
-                                    const fallback =
-                                      document.createElement("div");
-                                    fallback.className =
-                                      "flex flex-col items-center justify-center h-full";
-                                    fallback.innerHTML = `
-                        <div class="text-gray-400">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                          <p class="mt-2 text-sm">Unable to preview certificate</p>
-                        </div>
-                      `;
-                                    parent.appendChild(fallback);
-                                  }}
+                                  
                                 />
                               ) : (
                                 <div className="flex flex-col items-center justify-center h-full text-gray-400">
