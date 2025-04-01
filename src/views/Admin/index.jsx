@@ -883,6 +883,10 @@ const Index = () => {
       setOpenPaymentModal(true); // Open the payment modal
     }
   };
+  const getProxyImageUrl = (fileId) => {
+    if (!fileId) return '/placeholder.svg'; // Fallback image
+    return `${API_BASE_URL}/api/image-proxy/${fileId}`;
+  };
 
   return (
     <div className="w-full">
@@ -890,7 +894,7 @@ const Index = () => {
       <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-1 gap-3 md:px-3 px-1 py-5 mb-5">
         <div className="col-span-4">
           <Banner />
-          <div className="grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 grid-cols-1 gap-4">
+          <div className="grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 place-items-center grid-cols-1 gap-4">
             <StatCard
               icon={<Groups2 fontSize="large" />}
               title="Total Members"
@@ -1113,8 +1117,10 @@ const Index = () => {
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <Avatar
-                                src={member.profilePic}
-                                alt={member.fullName}
+                           src={user?.profilePic?.fileId ? 
+                            getProxyImageUrl(user.profilePic.fileId) : 
+                            '/placeholder.svg'
+                          }
                               />
                               <div>
                                 <div className="font-medium">

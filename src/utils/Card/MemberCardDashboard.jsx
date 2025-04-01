@@ -8,7 +8,6 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import tu from "@/assets/logos/tu.png";
 import { Link } from "react-router";
 
-
 import { Modal, Box, Tabs, Tab, Typography } from "@mui/material";
 import {
   LinkedIn,
@@ -19,7 +18,7 @@ import {
 } from "@mui/icons-material";
 import "tailwindcss/tailwind.css";
 import ProfileModal from "../Modal/ProfileModal";
-import userIcon from "@/assets/img/user-icon.png"
+import userIcon from "@/assets/img/user-icon.png";
 const UserProfileModal = ({ open, handleClose, userData }) => {
   const [activeTab, setActiveTab] = useState(0);
 
@@ -41,6 +40,10 @@ const UserProfileModal = ({ open, handleClose, userData }) => {
     maxHeight: "90vh",
     overflowY: "auto",
   };
+  const getProxyImageUrl = (fileId) => {
+    if (!fileId) return "/placeholder.svg"; // Fallback image
+    return `https://theuniquesbackend.vercel.app/api/image-proxy/${fileId}`;
+  };
 
   return (
     <Modal open={open} onClose={handleClose}>
@@ -49,7 +52,11 @@ const UserProfileModal = ({ open, handleClose, userData }) => {
         <div className="flex flex-col md:flex-row gap-6 mb-6">
           <div className="flex-shrink-0">
             <img
-              src={userData?.profilePic?.fileUrl || userIcon}
+              src={
+                user?.profilePic?.fileId
+                  ? getProxyImageUrl(user.profilePic.fileId)
+                  : userIcon
+              }
               sx={{ width: 120, height: 120 }}
               className="border-2 border-gray-200"
             />
@@ -292,7 +299,10 @@ export const MemberCardDashboard = ({ user }) => {
   const [open, setOpen] = useState(false);
 
   const handleClose = () => setOpen(false);
-
+  const getProxyImageUrl = (fileId) => {
+    if (!fileId) return "/placeholder.svg"; // Fallback image
+    return `https://theuniquesbackend.vercel.app/api/image-proxy/${fileId}`;
+  };
   return (
     <>
       {/* User Card */}
@@ -316,9 +326,13 @@ export const MemberCardDashboard = ({ user }) => {
           {/* User Details */}
           <div className="flex items-center gap-3">
             <img
-              src={user.profilePic?.fileUrl || userIcon}
+              src={
+                user?.profilePic?.fileId
+                  ? getProxyImageUrl(user.profilePic.fileId)
+                  : userIcon
+              }
               alt={user.fullName}
-              className="w-16 h-16"
+              className="w-16 h-16 rounded-full object-cover object-center"
             />
             <div>
               <h2 className="text-lg font-semibold">{user.fullName}</h2>
@@ -383,7 +397,11 @@ export const MemberCardDashboard = ({ user }) => {
       </Card>
 
       {/* Fullscreen Modal */}
-      <ProfileModal handleClose={()=>setOpen(false)} open={open} user={user}/>
+      <ProfileModal
+        handleClose={() => setOpen(false)}
+        open={open}
+        user={user}
+      />
     </>
   );
 };

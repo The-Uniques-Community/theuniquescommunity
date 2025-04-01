@@ -130,7 +130,7 @@ export default function Landing() {
           <p className="text-gray-600 my-4 max-w-2xl mx-auto">
           Experience tech like never before with The UNIQUES Community — vibrant events, hands-on sessions, and pure innovation.
           </p>
-          <Button path="#" bgColor="#ca0019" color="white" iconColor="black">
+          <Button path="https://chat.whatsapp.com/HYOloogGXKcIkR83DnOjFj" bgColor="#ca0019" color="white" iconColor="black">
               Join Us
           </Button>
         </div>

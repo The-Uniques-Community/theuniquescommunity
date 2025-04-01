@@ -125,6 +125,7 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
     }
   };
 
+
   // Format date
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -135,6 +136,12 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
       day: "numeric",
     });
   };
+
+  const getProxyImageUrl = (fileId) => {
+    if (!fileId) return '/placeholder.svg'; // Fallback image
+    return `https://theuniquesbackend.vercel.app/api/image-proxy/${fileId}`;
+  };
+
 
   // Handle opening fine modal
   const handleOpenFineModal = () => {
@@ -217,7 +224,11 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
             <div className="xl:col-span-1 lg:col-span-1 col-span-1 flex gap-x-5 items-center">
               <div className="bg-black w-36 h-36 overflow-hidden rounded-full relative">
                 <img
-                  src={user.profilePic?.fileUrl || userIcon}
+                  src={
+                    user?.profilePic?.fileId
+                      ? getProxyImageUrl(user.profilePic.fileId)
+                      : userIcon
+                  }
                   alt="Profile"
                   className="w-full h-full object-contain"
                 />

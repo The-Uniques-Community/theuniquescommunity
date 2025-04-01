@@ -1931,7 +1931,7 @@ const EventView = () => {
                                                 {response.respondent?.member
                                                   ?.memberName ||
                                                   response.respondent?.name ||
-                                                  "Anonymous"}
+                                                  ""}
                                               </Typography>
                                               <Typography
                                                 variant="caption"
