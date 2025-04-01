@@ -61,7 +61,13 @@ import {
   Refresh as RefreshIcon,
   History as HistoryIcon,
   Dashboard as DashboardIcon,
-  Info as InfoIcon
+  Info as InfoIcon,
+  CloudUpload,
+  InsertDriveFile,
+  UploadFile,
+  RemoveCircle,
+  Preview,
+  Close
 } from "@mui/icons-material";
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
@@ -73,6 +79,288 @@ import * as XLSX from 'xlsx';
 
 // Base API URL
 const API_BASE_URL = 'https://theuniquesbackend.vercel.app/api/admin/fine';
+const UPLOAD_API_URL = 'https://theuniquesbackend.vercel.app/upload/fine_file_upload';
+
+// Fine Payment Modal Component - Fix Receipt icon reference
+const FinePaymentModal = ({ open, onClose, memberId, fine, onPaymentComplete }) => {
+  const [files, setFiles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('upi');
+  const [reference, setReference] = useState('');
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [error, setError] = useState('');
+
+  // Handle file selection
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    if (selectedFiles.length > 0) {
+      setFiles(selectedFiles);
+      
+      // Create preview for image files
+      if (selectedFiles[0].type.startsWith('image/')) {
+        const url = URL.createObjectURL(selectedFiles[0]);
+        setPreviewUrl(url);
+      }
+    }
+  };
+  
+  // Remove selected file
+  const handleRemoveFile = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setFiles([]);
+    setPreviewUrl(null);
+  };
+
+  // Submit the form
+  const handleSubmit = async () => {
+    try {
+      if (files.length === 0) {
+        setError('Please upload a payment receipt');
+        return;
+      }
+
+      setLoading(true);
+      setError('');
+
+      // 1. First upload the file(s)
+      const formData = new FormData();
+      formData.append('memberId', memberId);
+      formData.append('fineId', fine._id);
+      formData.append('fileType', 'receipt');
+      
+      files.forEach(file => {
+        formData.append('files', file);
+      });
+
+      // Upload the file
+      const uploadResponse = await axios.post(
+        UPLOAD_API_URL,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      if (!uploadResponse.data.success) {
+        throw new Error(uploadResponse.data.message || 'Failed to upload receipt');
+      }
+
+      // 2. Now update the fine with the file reference
+      if (uploadResponse.data.files && uploadResponse.data.files.length > 0) {
+        const fileId = uploadResponse.data.files[0]._id;
+        
+        // Update the fine status and attach the proof
+        const updateResponse = await axios.patch(
+          `${API_BASE_URL}/members/${memberId}/fines/${fine._id}`,
+          {
+            status: 'paid',
+            proofOfPaymentId: fileId,
+            paymentMethod: paymentMethod,
+            paymentReference: reference
+          }
+        );
+
+        if (updateResponse.data.success) {
+          if (onPaymentComplete) {
+            onPaymentComplete({
+              ...updateResponse.data.data,
+              proofFile: uploadResponse.data.files[0]
+            });
+          }
+          handleClose();
+        }
+      }
+    } catch (err) {
+      console.error('Error processing payment:', err);
+      setError(err.message || 'Failed to process payment');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Reset state when closing
+  const handleClose = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+    setFiles([]);
+    setPreviewUrl(null);
+    setError('');
+    setPaymentMethod('upi');
+    setReference('');
+    onClose();
+  };
+
+  return (
+    <Dialog 
+      open={open} 
+      onClose={loading ? null : handleClose}
+      fullWidth
+      maxWidth="sm"
+    >
+      <DialogTitle>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6">
+            Mark Fine as Paid
+          </Typography>
+          {!loading && (
+            <IconButton onClick={handleClose}>
+              <Close />
+            </IconButton>
+          )}
+        </Box>
+      </DialogTitle>
+      
+      <DialogContent>
+        {fine && (
+          <>
+            <Box mb={3}>
+              <Alert severity="info" sx={{ mb: 2 }}>
+                Please upload proof of payment to mark this fine as paid.
+              </Alert>
+
+              <Typography variant="subtitle1" fontWeight="bold">
+                Fine Details
+              </Typography>
+              
+              <Typography variant="body1">
+                Amount: ₹{fine.amount}
+              </Typography>
+              
+              <Typography variant="body2" color="textSecondary">
+                Reason: {fine.reason}
+              </Typography>
+              
+              <Typography variant="body2" color="textSecondary">
+                Date Imposed: {new Date(fine.dateImposed).toLocaleDateString()}
+              </Typography>
+            </Box>
+            
+            <Divider sx={{ mb: 3 }} />
+            
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="payment-method-label">Payment Method</InputLabel>
+              <Select
+                labelId="payment-method-label"
+                value={paymentMethod}
+                label="Payment Method"
+                onChange={(e) => setPaymentMethod(e.target.value)}
+                disabled={loading}
+              >
+                <MenuItem value="upi">UPI</MenuItem>
+                <MenuItem value="bank_transfer">Bank Transfer</MenuItem>
+                <MenuItem value="cash">Cash</MenuItem>
+                <MenuItem value="other">Other</MenuItem>
+              </Select>
+            </FormControl>
+            
+            <TextField
+              margin="normal"
+              fullWidth
+              label="Payment Reference (Optional)"
+              placeholder="Transaction ID / Reference Number"
+              value={reference}
+              onChange={(e) => setReference(e.target.value)}
+              disabled={loading}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    {/* FIX: Changed Receipt to ReceiptIcon */}
+                    <ReceiptIcon fontSize="small" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            
+            <Box 
+              mt={3} 
+              p={3} 
+              border="1px dashed #ccc" 
+              borderRadius={1} 
+              textAlign="center"
+              bgcolor={files.length > 0 ? 'rgba(0,0,0,0.02)' : 'transparent'}
+            >
+              {files.length > 0 ? (
+                <Box>
+                  {previewUrl ? (
+                    <Box mb={2} position="relative">
+                      <img 
+                        src={previewUrl} 
+                        alt="Receipt preview" 
+                        style={{ 
+                          maxWidth: '100%', 
+                          maxHeight: '200px',
+                          borderRadius: '4px'
+                        }} 
+                      />
+                    </Box>
+                  ) : (
+                    <Box mb={2} display="flex" alignItems="center" justifyContent="center">
+                      <InsertDriveFile sx={{ mr: 1 }} />
+                      <Typography variant="body2">{files[0].name}</Typography>
+                    </Box>
+                  )}
+                  <Button 
+                    variant="outlined" 
+                    color="error" 
+                    onClick={handleRemoveFile}
+                    startIcon={<RemoveCircle />}
+                  >
+                    Remove File
+                  </Button>
+                </Box>
+              ) : (
+                <Box>
+                  <Button
+                    component="label"
+                    variant="contained"
+                    startIcon={<CloudUpload />}
+                    disabled={loading}
+                  >
+                    Upload Receipt
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*,.pdf"
+                      onChange={handleFileChange}
+                    />
+                  </Button>
+                  <Typography variant="caption" display="block" mt={1} color="textSecondary">
+                    Supported formats: JPG, PNG, PDF
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+            
+            {error && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {error}
+              </Alert>
+            )}
+          </>
+        )}
+      </DialogContent>
+      
+      <DialogActions sx={{ px: 3, pb: 3 }}>
+        <Button onClick={handleClose} disabled={loading}>
+          Cancel
+        </Button>
+        <Button 
+          variant="contained" 
+          onClick={handleSubmit}
+          disabled={loading || files.length === 0}
+          startIcon={loading ? <CircularProgress size={16} /> : <UploadFile />}
+        >
+          {loading ? 'Processing...' : 'Submit Payment'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 const FineTable = () => {
   const theme = useTheme();
@@ -117,6 +405,12 @@ const FineTable = () => {
   
   // Tab state for fine details modal
   const [activeTab, setActiveTab] = useState(0);
+
+  // NEW: Payment and Receipt states
+  const [openPaymentModal, setOpenPaymentModal] = useState(false);
+  const [selectedFineForPayment, setSelectedFineForPayment] = useState(null);
+  const [receiptPreviewUrl, setReceiptPreviewUrl] = useState(null);
+  const [openReceiptPreview, setOpenReceiptPreview] = useState(false);
   
   // Alert state
   const [alert, setAlert] = useState({
@@ -124,6 +418,35 @@ const FineTable = () => {
     message: "",
     severity: "success"
   });
+
+  // NEW: Handle payment completion
+  const handlePaymentComplete = (updatedFine) => {
+    // Refresh fine data
+    fetchFines();
+    
+    setAlert({
+      open: true,
+      message: "Payment recorded successfully!",
+      severity: "success"
+    });
+  };
+  
+  // NEW: Receipt preview handler
+  const handleOpenReceipt = (fileUrl) => {
+    // If we have a file object reference
+    if (fileUrl && fileUrl.fileUrl) {
+      setReceiptPreviewUrl(fileUrl.fileId);
+      setOpenReceiptPreview(true);
+      return;
+    }
+    
+    // Show error
+    setAlert({
+      open: true,
+      message: "Cannot open receipt: File not found",
+      severity: "error"
+    });
+  };
 
   // Get fine statistics
   const fetchFineStatistics = async () => {
@@ -141,14 +464,15 @@ const FineTable = () => {
   };
 
   // Fetch members with fines
+  // Fetch members with fines - FIXED VERSION to show ALL statuses
   const fetchFines = async () => {
     try {
       setLoading(true);
       
-      // Use the pending/members endpoint for all fines
-      const endpoint = `${API_BASE_URL}/fines/pending/members`;
+      // Use this generic endpoint instead of the specific "pending" one
+      const endpoint = `${API_BASE_URL}/fines/members`;
       
-      // Create query parameters object - only add filters with values
+      // Create query parameters object
       const params = {
         page,
         limit: rowsPerPage
@@ -162,6 +486,7 @@ const FineTable = () => {
         params.search = search.trim();
       }
       
+      // Only add status filter if not "All"
       if (statusFilter !== "All") {
         params.status = statusFilter.toLowerCase();
       }
@@ -819,15 +1144,19 @@ const FineTable = () => {
                               </Typography>
                             </div>
                             <Box>
+                              {/* UPDATED: Mark Paid button now opens payment modal */}
                               <Button 
                                 size="small"
                                 variant="outlined"
                                 color="success"
-                                onClick={() => updateFineStatus(selectedFine.member.id, fine._id, 'paid')}
+                                onClick={() => {
+                                  setSelectedFineForPayment(fine);
+                                  setOpenPaymentModal(true);
+                                }}
                               >
                                 Mark Paid
                               </Button>
-                              <IconButton 
+                              {/* <IconButton 
                                 size="small" 
                                 color="error"
                                 sx={{ ml: 1 }}
@@ -841,7 +1170,7 @@ const FineTable = () => {
                                 }}
                               >
                                 <DeleteIcon />
-                              </IconButton>
+                              </IconButton> */}
                             </Box>
                           </Box>
                         </CardContent>
@@ -887,9 +1216,11 @@ const FineTable = () => {
                                   </Typography>
                                   <Box display="flex" alignItems="center" mt={0.5}>
                                     {getStatusChip(fine.status)}
+                                    {/* UPDATED: Receipt link now opens preview */}
                                     {fine.proofOfPayment && (
                                       <Link 
-                                        href="#"
+                                        component="button"
+                                        onClick={() => handleOpenReceipt(fine.proofOfPayment)}
                                         underline="hover" 
                                         color="primary" 
                                         sx={{ ml: 2, fontSize: '0.75rem', display: 'flex', alignItems: 'center' }}
@@ -920,11 +1251,15 @@ const FineTable = () => {
                                   >
                                     Remove
                                   </Button>
+                                  {/* UPDATED: Mark Paid button now opens payment modal */}
                                   <Button 
                                     size="small"
                                     variant="outlined"
                                     color="success"
-                                    onClick={() => updateFineStatus(selectedFine.member.id, fine._id, 'paid')}
+                                    onClick={() => {
+                                      setSelectedFineForPayment(fine);
+                                      setOpenPaymentModal(true);
+                                    }}
                                   >
                                     Mark Paid
                                   </Button>
@@ -1135,7 +1470,7 @@ const FineTable = () => {
       </Dialog>
 
       {/* Delete Confirmation Modal */}
-      <Dialog
+      {/* <Dialog
         open={openDeleteConfirmModal}
         onClose={() => setOpenDeleteConfirmModal(false)}
       >
@@ -1162,7 +1497,7 @@ const FineTable = () => {
             Remove
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
 
       {/* Statistics Modal */}
       <Dialog
@@ -1276,6 +1611,58 @@ const FineTable = () => {
               </TableBody>
             </Table>
           </TableContainer>
+        </DialogContent>
+      </Dialog>
+
+      {/* NEW: Payment Modal */}
+      <FinePaymentModal
+        open={openPaymentModal}
+        onClose={() => setOpenPaymentModal(false)}
+        memberId={selectedFine?.member?.id}
+        fine={selectedFineForPayment}
+        onPaymentComplete={handlePaymentComplete}
+      />
+
+      {/* NEW: Receipt Preview Modal */}
+      <Dialog
+        open={openReceiptPreview}
+        onClose={() => setOpenReceiptPreview(false)}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h6">Payment Receipt</Typography>
+            <IconButton onClick={() => setOpenReceiptPreview(false)}>
+              <Close />
+            </IconButton>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          {receiptPreviewUrl && (
+            <Box textAlign="center" py={2}>
+              
+                <Box>
+                  <iframe 
+                    src={`https://drive.google.com/file/d/${receiptPreviewUrl}/preview`} 
+                    width="100%" 
+                    height="500px" 
+                    title="PDF Receipt"
+                    style={{ border: '1px solid #ddd' }}
+                  />
+                </Box>
+            
+              
+              <Button
+                variant="contained"
+                startIcon={<Preview />}
+                sx={{ mt: 2 }}
+                onClick={() => window.open(receiptPreviewUrl, '_blank')}
+              >
+                Open in New Tab
+              </Button>
+            </Box>
+          )}
         </DialogContent>
       </Dialog>
 

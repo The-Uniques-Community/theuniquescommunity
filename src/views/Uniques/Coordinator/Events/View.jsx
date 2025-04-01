@@ -1,4 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify"; // Make sure this is installed
+import dayjs from "dayjs"; // Make sure this is installed
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import {
   Box,
   Typography,
@@ -37,31 +44,32 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  FormControlLabel,
+  FormHelperText,
+  RadioGroup,
+  Radio,
+  Checkbox,
+  Alert,
 } from "@mui/material";
+
+// Material UI Icons
 import {
+  PhotoCamera,
+  Delete,
+  PhotoLibrary,
   Edit,
   Save,
   Close,
-  Delete,
-  PhotoCamera,
-  EventNote,
-  LocationOn,
-  Schedule,
-  Group,
   AttachMoney,
-  PhotoLibrary,
-  ContactMail,
+  Schedule,
+  LocationOn,
+  EventNote,
+  Group,
   Add,
   PersonAdd,
+  ContactMail,
+  X,
 } from "@mui/icons-material";
-import { useParams, useNavigate } from "react-router-dom";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import {
-  LocalizationProvider,
-  DatePicker,
-  TimePicker,
-} from "@mui/x-date-pickers";
-import dayjs from "dayjs";
 
 // Image gallery component
 const Gallery = ({ images, onAddImage, onRemoveImage, readOnly }) => {
@@ -81,11 +89,11 @@ const Gallery = ({ images, onAddImage, onRemoveImage, readOnly }) => {
             variant="contained"
             startIcon={<PhotoCamera />}
             component="label"
-            sx={{ 
-              background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-              boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
-              transition: 'transform 0.2s',
-              '&:hover': { transform: 'scale(1.02)' }
+            sx={{
+              background: "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
+              boxShadow: "0 3px 5px 2px rgba(33, 203, 243, .3)",
+              transition: "transform 0.2s",
+              "&:hover": { transform: "scale(1.02)" },
             }}
           >
             Add Images
@@ -104,27 +112,28 @@ const Gallery = ({ images, onAddImage, onRemoveImage, readOnly }) => {
         {images && images.length > 0 ? (
           images.map((image, index) => (
             <Grid item xs={6} md={4} lg={3} key={index}>
-              <Card 
-                sx={{ 
-                  position: "relative", 
-                  height: 200, 
-                  borderRadius: '12px',
-                  overflow: 'hidden',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                  transition: 'transform 0.3s, box-shadow 0.3s',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: '0 6px 16px rgba(0,0,0,0.15)'
-                  }
+              <Card
+                sx={{
+                  position: "relative",
+                  height: 200,
+                  width: "100%",
+                  borderRadius: "12px",
+                  overflow: "hidden",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                  transition: "transform 0.3s, box-shadow 0.3s",
+                  "&:hover": {
+                    transform: "translateY(-4px)",
+                    boxShadow: "0 6px 16px rgba(0,0,0,0.15)",
+                  },
                 }}
               >
-                <CardMedia
-                  component="img"
-                  height="200"
-                  image={image.url || '/placeholder-image.png'}
-                  alt={`Gallery image ${index}`}
-                  sx={{ objectFit: "cover" }}
-                />
+                <iframe
+                  class="drive-iframe"
+                  src={`https://drive.google.com/file/d/${image.fileId}/preview`}
+                  height={200}
+                  width={"100%"}
+                  allowFullScreen
+                ></iframe>
                 {!readOnly && (
                   <IconButton
                     sx={{
@@ -152,7 +161,7 @@ const Gallery = ({ images, onAddImage, onRemoveImage, readOnly }) => {
                 textAlign: "center",
                 bgcolor: "background.paper",
                 borderRadius: 2,
-                boxShadow: 'inset 0 0 8px rgba(0,0,0,0.05)',
+                boxShadow: "inset 0 0 8px rgba(0,0,0,0.05)",
               }}
             >
               <PhotoLibrary
@@ -185,6 +194,12 @@ const EventView = () => {
   const [availableGuests, setAvailableGuests] = useState([]);
   const [selectedGuest, setSelectedGuest] = useState(null);
   const [guestTag, setGuestTag] = useState("");
+  const [registrationModalOpen, setRegistrationModalOpen] = useState(false);
+  const [formFields, setFormFields] = useState([]);
+  const [formValues, setFormValues] = useState({});
+  const [formErrors, setFormErrors] = useState({});
+  const [registrationLoading, setRegistrationLoading] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
   // Fetch event data
   useEffect(() => {
@@ -221,7 +236,9 @@ const EventView = () => {
   // Fetch available guests
   const fetchAvailableGuests = async () => {
     try {
-      const response = await fetch(`https://theuniquesbackend.vercel.app/api/guest/get-all-guests`);
+      const response = await fetch(
+        `https://theuniquesbackend.vercel.app/api/guest/get-all-guests`
+      );
       const data = await response.json();
 
       if (data.success) {
@@ -236,7 +253,10 @@ const EventView = () => {
   const fetchFormResponses = async (eventId) => {
     try {
       const response = await fetch(
-        `https://theuniquesbackend.vercel.app/api/events/${eventId}/form-responses`
+        `https://theuniquesbackend.vercel.app/api/events/${eventId}/form-responses`,
+        {
+          credentials: "include",
+        }
       );
       const data = await response.json();
 
@@ -275,7 +295,7 @@ const EventView = () => {
   const handleDateChange = (date) => {
     setEditedEvent({
       ...editedEvent,
-      eventDate: date ? date.format('YYYY-MM-DD') : null
+      eventDate: date ? date.format("YYYY-MM-DD") : null,
     });
   };
 
@@ -298,43 +318,75 @@ const EventView = () => {
   // Save event changes
   const handleSaveChanges = async () => {
     try {
+      // Show loading indicator
+      setLoading(true);
+
       const response = await fetch(`https://theuniquesbackend.vercel.app/api/events/${id}`, {
         method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
         credentials: "include",
         body: JSON.stringify(editedEvent),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `Failed to update event: ${response.status} ${errorText}`
+        );
+      }
 
       const data = await response.json();
 
       if (data.success) {
         setEvent(data.event);
         setEditMode(false);
+        // Show success message
+        toast.success("Event updated successfully!");
       } else {
-        // Handle error
-        console.error("Error updating event:", data.message);
+        // Handle error from API response
+        throw new Error(data.message || "Failed to update event");
       }
     } catch (error) {
       console.error("Error saving event changes:", error);
+      toast.error(
+        `Error: ${error.message || "Failed to save changes. Please try again."}`
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Add image to gallery
   const handleAddImage = async (e) => {
     try {
       const files = Array.from(e.target.files);
       if (files.length === 0) return;
-      
+
+  // Get authentication token
+
+
+      // Show loading state
+      setLoading(true);
+
       // Show temporary local images while uploading
-      const tempImages = files.map(file => ({
+      const tempImages = files.map((file) => ({
         _id: `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         url: URL.createObjectURL(file),
-        isTemp: true
+        isTemp: true,
       }));
-      
-      setGallery(prevGallery => [...prevGallery, ...tempImages]);
 
-      // Upload images first to get their IDs
+      setGallery((prevGallery) => [...prevGallery, ...tempImages]);
+
+      // Upload images to Drive
       const formData = new FormData();
+
+      // Add required fields to formData
+      formData.append("eventName", event.eventName);
+      formData.append("fileKey", "eventGallery");
+      formData.append("eventId", id);
+
+      // Add files
       for (let file of files) {
         formData.append("files", file);
       }
@@ -343,47 +395,52 @@ const EventView = () => {
         "https://theuniquesbackend.vercel.app/upload/event_file_upload",
         {
           method: "POST",
+          
           credentials: "include",
           body: formData,
         }
       );
 
+      if (!uploadResponse.ok) {
+        const errorText = await uploadResponse.text();
+        throw new Error(
+          `Failed to upload images: ${uploadResponse.status} ${errorText}`
+        );
+      }
+
       const uploadResult = await uploadResponse.json();
 
-      if (uploadResult.success) {
-        // Now add these images to event gallery
-        const imageIds = uploadResult.files.map((file) => file._id);
-
+      if (uploadResult.success !== false) {
+        // Refresh the gallery
         const galleryResponse = await fetch(
-          `https://theuniquesbackend.vercel.app/api/events/${id}/gallery`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            body: JSON.stringify({
-              imagesToAdd: imageIds,
-            }),
-          }
+          `https://theuniquesbackend.vercel.app/api/events/${id}/gallery`
         );
-
         const galleryResult = await galleryResponse.json();
 
         if (galleryResult.success) {
-          // Replace the temporary images with the real ones
-          setGallery(galleryResult.gallery);
+          setGallery(galleryResult.gallery || []);
+          toast.success("Images uploaded successfully!");
         }
-        
-        // Clean up any object URLs to prevent memory leaks
-        tempImages.forEach(image => {
+
+        // Clean up temp image URLs
+        tempImages.forEach((image) => {
           if (image.isTemp && image.url) {
             URL.revokeObjectURL(image.url);
           }
         });
+      } else {
+        throw new Error(uploadResult.message || "Failed to upload images");
       }
     } catch (error) {
       console.error("Error adding images:", error);
+      toast.error(
+        `Error: ${error.message || "Failed to add images. Please try again."}`
+      );
+
+      // If there was an error, remove temp images
+      setGallery((prevGallery) => prevGallery.filter((img) => !img.isTemp));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -396,21 +453,31 @@ const EventView = () => {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
+          credentials: "include",
           body: JSON.stringify({
             imagesToRemove: [imageId],
           }),
         }
       );
 
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `Failed to remove image: ${response.status} ${errorText}`
+        );
+      }
+
       const result = await response.json();
 
       if (result.success) {
         setGallery(result.gallery);
+      } else {
+        throw new Error(result.message || "Failed to remove image");
       }
     } catch (error) {
       console.error("Error removing image:", error);
+      toast.error("Failed to remove image. Please try again.");
     }
   };
 
@@ -418,45 +485,61 @@ const EventView = () => {
   const handleNavigateToBudget = () => {
     navigate(`/admin/events-overview/${id}/budget`);
   };
-  
+
   // Handle event registration
   const handleRegisterForEvent = async () => {
     try {
-      // Check if user is logged in
-      const token = localStorage.getItem("token");
-      if (!token) {
-        // Redirect to login or show login dialog
-        navigate("/login", { 
-          state: { 
-            redirectTo: `/admin/events-overview/${id}`,
-            message: "Please log in to register for this event" 
-          } 
-        });
-        return;
-      }
-
-      // If event has a form, redirect to the form submission page
+      // If event has a form, open modal with form fields
       if (event.eventForm && event.eventForm.formId) {
-        const formUrl = `https://theuniquesbackend.vercel.app/api/forms/${event.eventForm.formId}/submit?eventId=${id}`;
-        window.open(formUrl, "_blank");
+        const formLoaded = await fetchFormFields();
+        if (formLoaded) {
+          setRegistrationModalOpen(true);
+        } else {
+          // If form couldn't be loaded, show an alert
+          toast.error(
+            "Could not load registration form. Please try again later."
+          );
+        }
       } else {
         // Simple registration without form
-        const response = await fetch(`https://theuniquesbackend.vercel.app/api/events/${id}/register`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+        setRegistrationLoading(true);
+
+        try {
+          const response = await fetch(
+            `https://theuniquesbackend.vercel.app/api/events/${id}/register`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+            }
+          );
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(
+              `Registration failed: ${response.status} ${errorText}`
+            );
           }
-        });
-        
-        const result = await response.json();
-        if (result.success) {
-          // Show success notification or update UI
-          alert("Successfully registered for this event!");
+
+          const result = await response.json();
+          if (result.success) {
+            toast.success("Successfully registered for this event!");
+          } else {
+            throw new Error(result.message || "Registration failed");
+          }
+        } catch (error) {
+          console.error("Registration API error:", error);
+          toast.error(`Registration failed: ${error.message}`);
+        } finally {
+          setRegistrationLoading(false);
         }
       }
     } catch (error) {
       console.error("Error registering for event:", error);
+      toast.error(`Error: ${error.message}`);
+      setRegistrationLoading(false);
     }
   };
 
@@ -473,62 +556,193 @@ const EventView = () => {
     setGuestTag("");
   };
 
-  // Add guest to event
   const handleAddGuest = async () => {
     if (!selectedGuest) return;
 
     try {
-      const response = await fetch(`https://theuniquesbackend.vercel.app/api/events/${id}/guests`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          guestId: selectedGuest._id,
-          guestTag: guestTag || selectedGuest.guestDesignation,
-        }),
-      });
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Authentication required. Please log in again.");
+        return;
+      }
+
+      // Show loading state
+      setLoading(true);
+
+      // Use link-guest route as defined in your eventRouter
+      const response = await fetch(
+        "https://theuniquesbackend.vercel.app/api/events/link-guest",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            eventId: id,
+            guestId: selectedGuest._id,
+            guestTag: guestTag || selectedGuest.guestDesignation,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to add guest: ${response.status} ${errorText}`);
+      }
 
       const result = await response.json();
 
       if (result.success) {
-        // Update event with new guest list
-        setEvent({
-          ...event,
-          eventGuests: result.guests,
-        });
+        // Refresh the event data to get updated guest list
+        const eventResponse = await fetch(
+          `https://theuniquesbackend.vercel.app/api/events/${id}`
+        );
+        const eventData = await eventResponse.json();
+
+        if (eventData.success) {
+          setEvent(eventData.event);
+          toast.success("Guest added successfully!");
+        }
 
         // Reset form fields
         setSelectedGuest(null);
         setGuestTag("");
+        handleCloseGuestDialog();
+      } else {
+        throw new Error(result.message || "Failed to add guest");
       }
     } catch (error) {
       console.error("Error adding guest:", error);
+      toast.error(`Error: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
   // Remove guest from event
   const handleRemoveGuest = async (guestId) => {
+    if (!guestId) return;
+
     try {
-      const response = await fetch(`https://theuniquesbackend.vercel.app/api/events/${id}/guests/${guestId}`, {
-        method: "DELETE",
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Authentication required. Please log in again.");
+        return;
+      }
+
+      setLoading(true);
+
+      // Method 1: Using event update endpoint since there's no direct remove guest endpoint
+      const updatedEvent = { ...event };
+      updatedEvent.eventGuests = updatedEvent.eventGuests.filter(
+        (guest) => guest.guestId._id !== guestId
+      );
+
+      // Format the payload correctly for the API
+      const payload = {
+        ...updatedEvent,
+        eventGuests: updatedEvent.eventGuests.map((guest) => ({
+          guestId: guest.guestId._id,
+          guestTag: guest.guestTag,
+        })),
+      };
+
+      const response = await fetch(`https://theuniquesbackend.vercel.app/api/events/${id}`, {
+        method: "PUT",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
+        body: JSON.stringify(payload),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `Failed to remove guest: ${response.status} ${errorText}`
+        );
+      }
 
       const result = await response.json();
 
       if (result.success) {
-        // Update event with new guest list
-        setEvent({
-          ...event,
-          eventGuests: result.guests,
-        });
+        setEvent(result.event);
+        toast.success("Guest removed successfully!");
+      } else {
+        throw new Error(result.message || "Failed to remove guest");
       }
     } catch (error) {
       console.error("Error removing guest:", error);
+      toast.error(`Error: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle banner upload
+  const handleUploadBanner = async (e) => {
+    try {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Authentication required. Please log in again.");
+        return;
+      }
+
+      setLoading(true);
+
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append("eventName", event.eventName);
+      formData.append("fileKey", "eventBanner");
+      formData.append("eventId", id);
+      formData.append("files", file);
+
+      const response = await fetch(
+        "https://theuniquesbackend.vercel.app/upload/event_file_upload",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `Failed to upload banner: ${response.status} ${errorText}`
+        );
+      }
+
+      const result = await response.json();
+
+      if (result.success !== false) {
+        // Refresh event data to get updated banner
+        const eventResponse = await fetch(
+          `https://theuniquesbackend.vercel.app/api/events/${id}`
+        );
+        const eventData = await eventResponse.json();
+
+        if (eventData.success) {
+          setEvent(eventData.event);
+          toast.success("Banner updated successfully!");
+        }
+      } else {
+        throw new Error(result.message || "Failed to upload banner");
+      }
+    } catch (error) {
+      console.error("Error uploading banner:", error);
+      toast.error(`Error: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -536,6 +750,362 @@ const EventView = () => {
   const formatDate = (dateString) => {
     if (!dateString) return "";
     return dayjs(dateString).format("dddd, MMMM D, YYYY");
+  };
+
+  // Fetch form fields from the event
+  const fetchFormFields = async () => {
+    try {
+      // Reset any previous form data
+      setFormErrors({});
+
+      // Check if event has form data
+      if (!event?.eventForm?.formId) {
+        setFormErrors({
+          submit: "This event doesn't have a registration form.",
+        });
+        return false;
+      }
+
+      // Extract form fields directly from event object
+      // Handle both cases: form fields in formId object or in formFeilds array
+      let fields = [];
+
+      if (
+        event.eventForm.formId.fields &&
+        event.eventForm.formId.fields.length > 0
+      ) {
+        // Fields from the formId object
+        fields = event.eventForm.formId.fields.map((field) => ({
+          name: field.fieldName,
+          label: field.fieldLabel,
+          type: field.fieldType,
+          placeholder: field.placeholder,
+          required: field.required,
+          options: field.options || [],
+          helperText: "",
+        }));
+      } else if (
+        event.eventForm.formFeilds &&
+        event.eventForm.formFeilds.length > 0
+      ) {
+        // Fields from the formFeilds array (note: handling the typo in "Feilds")
+        fields = event.eventForm.formFeilds.map((field) => ({
+          name: field.fieldName,
+          label: field.fieldLabel,
+          type: field.fieldType,
+          placeholder: field.placeholder,
+          required: field.required,
+          options: field.options || [],
+          helperText: "",
+        }));
+      }
+
+      if (fields.length === 0) {
+        setFormErrors({
+          submit: "No form fields found for this event.",
+        });
+        return false;
+      }
+
+      setFormFields(fields);
+
+      // Initialize form values
+      const initialValues = {};
+      fields.forEach((field) => {
+        if (field.type === "checkbox") {
+          initialValues[field.name] = [];
+        } else {
+          initialValues[field.name] = "";
+        }
+      });
+
+      setFormValues(initialValues);
+      return true;
+    } catch (error) {
+      console.error("Error setting up form fields:", error);
+      setFormErrors({
+        submit: "An error occurred while preparing the form.",
+      });
+      return false;
+    }
+  };
+
+  // Handle form input changes
+  const handleFormInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    if (type === "checkbox") {
+      const updatedValues = formValues[name] || [];
+      if (checked) {
+        setFormValues({
+          ...formValues,
+          [name]: [...updatedValues, value],
+        });
+      } else {
+        setFormValues({
+          ...formValues,
+          [name]: updatedValues.filter((item) => item !== value),
+        });
+      }
+    } else {
+      setFormValues({
+        ...formValues,
+        [name]: value,
+      });
+    }
+
+    // Clear error when user types
+    if (formErrors[name]) {
+      setFormErrors({
+        ...formErrors,
+        [name]: "",
+      });
+    }
+  };
+
+  // Validate form before submission
+  const validateForm = () => {
+    const errors = {};
+    formFields.forEach((field) => {
+      if (
+        field.required &&
+        (!formValues[field.name] ||
+          (Array.isArray(formValues[field.name]) &&
+            formValues[field.name].length === 0))
+      ) {
+        errors[field.name] = "This field is required";
+      }
+    });
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  // Submit form response
+  const handleSubmitRegistrationForm = async () => {
+    if (!validateForm()) return;
+
+    try {
+      setRegistrationLoading(true);
+
+      // Prepare the request body according to the API expectations
+      const requestBody = {
+        responses: formValues,
+        // Include respondent info if user is not authenticated
+        respondentInfo: {
+          name: formValues.name || "",
+          email: formValues.email || "",
+          phone: formValues.phone || "",
+        },
+      };
+
+      const response = await fetch(
+        `https://theuniquesbackend.vercel.app/api/events/${id}/form-response`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(requestBody),
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `Form submission failed (${response.status}): ${errorText}`
+        );
+      }
+
+      const result = await response.json();
+
+      if (result.success) {
+        setRegistrationSuccess(true);
+        setTimeout(() => {
+          setRegistrationModalOpen(false);
+          setRegistrationSuccess(false); // Reset for future submissions
+          // Clear form values for new submissions
+          const initialValues = {};
+          formFields.forEach((field) => {
+            if (field.type === "checkbox") {
+              initialValues[field.name] = [];
+            } else {
+              initialValues[field.name] = "";
+            }
+          });
+          setFormValues(initialValues);
+        }, 2000);
+      } else {
+        throw new Error(result.message || "Registration failed");
+      }
+    } catch (error) {
+      console.error("Error submitting form response:", error);
+      setFormErrors({
+        submit:
+          error.message ||
+          "An error occurred while submitting your registration. Please try again.",
+      });
+    } finally {
+      setRegistrationLoading(false);
+    }
+  };
+
+  // Render form field based on type
+  const renderFormField = (field) => {
+    // Map fieldType to appropriate input type
+    const fieldType = field.type || field.fieldType;
+    const fieldName = field.name || field.fieldName;
+    const fieldLabel = field.label || field.fieldLabel;
+
+    switch (fieldType) {
+      case "text":
+      case "email":
+      case "number":
+      case "tel":
+      case "url":
+        return (
+          <TextField
+            key={fieldName}
+            name={fieldName}
+            label={fieldLabel}
+            type={fieldType}
+            value={formValues[fieldName] || ""}
+            onChange={handleFormInputChange}
+            fullWidth
+            required={field.required}
+            placeholder={field.placeholder || ""}
+            error={!!formErrors[fieldName]}
+            helperText={formErrors[fieldName] || field.helperText}
+            margin="normal"
+            variant="outlined"
+          />
+        );
+
+      case "textarea":
+        return (
+          <TextField
+            key={fieldName}
+            name={fieldName}
+            label={fieldLabel}
+            multiline
+            rows={4}
+            value={formValues[fieldName] || ""}
+            onChange={handleFormInputChange}
+            fullWidth
+            required={field.required}
+            placeholder={field.placeholder || ""}
+            error={!!formErrors[fieldName]}
+            helperText={formErrors[fieldName] || field.helperText}
+            margin="normal"
+            variant="outlined"
+          />
+        );
+
+      case "select":
+        return (
+          <FormControl
+            key={fieldName}
+            fullWidth
+            margin="normal"
+            error={!!formErrors[fieldName]}
+            required={field.required}
+          >
+            <InputLabel>{fieldLabel}</InputLabel>
+            <Select
+              name={fieldName}
+              value={formValues[fieldName] || ""}
+              onChange={handleFormInputChange}
+              label={fieldLabel}
+            >
+              {field.options?.map((option) => (
+                <MenuItem
+                  key={option.value || option}
+                  value={option.value || option}
+                >
+                  {option.label || option}
+                </MenuItem>
+              ))}
+            </Select>
+            {(formErrors[fieldName] || field.helperText) && (
+              <FormHelperText>
+                {formErrors[fieldName] || field.helperText}
+              </FormHelperText>
+            )}
+          </FormControl>
+        );
+
+      case "radio":
+        return (
+          <FormControl
+            key={fieldName}
+            component="fieldset"
+            margin="normal"
+            error={!!formErrors[fieldName]}
+            required={field.required}
+            fullWidth
+          >
+            <Typography component="legend">{fieldLabel}</Typography>
+            <RadioGroup
+              name={fieldName}
+              value={formValues[fieldName] || ""}
+              onChange={handleFormInputChange}
+            >
+              {field.options?.map((option) => (
+                <FormControlLabel
+                  key={option.value || option}
+                  value={option.value || option}
+                  control={<Radio />}
+                  label={option.label || option}
+                />
+              ))}
+            </RadioGroup>
+            {(formErrors[fieldName] || field.helperText) && (
+              <FormHelperText>
+                {formErrors[fieldName] || field.helperText}
+              </FormHelperText>
+            )}
+          </FormControl>
+        );
+
+      case "checkbox":
+        return (
+          <FormControl
+            key={fieldName}
+            component="fieldset"
+            margin="normal"
+            error={!!formErrors[fieldName]}
+            required={field.required}
+            fullWidth
+          >
+            <Typography component="legend">{fieldLabel}</Typography>
+            {field.options?.map((option) => (
+              <FormControlLabel
+                key={option.value || option}
+                control={
+                  <Checkbox
+                    name={fieldName}
+                    value={option.value || option}
+                    checked={(formValues[fieldName] || []).includes(
+                      option.value || option
+                    )}
+                    onChange={handleFormInputChange}
+                  />
+                }
+                label={option.label || option}
+              />
+            ))}
+            {(formErrors[fieldName] || field.helperText) && (
+              <FormHelperText>
+                {formErrors[fieldName] || field.helperText}
+              </FormHelperText>
+            )}
+          </FormControl>
+        );
+
+      default:
+        return null;
+    }
   };
 
   if (loading) {
@@ -579,21 +1149,22 @@ const EventView = () => {
           justifyContent: "space-between",
           alignItems: "center",
           mb: 4,
-          background: 'linear-gradient(to right, rgba(255,255,255,0.9), rgba(255,255,255,0.7))',
+          background:
+            "linear-gradient(to right, rgba(255,255,255,0.9), rgba(255,255,255,0.7))",
           p: 2,
           borderRadius: 2,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+          boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
         }}
       >
         <Box>
-          <Typography 
-            variant="h4" 
-            sx={{ 
+          <Typography
+            variant="h4"
+            sx={{
               fontWeight: "bold",
-              background: 'linear-gradient(45deg, #1976d2, #42a5f5)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-             }}
+              background: "linear-gradient(45deg, #1976d2, #42a5f5)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
           >
             {editMode ? "Edit Event" : event.eventName}
           </Typography>
@@ -605,37 +1176,45 @@ const EventView = () => {
         </Box>
         <Box sx={{ display: "flex", gap: 1 }}>
           {/* Register button beside heading */}
-          {event.eventForm && event.eventForm.formId && !editMode && (
+          {/* {event.eventForm && event.eventForm.formId && !editMode && (
             <Button
               variant="contained"
               color="secondary"
               startIcon={<ContactMail />}
               onClick={handleRegisterForEvent}
-              sx={{ 
-                background: 'linear-gradient(45deg, #FF5722 30%, #FFA726 90%)',
-                boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-                transition: 'transform 0.2s',
-                '&:hover': { transform: 'scale(1.02)' }
+              disabled={registrationLoading}
+              sx={{
+                background: "linear-gradient(45deg, #FF5722 30%, #FFA726 90%)",
+                boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
+                transition: "transform 0.2s",
+                "&:hover": { transform: "scale(1.02)" },
               }}
             >
-              Register Now
+              {registrationLoading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Register Now"
+              )}
             </Button>
-          )}
+          )} */}
 
           <Button
             variant={editMode ? "outlined" : "contained"}
             color={editMode ? "error" : "primary"}
             onClick={handleToggleEditMode}
             startIcon={editMode ? <Close /> : <Edit />}
-            sx={{ 
-              transition: 'all 0.2s',
-              ...(editMode ? {} : {
-                background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
-              }),
-              '&:hover': {
-                transform: 'translateY(-2px)'
-              }
+            sx={{
+              transition: "all 0.2s",
+              ...(editMode
+                ? {}
+                : {
+                    background:
+                      "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
+                    boxShadow: "0 3px 5px 2px rgba(33, 203, 243, .3)",
+                  }),
+              "&:hover": {
+                transform: "translateY(-2px)",
+              },
             }}
           >
             {editMode ? "Cancel" : "Edit Event"}
@@ -647,11 +1226,11 @@ const EventView = () => {
               color="primary"
               startIcon={<Save />}
               onClick={handleSaveChanges}
-              sx={{ 
-                background: 'linear-gradient(45deg, #4CAF50 30%, #8BC34A 90%)',
-                boxShadow: '0 3px 5px 2px rgba(76, 175, 80, .3)',
-                transition: 'transform 0.2s',
-                '&:hover': { transform: 'translateY(-2px)' }
+              sx={{
+                background: "linear-gradient(45deg, #4CAF50 30%, #8BC34A 90%)",
+                boxShadow: "0 3px 5px 2px rgba(76, 175, 80, .3)",
+                transition: "transform 0.2s",
+                "&:hover": { transform: "translateY(-2px)" },
               }}
             >
               Save Changes
@@ -662,15 +1241,15 @@ const EventView = () => {
             variant="outlined"
             startIcon={<AttachMoney />}
             onClick={handleNavigateToBudget}
-            sx={{ 
-              borderColor: '#4CAF50', 
-              color: '#4CAF50',
-              transition: 'all 0.2s',
-              '&:hover': {
-                borderColor: '#4CAF50',
-                backgroundColor: 'rgba(76, 175, 80, 0.08)',
-                transform: 'translateY(-2px)'
-              }
+            sx={{
+              borderColor: "#4CAF50",
+              color: "#4CAF50",
+              transition: "all 0.2s",
+              "&:hover": {
+                borderColor: "#4CAF50",
+                backgroundColor: "rgba(76, 175, 80, 0.08)",
+                transform: "translateY(-2px)",
+              },
             }}
           >
             Manage Budget
@@ -682,26 +1261,25 @@ const EventView = () => {
       <Grid container spacing={3}>
         {/* Left column */}
         <Grid item xs={12} md={8}>
-          <Paper 
-            sx={{ 
-              p: 3, 
-              mb: 3, 
-              borderRadius: 3, 
-              boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
-              overflow: 'hidden',
+          <Paper
+            sx={{
+              p: 3,
+              mb: 3,
+              borderRadius: 3,
+              boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
+              overflow: "hidden",
             }}
             elevation={2}
           >
             {/* Banner image */}
             <Box sx={{ position: "relative", mb: 3 }}>
               {event.eventBanner ? (
-                <CardMedia
-                  component="img"
-                  height="350"
-                  image={event.eventBanner.url}
-                  alt={event.eventName}
-                  sx={{ borderRadius: 2, boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
-                />
+                <iframe
+                  class="drive-iframe"
+                  src={`https://drive.google.com/file/d/${event.eventBanner.fileId}/preview`}
+                  width="100%"
+                  height={350}
+                ></iframe>
               ) : (
                 <Box
                   sx={{
@@ -726,14 +1304,19 @@ const EventView = () => {
                     position: "absolute",
                     bottom: 16,
                     right: 16,
-                    background: 'rgba(0,0,0,0.7)',
-                    '&:hover': {
-                      background: 'rgba(0,0,0,0.9)',
-                    }
+                    background: "rgba(0,0,0,0.7)",
+                    "&:hover": {
+                      background: "rgba(0,0,0,0.9)",
+                    },
                   }}
                 >
                   Change Banner
-                  <input type="file" hidden accept="image/*" />
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={handleUploadBanner}
+                  />
                 </Button>
               )}
             </Box>
@@ -746,18 +1329,18 @@ const EventView = () => {
                 variant="scrollable"
                 scrollButtons="auto"
                 sx={{
-                  '& .MuiTabs-indicator': {
+                  "& .MuiTabs-indicator": {
                     height: 3,
                     borderRadius: 2,
-                    backgroundColor: 'primary.main',
+                    backgroundColor: "primary.main",
                   },
-                  '& .MuiTab-root': {
-                    textTransform: 'none',
+                  "& .MuiTab-root": {
+                    textTransform: "none",
                     fontWeight: 600,
-                    fontSize: '0.95rem',
-                    transition: 'all 0.2s',
-                    '&:hover': {
-                      color: 'primary.main',
+                    fontSize: "0.95rem",
+                    transition: "all 0.2s",
+                    "&:hover": {
+                      color: "primary.main",
                     },
                   },
                   mb: 1,
@@ -813,7 +1396,12 @@ const EventView = () => {
                                   : null
                               }
                               onChange={handleDateChange}
-                              slotProps={{ textField: { fullWidth: true, variant: 'outlined' } }}
+                              slotProps={{
+                                textField: {
+                                  fullWidth: true,
+                                  variant: "outlined",
+                                },
+                              }}
                               sx={{ mb: 2 }}
                             />
                           </LocalizationProvider>
@@ -829,7 +1417,12 @@ const EventView = () => {
                                   : null
                               }
                               onChange={handleTimeChange}
-                              slotProps={{ textField: { fullWidth: true, variant: 'outlined' } }}
+                              slotProps={{
+                                textField: {
+                                  fullWidth: true,
+                                  variant: "outlined",
+                                },
+                              }}
                               sx={{ mb: 2 }}
                             />
                           </LocalizationProvider>
@@ -860,7 +1453,11 @@ const EventView = () => {
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
-                          <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+                          <FormControl
+                            fullWidth
+                            variant="outlined"
+                            sx={{ mb: 2 }}
+                          >
                             <InputLabel>Event Status</InputLabel>
                             <Select
                               value={editedEvent.eventStatus || "upcoming"}
@@ -893,11 +1490,15 @@ const EventView = () => {
                         <Typography
                           variant="subtitle1"
                           fontWeight="bold"
-                          sx={{ mt: 2, mb: 1, fontSize: '1.1rem' }}
+                          sx={{ mt: 2, mb: 1, fontSize: "1.1rem" }}
                         >
                           Description
                         </Typography>
-                        <Typography variant="body1" paragraph sx={{ lineHeight: 1.7, color: 'text.primary' }}>
+                        <Typography
+                          variant="body1"
+                          paragraph
+                          sx={{ lineHeight: 1.7, color: "text.primary" }}
+                        >
                           {event.eventDescription ||
                             "No description available."}
                         </Typography>
@@ -906,7 +1507,7 @@ const EventView = () => {
                         <Typography
                           variant="subtitle1"
                           fontWeight="bold"
-                          sx={{ mt: 4, mb: 2, fontSize: '1.1rem' }}
+                          sx={{ mt: 4, mb: 2, fontSize: "1.1rem" }}
                         >
                           Event Details
                         </Typography>
@@ -916,13 +1517,13 @@ const EventView = () => {
                             <Card
                               sx={{
                                 bgcolor: "background.paper",
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
                                 borderRadius: 2,
-                                transition: 'transform 0.2s',
-                                '&:hover': {
-                                  transform: 'translateY(-3px)',
-                                  boxShadow: '0 6px 16px rgba(0,0,0,0.1)'
-                                }
+                                transition: "transform 0.2s",
+                                "&:hover": {
+                                  transform: "translateY(-3px)",
+                                  boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
+                                },
                               }}
                             >
                               <CardContent
@@ -932,7 +1533,11 @@ const EventView = () => {
                                 }}
                               >
                                 <Schedule
-                                  sx={{ mr: 2, color: "primary.main", fontSize: 28 }}
+                                  sx={{
+                                    mr: 2,
+                                    color: "primary.main",
+                                    fontSize: 28,
+                                  }}
                                 />
                                 <Box>
                                   <Typography
@@ -942,10 +1547,16 @@ const EventView = () => {
                                   >
                                     Date & Time
                                   </Typography>
-                                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                  <Typography
+                                    variant="body1"
+                                    sx={{ fontWeight: 500 }}
+                                  >
                                     {formatDate(event.eventDate)}
                                   </Typography>
-                                  <Typography variant="body2" sx={{ color: 'text.primary', mt: 0.5 }}>
+                                  <Typography
+                                    variant="body2"
+                                    sx={{ color: "text.primary", mt: 0.5 }}
+                                  >
                                     {event.eventTime}
                                   </Typography>
                                 </Box>
@@ -957,13 +1568,13 @@ const EventView = () => {
                             <Card
                               sx={{
                                 bgcolor: "background.paper",
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
                                 borderRadius: 2,
-                                transition: 'transform 0.2s',
-                                '&:hover': {
-                                  transform: 'translateY(-3px)',
-                                  boxShadow: '0 6px 16px rgba(0,0,0,0.1)'
-                                }
+                                transition: "transform 0.2s",
+                                "&:hover": {
+                                  transform: "translateY(-3px)",
+                                  boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
+                                },
                               }}
                             >
                               <CardContent
@@ -973,7 +1584,11 @@ const EventView = () => {
                                 }}
                               >
                                 <LocationOn
-                                  sx={{ mr: 2, color: "primary.main", fontSize: 28 }}
+                                  sx={{
+                                    mr: 2,
+                                    color: "primary.main",
+                                    fontSize: 28,
+                                  }}
                                 />
                                 <Box>
                                   <Typography
@@ -983,7 +1598,10 @@ const EventView = () => {
                                   >
                                     Venue
                                   </Typography>
-                                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                  <Typography
+                                    variant="body1"
+                                    sx={{ fontWeight: 500 }}
+                                  >
                                     {event.eventVenue || "Venue not specified"}
                                   </Typography>
                                 </Box>
@@ -995,13 +1613,13 @@ const EventView = () => {
                             <Card
                               sx={{
                                 bgcolor: "background.paper",
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
                                 borderRadius: 2,
-                                transition: 'transform 0.2s',
-                                '&:hover': {
-                                  transform: 'translateY(-3px)',
-                                  boxShadow: '0 6px 16px rgba(0,0,0,0.1)'
-                                }
+                                transition: "transform 0.2s",
+                                "&:hover": {
+                                  transform: "translateY(-3px)",
+                                  boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
+                                },
                               }}
                             >
                               <CardContent
@@ -1011,7 +1629,11 @@ const EventView = () => {
                                 }}
                               >
                                 <EventNote
-                                  sx={{ mr: 2, color: "primary.main", fontSize: 28 }}
+                                  sx={{
+                                    mr: 2,
+                                    color: "primary.main",
+                                    fontSize: 28,
+                                  }}
                                 />
                                 <Box>
                                   <Typography
@@ -1021,7 +1643,10 @@ const EventView = () => {
                                   >
                                     Event Type
                                   </Typography>
-                                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                  <Typography
+                                    variant="body1"
+                                    sx={{ fontWeight: 500 }}
+                                  >
                                     {event.eventType || "Not specified"}
                                   </Typography>
                                 </Box>
@@ -1033,13 +1658,13 @@ const EventView = () => {
                             <Card
                               sx={{
                                 bgcolor: "background.paper",
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
                                 borderRadius: 2,
-                                transition: 'transform 0.2s',
-                                '&:hover': {
-                                  transform: 'translateY(-3px)',
-                                  boxShadow: '0 6px 16px rgba(0,0,0,0.1)'
-                                }
+                                transition: "transform 0.2s",
+                                "&:hover": {
+                                  transform: "translateY(-3px)",
+                                  boxShadow: "0 6px 16px rgba(0,0,0,0.1)",
+                                },
                               }}
                             >
                               <CardContent
@@ -1048,7 +1673,13 @@ const EventView = () => {
                                   alignItems: "flex-start",
                                 }}
                               >
-                                <Group sx={{ mr: 2, color: "primary.main", fontSize: 28 }} />
+                                <Group
+                                  sx={{
+                                    mr: 2,
+                                    color: "primary.main",
+                                    fontSize: 28,
+                                  }}
+                                />
                                 <Box>
                                   <Typography
                                     variant="body2"
@@ -1057,7 +1688,10 @@ const EventView = () => {
                                   >
                                     Organizer Batch
                                   </Typography>
-                                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                  <Typography
+                                    variant="body1"
+                                    sx={{ fontWeight: 500 }}
+                                  >
                                     {event.eventOrganizerBatch ||
                                       "Not specified"}
                                   </Typography>
@@ -1073,14 +1707,14 @@ const EventView = () => {
                             <Typography
                               variant="subtitle1"
                               fontWeight="bold"
-                              sx={{ mb: 2, fontSize: '1.1rem' }}
+                              sx={{ mb: 2, fontSize: "1.1rem" }}
                             >
                               Budget Overview
                             </Typography>
                             <Card
                               sx={{
                                 bgcolor: "background.paper",
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
                                 borderRadius: 2,
                               }}
                             >
@@ -1093,7 +1727,13 @@ const EventView = () => {
                                     >
                                       Total Budget
                                     </Typography>
-                                    <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>
+                                    <Typography
+                                      variant="h6"
+                                      sx={{
+                                        fontWeight: 600,
+                                        color: "text.primary",
+                                      }}
+                                    >
                                       ₹
                                       {event.budget.totalAllocated.toLocaleString()}
                                     </Typography>
@@ -1105,7 +1745,13 @@ const EventView = () => {
                                     >
                                       Total Spent
                                     </Typography>
-                                    <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>
+                                    <Typography
+                                      variant="h6"
+                                      sx={{
+                                        fontWeight: 600,
+                                        color: "text.primary",
+                                      }}
+                                    >
                                       ₹
                                       {event.budget.totalSpent.toLocaleString()}
                                     </Typography>
@@ -1162,101 +1808,197 @@ const EventView = () => {
                   <Box>
                     {event.eventForm && event.eventForm.formId ? (
                       <Box>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                            Form Responses
-                          </Typography>
-                          <Button
-                            variant="contained"
-                            color="secondary"
-                            startIcon={<ContactMail />}
-                            onClick={handleRegisterForEvent}
-                            sx={{ 
-                              background: 'linear-gradient(45deg, #FF5722 30%, #FFA726 90%)',
-                              boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-                              transition: 'transform 0.2s',
-                              '&:hover': { transform: 'scale(1.02)' }
-                            }}
-                          >
-                            Register for Event
-                          </Button>
-                        </Box>
-
-                        {/* Form Preview Section */}
-                        <Box sx={{ mb: 4 }}>
-                          <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
-                            Form Preview
-                          </Typography>
-                          <Box sx={{ 
-                            border: '1px solid', 
-                            borderColor: 'divider', 
-                            borderRadius: 2, 
-                            mb: 2,
-                            overflow: 'hidden',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                          }}>
-                            <iframe
-                              src={`https://theuniquesbackend.vercel.app/api/forms/${event.eventForm.formId}/preview`}
-                              style={{ width: '100%', height: '400px', border: 'none' }}
-                              title="Form Preview"
-                            />
-                          </Box>
-                        </Box>
+                        {/* Previous code for form preview section */}
 
                         <Divider sx={{ my: 3 }} />
 
-                        <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
+                        <Typography
+                          variant="subtitle1"
+                          fontWeight="bold"
+                          sx={{ mb: 2 }}
+                        >
                           Submissions ({formResponses.length})
                         </Typography>
 
                         {formResponses.length > 0 ? (
-                          <TableContainer component={Paper} sx={{ boxShadow: '0 4px 12px rgba(0,0,0,0.05)', borderRadius: 2, overflow: 'hidden' }}>
-                            <Table>
-                              <TableHead sx={{ bgcolor: 'rgba(0,0,0,0.02)' }}>
-                                <TableRow>
-                                  <TableCell>Name</TableCell>
-                                  <TableCell>Email</TableCell>
-                                  <TableCell>Status</TableCell>
-                                  <TableCell>Submission Date</TableCell>
-                                </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                {formResponses.map((response, index) => (
-                                  <TableRow 
-                                    key={response._id || index}
-                                    sx={{ 
-                                      '&:hover': { backgroundColor: 'rgba(0,0,0,0.02)' },
-                                      transition: 'background-color 0.2s'
-                                    }}
+                          (() => {
+                            // Get all unique keys from all responses
+                            const allKeys = new Set();
+                            formResponses.forEach((response) => {
+                              if (response.responses) {
+                                Object.keys(response.responses).forEach((key) =>
+                                  allKeys.add(key)
+                                );
+                              }
+                            });
+                            const responseKeys = Array.from(allKeys);
+
+                            return (
+                              <TableContainer
+                                component={Paper}
+                                sx={{
+                                  boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                                  borderRadius: 2,
+                                  overflow: "hidden",
+                                  overflowX: "auto", // Add horizontal scroll for many columns
+                                }}
+                              >
+                                <Table>
+                                  <TableHead
+                                    sx={{ bgcolor: "rgba(0,0,0,0.02)" }}
                                   >
-                                    <TableCell>
-                                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                        <Avatar sx={{ mr: 1, width: 32, height: 32 }}>
-                                          {(response.respondent?.member?.memberName || "A").charAt(0)}
-                                        </Avatar>
-                                        {response.respondent?.member?.memberName || ""}
-                                      </Box>
-                                    </TableCell>
-                                    <TableCell>{response.respondent?.member?.memberEmail || "No email"}</TableCell>
-                                    <TableCell>
-                                      <Chip
-                                        size="small"
-                                        label={response.status}
-                                        color={
-                                          response.status === "approved"
-                                            ? "success"
-                                            : response.status === "rejected"
-                                            ? "error"
-                                            : "default"
-                                        }
-                                      />
-                                    </TableCell>
-                                    <TableCell>{new Date(response.metadata?.submittedAt).toLocaleString()}</TableCell>
-                                  </TableRow>
-                                ))}
-                              </TableBody>
-                            </Table>
-                          </TableContainer>
+                                    <TableRow>
+                                      {/* Fixed columns */}
+                                      <TableCell
+                                        sx={{
+                                          fontWeight: "bold",
+                                          minWidth: 180,
+                                        }}
+                                      >
+                                        Respondent
+                                      </TableCell>
+
+                                      {/* Dynamic columns based on all possible response fields */}
+                                      {responseKeys.map((key) => (
+                                        <TableCell
+                                          key={key}
+                                          sx={{
+                                            fontWeight: "bold",
+                                            minWidth: 120,
+                                          }}
+                                        >
+                                          {key}
+                                        </TableCell>
+                                      ))}
+
+                                      {/* Fixed columns at the end */}
+                                      {/* <TableCell
+                                        sx={{
+                                          fontWeight: "bold",
+                                          minWidth: 100,
+                                        }}
+                                      >
+                                        Status
+                                      </TableCell> */}
+                                      <TableCell
+                                        sx={{
+                                          fontWeight: "bold",
+                                          minWidth: 150,
+                                        }}
+                                      >
+                                        Submitted On
+                                      </TableCell>
+                                    </TableRow>
+                                  </TableHead>
+                                  <TableBody>
+                                    {formResponses.map((response, index) => (
+                                      <TableRow
+                                        key={response._id || index}
+                                        sx={{
+                                          "&:hover": {
+                                            backgroundColor: "rgba(0,0,0,0.02)",
+                                          },
+                                          transition: "background-color 0.2s",
+                                        }}
+                                      >
+                                        {/* Respondent info */}
+                                        <TableCell>
+                                          <Box
+                                            sx={{
+                                              display: "flex",
+                                              alignItems: "center",
+                                            }}
+                                          >
+                                            <Avatar
+                                              sx={{
+                                                mr: 1,
+                                                width: 32,
+                                                height: 32,
+                                              }}
+                                            >
+                                              {(
+                                                response.respondent?.member
+                                                  ?.memberName ||
+                                                response.respondent?.name ||
+                                                "A"
+                                              ).charAt(0)}
+                                            </Avatar>
+                                            <Box>
+                                              <Typography
+                                                variant="body2"
+                                                sx={{ fontWeight: "medium" }}
+                                              >
+                                                {response.respondent?.member
+                                                  ?.memberName ||
+                                                  response.respondent?.name ||
+                                                  ""}
+                                              </Typography>
+                                              <Typography
+                                                variant="caption"
+                                                color="text.secondary"
+                                              >
+                                                {response.respondent?.member
+                                                  ?.memberEmail ||
+                                                  response.respondent?.email ||
+                                                  "No email"}
+                                              </Typography>
+                                            </Box>
+                                          </Box>
+                                        </TableCell>
+
+                                        {/* Dynamic response values */}
+                                        {responseKeys.map((key) => (
+                                          <TableCell key={key}>
+                                            {response.responses &&
+                                            response.responses[key] !==
+                                              undefined
+                                              ? Array.isArray(
+                                                  response.responses[key]
+                                                )
+                                                ? response.responses[key].join(
+                                                    ", "
+                                                  )
+                                                : String(
+                                                    response.responses[key]
+                                                  )
+                                              : "—"}
+                                          </TableCell>
+                                        ))}
+
+                                        {/* Status */}
+                                        {/* <TableCell>
+                                          <Chip
+                                            size="small"
+                                            label={response.status}
+                                            color={
+                                              response.status === "approved"
+                                                ? "success"
+                                                : response.status === "rejected"
+                                                ? "error"
+                                                : "default"
+                                            }
+                                          />
+                                        </TableCell> */}
+
+                                        {/* Date */}
+                                        <TableCell>
+                                          {response.metadata?.submittedAt
+                                            ? new Date(
+                                                response.metadata.submittedAt
+                                              ).toLocaleString()
+                                            : response.createdAt
+                                            ? new Date(
+                                                response.createdAt
+                                              ).toLocaleString()
+                                            : "Unknown"}
+                                        </TableCell>
+                                      </TableRow>
+                                    ))}
+                                  </TableBody>
+                                </Table>
+                              </TableContainer>
+                            );
+                          })()
                         ) : (
                           <Box
                             sx={{
@@ -1264,7 +2006,7 @@ const EventView = () => {
                               textAlign: "center",
                               bgcolor: "background.paper",
                               borderRadius: 2,
-                              boxShadow: 'inset 0 0 8px rgba(0,0,0,0.05)',
+                              boxShadow: "inset 0 0 8px rgba(0,0,0,0.05)",
                             }}
                           >
                             <Typography color="text.secondary">
@@ -1280,7 +2022,7 @@ const EventView = () => {
                           textAlign: "center",
                           bgcolor: "background.paper",
                           borderRadius: 2,
-                          boxShadow: 'inset 0 0 8px rgba(0,0,0,0.05)',
+                          boxShadow: "inset 0 0 8px rgba(0,0,0,0.05)",
                         }}
                       >
                         <Typography color="text.secondary">
@@ -1298,12 +2040,12 @@ const EventView = () => {
         {/* Right column - Side panel */}
         <Grid item xs={12} md={4}>
           {/* Event Status Card */}
-          <Card 
-            sx={{ 
-              mb: 3, 
-              borderRadius: 3, 
-              boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
-              overflow: 'hidden',
+          <Card
+            sx={{
+              mb: 3,
+              borderRadius: 3,
+              boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
+              overflow: "hidden",
             }}
           >
             <CardContent>
@@ -1363,19 +2105,25 @@ const EventView = () => {
                     label="Update Status"
                     onChange={async (e) => {
                       try {
+                        setLoading(true);
                         const response = await fetch(
                           `https://theuniquesbackend.vercel.app/api/events/${id}/status`,
                           {
                             method: "PATCH",
                             headers: {
                               "Content-Type": "application/json",
-                              Authorization: `Bearer ${localStorage.getItem(
-                                "token"
-                              )}`,
                             },
+                            credentials: "include",
                             body: JSON.stringify({ status: e.target.value }),
                           }
                         );
+
+                        if (!response.ok) {
+                          const errorText = await response.text();
+                          throw new Error(
+                            `Failed to update status: ${response.status} ${errorText}`
+                          );
+                        }
 
                         const data = await response.json();
 
@@ -1384,9 +2132,21 @@ const EventView = () => {
                             ...event,
                             eventStatus: data.event.eventStatus,
                           });
+                        } else {
+                          throw new Error(
+                            data.message || "Failed to update status"
+                          );
                         }
                       } catch (error) {
                         console.error("Error updating event status:", error);
+                        toast.success(
+                          `Error: ${
+                            error.message ||
+                            "Failed to update status. Please try again."
+                          }`
+                        );
+                      } finally {
+                        setLoading(false);
                       }
                     }}
                   >
@@ -1401,48 +2161,57 @@ const EventView = () => {
           </Card>
 
           {/* Guests Card */}
-          <Card 
-            sx={{ 
-              mb: 3, 
-              borderRadius: 3, 
-              boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
-              overflow: 'hidden',
+          <Card
+            sx={{
+              mb: 3,
+              borderRadius: 3,
+              boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
+              overflow: "hidden",
             }}
           >
             <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 2,
+                }}
+              >
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   Event Guests
                 </Typography>
-                <Chip 
-                  label={`${event.eventGuests?.length || 0} guests`} 
-                  size="small" 
-                  color="primary" 
+                <Chip
+                  label={`${event.eventGuests?.length || 0} guests`}
+                  size="small"
+                  color="primary"
                   sx={{ fontWeight: 500 }}
                 />
               </Box>
 
               {event.eventGuests && event.eventGuests.length > 0 ? (
-                <List>
+                <List sx={{ overflowY: "auto", maxHeight: 300 }}>
                   {event.eventGuests.map((guest, index) => (
                     <ListItem
                       key={index}
                       alignItems="flex-start"
-                      sx={{ 
-                        px: 0, 
-                        transition: 'background-color 0.2s',
-                        '&:hover': { backgroundColor: 'rgba(0,0,0,0.02)' },
+                      sx={{
+                        px: 0,
+                        transition: "background-color 0.2s",
+                        "&:hover": { backgroundColor: "rgba(0,0,0,0.02)" },
                         borderRadius: 1,
                       }}
                       secondaryAction={
                         !editMode && (
-                          <IconButton 
-                            edge="end" 
+                          <IconButton
+                            edge="end"
                             size="small"
-                            onClick={() => handleRemoveGuest(guest.guestId?._id)}
-                            sx={{ 
+                            onClick={() =>
+                              handleRemoveGuest(guest.guestId?._id)
+                            }
+                            sx={{
                               opacity: 0.6,
-                              '&:hover': { opacity: 1, color: 'error.main' }
+                              "&:hover": { opacity: 1, color: "error.main" },
                             }}
                           >
                             <Delete fontSize="small" />
@@ -1451,10 +2220,10 @@ const EventView = () => {
                       }
                     >
                       <ListItemAvatar>
-                        <Avatar 
+                        <Avatar
                           src={guest.guestId?.guestImage?.url}
                           sx={{
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                           }}
                         >
                           {guest.guestId?.guestName?.charAt(0) || "G"}
@@ -1464,7 +2233,11 @@ const EventView = () => {
                         primary={guest.guestId?.guestName || "Unknown Guest"}
                         secondary={
                           <React.Fragment>
-                            <Typography variant="body2" component="span" sx={{ display: 'block' }}>
+                            <Typography
+                              variant="body2"
+                              component="span"
+                              sx={{ display: "block" }}
+                            >
                               {guest.guestId?.guestDesignation}
                               {guest.guestId?.guestCompany && (
                                 <>, {guest.guestId.guestCompany}</>
@@ -1474,7 +2247,7 @@ const EventView = () => {
                               <Chip
                                 label={guest.guestTag}
                                 size="small"
-                                sx={{ mt: 0.5, fontSize: '0.7rem' }}
+                                sx={{ mt: 0.5, fontSize: "0.7rem" }}
                                 variant="outlined"
                               />
                             )}
@@ -1491,7 +2264,7 @@ const EventView = () => {
                     textAlign: "center",
                     bgcolor: "background.paper",
                     borderRadius: 2,
-                    boxShadow: 'inset 0 0 8px rgba(0,0,0,0.05)',
+                    boxShadow: "inset 0 0 8px rgba(0,0,0,0.05)",
                   }}
                 >
                   <Typography variant="body2" color="text.secondary">
@@ -1505,15 +2278,15 @@ const EventView = () => {
                   variant="outlined"
                   startIcon={<PersonAdd />}
                   size="medium"
-                  sx={{ 
-                    mt: 2, 
-                    width: '100%',
-                    borderColor: 'primary.main',
-                    color: 'primary.main',
-                    '&:hover': {
-                      backgroundColor: 'rgba(33, 150, 243, 0.08)',
-                      borderColor: 'primary.main',
-                    }
+                  sx={{
+                    mt: 2,
+                    width: "100%",
+                    borderColor: "primary.main",
+                    color: "primary.main",
+                    "&:hover": {
+                      backgroundColor: "rgba(33, 150, 243, 0.08)",
+                      borderColor: "primary.main",
+                    },
                   }}
                   onClick={handleOpenGuestDialog}
                 >
@@ -1524,12 +2297,12 @@ const EventView = () => {
           </Card>
 
           {/* Quick Stats Card */}
-          <Card 
-            sx={{ 
-              borderRadius: 3, 
-              boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
-              overflow: 'hidden',
-              background: 'linear-gradient(to right bottom, #f9f9f9, #ffffff)',
+          <Card
+            sx={{
+              borderRadius: 3,
+              boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
+              overflow: "hidden",
+              background: "linear-gradient(to right bottom, #f9f9f9, #ffffff)",
             }}
           >
             <CardContent>
@@ -1540,17 +2313,23 @@ const EventView = () => {
               <Grid container spacing={2}>
                 {event.eventForm && (
                   <Grid item xs={6}>
-                    <Card sx={{ 
-                      boxShadow: 'none', 
-                      backgroundColor: 'rgba(33, 150, 243, 0.04)', 
-                      borderRadius: 2,
-                      transition: 'transform 0.3s',
-                      '&:hover': {
-                        transform: 'translateY(-4px)'
-                      }
-                    }}>
+                    <Card
+                      sx={{
+                        boxShadow: "none",
+                        backgroundColor: "rgba(33, 150, 243, 0.04)",
+                        borderRadius: 2,
+                        transition: "transform 0.3s",
+                        "&:hover": {
+                          transform: "translateY(-4px)",
+                        },
+                      }}
+                    >
                       <CardContent sx={{ textAlign: "center", p: 2 }}>
-                        <Typography variant="h4" color="primary.main" sx={{ fontWeight: 700 }}>
+                        <Typography
+                          variant="h4"
+                          color="primary.main"
+                          sx={{ fontWeight: 700 }}
+                        >
                           {formResponses.length}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
@@ -1563,17 +2342,22 @@ const EventView = () => {
 
                 {event.eventGallery && (
                   <Grid item xs={6}>
-                    <Card sx={{ 
-                      boxShadow: 'none', 
-                      backgroundColor: 'rgba(76, 175, 80, 0.04)', 
-                      borderRadius: 2,
-                      transition: 'transform 0.3s',
-                      '&:hover': {
-                        transform: 'translateY(-4px)'
-                      }
-                    }}>
+                    <Card
+                      sx={{
+                        boxShadow: "none",
+                        backgroundColor: "rgba(76, 175, 80, 0.04)",
+                        borderRadius: 2,
+                        transition: "transform 0.3s",
+                        "&:hover": {
+                          transform: "translateY(-4px)",
+                        },
+                      }}
+                    >
                       <CardContent sx={{ textAlign: "center", p: 2 }}>
-                        <Typography variant="h4" sx={{ color: '#4caf50', fontWeight: 700 }}>
+                        <Typography
+                          variant="h4"
+                          sx={{ color: "#4caf50", fontWeight: 700 }}
+                        >
                           {gallery.length}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
@@ -1585,17 +2369,22 @@ const EventView = () => {
                 )}
 
                 <Grid item xs={6}>
-                  <Card sx={{ 
-                    boxShadow: 'none', 
-                    backgroundColor: 'rgba(255, 152, 0, 0.04)', 
-                    borderRadius: 2,
-                    transition: 'transform 0.3s',
-                    '&:hover': {
-                      transform: 'translateY(-4px)'
-                    }
-                  }}>
+                  <Card
+                    sx={{
+                      boxShadow: "none",
+                      backgroundColor: "rgba(255, 152, 0, 0.04)",
+                      borderRadius: 2,
+                      transition: "transform 0.3s",
+                      "&:hover": {
+                        transform: "translateY(-4px)",
+                      },
+                    }}
+                  >
                     <CardContent sx={{ textAlign: "center", p: 2 }}>
-                      <Typography variant="h4" sx={{ color: '#ff9800', fontWeight: 700 }}>
+                      <Typography
+                        variant="h4"
+                        sx={{ color: "#ff9800", fontWeight: 700 }}
+                      >
                         {event.eventMembers?.length || 0}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
@@ -1606,17 +2395,22 @@ const EventView = () => {
                 </Grid>
 
                 <Grid item xs={6}>
-                  <Card sx={{ 
-                    boxShadow: 'none', 
-                    backgroundColor: 'rgba(156, 39, 176, 0.04)', 
-                    borderRadius: 2,
-                    transition: 'transform 0.3s',
-                    '&:hover': {
-                      transform: 'translateY(-4px)'
-                    }
-                  }}>
+                  <Card
+                    sx={{
+                      boxShadow: "none",
+                      backgroundColor: "rgba(156, 39, 176, 0.04)",
+                      borderRadius: 2,
+                      transition: "transform 0.3s",
+                      "&:hover": {
+                        transform: "translateY(-4px)",
+                      },
+                    }}
+                  >
                     <CardContent sx={{ textAlign: "center", p: 2 }}>
-                      <Typography variant="h4" sx={{ color: '#9c27b0', fontWeight: 700 }}>
+                      <Typography
+                        variant="h4"
+                        sx={{ color: "#9c27b0", fontWeight: 700 }}
+                      >
                         {event.eventGuests?.length || 0}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
@@ -1632,15 +2426,13 @@ const EventView = () => {
       </Grid>
 
       {/* Manage Guests Dialog */}
-      <Dialog 
-        open={guestDialogOpen} 
+      <Dialog
+        open={guestDialogOpen}
         onClose={handleCloseGuestDialog}
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
-          Manage Event Guests
-        </DialogTitle>
+        <DialogTitle>Manage Event Guests</DialogTitle>
         <DialogContent>
           <Box sx={{ mb: 3 }}>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
@@ -1648,28 +2440,37 @@ const EventView = () => {
             </Typography>
             <Autocomplete
               options={availableGuests || []}
-              getOptionLabel={(option) => 
-                option.guestName ? `${option.guestName} - ${option.guestDesignation || 'No designation'}` : ''
+              getOptionLabel={(option) =>
+                option.guestName
+                  ? `${option.guestName} - ${
+                      option.guestDesignation || "No designation"
+                    }`
+                  : ""
               }
-              renderInput={(params) => 
-                <TextField {...params} label="Select Guest" variant="outlined" fullWidth />
-              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Select Guest"
+                  variant="outlined"
+                  fullWidth
+                />
+              )}
               value={selectedGuest}
               onChange={(e, newValue) => setSelectedGuest(newValue)}
               sx={{ mb: 2 }}
             />
-            <TextField 
-              label="Guest Tag (Optional)" 
-              variant="outlined" 
-              fullWidth 
+            <TextField
+              label="Guest Tag (Optional)"
+              variant="outlined"
+              fullWidth
               value={guestTag}
               onChange={(e) => setGuestTag(e.target.value)}
               placeholder="Speaker, Judge, Mentor, etc."
               helperText="How would you like to describe this guest's role?"
             />
-            <Button 
-              variant="contained" 
-              color="primary" 
+            <Button
+              variant="contained"
+              color="primary"
               startIcon={<Add />}
               onClick={handleAddGuest}
               disabled={!selectedGuest}
@@ -1680,18 +2481,18 @@ const EventView = () => {
           </Box>
 
           <Divider sx={{ my: 3 }} />
-          
+
           <Typography variant="subtitle2" sx={{ mb: 2 }}>
             Current Guests
           </Typography>
-          
-          <List sx={{ bgcolor: 'background.paper', borderRadius: 1 }}>
+
+          <List sx={{ bgcolor: "background.paper", borderRadius: 1 }}>
             {event.eventGuests && event.eventGuests.length > 0 ? (
               event.eventGuests.map((guest, index) => (
                 <ListItem
                   key={index}
                   secondaryAction={
-                    <IconButton 
+                    <IconButton
                       edge="end"
                       onClick={() => handleRemoveGuest(guest.guestId?._id)}
                       color="error"
@@ -1714,7 +2515,7 @@ const EventView = () => {
                           <Chip
                             label={guest.guestTag}
                             size="small"
-                            sx={{ ml: 1, fontSize: '0.7rem' }}
+                            sx={{ ml: 1, fontSize: "0.7rem" }}
                             variant="outlined"
                           />
                         )}
@@ -1725,10 +2526,10 @@ const EventView = () => {
               ))
             ) : (
               <ListItem>
-                <ListItemText 
-                  primary="No guests added" 
+                <ListItemText
+                  primary="No guests added"
                   secondary="Add guests from the form above"
-                  sx={{ textAlign: 'center', color: 'text.secondary' }}
+                  sx={{ textAlign: "center", color: "text.secondary" }}
                 />
               </ListItem>
             )}
@@ -1736,6 +2537,86 @@ const EventView = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseGuestDialog}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Registration Form Modal */}
+      <Dialog
+        open={registrationModalOpen}
+        onClose={() => !registrationLoading && setRegistrationModalOpen(false)}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>
+          Registration Form: {event?.eventName}
+          <IconButton
+            aria-label="close"
+            onClick={() =>
+              !registrationLoading && setRegistrationModalOpen(false)
+            }
+            sx={{ position: "absolute", right: 8, top: 8 }}
+          >
+            <Close />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers>
+          {registrationSuccess ? (
+            <Alert severity="success" sx={{ mb: 2 }}>
+              Your form has been submitted successfully! Thank you for your
+              response.
+            </Alert>
+          ) : (
+            <>
+              {formErrors.submit && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                  {formErrors.submit}
+                </Alert>
+              )}
+
+              <Typography variant="body2" color="text.secondary" paragraph>
+                Please complete the following form to register for this event.
+                Fields marked with * are required.
+              </Typography>
+
+              {formFields.length > 0 ? (
+                formFields.map((field) => renderFormField(field))
+              ) : (
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    py: 4,
+                  }}
+                >
+                  <CircularProgress sx={{ mb: 2 }} />
+                  <Typography>Loading form fields...</Typography>
+                </Box>
+              )}
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() =>
+              !registrationLoading && setRegistrationModalOpen(false)
+            }
+            disabled={registrationLoading}
+          >
+            Cancel
+          </Button>
+          {!registrationSuccess && formFields.length > 0 && (
+            <Button
+              variant="contained"
+              onClick={handleSubmitRegistrationForm}
+              disabled={registrationLoading}
+              startIcon={
+                registrationLoading ? <CircularProgress size={20} /> : null
+              }
+            >
+              {registrationLoading ? "Submitting..." : "Submit Registration"}
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </Box>
