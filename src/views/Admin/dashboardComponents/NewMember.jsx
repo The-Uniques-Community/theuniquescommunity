@@ -814,8 +814,8 @@ export const NewMember = ({ user, refreshData }) => {
           )}
 
           {/* Footer Actions */}
-          <Divider className="my-6" />
-          <div className="flex justify-between items-center">
+          <Divider className="my-6 !pt-5" />
+          <div className="flex justify-between items-center !pt-5">
             <div className="flex flex-wrap gap-2">
               {/* Block/Unblock Button */}
               <Button
