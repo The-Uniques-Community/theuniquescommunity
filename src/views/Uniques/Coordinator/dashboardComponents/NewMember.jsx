@@ -674,8 +674,8 @@ export const NewMember = ({ user, refreshData }) => {
                     user.skills.map((skill, index) => (
                       <Chip
                         key={index}
-                        label={skill}
-                        size="small"
+                       label={typeof skill === "string" ? skill : skill.name} // Access the correct property
+        size="small"
                         className="bg-blue-100 text-blue-800"
                       />
                     ))
@@ -696,7 +696,7 @@ export const NewMember = ({ user, refreshData }) => {
                   <div className="space-y-2 mt-1">
                     {user.projects.map((project, index) => (
                       <div key={index} className="bg-slate-100 p-2 rounded-lg">
-                        <div className="font-medium">{project.name}</div>
+                        <div className="font-medium">{project.title || project.name}</div>
                         <div className="text-sm text-gray-600">
                           {project.description}
                         </div>
@@ -755,8 +755,8 @@ export const NewMember = ({ user, refreshData }) => {
                   <div className="space-y-1 mt-1">
                     {user.achievements.map((achievement, index) => (
                       <div key={index} className="bg-slate-100 p-2 rounded-lg">
-                        {achievement}
-                      </div>
+                      {typeof achievement === "string" ? achievement : achievement.title} {/* Access title */}
+                    </div>
                     ))}
                   </div>
                 ) : (
