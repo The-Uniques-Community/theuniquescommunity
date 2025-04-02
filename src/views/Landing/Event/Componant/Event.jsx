@@ -720,8 +720,9 @@ export default function Eventmodel({ event, onClose }) {
                                             const guestName = guestId?.guestName || "Unknown Guest";
                                             // Use initials if no image is available
                                             const guestImage = guestId?.guestImage || getInitialsAvatar(guestName);
-                                            const guestDesignation = guestId?.designation || "";
+                                            const guestDesignation = guestId?.guestDesignation || "No designation provided";
                                             const guestTag = guest?.guestTag || "guest";
+                                            const guestCompany = guestId?.guestCompany || "No company provided"; // Corrected variable name
 
                                             return (
                                                 <div key={index} className="border rounded-lg p-3 sm:p-4 flex items-center">
@@ -732,8 +733,11 @@ export default function Eventmodel({ event, onClose }) {
                                                     />
                                                     <div className="ml-3 sm:ml-4">
                                                         <h3 className="font-semibold text-sm sm:text-base">{guestName}</h3>
-                                                        <p className="text-xs sm:text-sm text-gray-600 capitalize">{guestTag}</p>
                                                         <p className="text-xs sm:text-sm text-gray-500">{guestDesignation}</p>
+                                                        <p className="!text-[14px] sm:text-sm text-[#ca0019] capitalize">{guestCompany}</p>
+                                                        <p className="text-xs sm:text-sm text-gray-600 capitalize">{guestTag}</p>
+                                                       
+                                                       
                                                     </div>
                                                 </div>
                                             );
