@@ -291,16 +291,16 @@ export const NewMember = ({ user, refreshData }) => {
                   : userIcon
               }
               alt={user.fullName}
-              sx={{ 
-                width: 60, 
-                height: 60, 
-                border: '4px solid #f5f5f5',
-                boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-                cursor: 'pointer',
-                transition: 'transform 0.2s',
-                '&:hover': {
-                  transform: 'scale(1.05)'
-                }
+              sx={{
+                width: 60,
+                height: 60,
+                border: "4px solid #f5f5f5",
+                boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+                cursor: "pointer",
+                transition: "transform 0.2s",
+                "&:hover": {
+                  transform: "scale(1.05)",
+                },
               }}
             />
             <div>
@@ -330,9 +330,10 @@ export const NewMember = ({ user, refreshData }) => {
           <div className="flex items-center flex-wrap gap-y-5 justify-between mb-4">
             <div className="flex items-center gap-4">
               <img
-                src={user?.profilePic?.fileId ? 
-                  getProxyImageUrl(user.profilePic.fileId) : 
-                  userIcon
+                src={
+                  user?.profilePic?.fileId
+                    ? getProxyImageUrl(user.profilePic.fileId)
+                    : userIcon
                 }
                 alt={user.fullName}
                 className="w-16 h-16 rounded-full object-cover"
@@ -674,8 +675,8 @@ export const NewMember = ({ user, refreshData }) => {
                     user.skills.map((skill, index) => (
                       <Chip
                         key={index}
-                       label={typeof skill === "string" ? skill : skill.name} // Access the correct property
-        size="small"
+                        label={typeof skill === "string" ? skill : skill.name} // Access the correct property
+                        size="small"
                         className="bg-blue-100 text-blue-800"
                       />
                     ))
@@ -696,7 +697,9 @@ export const NewMember = ({ user, refreshData }) => {
                   <div className="space-y-2 mt-1">
                     {user.projects.map((project, index) => (
                       <div key={index} className="bg-slate-100 p-2 rounded-lg">
-                        <div className="font-medium">{project.title || project.name}</div>
+                        <div className="font-medium">
+                          {project.title || project.name}
+                        </div>
                         <div className="text-sm text-gray-600">
                           {project.description}
                         </div>
@@ -755,8 +758,11 @@ export const NewMember = ({ user, refreshData }) => {
                   <div className="space-y-1 mt-1">
                     {user.achievements.map((achievement, index) => (
                       <div key={index} className="bg-slate-100 p-2 rounded-lg">
-                      {typeof achievement === "string" ? achievement : achievement.title} {/* Access title */}
-                    </div>
+                        {typeof achievement === "string"
+                          ? achievement
+                          : achievement.title}{" "}
+                        {/* Access title */}
+                      </div>
                     ))}
                   </div>
                 ) : (
@@ -813,8 +819,8 @@ export const NewMember = ({ user, refreshData }) => {
           )}
 
           {/* Footer Actions */}
-          <Divider className="my-6" />
-          <div className="flex justify-between items-center">
+          <Divider className="my-6 !pt-5" />
+          <div className="flex justify-between items-center !pt-5">
             <div className="flex flex-wrap gap-2">
               {/* Block/Unblock Button */}
               <Button
