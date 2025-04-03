@@ -5,7 +5,7 @@ import CommunityCard from '@/utils/Card/CommunityCard';
 import Header from '@/utils/Header/index';
 import CallToAction from '../homComponents/CallToAction';
 import { TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import EventForm from '@/utils/event/EventForm';
+
 
 const Index = () => {
   const [events, setEvents] = useState([]);

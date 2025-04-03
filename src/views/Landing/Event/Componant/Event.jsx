@@ -12,7 +12,7 @@ import { Alert, DialogActions } from '@mui/material';
 import { ContactMail } from '@mui/icons-material';
 
 
-export default function Eventmodel({ event, onClose }) {
+export default function Eventmodel({ event,isOpen, onClose }) {
     const [activeTab, setActiveTab] = useState("about");
     const [allEvents, setAllEvents] = useState([]);
     const [filteredEvents, setFilteredEvents] = useState([]);
