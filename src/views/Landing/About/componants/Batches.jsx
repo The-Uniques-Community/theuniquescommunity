@@ -3,6 +3,9 @@ import { Box, Typography, Grid, Card, Stack, Chip, Container } from "@mui/materi
 import Button from "@/utils/Buttons/Button";
 import { useTheme } from "@mui/material";
 import uniques1 from "../../../../assets/img/About/uniques1.jpg";
+import uniques2 from "../../../../assets/img/About/uniques2.jpg";
+import uniques3 from "../../../../assets/img/About/uniques3.jpg";
+
 import { useNavigate } from "react-router-dom";
 
 const BatchProfile = () => {
@@ -29,7 +32,7 @@ const BatchProfile = () => {
       title: "The Uniques Batch 2.0",
       description:
         "The Uniques 2.0 batch consists of highly driven junior members who are actively enhancing their skills in modern technologies.\n\nWith a focus on collaboration and hands-on learning, they engage in real-world projects and hackathons, ensuring they are industry-ready.\n\nBatch 2.0 members benefit from mentorship programs, networking opportunities, and workshops to sharpen their expertise. They are on the path to becoming future innovators, following the footsteps of their predecessors while bringing fresh perspectives to the community.",
-      image: uniques1,
+      image: uniques2,
     },
     {
       label: "Batch 3.0",
@@ -37,7 +40,7 @@ const BatchProfile = () => {
       title: "The Uniques Batch 3.0",
       description:
         "The latest addition to The Uniques Community, Batch 3.0, is a dynamic and ambitious group of individuals passionate about pushing boundaries.\n\nAs they embark on their journey, they are exposed to cutting-edge technologies, problem-solving challenges, and research-driven initiatives.\n\nWith an eagerness to learn and innovate, Batch 3.0 aims to make a lasting impact, bringing new ideas and energy to the community. They are being nurtured to be future leaders and trailblazers in their respective fields.",
-      image: uniques1,
+      image: uniques3,
     },
   ];
 

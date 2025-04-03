@@ -45,7 +45,7 @@ export const getPublicMembers = async (req, res) => {
       // Process members to include only public-safe information, handle missing fields
       const formattedMembers = members.map(member => ({
         _id: member._id,
-        fullName: member.fullName || "Anonymous Member",
+        fullName: member.fullName || member.email,
         batch: member.batch || null,
         course: member.course || null,
         isPlaced: member.isPlaced || false,

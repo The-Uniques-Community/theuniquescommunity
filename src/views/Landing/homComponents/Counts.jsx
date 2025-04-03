@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Globe, Cpu, Leaf, Users, Lightbulb, Building, Mic, Award } from 'lucide-react';
 
-const   Counts = () => {
+const Counts = () => {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
   const statsRef = useRef(null);
@@ -61,34 +61,34 @@ const   Counts = () => {
       const duration = 2000; // ms
       const frameDuration = 1000 / 60; // 60fps
       const totalFrames = Math.round(duration / frameDuration);
-      
+
       const finalValues = {
         Earnings: 400000,
         Clients: 50,
         Projects: 100,
         Events: 30
       };
-      
+
       let frame = 0;
       const counter = setInterval(() => {
         frame++;
-        
+
         const progress = frame / totalFrames;
         const easeOutQuad = 1 - (1 - progress) * (1 - progress);
-        
+
         setCounters({
           Earnings: Math.floor(easeOutQuad * finalValues.Earnings),
           Clients: Math.floor(easeOutQuad * finalValues.Clients),
           Projects: Math.floor(easeOutQuad * finalValues.Projects),
           Events: Math.floor(easeOutQuad * finalValues.Events)
         });
-        
+
         if (frame === totalFrames) {
           clearInterval(counter);
           setAnimationComplete(true);
         }
       }, frameDuration);
-      
+
       return () => clearInterval(counter);
     }
   }, [statsVisible, animationComplete]);
@@ -285,13 +285,13 @@ const   Counts = () => {
      
     `;
     document.head.appendChild(styleEl);
-    
+
     return () => {
       document.head.removeChild(styleEl);
     };
   }, []);
 
-  
+
 
   const stats = [
     { value: counters.Earnings, label: "Earnings", icon: <Users className="w-6 h-6" />, delay: 0 },
@@ -301,63 +301,63 @@ const   Counts = () => {
   ];
 
   return (
-    <section 
-      id="about" 
+    <section
+      id="about"
       ref={sectionRef}
       className="relative py-6 px-6 overflow-hidden bg-gray-50"
     >
       {/* Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-40 -right-32 w-96 h-96 rounded-full border-4 border-[#025067]/10 animate-float"></div>
-        <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full border-4 border-[#02A8A8]/10 animate-float" style={{animationDelay: '2s'}}></div>
+        <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full border-4 border-[#02A8A8]/10 animate-float" style={{ animationDelay: '2s' }}></div>
         <div className="absolute top-1/4 left-1/4 w-4 h-4 rounded-full bg-[#025067]/20 animate-pulse"></div>
-        <div className="absolute top-1/3 right-1/4 w-6 h-6 rounded-full bg-[#02A8A8]/20 animate-pulse" style={{animationDelay: '1s'}}></div>
-        <div className="absolute bottom-1/4 left-1/3 w-5 h-5 rounded-full bg-[#025067]/20 animate-pulse" style={{animationDelay: '1.5s'}}></div>
-        
+        <div className="absolute top-1/3 right-1/4 w-6 h-6 rounded-full bg-[#02A8A8]/20 animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-1/4 left-1/3 w-5 h-5 rounded-full bg-[#025067]/20 animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+
         {/* Grid pattern */}
-        
+
       </div>
 
-     
-        <div ref={statsRef} className="relative max-w-7xl mx-auto">
-          
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {stats.map((stat, index) => (
-              <div 
-                key={index}
-                className={`stat-card relative p-8 rounded-xl overflow-hidden ${statsVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
-                style={{
-                  animationDelay: `${0.2 + stat.delay/1000}s`,
-                  background: 'linear-gradient(135deg, #70000d, #ca0019)'
-                }}
-              >
-                <div className="stat-overlay absolute inset-0 bg-black opacity-20"></div>
-                
-                <div className="flex items-center justify-between mb-4 relative z-10">
-                  <h4 className="stat-value text-4xl font-bold text-white ">{stat.value}+</h4>
-                  <div className="p-2 bg-white rounded-full">
-                    {stat.icon}
-                  </div>
+
+      <div ref={statsRef} className="relative max-w-7xl mx-auto">
+
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {stats.map((stat, index) => (
+            <div
+              key={index}
+              className={`stat-card relative p-8 rounded-xl overflow-hidden ${statsVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
+              style={{
+                animationDelay: `${0.2 + stat.delay / 1000}s`,
+                background: 'linear-gradient(135deg, #70000d, #ca0019)'
+              }}
+            >
+              <div className="stat-overlay absolute inset-0 bg-black opacity-20"></div>
+
+              <div className="flex items-center justify-between mb-4 relative z-10">
+                <h4 className="stat-value text-4xl font-bold text-white ">{stat.value}+</h4>
+                <div className="p-2 bg-white rounded-full">
+                  {stat.icon}
                 </div>
-                
-                <p className="text-sm Capitalize tracking-wider text-white/80 font-medium relative z-10">
-                  {stat.label}
-                </p>
-                
-                {/* Decorative circles */}
-                <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full border border-white/10"></div>
-                <div className="absolute -top-10 -left-10 w-20 h-20 rounded-full border border-white/10"></div>
               </div>
-            ))}
-          </div>
-          
-          {/* CTA Button */}
-          
+
+              <p className="text-sm Capitalize tracking-wider text-white/80 font-medium relative z-10">
+                {stat.label}
+              </p>
+
+              {/* Decorative circles */}
+              <div className="absolute -bottom-10 -right-10 w-40 h-40 rounded-full border border-white/10"></div>
+              <div className="absolute -top-10 -left-10 w-20 h-20 rounded-full border border-white/10"></div>
+            </div>
+          ))}
         </div>
-      
+
+        {/* CTA Button */}
+
+      </div>
+
     </section>
   );
 };
 
-export default  Counts;
+export default Counts;

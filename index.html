@@ -2,14 +2,48 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <!-- Replace these with your actual favicon paths -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/favicon-dark.svg"
+      id="favicon"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/favicon-light.svg"
+      id="favicon-dark"
+      media="(prefers-color-scheme: dark)"
+    />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/favicon-dark.svg"
+      id="favicon-light"
+      media="(prefers-color-scheme: light)"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Uniques Community</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/ScrollTrigger.min.js"></script>
+    <script>
+      // Watch for theme changes
+      const darkModeMediaQuery = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      );
+      const updateFavicon = (e) => {
+        const favicon = document.getElementById("favicon");
+        favicon.href = e.matches ? "/favicon-dark.svg" : "/favicon-light.svg";
+      };
+
+      // Set initial favicon
+      updateFavicon(darkModeMediaQuery);
+
+      // Listen for theme changes
+      darkModeMediaQuery.addEventListener("change", updateFavicon);
+    </script>
   </body>
 </html>

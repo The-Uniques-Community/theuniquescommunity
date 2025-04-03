@@ -2,7 +2,32 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import File from "./fileModel.js";
-
+const projectSchema = new mongoose.Schema({
+  title: {
+    type: String,
+     // Project title is mandatory
+  },
+  description: {
+    type: String,
+    default: "", // Optional description
+  },
+  technologies: {
+    type: [String], // Array of strings for technologies used
+    default: [], // Default to an empty array
+  },
+  link: {
+    type: String, // Link to the project (e.g., GitHub, live demo)
+    default: "",
+  },
+  imageUrl: {
+    type: String, // URL for the project image
+    default: "",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now, // Automatically set the creation date
+  },
+});
 const memberSchema = new mongoose.Schema(
   {
     fullName: {
@@ -69,7 +94,7 @@ const memberSchema = new mongoose.Schema(
       {
         amount: {
           type: Number,
-          required: true,
+          
         },
         dateImposed: {
           type: Date,
@@ -82,7 +107,7 @@ const memberSchema = new mongoose.Schema(
         },
         reason: {
           type: String,
-          required: true,
+          
         },
         proofOfPayment: {
           type: mongoose.Schema.Types.ObjectId,
@@ -96,13 +121,13 @@ const memberSchema = new mongoose.Schema(
       {
         semester: {
           type: Number,
-          required: true,
+          
           min: 1,
           max: 8
         },
         sgpa: {
           type: Number,
-          required: true,
+          
           min: 0,
           max: 10
         }
@@ -113,7 +138,7 @@ const memberSchema = new mongoose.Schema(
       {
         semester: {
           type: Number,
-          required: true,
+          
           min: 1,
           max: 8
         },
@@ -150,10 +175,8 @@ const memberSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
-    projects: {
-      type: Array,
-      default: [],
-    },
+    projects:[projectSchema],
+    
     internships: {
       type: Array,
       default: [],

@@ -46,11 +46,12 @@ const MemberCard = ({ member }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("about");
-
+  console.log(member);
   // Extract member properties
   const {
     _id,
     fullName,
+    email,
     batch,
     bio = "",
     course = "Member",
@@ -59,6 +60,7 @@ const MemberCard = ({ member }) => {
     certifications = [],
     projects = [],
     eventContributionType = [],
+    profilePic
   } = member;
 
   // Format position (displayed role/status)
@@ -85,40 +87,40 @@ const MemberCard = ({ member }) => {
   // Format achievements for display
   const formattedAchievements = Array.isArray(achievements)
     ? achievements.map((achievement, index) => ({
-        id: achievement.id || index,
-        title: achievement.title || achievement.name || achievement,
-        description: achievement.description || "",
-        date: achievement.date || "",
-        color: achievement.color || "bg-gray-700",
-        icon: achievement.icon || null,
-      }))
+      id: achievement.id || index,
+      title: achievement.title || achievement.name || achievement,
+      description: achievement.description || "",
+      date: achievement.date || "",
+      color: achievement.color || "bg-gray-700",
+      icon: achievement.icon || null,
+    }))
     : [];
 
   // Format certificates for display
   const formattedCertificates = Array.isArray(certifications)
     ? certifications.map((cert, index) => ({
-        id: cert._id || index,
-        title: cert.title || cert.name || "Certification",
-        issuer: cert.issuer || cert.organization || "",
-        date: cert.date || cert.issuedDate || "",
-        imageUrl: cert.imageUrl || cert.url || null,
-      }))
+      id: cert._id || index,
+      title: cert.title || cert.name || "Certification",
+      issuer: cert.issuer || cert.organization || "",
+      date: cert.date || cert.issuedDate || "",
+      imageUrl: cert.imageUrl || cert.url || null,
+    }))
     : [];
 
   // Format projects for display
   const formattedProjects = Array.isArray(projects)
     ? projects.map((project, index) => ({
-        id: project.id || index,
-        title: project.title || project.name || "Project",
-        description: project.description || "",
-        link: project.link || project.url || null,
-        imageUrl: project.imageUrl || project.image || null,
-        technologies: Array.isArray(project.technologies)
-          ? project.technologies
-          : project.tech
+      id: project.id || index,
+      title: project.title || project.name || "Project",
+      description: project.description || "",
+      link: project.link || project.url || null,
+      imageUrl: project.imageUrl || project.image || null,
+      technologies: Array.isArray(project.technologies)
+        ? project.technologies
+        : project.tech
           ? [project.tech]
           : [],
-      }))
+    }))
     : [];
 
   // Format contributions from eventContributionType
@@ -129,13 +131,18 @@ const MemberCard = ({ member }) => {
   // Format skills as objects if they're strings
   const formattedSkills = Array.isArray(skills)
     ? skills.map((skill, index) => {
-        if (typeof skill === "object") return skill;
-        return { name: skill, id: index };
-      })
+      if (typeof skill === "object") return skill;
+      return { name: skill, id: index };
+    })
     : [];
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const getProxyImageUrl = (fileId) => {
+    if (!fileId) return '/placeholder.svg'; // Fallback image
+    return `https://theuniquesbackend.vercel.app/api/image-proxy/${fileId}`;
+  }
 
   return (
     <div className="bg-white group hover:cursor-pointer hover:shadow-lg transition-shadow duration-200 px-2 py-2 border border-gray-200 shadow-md rounded-lg relative max-w-72">
@@ -145,7 +152,7 @@ const MemberCard = ({ member }) => {
         <div className="relative">
           <div onClick={handleOpen} className="overflow-hidden rounded-lg">
             <img
-              src={profileImg}
+              src={profilePic ? getProxyImageUrl(profilePic?.fileId) : profileImg}
               className="hover:scale-105 duration-300 custom-clip rounded-t-lg rounded-l-lg lg:w-[42vh] w-[70vh] h-56 object-cover"
               alt={`${fullName}'s Profile`}
             />
@@ -286,11 +293,7 @@ const MemberCard = ({ member }) => {
             <div className="md:col-span-1">
               <div className="relative mb-5">
                 <img
-                  src={
-                    profileImg ||
-                    "https://ui-avatars.com/api/?name=" +
-                      encodeURIComponent(fullName)
-                  }
+                  src={profilePic ? getProxyImageUrl(profilePic?.fileId) : profileImg}
                   alt={`${fullName}'s profile`}
                   className="w-full h-64 rounded-lg object-cover shadow-md"
                 />
@@ -394,31 +397,28 @@ const MemberCard = ({ member }) => {
               {/* Tabs */}
               <div className="flex border-b border-gray-200 mb-6">
                 <button
-                  className={`px-4 py-2 font-medium text-sm ${
-                    activeTab === "about"
+                  className={`px-4 py-2 font-medium text-sm ${activeTab === "about"
                       ? "border-b-2 border-[#ca0019] text-[#ca0019]"
                       : "text-gray-600 hover:text-gray-900"
-                  } transition-colors`}
+                    } transition-colors`}
                   onClick={() => setActiveTab("about")}
                 >
                   About
                 </button>
                 <button
-                  className={`px-4 py-2 font-medium text-sm ${
-                    activeTab === "certificates"
+                  className={`px-4 py-2 font-medium text-sm ${activeTab === "certificates"
                       ? "border-b-2 border-[#ca0019] text-[#ca0019]"
                       : "text-gray-600 hover:text-gray-900"
-                  } transition-colors`}
+                    } transition-colors`}
                   onClick={() => setActiveTab("certificates")}
                 >
                   Certificates
                 </button>
                 <button
-                  className={`px-4 py-2 font-medium text-sm ${
-                    activeTab === "projects"
+                  className={`px-4 py-2 font-medium text-sm ${activeTab === "projects"
                       ? "border-b-2 border-[#ca0019] text-[#ca0019]"
                       : "text-gray-600 hover:text-gray-900"
-                  } transition-colors`}
+                    } transition-colors`}
                   onClick={() => setActiveTab("projects")}
                 >
                   Projects
@@ -497,42 +497,44 @@ const MemberCard = ({ member }) => {
                     <FileText className="w-4 h-4" /> Certificates & Credentials
                   </h4>
                   <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-5">
-                    {formattedCertificates.length > 0 ? (
-                      formattedCertificates.map((certificate, idx) => {
+                    {certifications.length > 0 ? (
+                      certifications.map((certificate, idx) => {
                         // Convert Drive URL to preview URL for iframe embedding
-                        const getPreviewUrl = (url) => {
-                          if (!url) return null;
+                        // const getPreviewUrl = (url) => {
+                        //   if (!url) return null;
 
-                          // For uc?id= format (direct download links)
-                          if (url.includes("drive.google.com/uc?id=")) {
-                            const fileId = url.split("id=")[1]?.split("&")[0];
-                            if (fileId) {
-                              return `https://drive.google.com/file/d/${fileId}/preview`;
-                            }
-                          }
+                        //   // For uc?id= format (direct download links)
+                        //   if (url.includes("drive.google.com/uc?id=")) {
+                        //     const fileId = url.split("id=")[1]?.split("&")[0];
+                        //     if (fileId) {
+                        //       return `https://drive.google.com/file/d/${fileId}/preview`;
+                        //     }
+                        //   }
 
-                          // For file/d/ format
-                          if (url.includes("drive.google.com/file/d/")) {
-                            const fileId = url
-                              .split("file/d/")[1]
-                              ?.split("/")[0];
-                            if (fileId) {
-                              return `https://drive.google.com/file/d/${fileId}/preview`;
-                            }
-                          }
+                        //   // For file/d/ format
+                        //   if (url.includes("drive.google.com/file/d/")) {
+                        //     const fileId = url
+                        //       .split("file/d/")[1]
+                        //       ?.split("/")[0];
+                        //     if (fileId) {
+                        //       return `https://drive.google.com/file/d/${fileId}/preview`;
+                        //     }
+                        //   }
 
-                          return url;
-                        };
+                        //   return url;
+                        // };
 
                         // Handle multiple certificate URL field names
                         const fileUrl =
-                          certificate.fileUrl ||
+                          certificate.fileId ||
                           certificate.imageUrl ||
                           certificate.url ||
-                          null;
+                          null;   
                         const previewUrl = fileUrl
-                          ? getPreviewUrl(fileUrl)
+                          ? certificate.fileId
                           : null;
+
+                          console.log(previewUrl, "previewUrl");
 
                         // Handle multiple certificate title field names
                         const certTitle =
@@ -555,27 +557,13 @@ const MemberCard = ({ member }) => {
                             <div className="aspect-[16/9] overflow-hidden bg-gray-50">
                               {previewUrl ? (
                                 <iframe
-                                  src={previewUrl}
+                                  src={`https://drive.google.com/file/d/${previewUrl}/preview`}
                                   className="w-full h-full"
                                   frameBorder="0"
                                   allowFullScreen
                                   loading="lazy"
                                   title={certTitle}
-                                  onError={(e) => {
-                                    e.target.style.display = "none";
-                                    const parent = e.target.parentNode;
-                                    const fallback =
-                                      document.createElement("div");
-                                    fallback.className =
-                                      "flex flex-col items-center justify-center h-full";
-                                    fallback.innerHTML = `
-                        <div class="text-gray-400">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                          <p class="mt-2 text-sm">Unable to preview certificate</p>
-                        </div>
-                      `;
-                                    parent.appendChild(fallback);
-                                  }}
+                                  
                                 />
                               ) : (
                                 <div className="flex flex-col items-center justify-center h-full text-gray-400">
@@ -605,7 +593,7 @@ const MemberCard = ({ member }) => {
 
                                 {fileUrl && (
                                   <a
-                                    href={fileUrl}
+                                    href={`https://drive.google.com/file/d/${previewUrl}/preview`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-[#ca0019] text-sm font-medium flex items-center gap-1 hover:underline"

@@ -27,9 +27,8 @@ function Startups() {
           <div className="col-span-12 lg:col-span-5">
             <ul className="relative z-[1] sm:pl-[125px] sm:before:contents-[''] sm:before:absolute sm:before:-z-[1] before:bg-gradient-to-b before:from-[rgba(0,0,0,0.19)] dark:before:from-gray-500 before:to-80% before:to-transparent dark:before:to-transparent before:left-0 before:-top-[8px] before:w-[77px] before:h-full before:rounded-full">
               <li
-                className={`relative cursor-pointer ${
-                  activeStep === 1 ? "opacity-100" : "opacity-50"
-                }`}
+                className={`relative cursor-pointer ${activeStep === 1 ? "opacity-100" : "opacity-50"
+                  }`}
                 onMouseEnter={() => setActiveStep(1)}
                 onClick={() => setActiveStep(1)}
                 onTouchStart={() => setActiveStep(1)}
@@ -62,9 +61,8 @@ function Startups() {
                 </p>
               </li>
               <li
-                className={`relative cursor-pointer mt-12 ${
-                  activeStep === 2 ? "opacity-100" : "opacity-50"
-                }`}
+                className={`relative cursor-pointer mt-12 ${activeStep === 2 ? "opacity-100" : "opacity-50"
+                  }`}
                 onMouseEnter={() => setActiveStep(2)}
                 onClick={() => setActiveStep(2)}
                 onTouchStart={() => setActiveStep(2)}
@@ -97,9 +95,8 @@ function Startups() {
                 </p>
               </li>
               <li
-                className={`relative cursor-pointer mt-12 ${
-                  activeStep === 3 ? "opacity-100" : "opacity-50"
-                }`}
+                className={`relative cursor-pointer mt-12 ${activeStep === 3 ? "opacity-100" : "opacity-50"
+                  }`}
                 onMouseEnter={() => setActiveStep(3)}
                 onClick={() => setActiveStep(3)}
                 onTouchStart={() => setActiveStep(3)}
@@ -116,7 +113,7 @@ function Startups() {
                     animationName: "fadeInUp",
                   }}
                 >
-                  Getscholify
+                  Wirely
                 </h4>
                 <p
                   className="text-sm-regular  mt-3 wow fadeInUp"
@@ -134,32 +131,32 @@ function Startups() {
             </ul>
           </div>
           <div className="col-span-12 lg:col-start-8 lg:col-span-5 flex items-center relative mt-8 lg:mt-0">
-  <div className="relative w-full">
-    {activeStep === 1 && (
-      <iframe
-      src="https://www.godigitify.com/"
-       
-        title="Find The Perfect Component"
-        className="w-full h-[315px] rounded-lg shadow-3xl"
-      ></iframe>
-    )}
-    {activeStep === 2 && (
-      <iframe
-       src="https://techlearns.in/"
-       
-        title="Copy The Snippet"
-        className="w-full h-[315px] rounded-lg shadow-3xl"
-      ></iframe>
-    )}
-    {activeStep === 3 && (
-      <iframe
-         src="https://www.getscholify.com/"
-        title="Make It Yours"
-        className="w-full h-[315px] rounded-lg shadow-3xl"
-      ></iframe>
-    )}
-  </div>
-</div>
+            <div className="relative w-full">
+              {activeStep === 1 && (
+                <iframe
+                  src="https://www.godigitify.com/"
+
+                  title="Find The Perfect Component"
+                  className="w-full h-[315px] rounded-lg shadow-3xl"
+                ></iframe>
+              )}
+              {activeStep === 2 && (
+                <iframe
+                  src="https://techlearns.in/"
+
+                  title="Copy The Snippet"
+                  className="w-full h-[315px] rounded-lg shadow-3xl"
+                ></iframe>
+              )}
+              {activeStep === 3 && (
+                <iframe
+                  src="https://img.freepik.com/free-vector/abstract-coming-soon-new-arrival-background-with-splatter-effect_1017-54591.jpg?t=st=1743371449~exp=1743375049~hmac=16cb316dc6831d63ec18fbf3c259c8f415f6c9c88952fbb5ccd4ea9f1cd4eb83&w=370&auto=format"
+                  title="Make It Yours"
+                  className="w-full h-[315px] rounded-lg shadow-3xl"
+                ></iframe>
+              )}
+            </div>
+          </div>
 
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import Effect from "@/assets/img/Community/Effect.png";
+import Effect from "@/assets/img/Community/effect.png";
+// import Modal from "@/utils/Modal/Community"
 
 const cardData = [
     {
@@ -7,8 +8,20 @@ const cardData = [
         title: 'Innovation Challenges',
         description:
             'Run corporate challenges & hackathons to develop innovative solutions that will transform your business.',
+        modalContent: (
+            <div>
+                <p className="mb-4">Our Innovation Challenges program helps organizations:</p>
+                <ul className="list-disc pl-6 space-y-2">
+                    <li>Organize and run successful hackathons</li>
+                    <li>Connect with talented developers and innovators</li>
+                    <li>Transform business challenges into opportunities</li>
+                    <li>Implement winning solutions effectively</li>
+                    <li>Track and measure innovation outcomes</li>
+                </ul>
+                <p className="mt-4">Join our community of innovators and start your journey towards digital transformation.</p>
+            </div>
+        ),
         buttonText: 'Learn More',
-        // Inactive: card has blue background and icon is white.
         cardBg: 'bg-white',
         iconBg: 'bg-[#9bc8ff]',
         icon: (
@@ -26,6 +39,18 @@ const cardData = [
         id: 2,
         title: 'Product Evangelism',
         description: 'Ignite customer excitement and drive product adoption through strategic evangelism.',
+        modalContent: (
+            <div>
+                <p className="mb-4">Discover how Product Evangelism can:</p>
+                <ul className="list-disc pl-6 space-y-2">
+                    <li>Boost customer engagement</li>
+                    <li>Increase product adoption rates</li>
+                    <li>Build a loyal customer base</li>
+                    <li>Enhance brand reputation</li>
+                </ul>
+                <p className="mt-4">Learn more about our strategies to make your product a market leader.</p>
+            </div>
+        ),
         buttonText: 'View More',
         cardBg: 'bg-white',
         iconBg: 'bg-red-100',
@@ -44,6 +69,18 @@ const cardData = [
         id: 3,
         title: 'Startup Pitches',
         description: 'Connect with students globally to identify the brightest young minds and their game-changing ideas.',
+        modalContent: (
+            <div>
+                <p className="mb-4">Startup Pitches provide:</p>
+                <ul className="list-disc pl-6 space-y-2">
+                    <li>Access to innovative ideas</li>
+                    <li>Opportunities to collaborate with young talent</li>
+                    <li>Insights into emerging trends</li>
+                    <li>Support for entrepreneurial growth</li>
+                </ul>
+                <p className="mt-4">Be part of the next big thing in the startup ecosystem.</p>
+            </div>
+        ),
         buttonText: 'View More',
         cardBg: 'bg-white',
         iconBg: 'bg-green-100',
@@ -69,6 +106,18 @@ const cardData = [
         id: 4,
         title: 'Student Challenges',
         description: 'Explore innovative ideas from student minds.',
+        modalContent: (
+            <div>
+                <p className="mb-4">Student Challenges enable:</p>
+                <ul className="list-disc pl-6 space-y-2">
+                    <li>Engagement with creative students</li>
+                    <li>Discovery of groundbreaking ideas</li>
+                    <li>Opportunities for mentorship</li>
+                    <li>Support for academic innovation</li>
+                </ul>
+                <p className="mt-4">Join us in shaping the future of innovation.</p>
+            </div>
+        ),
         buttonText: 'View More',
         cardBg: 'bg-white',
         iconBg: 'bg-yellow-100',
@@ -87,6 +136,18 @@ const cardData = [
         id: 5,
         title: 'Tech Innovation',
         description: 'Foster a culture of innovation with cutting-edge technology solutions.',
+        modalContent: (
+            <div>
+                <p className="mb-4">Tech Innovation helps you:</p>
+                <ul className="list-disc pl-6 space-y-2">
+                    <li>Stay ahead in the tech landscape</li>
+                    <li>Adopt innovative solutions</li>
+                    <li>Drive digital transformation</li>
+                    <li>Enhance operational efficiency</li>
+                </ul>
+                <p className="mt-4">Discover how technology can revolutionize your business.</p>
+            </div>
+        ),
         buttonText: 'Discover',
         cardBg: 'bg-white',
         iconBg: 'bg-purple-100',
@@ -99,21 +160,23 @@ const cardData = [
     },
 ];
 
-const DynamicCard = ({ card }) => {
-    // State to handle persistent active (via click) and hover active
+const DynamicCard = ({ card, onOpenModal }) => {
     const [persistentActive, setPersistentActive] = useState(false);
     const [hoverActive, setHoverActive] = useState(false);
 
-    // Combine active states for mobile (click) and desktop (hover)
     const active = persistentActive || hoverActive;
 
-    // When active, swap the colors: card bg becomes icon's original bg and vice versa.
     const containerWidthClass = active ? 'lg:w-[19rem]' : 'lg:w-[12rem]';
     const containerBgClass = active ? card.iconBg : card.cardBg;
     const iconBgClass = active ? card.cardBg : card.iconBg;
 
     const handleClick = () => {
         setPersistentActive((prev) => !prev);
+    };
+
+    const handleButtonClick = (e) => {
+        e.stopPropagation();
+        onOpenModal(card);
     };
 
     return (
@@ -139,7 +202,10 @@ const DynamicCard = ({ card }) => {
             <div className="mt-3 w-full">
                 {active && (
                     <div className="flex items-center justify-center md:justify-start transition-all duration-500 delay-200">
-                        <button className="w-32 z-10 mt-4 bg-[#3462ae] text-base text-white px-2 py-2 rounded-full flex items-center justify-center">
+                        <button
+                            onClick={handleButtonClick}
+                            className="w-32 z-10 mt-4 bg-[#3462ae] text-base text-white px-2 py-2 rounded-full flex items-center justify-center"
+                        >
                             {card.buttonText}
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -163,10 +229,39 @@ const DynamicCard = ({ card }) => {
     );
 };
 
+const Modal = ({ isOpen, onClose, title, content }) => {
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white rounded-lg p-6 w-3/4 max-w-lg">
+                <h2 className="text-xl font-bold mb-4">{title}</h2>
+                <div>{content}</div>
+                <button
+                    onClick={onClose}
+                    className="mt-4 bg-[#3462ae] text-white px-4 py-2 rounded-full"
+                >
+                    Close
+                </button>
+            </div>
+        </div>
+    );
+};
+
 const Guidelines = () => {
+    const [selectedCard, setSelectedCard] = useState(null);
+
+    const handleOpenModal = (card) => {
+        setSelectedCard(card);
+    };
+
+    const handleCloseModal = () => {
+        setSelectedCard(null);
+    };
+
     return (
         <div>
-            <section className="mx-auto container py-10" id="whyH2s ">
+            <section className="mx-auto container py-10" id="whyH2s">
                 <div className="pt-[30px] max-sm:mt-6 ">
                     <div className="w-full md:w-4/5 mx-auto">
                         <h2 className="max-sm:text-[24px] sm:text-[40px] text-[#212B36] text-left sm:mb-4 py-4">
@@ -180,12 +275,19 @@ const Guidelines = () => {
                     <div className="flex flex-col md:flex-row justify-center items-center lg:flex" id="card-container">
                         {cardData.map((card) => (
                             <div key={card.id} className="">
-                                <DynamicCard card={card} />
+                                <DynamicCard card={card} onOpenModal={handleOpenModal} />
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
+
+            <Modal
+                isOpen={selectedCard !== null}
+                onClose={handleCloseModal}
+                title={selectedCard?.title}
+                content={selectedCard?.modalContent}
+            />
         </div>
     );
 };

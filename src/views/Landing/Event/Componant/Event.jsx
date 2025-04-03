@@ -62,7 +62,7 @@ export default function Eventmodel({ event, onClose }) {
 
                 try {
                     const response = await fetch(
-                        `http://localhost:5000/api/events/${id}/register`,
+                        `https://theuniquesbackend.vercel.app/api/events/${id}/register`,
                         {
                             method: "POST",
                             headers: {
@@ -247,7 +247,7 @@ export default function Eventmodel({ event, onClose }) {
             };
 
             const response = await fetch(
-                `http://localhost:5000/api/events/${event._id}/form-response`,
+                `https://theuniquesbackend.vercel.app/api/events/${event._id}/form-response`,
                 {
                     method: "POST",
                     headers: {
@@ -457,7 +457,7 @@ export default function Eventmodel({ event, onClose }) {
 
     useEffect(() => {
         // Fetch all events to populate related events and tabs
-        axios.get('http://localhost:5000/api/events')
+        axios.get('https://theuniquesbackend.vercel.app/api/events')
             .then(response => {
                 const events = response.data.data || response.data || [];
                 setAllEvents(events);
@@ -486,7 +486,7 @@ export default function Eventmodel({ event, onClose }) {
 
                 // If the current event doesn't have populated gallery data, you might need to fetch it
                 if (event && (!event.eventGallery || event.eventGallery.length === 0)) {
-                    axios.get(`http://localhost:5000/api/events/${event._id}/gallery`)
+                    axios.get(`https://theuniquesbackend.vercel.app/api/events/${event._id}/gallery`)
                         .catch(err => console.error("Error fetching gallery:", err));
                 }
             })
@@ -511,7 +511,7 @@ export default function Eventmodel({ event, onClose }) {
 
     const fetchEventDetails = async (eventId) => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/events/${eventId}`);
+            const response = await axios.get(`https://theuniquesbackend.vercel.app/api/events/${eventId}`);
             setSelectedDetailEvent(response.data.data || response.data);
         } catch (error) {
             console.error("Error fetching event details:", error);
@@ -720,8 +720,9 @@ export default function Eventmodel({ event, onClose }) {
                                             const guestName = guestId?.guestName || "Unknown Guest";
                                             // Use initials if no image is available
                                             const guestImage = guestId?.guestImage || getInitialsAvatar(guestName);
-                                            const guestDesignation = guestId?.designation || "";
+                                            const guestDesignation = guestId?.guestDesignation || "No designation provided";
                                             const guestTag = guest?.guestTag || "guest";
+                                            const guestCompany = guestId?.guestCompany || "No company provided"; // Corrected variable name
 
                                             return (
                                                 <div key={index} className="border rounded-lg p-3 sm:p-4 flex items-center">
@@ -732,8 +733,11 @@ export default function Eventmodel({ event, onClose }) {
                                                     />
                                                     <div className="ml-3 sm:ml-4">
                                                         <h3 className="font-semibold text-sm sm:text-base">{guestName}</h3>
-                                                        <p className="text-xs sm:text-sm text-gray-600 capitalize">{guestTag}</p>
                                                         <p className="text-xs sm:text-sm text-gray-500">{guestDesignation}</p>
+                                                        <p className="!text-[14px] sm:text-sm text-[#ca0019] capitalize">{guestCompany}</p>
+                                                        <p className="text-xs sm:text-sm text-gray-600 capitalize">{guestTag}</p>
+                                                       
+                                                       
                                                     </div>
                                                 </div>
                                             );

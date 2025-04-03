@@ -12,6 +12,7 @@ let auth;
 if (process.env.NODE_ENV === 'production') {
   // Load credentials from environment variable
   const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
+  serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n'); 
   auth = new google.auth.GoogleAuth({
     credentials: serviceAccount,
     scopes: SCOPES,
@@ -158,16 +159,36 @@ export async function uploadFile(filePath, destinationFolderId, options = {}) {
   // Get the shareable web link
   const getFile = await drive.files.get({
     fileId: file.data.id,
-    fields: 'thumbnailLink',
+    fields: '*',
+    supportsAllDrives: true,
   });
-  
+
   const fileId = file.data.id;
-  const fileUrl = getFile.data.thumbnailLink || `https://drive.google.com/uc?id=${fileId}`;
-  
+  let fileUrl;
+
+
+  // Try to get the permanent thumbnail from contentHints
+  if (getFile.data.contentHints && 
+      getFile.data.contentHints.thumbnail && 
+      getFile.data.contentHints.thumbnail.image) {
+    // This is a base64 encoded image that won't expire
+    const thumbnailImage = getFile.data.contentHints.thumbnail.image;
+    fileUrl = `data:image/png;base64,${thumbnailImage}`;
+  }else if (getFile.data.webContentLink) {
+    // Fallback to the webViewLink if thumbnail is not available
+    fileUrl = getFile.data.webContentLink;
+  }
+
   return {
     fileName: file.data.name,
     originalName: originalFileName,
     fileId,
     fileUrl,
   };
+}
+
+// Add this export if not already present
+export async function getAuth() {
+  // Return the same auth object you use for other Drive operations
+  return auth;
 }

@@ -59,7 +59,7 @@ const index = () => {
       setLoading(true);
       // Add page parameter to the API endpoint
       const response = await fetch(
-        `http://localhost:5000/api/events?page=${page}`
+        `https://theuniquesbackend.vercel.app/api/events?page=${page}`
       );
       const data = await response.json();
 
