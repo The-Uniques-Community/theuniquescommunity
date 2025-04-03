@@ -593,7 +593,7 @@ const MemberCard = ({ member }) => {
 
                                 {fileUrl && (
                                   <a
-                                    href={fileUrl}
+                                    href={`https://drive.google.com/file/d/${previewUrl}/preview`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-[#ca0019] text-sm font-medium flex items-center gap-1 hover:underline"

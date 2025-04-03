@@ -154,19 +154,19 @@ const index = () => {
   };
 
   const handleCreateEvent = () => {
-    navigate("/admin/events-overview/create");
+    navigate("/coordinator/events-overview/create");
   };
  
   const handleViewEvent = (eventId) => {
-    navigate(`/admin/events-overview/view/${eventId}`);
+    navigate(`/coordinator/events-overview/view/${eventId}`);
   };
 
   const handleViewBudget = (eventId) => {
-    navigate(`/admin/events-overview/${eventId}/budget`);
+    navigate(`/coordinator/events-overview/${eventId}/budget`);
   };
 
   const handleViewGallery = (eventId) => {
-    navigate(`/admin/events/${eventId}/gallery`);
+    navigate(`/coordinator/events/${eventId}/gallery`);
   };
 
   const getStatusColor = (status) => {
