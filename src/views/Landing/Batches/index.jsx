@@ -301,7 +301,7 @@ const index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen ">
       <Header />
       
       {/* Header */}
@@ -321,12 +321,7 @@ const index = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-wrap gap-4 mb-8 justify-center">
           {batchesData.map((batch) => (
-            <Tooltip 
-              key={batch.id}
-              title={countsLoading ? "Loading member counts..." : `${batch.memberCount} members in ${batch.name}`}
-              arrow
-              placement="top"
-            >
+            
               <motion.button
                 className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all ${
                   selectedBatch === batch.id
@@ -339,18 +334,8 @@ const index = () => {
               >
                 {batch.icon}
                 <span>{batch.name}</span>
-                <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${
-                  countsLoading 
-                    ? "bg-gray-200 text-gray-500 animate-pulse" 
-                    : selectedBatch === batch.id 
-                      ? "bg-white bg-opacity-20 text-white" 
-                      : "bg-black bg-opacity-10"
-                }`}>
-                  <Users size={12} />
-                  {countsLoading ? "..." : batch.memberCount}
-                </span>
+                
               </motion.button>
-            </Tooltip>
           ))}
         </div>
       </div>

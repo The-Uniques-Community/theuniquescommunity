@@ -315,10 +315,10 @@ const MemberCard = ({ member }) => {
                       href={socialLinks.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-full text-sm group  hover:bg-gray-200 transition-colors"
                     >
-                      <FaGithub size={14} />
-                      GitHub
+                      <FaGithub className="group-hover:text-[#ca0019]" size={14} />
+                      <span className="group-hover:text-[#ca0019]">GitHub</span>
                     </a>
                   )}
                   {socialLinks.linkedin && (
@@ -326,10 +326,10 @@ const MemberCard = ({ member }) => {
                       href={socialLinks.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-full group text-sm hover:bg-gray-200 transition-colors"
                     >
-                      <FaLinkedinIn size={14} />
-                      LinkedIn
+                      <FaLinkedinIn className="group-hover:text-[#ca0019]"  size={14} />
+                      <span className="group-hover:text-[#ca0019]">Linkedin</span>
                     </a>
                   )}
                   {socialLinks.twitter && (
@@ -337,10 +337,10 @@ const MemberCard = ({ member }) => {
                       href={socialLinks.twitter}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-full text-sm group  hover:bg-gray-200 transition-colors"
                     >
-                      <FaXTwitter size={14} />
-                      Twitter
+                      <FaXTwitter className="group-hover:text-[#ca0019]" size={14} />
+                      <span className="group-hover:text-[#ca0019]">Twitter</span>
                     </a>
                   )}
                   {socialLinks.instagram && (
@@ -348,10 +348,10 @@ const MemberCard = ({ member }) => {
                       href={socialLinks.instagram}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 rounded-full text-sm group hover:bg-gray-200 transition-colors"
                     >
-                      <FaInstagram size={14} />
-                      Instagram
+                      <FaInstagram className="group-hover:text-[#ca0019]" size={14} />
+                      <span className="group-hover:text-[#ca0019]">Instagram</span>
                     </a>
                   )}
                   {socialLinks.website && (
@@ -375,7 +375,7 @@ const MemberCard = ({ member }) => {
                   {formattedSkills.map((skill, index) => (
                     <span
                       key={index}
-                      className="text-sm bg-gray-100 px-3 py-1.5 rounded-full"
+                      className="text-sm bg-gray-200 px-3 py-1.5 rounded-full"
                     >
                       {skill.name}
                       {skill.level && (

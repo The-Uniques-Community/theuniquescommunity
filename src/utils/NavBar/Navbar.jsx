@@ -50,7 +50,7 @@ const Navbar = () => {
     { text: "Batches", icon: <SchoolIcon />, link: "/batches" },
     { text: "Training Model", icon: <ScienceIcon />, link: "/training" },
     { text: "Events", icon: <EventIcon />, link: "/events" },
-    { text: "Community", icon: <GroupsIcon />, link: "/community-page" },
+    { text: "Community", icon: <GroupsIcon />, link: "/community-main" },
     { text: "Blogs", icon: <ArticleIcon />, link: "/blogs" },
     { text: "Contact", icon: <ContactMailIcon />, link: "/contact" },
     { text: "Login", icon: <LogIn />, link: "/auth/login" }

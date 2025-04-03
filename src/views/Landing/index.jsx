@@ -162,10 +162,10 @@ const index = () => {
       <section>
         {/* <Logo/> */}
       </section>
-      <div className="spacer py-10"></div>
+      {/* <div className="spacer py-10"></div>
       <section>
           <BlogSection/>
-      </section>
+      </section> */}
       <div className="spacer py-10"></div>
       <section>
         <TestimonialSectionCarousel/>
