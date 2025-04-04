@@ -135,19 +135,6 @@ const Navbar = () => {
     setActiveLink(linkText);
   };
 
-  const navItems = [
-    { text: "Home", icon: <HomeIcon />, link: "/" },
-    { text: "About Us", icon: <InfoIcon />, link: "/about" },
-    { text: "How it started", icon: <WorkIcon />, link: "/howitstarted" },
-    { text: "Batches", icon: <SchoolIcon />, link: "/batches" },
-    { text: "Training Model", icon: <ScienceIcon />, link: "/training" },
-    { text: "Events", icon: <EventIcon />, link: "/events" },
-    { text: "Community", icon: <GroupsIcon />, link: "/community-main" },
-    { text: "Blogs", icon: <ArticleIcon />, link: "/blogs" },
-    { text: "Contact", icon: <ContactMailIcon />, link: "/contact" },
-    { text: "Login", icon: <LogIn />, link: "/auth/login" }
-  ];
-
   // Social media links - update these URLs with actual links
   const socialLinks = [
     {
