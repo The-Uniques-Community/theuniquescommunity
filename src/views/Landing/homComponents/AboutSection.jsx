@@ -1,28 +1,29 @@
 import React from "react";
-import { Lock, Storage, Layers, SyncAlt } from "@mui/icons-material";
+import { Groups, VolunteerActivism, Diversity3, Handshake } from "@mui/icons-material";
 import Orbit from "@/utils/Orbit/Orbit";
 
 const features = [
   {
-    icon: <Lock fontSize="large" style={{ color: "white" }} />,
-    title: "Security Maintenance",
-    description: "The little rotter bevvy l gormless mush golly gosh cras.",
+    icon: <Groups fontSize="large" style={{ color: "white" }} />,
+    title: "Community Engagement",
+    description: "Bringing people together through events, discussions, and support.",
   },
   {
-    icon: <Storage fontSize="large" style={{ color: "white" }} />,
-    title: "Backup Database",
-    description: "The little rotter bevvy l gormless mush golly gosh cras.",
+    icon: <VolunteerActivism fontSize="large" style={{ color: "white" }} />,
+    title: "Volunteer Programs",
+    description: "Join hands to make a difference with impactful volunteer initiatives.",
   },
   {
-    icon: <Layers fontSize="large" style={{ color: "white" }} />,
-    title: "Server Maintenance",
-    description: "The little rotter bevvy l gormless mush golly gosh cras.",
+    icon: <Diversity3 fontSize="large" style={{ color: "white" }} />,
+    title: "Inclusive Environment",
+    description: "Creating a welcoming space for everyone, regardless of background.",
   },
   {
-    icon: <SyncAlt fontSize="large" style={{ color: "white" }} />,
-    title: "No Risk Protestable",
-    description: "The little rotter bevvy l gormless mush golly gosh cras.",
-  },
+    icon: <Handshake fontSize="large" style={{ color: "white" }} />,
+    title: "Collaboration Opportunities",
+    description: "Partner with others to drive meaningful change in the community.",
+  }
+  
 ];
 
 const AboutSection = () => {

@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import CommunityCard from '@/utils/Card/CommunityCard';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, X } from 'lucide-react';
+import Eventmodel from '../Event/Componant/Event';;
 
 const Event = () => {
   const [completedEvents, setCompletedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -67,6 +70,18 @@ const Event = () => {
     fetchEvents();
   }, []);
 
+  const openEventModal = (event) => {
+    setSelectedEvent(event);
+    setIsModalOpen(true);
+    document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+  };
+
+  const closeEventModal = () => {
+    setIsModalOpen(false);
+    setSelectedEvent(null);
+    document.body.style.overflow = 'auto'; // Re-enable scrolling
+  };
+
   if (loading) {
     return (
       <div className="py-16 px-4">
@@ -85,17 +100,16 @@ const Event = () => {
     <section className="py-16 px-4 bg-tansparent">
       <div className="max-w-7xl mx-auto">
         <div className="mb-10 flex justify-between items-center">
-        <div className="md:w-1/2 flex flex-col justify-center">
-  <div className="flex mb-2 md:mb-5 items-center">
-    <span className="border-l-2 border-[#e03232] h-6 mr-3"></span>
-    <h1 className="text-lg font-bold">OUR EVENTS</h1>
-  </div>
-  <h1 className="text-lg md:text-3xl font-semibold mb-8">
-    Experience the <span className="text-[#ca2c2c] text-4xl md:text-7xl md:py-3 block">excitement</span>
-  </h1>
-  
-</div>
-  
+          <div className="md:w-1/2 flex flex-col justify-center">
+            <div className="flex mb-2 md:mb-5 items-center">
+              <span className="border-l-2 border-[#e03232] h-6 mr-3"></span>
+              <h1 className="text-lg font-bold">OUR EVENTS</h1>
+            </div>
+            <h1 className="text-lg md:text-3xl font-semibold mb-8">
+              Experience the <span className="text-[#ca2c2c] text-4xl md:text-7xl md:py-3 block">excitement</span>
+            </h1>
+          </div>
+          
           <Link 
             to="/events" 
             className="inline-flex items-center px-5 py-2 bg-[#e03232] hover:bg-[#c52020] text-white font-medium rounded-lg transition-all duration-300"
@@ -108,11 +122,23 @@ const Event = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {completedEvents.map(event => (
             <div key={event._id} className="transform transition duration-300 hover:-translate-y-2">
-              <CommunityCard event={event} />
+              <CommunityCard 
+                event={event} 
+                onKnowMoreClick={() => openEventModal(event)} 
+              />
             </div>
           ))}
         </div>
       </div>
+
+      {/* Render the EventModel component when modal is open */}
+      {isModalOpen && selectedEvent && (
+        <Eventmodel
+        event={selectedEvent}
+        isOpen={isModalOpen}
+        onClose={closeEventModal}
+      />
+      )}
     </section>
   );
 };
