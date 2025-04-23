@@ -40,6 +40,28 @@ import axios from "axios";
 // Base API URL
 const API_BASE_URL = "http://localhost:5000/api";
 
+// Create axios instance with default config
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true, // Always include credentials
+  headers: {
+    "Content-Type": "application/json",
+  }
+});
+
+// Add request interceptor to handle authentication errors consistently
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Redirect to login page or handle unauthorized access
+      console.error("Authentication error: Not authorized");
+      // You could redirect here: window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
 const BlogManagement = () => {
   // State for blog form
   const [blogForm, setBlogForm] = useState({
@@ -93,11 +115,8 @@ const BlogManagement = () => {
   const fetchMemberBlogs = async () => {
     setIsLoading(true);
     try {
-      // Use the dedicated endpoint for the authenticated user's blogs
-      const response = await fetch(`${API_BASE_URL}/blogs/my-blogs`, {
-        method: "GET", // optional if GET is default
-        credentials: "include", // this includes cookies/session info
-      });
+      // Use the custom axios instance
+      const response = await api.get('/blogs/my-blogs');
 
       // Check if data exists and has expected structure
       if (response.data && response.data.data) {
@@ -239,25 +258,13 @@ const BlogManagement = () => {
         return;
       }
 
-      // Common request config with credentials
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      };
-
       if (isEditing) {
         // Update existing blog
-        await axios.put(
-          `${API_BASE_URL}/blogs/${currentBlogId}`,
-          blogForm,
-          config
-        );
+        await api.put(`/blogs/${currentBlogId}`, blogForm);
         showSnackbar("Blog updated successfully!", "success");
       } else {
         // Create new blog
-        await axios.post(`${API_BASE_URL}/blogs`, blogForm, config);
+        await api.post('/blogs', blogForm);
         showSnackbar("Blog created successfully!", "success");
       }
 
@@ -288,9 +295,7 @@ const BlogManagement = () => {
     try {
       setIsLoading(true);
 
-      await axios.delete(`${API_BASE_URL}/blogs/${blogId}`, {
-        withCredentials: true,
-      });
+      await api.delete(`/blogs/${blogId}`);
 
       // Update blogs list after deletion
       setBlogs(blogs.filter((blog) => blog._id !== blogId));

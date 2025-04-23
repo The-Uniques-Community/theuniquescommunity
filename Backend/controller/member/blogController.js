@@ -8,11 +8,17 @@ import mongoose from "mongoose";
  */
 export const createBlog = async (req, res) => {
   try {
+    // Check if user is authenticated
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required. Please login."
+      });
+    }
+
     const { title, description, category, readTime, image, subContents, tags, status } = req.body;
     
-    // User is already authenticated via verifyToken middleware
-    // req.user contains the decoded JWT payload
-    const authorId = req.user.id; // Note: JWT usually stores user id as 'id'
+    const authorId = req.user.id;
     
     // Create new blog with author reference
     const newBlog = new Blog({
@@ -110,6 +116,14 @@ export const getAllBlogs = async (req, res) => {
  */
 export const getMyBlogs = async (req, res) => {
   try {
+    // Check if user is authenticated
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required. Please login."
+      });
+    }
+    
     // Get the authenticated user's ID from the token
     const userId = req.user.id;
     
@@ -218,6 +232,14 @@ export const getBlogsByMember = async (req, res) => {
  */
 export const editBlog = async (req, res) => {
   try {
+    // Check if user is authenticated
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required. Please login."
+      });
+    }
+    
     const blogId = req.params.blogId;
     const updates = req.body;
     const userId = req.user.id;
@@ -279,6 +301,14 @@ export const editBlog = async (req, res) => {
  */
 export const deleteBlogById = async (req, res) => {
   try {
+    // Check if user is authenticated
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required. Please login."
+      });
+    }
+    
     const blogId = req.params.blogId;
     const userId = req.user.id;
     
