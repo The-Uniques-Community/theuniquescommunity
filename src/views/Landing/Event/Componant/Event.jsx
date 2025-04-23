@@ -1,18 +1,93 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Users, X, Calendar, Clock, MapPin, User, Users as UsersIcon } from 'lucide-react';
+import { Users, X, Calendar, Clock, MapPin, User, Users as UsersIcon, Award } from 'lucide-react';
 import Button from "@/utils/Buttons/Button";
 import { Tabs, Tab } from '@mui/material';
 import { CircularProgress, TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText, RadioGroup, FormControlLabel, Radio, Checkbox } from '@mui/material';
 import { toast } from 'react-toastify';
 import { Dialog, DialogContent, Typography, Box, DialogTitle, IconButton } from '@mui/material';
 import { Close } from '@mui/icons-material';
-// Add these imports at the top with your other imports
 import { Alert, DialogActions } from '@mui/material';
 import { ContactMail } from '@mui/icons-material';
 
 
-export default function Eventmodel({ event,isOpen, onClose }) {
+// Static data for community partners (only for Bharat TechXperience Hackathon 2.0)
+const COMMUNITY_PARTNERS = [
+    {
+      name: "Google Developer Groups Chandigarh",
+      logo: "https://bharat-tech-xperience.theuniques.in/static/media/gdg%20chandigarh.43ca0a92cc45f4c3bcc9.png",
+      description: "A community of developers interested in Google's developer technologies.",
+      website: "https://gdg.community.dev/gdg-chandigarh/"
+    },
+    {
+      name: "Google Developer Groups Jalandhar",
+      logo: "https://bharat-tech-xperience.theuniques.in/static/media/cp-gdg%20jalandhar.4872d2376bb3273dde32.png",
+      description: "An initiative to concentrate the efforts of many developers in and around Punjab to learn and share Google products.",
+      website: "https://gdg.community.dev/gdg-jalandhar/"
+    },
+    {
+      name: "Google Developer Groups Ludhiana",
+      logo: "https://bharat-tech-xperience.theuniques.in/static/media/cp-gdg%20ludhiana.78b882f7fdc3b6b0619f.png",
+      description: "A platform for developers in Ludhiana to learn, network, and collaborate on Google technologies.",
+      website: "https://gdg.community.dev/gdg-ludhiana/"
+    },
+    {
+      name: "Google Developer Groups On Campus - DAV University",
+      logo: "https://bharat-tech-xperience.theuniques.in/static/media/dav.b61c694bc933f8c72663.png",
+      description: "A university-based community at DAV University, Jalandhar for students interested in Google technologies.",
+      website: "https://gdg.community.dev/gdg-on-campus-dav-university-jalandhar-india/"
+    },
+    {
+      name: "TensorFlow User Group Jalandhar",
+      logo: "https://zko8va4y8i.ufs.sh/f/GunMk0mxX0j1eFZcb2aqBE3Tc9OfeNG6Ht0Q1DCAhwvkjIs2",
+      description: "A community focused on exploring machine learning through TensorFlow.",
+      website: "https://www.commudle.com/users/TFUG_Jalandhar"
+    },
+    {
+      name: "BugBar",
+      logo: "https://zko8va4y8i.ufs.sh/f/GunMk0mxX0j1fT1nYeZmdZB8h7Gy9E4PH6l5JzgQ0ncsxka2",
+      description: "A community focused on technology and innovation.",
+      website: null
+    },
+    {
+      name: "CODEHAT THE MAGIC OF CODE",
+      logo: "https://zko8va4y8i.ufs.sh/f/GunMk0mxX0j1rz8iUDQRMqkfSpwsFOXIj2goWx8nGybmucet",
+      description: "A community centered around the magic and power of coding.",
+      website: null
+    },
+    {
+      name: "Google Developer Groups On Campus - NIT JALANDHAR",
+      logo: "https://bharat-tech-xperience.theuniques.in/static/media/nit.120bad5231a209fe72f7.jpg",
+      description: "The Google Developer Student Club at the National Institute of Technology, Jalandhar.",
+      website: "https://gdg.community.dev/gdg-on-campus-dr-b-r-ambedkar-national-institute-of-technology-jalandhar-india/"
+    },
+    {
+      name: "Google Developer Groups On Campus - RIET CONGOWAL",
+      logo: "https://bharat-tech-xperience.theuniques.in/static/media/slite.83eb41537ac66a4cbde6.png",
+      description: "A Google Developer Group on campus at RIET Congowal.",
+      website: null
+    },
+    {
+      name: "GeeksForGeeks (ARESEC CHAPTER)",
+      logo: "https://bharat-tech-xperience.theuniques.in/static/media/gfg.077a7e9ff5911c708565.jpg",
+      description: "The ARESEC chapter of GeeksForGeeks, a community focused on computer science and programming.",
+      website: "https://www.geeksforgeeks.org/"
+    },
+    {
+      name: "acm-w",
+      logo: "https://bmnmsbiymz.ufs.sh/f/1V3V2P4kpAumRKOIeRmu2iQAmoaFD3d9eMskP7J6LXV4IRly",
+      description: "ACM-W supports, celebrates, and advocates for the full engagement of women in all aspects of the computing field.",
+      website: "https://women.acm.org/"
+    },
+    {
+      name: "OPEN SOURCE CHANDIGARH",
+      logo: "https://bharat-tech-xperience.theuniques.in/static/media/open.f20a841a307eb8c05f28.png",
+      description: "A community in Chandigarh focused on open-source technologies, powered by Chitkara University, Punjab.",
+      website: "https://github.com/Open-Source-Chandigarh"
+    }
+  ];
+
+export default function Eventmodel({ event, isOpen, onClose }) {
     const [activeTab, setActiveTab] = useState("about");
     const [allEvents, setAllEvents] = useState([]);
     const [filteredEvents, setFilteredEvents] = useState([]);
@@ -26,6 +101,9 @@ export default function Eventmodel({ event,isOpen, onClose }) {
     const [formErrors, setFormErrors] = useState({});
     const [registrationLoading, setRegistrationLoading] = useState(false);
     const [registrationSuccess, setRegistrationSuccess] = useState(false);
+
+    // Check if this is the Bharat TechXperience Hackathon event
+    const isBharatHackathon = event?.eventName === "Bharat TechXperience Hackathon 2.0";
 
     // Helper function to get initials from name
     const getNameInitials = (name) => {
@@ -501,7 +579,8 @@ export default function Eventmodel({ event,isOpen, onClose }) {
         setActiveTab(newValue);
 
         // Filter events based on selected tab
-        if (newValue !== "about" && newValue !== "guests" && newValue !== "organizers" && newValue !== "gallery" && newValue !== "sponsors") {
+        if (newValue !== "about" && newValue !== "guests" && newValue !== "organizers" && 
+            newValue !== "gallery" && newValue !== "sponsors" && newValue !== "partners") {
             const filtered = allEvents.filter(e =>
                 e.eventType === newValue && e._id !== event._id
             );
@@ -629,6 +708,10 @@ export default function Eventmodel({ event,isOpen, onClose }) {
                     <Tab value="guests" label="Guests" />
                     <Tab value="sponsors" label="Sponsors" />
                     <Tab value="organizers" label="Organizers" />
+                    {/* Show Community Partners tab only for Bharat TechXperience Hackathon */}
+                    {isBharatHackathon && (
+                        <Tab value="partners" label="Community Partners" />
+                    )}
                 </Tabs>
 
                 {/* Main Content */}
@@ -781,6 +864,50 @@ export default function Eventmodel({ event,isOpen, onClose }) {
                                     </p>
                                 </div>
                             </>
+                        ) : activeTab === "partners" ? (
+                            <>
+                                <h2 className="text-xl sm:text-2xl font-bold mb-4">Community Partners</h2>
+                                <p className="text-gray-600 mb-6 text-sm sm:text-base">
+                                  We're proud to partner with these amazing tech communities who are supporting Bharat TechXperience Hackathon 2.0 with resources, mentorship, and outreach.
+                                </p>
+                                
+                                {/* Modern styled community partners grid */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                  {COMMUNITY_PARTNERS.map((partner, idx) => (
+                                    <div key={idx} className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-100">
+                                      <div className="h-36 bg-black flex items-center justify-center p-4">
+                                        <img 
+                                          src={partner.logo} 
+                                          alt={`${partner.name} logo`} 
+                                          className="max-h-28 max-w-full object-contain"
+                                        />
+                                      </div>
+                                      <div className="p-4">
+                                        <h3 className="font-bold text-lg text-gray-800">{partner.name}</h3>
+                                        <p className="text-sm text-gray-600 mt-1">{partner.description}</p>
+                                        <div className="mt-4 flex items-center">
+                                          <Award size={16} className="text-[#ca0019] mr-2" />
+                                          <a 
+                                            href={partner.website} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer" 
+                                            className="text-[#ca0019] text-sm font-medium hover:underline"
+                                          >
+                                            Visit Website
+                                          </a>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                <div className="mt-8 bg-gradient-to-r from-red-50 to-pink-50 p-4 rounded-lg border border-red-100">
+                                  <h3 className="font-semibold text-gray-800">Become a Community Partner</h3>
+                                  <p className="text-sm text-gray-700 mt-2">
+                                    If your community would like to collaborate with us for the hackathon, please reach out at <a href="mailto:partners@bharathackathon.tech" className="text-[#ca0019] hover:underline">partners@bharathackathon.tech</a>
+                                  </p>
+                                </div>
+                            </>
                         ) : (
                             <>
                                 <h2 className="text-xl sm:text-2xl font-bold mb-4">Related {activeTab} Events</h2>
@@ -926,6 +1053,33 @@ export default function Eventmodel({ event,isOpen, onClose }) {
                                             View all {safeEventSponsors.length} sponsors
                                         </button>
                                     )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Show Partners preview if this is Bharat TechXperience Hackathon */}
+                        {isBharatHackathon && (
+                            <div className="mt-4 sm:mt-6">
+                                <h2 className="text-lg sm:text-xl font-bold mb-2 sm:mb-4">Community Partners</h2>
+                                <div className="space-y-2 sm:space-y-3">
+                                    {COMMUNITY_PARTNERS.slice(0, 3).map((partner, index) => (
+                                        <div key={index} className="flex items-center">
+                                            <img
+                                                src={partner.logo}
+                                                className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
+                                                alt={partner.name}
+                                            />
+                                            <div className="ml-2 sm:ml-3">
+                                                <h3 className="font-medium text-xs sm:text-sm">{partner.name}</h3>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <button
+                                        onClick={() => setActiveTab("partners")}
+                                        className="text-blue-500 text-xs sm:text-sm hover:underline mt-1 sm:mt-2"
+                                    >
+                                        View all {COMMUNITY_PARTNERS.length} partners
+                                    </button>
                                 </div>
                             </div>
                         )}
