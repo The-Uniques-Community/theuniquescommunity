@@ -10,7 +10,7 @@ import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import ScheduleOutlinedIcon from "@mui/icons-material/ScheduleOutlined";
 // Import community card CSS
-import "@/utils/card/communitycard.css";
+import "../../../utils/Card/communitycard.css";
 // Import logo
 import logo from "@/assets/logos/theuniquesCommunity.png";
 
