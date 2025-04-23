@@ -28,7 +28,7 @@ import { LogIn, LogOut } from "lucide-react"; // Add LogOut import
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import axios from "axios"; // For logout API call
 import { set } from "date-fns";
-
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 const Navbar = () => {
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
   const [activeLink, setActiveLink] = React.useState("");
@@ -87,6 +87,7 @@ const Navbar = () => {
       { text: "How it started", icon: <WorkIcon />, link: "/howitstarted" },
       { text: "Batches", icon: <SchoolIcon />, link: "/batches" },
       { text: "Training Model", icon: <ScienceIcon />, link: "/training" },
+      { text: "Success Stories", icon: <CheckCircleIcon />, link: "/success-stories" },
       { text: "Events", icon: <EventIcon />, link: "/events" },
       { text: "Community", icon: <GroupsIcon />, link: "/community-main" },
       { text: "Blogs", icon: <ArticleIcon />, link: "/blogs" },

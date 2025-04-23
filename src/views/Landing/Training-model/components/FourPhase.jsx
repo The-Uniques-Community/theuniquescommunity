@@ -11,9 +11,10 @@ import { styled } from "@mui/material/styles";
 // Import images for each year (you should replace these with actual images)
 import firstYearImg from "../../../../assets/img/Community/Training1.png"; // Replace with your actual image path
 import secondYearImg from "../../../../assets/img/Community/Training2.png"; // Replace with your actual image path
-import thirdYearImg from "../../../../assets/img/Community/Training1.png"; // Replace with your actual image path
-import fourthYearImg from "../../../../assets/img/Community/Training1.png"; // Replace with your actual image path
-import ltImg from "../../../../assets/img/Community/Training1.png"; // Replace with your actual image path
+import thirdYearImg from "../../../../assets/img/Community/Training2.png"; // Replace with your actual image path
+import fourthYearImg from "../../../../assets/img/Community/Training4.png"; // Replace with your actual image path
+import ltImg from "../../../../assets/img/Community/Training5.png";
+ // Replace with your actual image path
 
 // Styled component for custom tab style
 const StyledTab = styled(Tab)(({ theme }) => ({
