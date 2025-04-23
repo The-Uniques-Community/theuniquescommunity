@@ -13,13 +13,15 @@ import Counts from "./homComponents/Counts";
 
 import Startups from "./homComponents/Startups";
 import WhyUs from "./homComponents/WhyUs";
-import TestimonialSectionCarousel from "./homComponents/TestimonialCard";
+// import TestimonialSectionCarousel from "./homComponents/TestimonialCard";
 import Batches from "./homComponents/Batches";
 
 import HomeHero from "./homComponents/HomeHero";
 import BlogSection from "./homComponents/BlogSection";
 import Event from "./homComponents/Event";
 import Highlight from "./homComponents/Highlight";
+// import Testimonial from "./homComponents/TestimonialCard";
+import Testimonials from "./homComponents/TestimonialCard";
 
 const index = () => {
   const theme = useTheme();
@@ -166,7 +168,7 @@ const index = () => {
       </section>
       <div className="spacer py-10"></div>
       <section>
-        <TestimonialSectionCarousel />
+        <Testimonials/>
       </section>
       <div className="spacer py-10"></div>
       <div className="my-6">
