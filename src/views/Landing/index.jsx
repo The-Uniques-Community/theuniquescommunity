@@ -156,10 +156,10 @@ const index = () => {
       <section>
         <Event/>
       </section>
-      <div className="spacer py-10"></div>
+      {/* <div className="spacer py-10"></div>
       <section>
-        <BlogSection />
-      </section>
+          <BlogSection/>
+      </section> */}
       <div className="spacer py-10"></div>
       <section>
         <TestimonialSectionCarousel />

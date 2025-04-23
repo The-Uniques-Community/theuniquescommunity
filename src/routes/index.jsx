@@ -15,6 +15,7 @@ import Event from "@/views/Landing/Event/Index"
 import BatchesPage from "@/views/Landing/Batches/index"
 // import AdvisoryBoard from "@/views/Landing/AdvisoryBoard";
 import Notices from "@/views/Landing/Notices/index"
+import SuccessStoriesRoutes from "./successStories";
 const Landing = Loader(lazy(() => import("@/views/Landing/index")));
 
 
@@ -23,6 +24,7 @@ const Contact = Loader(lazy(() => import("@/views/Landing/Contact/index")));
 const Training = Loader(lazy(() => import("@/views/Landing/Training-model/Training")));
 const NotFound = Loader(lazy(() => import("@/views/Landing/NotFound/index")));
 const CommunityPage = Loader(lazy(() => import("@/views/Landing/Community/index")));
+const SuccessStories  = Loader(lazy(() => import("@/views/Landing/SuccessStories/index")));
 const LandingRoutes = {
   path: "/",
   element: <LandingLayout />, // Wrap all pages inside LandingLayout
@@ -41,6 +43,7 @@ const LandingRoutes = {
     { path: "blogs", element: <BlogPage /> },
     { path: "contact", element: <Contact /> },
     { path: "batches", element: <BatchesPage />  },
+    { path: "success-stories", element: <SuccessStories />  },
     // { path: "advisoryBoard", element: <AdvisoryBoard />  },
     { path: "notices", element: <Notices/>  },
     
@@ -54,7 +57,8 @@ const router = createBrowserRouter([
   CommunityRoutes,
   CoordinatorRoutes,
   MemberRoutes,
-  Auth
+  Auth,
+  SuccessStoriesRoutes
 ]);
 
 export default router;

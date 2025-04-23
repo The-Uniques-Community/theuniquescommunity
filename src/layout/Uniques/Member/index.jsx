@@ -11,7 +11,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import PublishIcon from "@mui/icons-material/Publish";
+import BookIcon from '@mui/icons-material/Book';
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import GroupIcon from "@mui/icons-material/Group";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
@@ -30,6 +30,8 @@ import Brightness7Icon from "@mui/icons-material/Brightness7"; // Light Mode Ico
 // Navigation items with full paths
 const STUDENT_NAVIGATION = [
   { segment: "", title: "Dashboard", icon: <DashboardIcon /> },
+  { segment: "createBlog", title: "Create Blog", icon: <BookIcon /> },
+  
   // { segment: "JobPosting", title: "Post Job", icon: <PublishIcon /> },
   // { segment: "profile", title: "Profile", icon: <AccountCircleIcon /> },
   // { segment: "applicants", title: "Applicants", icon: <GroupIcon /> },

@@ -12,7 +12,6 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import EventIcon from "@mui/icons-material/Event";
-import Groups3Icon from '@mui/icons-material/Groups3';
 import GroupIcon from "@mui/icons-material/Group";
 
 import LogoutIcon from "@mui/icons-material/Logout";
