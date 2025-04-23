@@ -162,8 +162,8 @@ const index = () => {
         <Highlight />
       </section>
       <section>
-          <BlogSection/>
-      </section> */}
+        <BlogSection />
+      </section>
       <div className="spacer py-10"></div>
       <section>
         <TestimonialSectionCarousel />
