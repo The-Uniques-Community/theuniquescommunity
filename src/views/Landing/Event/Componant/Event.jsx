@@ -1073,6 +1073,7 @@ export default function Eventmodel({ event, isOpen, onClose }) {
                                                 <h3 className="font-medium text-xs sm:text-sm">{partner.name}</h3>
                                             </div>
                                         </div>
+                                        
                                     ))}
                                     <button
                                         onClick={() => setActiveTab("partners")}
