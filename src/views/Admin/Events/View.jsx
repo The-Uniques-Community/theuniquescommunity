@@ -560,11 +560,7 @@ const EventView = () => {
     if (!selectedGuest) return;
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("Authentication required. Please log in again.");
-        return;
-      }
+
 
       // Show loading state
       setLoading(true);
@@ -576,7 +572,6 @@ const EventView = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
           credentials: "include",
           body: JSON.stringify({
@@ -626,11 +621,7 @@ const EventView = () => {
     if (!guestId) return;
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("Authentication required. Please log in again.");
-        return;
-      }
+    
 
       setLoading(true);
 
@@ -653,7 +644,6 @@ const EventView = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         credentials: "include",
         body: JSON.stringify(payload),
@@ -688,11 +678,7 @@ const EventView = () => {
       const file = e.target.files[0];
       if (!file) return;
 
-      const token = localStorage.getItem("token");
-      if (!token) {
-        toast.error("Authentication required. Please log in again.");
-        return;
-      }
+ 
 
       setLoading(true);
 
@@ -707,9 +693,6 @@ const EventView = () => {
         "https://theuniquesbackend.vercel.app/upload/event_file_upload",
         {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
           credentials: "include",
           body: formData,
         }
@@ -1161,7 +1144,7 @@ const EventView = () => {
             variant="h4"
             sx={{
               fontWeight: "bold",
-              background: "linear-gradient(45deg, #1976d2, #42a5f5)",
+              background: "#ca0019",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}
@@ -1208,9 +1191,7 @@ const EventView = () => {
               ...(editMode
                 ? {}
                 : {
-                    background:
-                      "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
-                    boxShadow: "0 3px 5px 2px rgba(33, 203, 243, .3)",
+                    backgroundColor:"#ca0019",
                   }),
               "&:hover": {
                 transform: "translateY(-2px)",

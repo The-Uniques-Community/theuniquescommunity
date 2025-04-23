@@ -166,7 +166,7 @@ export const createEvent = async (req, res) => {
 
 export const getAllEvents = async (req, res) => {
   try {
-    const { status, type, organizer, page = 1, limit = 10 } = req.query;
+    const { status, type, organizer, page = 1, limit = 25 } = req.query;
     const pageNum = Number(page);
     const limitNum = Number(limit);
     let filter = {};

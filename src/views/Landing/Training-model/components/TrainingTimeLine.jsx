@@ -86,115 +86,151 @@ export const Timeline = ({ data }) => {
   );
 };
 
+// ...existing code...
+
 const trainingTimeline = [
   {
     title: "First Year",
-    subtitle: "Technical & Soft Skills (Second Semester)",
+    subtitle: "Technical & Soft Skills Development",
     content: (
       <>
-        <strong>Technical Focus:</strong>
+        <strong>Key Skills Developed:</strong>
         <ul>
           <li>Advanced image editing (Photoshop, Illustrator)</li>
           <li>Responsive front-end development</li>
+          <li>UI/UX design principles</li>
           <li>Digital marketing strategies</li>
-          <li>UI/UX design (user-friendly interfaces, prototype creation)</li>
         </ul>
-        <strong>Soft Skills:</strong>
+        <strong>Client Projects:</strong>
         <ul>
-          <li>Communication & personality development</li>
-          <li>Mock interviews and group discussions</li>
-          <li>Regular assessments to ensure mastery</li>
+          <li>4 local businesses - Website design & development</li>
+          <li>2 startups - Brand identity creation</li>
+          <li>3 e-commerce stores - UI/UX redesign</li>
         </ul>
-        <strong>Designing Curriculum (2nd Semester):</strong>
+        <strong>Revenue Generated:</strong>
         <ul>
-          <li>Unlocking creative potential through design</li>
-          <li>Mastering design principles and visual storytelling</li>
-          <li>Encouraging innovative and fresh problem-solving approaches</li>
+          <li>₹85,000 from design projects</li>
+          <li>₹35,000 from front-end development</li>
+          <li><strong>Total: ₹1,20,000</strong></li>
         </ul>
       </>
     ),
   },
   {
     title: "Second Year",
-    subtitle: "Programming & Data Management",
+    subtitle: "Programming & Data Management Solutions",
     content: (
       <>
-        <strong>Backend Development:</strong>
+        <strong>Key Skills Developed:</strong>
         <ul>
-          <li>Designing robust server-side logic</li>
-          <li>Database management (SQL/NoSQL) and API creation</li>
+          <li>Backend development (Node.js, Express)</li>
+          <li>Database management (SQL/NoSQL)</li>
+          <li>API design and implementation</li>
+          <li>Data structures & algorithms</li>
         </ul>
-        <strong>Advanced Data Structures & Algorithms:</strong>
+        <strong>Client Projects:</strong>
         <ul>
-          <li>In-depth study for efficient data handling</li>
+          <li>2 medium enterprises - Custom CRM solutions</li>
+          <li>3 startups - Full-stack web applications</li>
+          <li>1 educational institution - Student management system</li>
         </ul>
-        <strong>Core Languages:</strong>
+        <strong>Revenue Generated:</strong>
         <ul>
-          <li>Mastery in Core Java and Core Python for enhanced problem-solving</li>
-        </ul>
-        <strong>3rd Semester Specialization (Split Training):</strong>
-        <ul>
-          <li>Digital Marketing Training (2 Months) - SEO, social media, and ads</li>
-          <li>Java programming under L&T Courses</li>
-        </ul>
-        <strong>4th Semester (4 Months | ~360 Hours):</strong>
-        <ul>
-          <li>Advanced Backend & Security: RESTful API design, security best practices</li>
-          <li>Tools & Frameworks: Django/Express.js, OAuth, JWT</li>
-          <li>Deployment & Cloud: Docker, AWS</li>
-          <li>Emphasis on scalable architectures (microservices)</li>
+          <li>₹70,000 from backend development</li>
+          <li>₹45,000 from database solutions</li>
+          <li><strong>Total: ₹1,15,000</strong></li>
         </ul>
       </>
     ),
   },
   {
     title: "Third Year",
-    subtitle: "Cutting-Edge Technologies",
+    subtitle: "Advanced Technology Solutions",
     content: (
       <>
-        <strong>Application Development:</strong>
+        <strong>Key Skills Applied:</strong>
         <ul>
-          <li>Designing scalable, efficient, and user-friendly applications</li>
-          <li>Hands-on projects and collaborative learning to solve real-world challenges</li>
+          <li>Scalable application architecture</li>
+          <li>Cloud deployment (AWS, Azure)</li>
+          <li>DevOps integration</li>
+          <li>Mobile-responsive frameworks</li>
         </ul>
-        <em>Note: Machine Learning and Microsoft Power BI modules are now featured under L&T Courses.</em>
+        <strong>Client Projects:</strong>
+        <ul>
+          <li>1 fintech company - Payment gateway integration</li>
+          <li>2 e-commerce businesses - Inventory management systems</li>
+          <li>1 healthcare provider - Patient management portal</li>
+        </ul>
+        <strong>Revenue Generated:</strong>
+        <ul>
+          <li>₹60,000 from system integration</li>
+          <li>₹40,000 from custom application development</li>
+          <li><strong>Total: ₹1,00,000</strong></li>
+        </ul>
       </>
     ),
   },
   {
     title: "Fourth Year",
-    subtitle: "Professional Readiness & Emerging Tech",
+    subtitle: "Enterprise Solutions & Emerging Tech",
     content: (
       <>
-        <strong>Career Preparation:</strong>
+        <strong>Key Skills Applied:</strong>
         <ul>
-          <li>Intensive mock interview rounds and online assessments</li>
-          <li>Personality Development Program (PDP) with group discussions and public speaking sessions</li>
-          <li>Aptitude tests to sharpen problem-solving skills</li>
+          <li>Blockchain development</li>
+          <li>Smart contract implementation</li>
+          <li>Enterprise system integration</li>
+          <li>Advanced security protocols</li>
         </ul>
-        <strong>Emerging Technologies:</strong>
+        <strong>Client Projects:</strong>
         <ul>
-          <li>Deep dive into Blockchain development, smart contracts, and decentralized applications (DApps)</li>
-          <li>Focus on real-world applications in finance, healthcare, and supply chain management</li>
+          <li>1 supply chain company - Blockchain tracking solution</li>
+          <li>2 financial institutions - Secure transaction systems</li>
+          <li>1 government agency - Data security consultation</li>
         </ul>
+        <strong>Revenue Generated:</strong>
+        <ul>
+          <li>₹45,000 from blockchain implementation</li>
+          <li>₹20,000 from security consulting</li>
+          <li><strong>Total: ₹65,000</strong></li>
+        </ul>
+        <div className="mt-4 p-3 bg-gray-100 rounded-lg">
+          <strong className="text-xl text-[#ca0019]">Total Revenue To Date: ₹4,00,000+</strong>
+          <p className="text-sm text-gray-600 mt-1">From 21 client projects across various industries</p>
+        </div>
       </>
     ),
   },
   {
-    title: "L&T Courses",
-    subtitle: "Industry-Specific Training",
+    title: "Specialized Services",
+    subtitle: "High-Value Industry Solutions",
     content: (
       <>
+        <strong>Specialized Expertise:</strong>
         <ul>
-          <li><strong>Machine Learning Fundamentals</strong> - Duration: 1 Month</li>
-          <li><strong>Java Programming & Spring Development</strong> - Duration: 1 Month</li>
-          <li><strong>Blockchain Legal Consultant</strong> - Duration: 1 Month</li>
-          <li><strong>Microsoft Power BI</strong> - Duration: 1 Month</li>
+          <li>Machine Learning & AI implementation</li>
+          <li>Enterprise Java & Spring solutions</li>
+          <li>Blockchain legal consulting</li>
+          <li>Advanced data analytics with Power BI</li>
+        </ul>
+        <strong>Current Client Portfolio:</strong>
+        <ul>
+          <li>2 enterprise clients - ML implementation</li>
+          <li>3 legal firms - Blockchain consultation</li>
+          <li>2 corporations - Business intelligence dashboards</li>
+        </ul>
+        <strong>Ongoing Projects Value:</strong>
+        <ul>
+          <li>Multiple long-term contracts</li>
+          <li>Recurring maintenance and support agreements</li>
+          <li>Training and workshop services</li>
         </ul>
       </>
     ),
   },
 ];
+
+// ...existing code...
 
 
 export default function TrainingTimeLine() {

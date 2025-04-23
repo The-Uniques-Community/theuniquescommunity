@@ -55,15 +55,18 @@ export default function TrainingTabs() {
   return (
     <div className="flex justify-center items-center bg-white py-8">
       <div className="w-[85%] flex flex-col items-center">
-        <div className="text-center">
-          <h4 className="text-xs uppercase text-gray-600 mb-1">
-            About Our Training
-          </h4>
-          <h2 className="text-xl lg:text-2xl font-bold mb-6 leading-tight">
-            A new way to manage your
-            <br /> online money.
-          </h2>
+    
+        <div className="flex mb-5 items-center">
+          <span className="border-l-2 border-[#ca0019] h-6 mr-3"></span>
+          <h1 className="text-sm md:text-lg font-bold">TRAINING MODULES</h1>
         </div>
+        <h1 className="text-2xl md:text-4xl font-semibold">
+          Elevate Your Skills with
+          <span className="text-[#ca0019] text-2xl md:text-5xl md:py-2 block mb-5">
+            Expert-Led Programs
+          </span>
+        </h1>
+      
 
         <Box sx={{ width: "100%", bgcolor: "white", display: "flex", justifyContent: "center" }}>
           <Tabs
