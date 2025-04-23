@@ -19,6 +19,7 @@ import Batches from "./homComponents/Batches";
 import HomeHero from "./homComponents/HomeHero";
 import BlogSection from "./homComponents/BlogSection";
 import Event from "./homComponents/Event";
+import Highlight from "./homComponents/Highlight";
 
 const index = () => {
   const theme = useTheme();
@@ -156,10 +157,13 @@ const index = () => {
       <section>
         <Event/>
       </section>
-      {/* <div className="spacer py-10"></div>
+      <div className="spacer py-10"></div>
       <section>
-          <BlogSection/>
-      </section> */}
+        <Highlight />
+      </section>
+      <section>
+        <BlogSection />
+      </section>
       <div className="spacer py-10"></div>
       <section>
         <TestimonialSectionCarousel />

@@ -211,7 +211,7 @@ const Batches = () => {
                   : "bg-black bg-opacity-10"
                 }`}>
                 <Users size={12} />
-                {countsLoading ? "..." : batch.memberCount}
+                {/* {countsLoading ? "..." : batch.memberCount} */}
               </span>
             </motion.button>
           ))}
@@ -250,7 +250,7 @@ const Batches = () => {
                   {currentBatch.name}
                   <span className="bg-[#ca0019] text-white px-2 py-0.5 rounded-full text-sm flex items-center gap-1">
                     <Users size={14} />
-                    {countsLoading ? "Loading..." : `${currentBatch.memberCount} Members`}
+                    {/* {countsLoading ? "Loading..." : `${currentBatch.memberCount} Members`} */}
                   </span>
                 </h2>
                 <p className="mt-2 text-gray-600">{currentBatch.description}</p>
