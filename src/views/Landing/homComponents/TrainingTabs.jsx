@@ -10,6 +10,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import WebDevTab from "./WebDevTab";
 import MernTab from "./MernTab";
 import AndroidTab from "./AndroidTab";
+import GenAiTab from "./GenAiTab";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -116,6 +117,13 @@ export default function TrainingTabs() {
             label="Round-IV"
             {...a11yProps(3)}
           />
+          <Tab
+            sx={{ marginY: isSmallScreen ? 0 : 2 }}
+            icon={<SettingsIcon />}
+            iconPosition="start"
+            label="Round-V"
+            {...a11yProps(4)}
+          />
         </Tabs>
         <TabPanel value={value} index={0}>
           <Box>
@@ -135,6 +143,11 @@ export default function TrainingTabs() {
         <TabPanel value={value} index={3}>
           <Box>
             <AndroidTab />
+          </Box>
+        </TabPanel>
+        <TabPanel value={value} index={4}>
+          <Box>
+            <GenAiTab />
           </Box>
         </TabPanel>
       </Box>
