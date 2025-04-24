@@ -20,7 +20,7 @@ const About = (props) => (
                 </defs>
                 {/* Image clipped to the custom path */}
                 <image
-                    href="https://img.freepik.com/free-photo/still-life-business-roles-with-various-pawns_23-2149352663.jpg?t=st=1745393238~exp=1745396838~hmac=632eec3f6bcc658e89793bdb6c8c3c7653863e8910e9c07bab90f8252947286f&w=1380"
+                    href="https://studymelbourne.vic.gov.au/__data/assets/image/0009/2336490/Ambassadors-3.jpg"
                     width="342"
                     height="265"
                     preserveAspectRatio="xMidYMid slice"
