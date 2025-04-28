@@ -365,6 +365,70 @@ export const getAllEvents = async (req, res) => {
 };
 
 /**
+ * Update a specific event to include eventMembers field
+ * @route PUT /api/events/:id/migrate-members
+ * @access Private (Admin only)
+ */
+export const migrateEventMembers = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate event ID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid event ID format'
+      });
+    }
+
+    // First check if the event exists and if eventMembers field exists in the database
+    const eventExists = await Event.collection.findOne(
+      { 
+        _id: new mongoose.Types.ObjectId(id),
+        eventMembers: { $exists: true }
+      }
+    );
+
+    // If the field already exists in the database
+    if (eventExists) {
+      const event = await Event.findById(id);
+      return res.status(200).json({
+        success: true,
+        message: 'Event already has eventMembers field',
+        event: event
+      });
+    }
+
+    // If the field doesn't exist, add it as an empty array
+    const updatedEvent = await Event.findByIdAndUpdate(
+      id,
+      { $set: { eventMembers: [] } },
+      { new: true }
+    );
+    
+    if (!updatedEvent) {
+      return res.status(404).json({
+        success: false,
+        message: 'Event not found'
+      });
+    }
+    
+    return res.status(200).json({
+      success: true,
+      message: 'Event successfully updated with eventMembers field',
+      event: updatedEvent
+    });
+    
+  } catch (error) {
+    console.error('Error updating event:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error updating event',
+      error: error.message
+    });
+  }
+};
+/**
  * Get event by ID
  * @route GET /api/events/:id
  * 
@@ -2183,6 +2247,468 @@ export const deleteEventSponsor = async (req, res) => {
     });
   }
 };
+
+export const updateEventTeam = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { contributionType, contributionTeam } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid event ID format'
+      });
+    }
+
+    const event = await Event.findById(id);
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: 'Event not found'
+      });
+    }
+
+    // Validate team type
+    const validTypes = [
+      "technical team", "branding team", "infra team", 
+      "sponsors team", "hospitality", "guest-management"
+    ];
+    
+    if (!contributionType || !validTypes.includes(contributionType)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid or missing contributionType. Must be one of: ${validTypes.join(', ')}`
+      });
+    }
+    
+    // Validate team members array
+    if (!Array.isArray(contributionTeam)) {
+      return res.status(400).json({
+        success: false,
+        message: 'contributionTeam must be an array of member IDs'
+      });
+    }
+    
+    // Validate each member ID
+    for (const memberId of contributionTeam) {
+      if (!mongoose.Types.ObjectId.isValid(memberId)) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid member ID format: ${memberId}`
+        });
+      }
+
+      // Check if member exists
+      const memberExists = await Member.exists({ _id: memberId });
+      if (!memberExists) {
+        return res.status(404).json({
+          success: false,
+          message: `Member with ID ${memberId} not found`
+        });
+      }
+    }
+
+    // Initialize eventMembers if it doesn't exist
+    if (!event.eventMembers) {
+      event.eventMembers = [];
+    }
+    
+    // Find if team already exists
+    const existingTeamIndex = event.eventMembers.findIndex(
+      team => team.contributionType === contributionType
+    );
+
+    if (existingTeamIndex >= 0) {
+      // Update existing team
+      event.eventMembers[existingTeamIndex].contributionTeam = contributionTeam;
+    } else {
+      // Add new team
+      event.eventMembers.push({
+        contributionType,
+        contributionTeam
+      });
+    }
+
+    // Save changes
+    await event.save();
+
+    // Return updated event with populated members
+    const updatedEvent = await Event.findById(id).populate({
+      path: 'eventMembers.contributionTeam',
+      model: 'Member',
+      select: 'fullName batch email profilePic'
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `Team "${contributionType}" updated successfully`,
+      data: updatedEvent
+    });
+  } catch (error) {
+    console.error('Error updating event team:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error updating event team',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Add members to an existing team
+ * @route POST /api/events/:id/members/team/:teamType/add
+ * @access Private
+ */
+export const addMembersToTeam = async (req, res) => {
+  try {
+    const { id, teamType } = req.params;
+    const { memberIds } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid event ID format'
+      });
+    }
+
+    const event = await Event.findById(id);
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: 'Event not found'
+      });
+    }
+
+    // Validate team type
+    const validTypes = [
+      "technical team", "branding team", "infra team", 
+      "sponsors team", "hospitality", "guest-management"
+    ];
+    
+    if (!teamType || !validTypes.includes(teamType)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid team type. Must be one of: ${validTypes.join(', ')}`
+      });
+    }
+
+    // Validate memberIds
+    if (!Array.isArray(memberIds) || memberIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'memberIds must be a non-empty array'
+      });
+    }
+
+    // Validate each member ID
+    for (const memberId of memberIds) {
+      if (!mongoose.Types.ObjectId.isValid(memberId)) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid member ID format: ${memberId}`
+        });
+      }
+      
+      // Check if member exists
+      const memberExists = await Member.exists({ _id: memberId });
+      if (!memberExists) {
+        return res.status(404).json({
+          success: false,
+          message: `Member with ID ${memberId} not found`
+        });
+      }
+    }
+
+    // Initialize eventMembers if needed
+    if (!event.eventMembers) {
+      event.eventMembers = [];
+    }
+
+    // Find the specific team
+    let teamIndex = event.eventMembers.findIndex(
+      team => team.contributionType === teamType
+    );
+
+    // Create team if it doesn't exist
+    if (teamIndex === -1) {
+      event.eventMembers.push({
+        contributionType: teamType,
+        contributionTeam: []
+      });
+      teamIndex = event.eventMembers.length - 1;
+    }
+
+    // Add members that aren't already in the team
+    const existingMemberIds = event.eventMembers[teamIndex].contributionTeam.map(
+      id => id.toString()
+    );
+
+    for (const memberId of memberIds) {
+      if (!existingMemberIds.includes(memberId)) {
+        event.eventMembers[teamIndex].contributionTeam.push(memberId);
+      }
+    }
+
+    // Save changes
+    await event.save();
+
+    // Return updated event with populated members
+    const updatedEvent = await Event.findById(id).populate({
+      path: 'eventMembers.contributionTeam',
+      model: 'Member',
+      select: 'fullName batch email profilePic'
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `Members added to ${teamType} successfully`,
+      data: updatedEvent
+    });
+  } catch (error) {
+    console.error('Error adding members to team:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error adding members to team',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Remove members from a team
+ * @route DELETE /api/events/:id/members/team/:teamType/members
+ * @access Private
+ */
+export const removeMembersFromTeam = async (req, res) => {
+  try {
+    const { id, teamType } = req.params;
+    const { memberIds } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid event ID format'
+      });
+    }
+
+    const event = await Event.findById(id);
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: 'Event not found'
+      });
+    }
+
+    // Validate team type
+    const validTypes = [
+      "technical team", "branding team", "infra team", 
+      "sponsors team", "hospitality", "guest-management"
+    ];
+    
+    if (!teamType || !validTypes.includes(teamType)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid team type. Must be one of: ${validTypes.join(', ')}`
+      });
+    }
+
+    // Validate memberIds
+    if (!Array.isArray(memberIds) || memberIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'memberIds must be a non-empty array'
+      });
+    }
+
+    // Find the specific team
+    const teamIndex = event.eventMembers.findIndex(
+      team => team.contributionType === teamType
+    );
+
+    if (teamIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: `Team ${teamType} not found in this event`
+      });
+    }
+
+    // Remove the specified members
+    event.eventMembers[teamIndex].contributionTeam = 
+      event.eventMembers[teamIndex].contributionTeam.filter(
+        id => !memberIds.includes(id.toString())
+      );
+
+    // Save changes
+    await event.save();
+
+    // Return updated event with populated members
+    const updatedEvent = await Event.findById(id).populate({
+      path: 'eventMembers.contributionTeam',
+      model: 'Member',
+      select: 'fullName batch email profilePic'
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `Members removed from ${teamType} successfully`,
+      data: updatedEvent
+    });
+  } catch (error) {
+    console.error('Error removing members from team:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error removing members from team',
+      error: error.message
+    });
+  }
+};
+
+export const getEventWithMembers = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid event ID format'
+      });
+    }
+
+    // Find and populate all team members
+    const event = await Event.findById(id).populate({
+      path: 'eventMembers.contributionTeam',
+      model: 'Member',
+      select: 'fullName batch email profilePic'
+    });
+
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: 'Event not found'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: event
+    });
+  } catch (error) {
+    console.error('Error fetching event members:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error fetching event members',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Update all event teams at once
+ * @route PUT /api/events/:id/members
+ * @access Private
+ */
+export const updateAllEventTeams = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { eventMembers } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid event ID format'
+      });
+    }
+
+    const event = await Event.findById(id);
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: 'Event not found'
+      });
+    }
+
+    // Validate the eventMembers array structure
+    if (!Array.isArray(eventMembers)) {
+      return res.status(400).json({
+        success: false,
+        message: 'eventMembers must be an array'
+      });
+    }
+
+    const validTypes = [
+      "technical team", "branding team", "infra team", 
+      "sponsors team", "hospitality", "guest-management"
+    ];
+
+    // Validate each team object
+    for (const team of eventMembers) {
+      if (!team.contributionType) {
+        return res.status(400).json({
+          success: false,
+          message: 'Each team must have a contributionType'
+        });
+      }
+
+      if (!validTypes.includes(team.contributionType)) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid contributionType: ${team.contributionType}`
+        });
+      }
+
+      if (!Array.isArray(team.contributionTeam)) {
+        return res.status(400).json({
+          success: false,
+          message: 'contributionTeam must be an array of member IDs'
+        });
+      }
+
+      // Validate each member ID in the team
+      for (const memberId of team.contributionTeam) {
+        if (!mongoose.Types.ObjectId.isValid(memberId)) {
+          return res.status(400).json({
+            success: false,
+            message: `Invalid member ID format in ${team.contributionType}: ${memberId}`
+          });
+        }
+
+        // Optional: Check if member exists
+        const memberExists = await Member.exists({ _id: memberId });
+        if (!memberExists) {
+          return res.status(404).json({
+            success: false,
+            message: `Member with ID ${memberId} not found`
+          });
+        }
+      }
+    }
+
+    // Update all teams at once
+    event.eventMembers = eventMembers;
+    await event.save();
+
+    // Return populated event members
+    const updatedEvent = await Event.findById(id).populate({
+      path: 'eventMembers.contributionTeam',
+      model: 'Member',
+      select: 'fullName batch email profilePic'
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Event teams updated successfully',
+      data: updatedEvent
+    });
+  } catch (error) {
+    console.error('Error updating event teams:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error updating event teams',
+      error: error.message
+    });
+  }
+};
+
 
 export default {
   createEvent,

@@ -84,6 +84,7 @@ function a11yProps(index) {
 }
 
 const ProfileModal = ({ open, handleClose, user, refreshData }) => {
+  const [blockLoading, setBlockLoading] = React.useState(false);
   const [value, setValue] = React.useState(0);
   const [fineModalOpen, setFineModalOpen] = React.useState(false);
   const [fineAmount, setFineAmount] = React.useState("");
@@ -99,7 +100,42 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
+  const handleToggleBlockStatus = async () => {
+    try {
+      setBlockLoading(true);
+      
+      // Make API call to toggle block status
+      const response = await axios.patch(
+        `https://theuniquesbackend.vercel.app/api/admin/member/${user._id}/block`
+      );
+      
+      // Show success message
+      setAlert({
+        open: true,
+        message: user.isSuspended 
+          ? `${user.fullName} has been unblocked successfully` 
+          : `${user.fullName} has been blocked successfully`,
+        severity: "success",
+      });
+      
+      // Refresh data to show updated status
+      if (refreshData && typeof refreshData === "function") {
+        refreshData();
+      }
+    } catch (err) {
+      console.error("Error toggling block status:", err);
+      
+      // Show error message
+      setAlert({
+        open: true,
+        message: err.response?.data?.message || 
+                "Failed to update block status. Please try again.",
+        severity: "error",
+      });
+    } finally {
+      setBlockLoading(false);
+    }
+  };
   // Status badge
   const getStatusBadge = () => {
     if (user.isSuspended) {
@@ -352,28 +388,37 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
               </div>
             </div>
             <div className="col-span-1">
-              <div className="flex flex-wrap items-center h-full gap-3">
-            
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="medium"
-                  startIcon={<CurrencyRupeeIcon />}
-                  disabled={user.isSuspended}
-                  onClick={handleOpenFineModal}
-                >
-                  Impose Fine
-                </Button>
-                <Button
-                  variant="contained"
-                  color={user.isSuspended ? "success" : "error"}
-                  size="medium"
-                  startIcon={user.isSuspended ? <DoneIcon /> : <BlockIcon />}
-                >
-                  {user.isSuspended ? "Unblock" : "Block"}
-                </Button>
-              </div>
-            </div>
+          <div className="flex flex-wrap items-center h-full gap-3">
+            <Button
+              variant="contained"
+              color="primary"
+              size="medium"
+              startIcon={<CurrencyRupeeIcon />}
+              disabled={user.isSuspended}
+              onClick={handleOpenFineModal}
+            >
+              Impose Fine
+            </Button>
+            <Button
+              variant="contained"
+              color={user.isSuspended ? "success" : "error"}
+              size="medium"
+              startIcon={
+                blockLoading ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : user.isSuspended ? (
+                  <DoneIcon />
+                ) : (
+                  <BlockIcon />
+                )
+              }
+              onClick={handleToggleBlockStatus}
+              disabled={blockLoading}
+            >
+              {user.isSuspended ? "Unblock" : "Block"}
+            </Button>
+          </div>
+        </div>
           </div>
           <div className="mt-4 grid grid-cols-4 gap-4">
             <div className="lg:col-span-1 col-span-4">
