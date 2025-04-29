@@ -134,7 +134,7 @@ function Startups() {
             <div className="relative w-full">
               {activeStep === 1 && (
                 <iframe
-                  src="https://www.godigitify.com/"
+                  src="https://godigitify.com/"
 
                   title="Find The Perfect Component"
                   className="w-full h-[315px] rounded-lg shadow-3xl"
