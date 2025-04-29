@@ -150,9 +150,10 @@ function Startups() {
               )}
               {activeStep === 3 && (
                 <iframe
-                  src="https://img.freepik.com/free-vector/abstract-coming-soon-new-arrival-background-with-splatter-effect_1017-54591.jpg?t=st=1743371449~exp=1743375049~hmac=16cb316dc6831d63ec18fbf3c259c8f415f6c9c88952fbb5ccd4ea9f1cd4eb83&w=370&auto=format"
+                  // src="https://img.freepik.com/free-vector/abstract-coming-soon-new-arrival-background-with-splatter-effect_1017-54591.jpg?t=st=1743371449~exp=1743375049~hmac=16cb316dc6831d63ec18fbf3c259c8f415f6c9c88952fbb5ccd4ea9f1cd4eb83&w=370&auto=format"
+                  src="https://www.wirely.in/"
                   title="Make It Yours"
-                  className="w-full h-[315px] rounded-lg shadow-3xl"
+                  className="w-full h-[315px] rounded-lg shadow-3xl"z
                 ></iframe>
               )}
             </div>
