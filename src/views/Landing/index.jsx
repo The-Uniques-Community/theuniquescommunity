@@ -164,7 +164,7 @@ const index = () => {
         <Highlight />
       </section>
       <section>
-        <BlogSection />
+        {/* <BlogSection /> */}
       </section>
       <div className="spacer py-10"></div>
       <section>

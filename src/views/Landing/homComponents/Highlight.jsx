@@ -5,6 +5,7 @@ import { Play, ChevronRight, ChevronLeft } from "lucide-react"
 import useEmblaCarousel from "embla-carousel-react"
 import Autoplay from "embla-carousel-autoplay"
 import { Calendar as CalendarIcon, MapPin as MapPinIcon } from 'lucide-react'
+import Eventmodel from '../Event/Componant/Event' // Import the EventModel component
 
 // Update the helper function to use your proxy endpoint
 const getProxiedImageUrl = (fileId) => {
@@ -34,12 +35,14 @@ const transformEventToDestination = (event) => {
     images: event.eventGallery?.map(img => getProxiedImageUrl(img.fileId)) || [],
     isHot: event.eventStatus === 'completed',
     attendees: event.eventGuests?.length || 0,
+    // Store the original event data for the modal
+    originalEvent: event,
     tabContent: {
       Highlights: {
         title: "Event Highlights",
         description: shortenedDescription,
         highlights: [
-          `${event.eventGuests?.length || 0} Community Members Attended`,
+          `${event.eventGuests?.length || 0} Guests`,
           `Organized by ${event.eventOrganizer || 'The Uniques'}`,
           `${event.eventType || 'Community'} Event`,
           `Venue: ${event.eventVenue || 'TBD'}`
@@ -47,7 +50,7 @@ const transformEventToDestination = (event) => {
       },
       KeyTakaway: {
         title: "Key Takeaways",
-        description: event.eventDescription,
+        description: event.eventDescription.slice(0, 300) + "...",
         highlights: [
           event.eventHighlights?.split('\n') || 
           ['Networking Opportunity', 'Skill Development', 'Community Building']
@@ -70,6 +73,10 @@ export default function Highlight() {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [destinations, setDestinations] = useState([])
   const [loading, setLoading] = useState(true)
+  
+  // Add state for the event modal
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedEvent, setSelectedEvent] = useState(null)
 
   // Main carousel
   const [mainViewportRef, mainEmblaApi] = useEmblaCarousel(
@@ -119,6 +126,19 @@ export default function Highlight() {
   const scrollNext = useCallback(() => {
     if (mainEmblaApi) mainEmblaApi.scrollNext()
   }, [mainEmblaApi])
+
+  // Add functions to open and close the event modal
+  const openEventModal = (destination) => {
+    setSelectedEvent(destination.originalEvent)
+    setIsModalOpen(true)
+    document.body.style.overflow = 'hidden' // Prevent scrolling when modal is open
+  }
+
+  const closeEventModal = () => {
+    setIsModalOpen(false)
+    setSelectedEvent(null)
+    document.body.style.overflow = 'auto' // Re-enable scrolling
+  }
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -182,7 +202,7 @@ export default function Highlight() {
                         </div>
                       )}
                       <div className="absolute bottom-0 left-0 p-8 z-20 w-full bg-gradient-to-t from-gray-900 via-gray-900/80 to-transparent">
-                        <h2 className="text-5xl font-bold mb-4 text-white">{destination.name}</h2>
+                        <h2 className="text-3xl font-bold mb-12 text-white">{destination.name}</h2>
                         <div className="flex items-center gap-6 text-gray-200">
                           <div className="flex items-center gap-2">
                             <CalendarIcon className="w-4 h-4" />
@@ -259,7 +279,7 @@ export default function Highlight() {
 
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={`${activeDestination.id}-${activeTab}`}
+                  key={`${activeDestination?.id}-${activeTab}`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
@@ -268,21 +288,21 @@ export default function Highlight() {
                 >
                   <div className="flex justify-between items-start">
                     <h3 className="text-3xl font-bold text-gray-900 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                      {activeDestination.tabContent[activeTab].title}
+                      {activeDestination?.tabContent[activeTab].title}
                     </h3>
                     <span className="text-2xl font-bold bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">
-                      {activeDestination.price}
+                      {activeDestination?.price}
                     </span>
                   </div>
 
                   <p className="text-gray-600 leading-relaxed">
-                    {activeDestination.tabContent[activeTab].description}
+                    {activeDestination?.tabContent[activeTab].description}
                   </p>
 
                   <div className="bg-gray-50 rounded-xl p-6"> {/* Added container for highlights */}
                     <h4 className="font-semibold text-gray-900 mb-4">Highlights</h4>
                     <ul className="grid gap-3">
-                      {activeDestination.tabContent[activeTab].highlights.map((highlight, index) => (
+                      {activeDestination?.tabContent[activeTab].highlights.map((highlight, index) => (
                         <li key={index} className="flex items-center gap-3 text-gray-600">
                           <div className="w-2 h-2 rounded-full bg-gradient-to-r from-red-500 to-red-600"></div>
                           {highlight}
@@ -294,16 +314,18 @@ export default function Highlight() {
                   <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
                     <div>
                       <div className="text-gray-500 text-sm font-medium">Type</div>
-                      <div className="font-semibold text-gray-900">{activeDestination.level}</div>
+                      <div className="font-semibold text-gray-900">{activeDestination?.level}</div>
                     </div>
                     <div>
                       <div className="text-gray-500 text-sm font-medium">Date</div>
-                      <div className="font-semibold text-gray-900">{activeDestination.duration}</div>
+                      <div className="font-semibold text-gray-900">{activeDestination?.duration}</div>
                     </div>
+                    {/* Updated button to open the modal */}
                     <motion.button
                       className="bg-gradient-to-r from-red-600 to-red-500 text-white rounded-full px-6 py-2.5 hover:shadow-lg transition-shadow flex items-center gap-2"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
+                      onClick={() => openEventModal(activeDestination)}
                     >
                       Learn more
                       <ChevronRight className="w-4 h-4" />
@@ -311,48 +333,18 @@ export default function Highlight() {
                   </div>
                 </motion.div>
               </AnimatePresence>
-
-              {/* Featured destinations */}
-              {/* <div>
-                <h4 className="font-medium text-gray-900 mb-3">Other Events</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {destinations
-                    .filter((d) => d.id !== activeDestination.id)
-                    .slice(0, 3)
-                    .map((destination) => (
-                      <motion.div
-                        key={`featured-${destination.id}`}
-                        className="relative rounded-xl overflow-hidden cursor-pointer"
-                        style={{ aspectRatio: '16/9' }} // Add fixed aspect ratio
-                        onClick={() => {
-                          const index = destinations.findIndex((d) => d.id === destination.id)
-                          if (index !== -1) onThumbClick(index)
-                        }}
-                        whileHover={{ y: -5 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <img
-                          src={destination.image}
-                          alt={destination.name}
-                          className="object-cover w-full h-full" // Changed from object-contain
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 to-transparent"></div>
-
-                        <div className="absolute bottom-0 left-0 p-3 text-white">
-                          <h4 className="font-bold">{destination.name}</h4>
-                          <div className="flex items-center text-xs mt-1">
-                            <span>{destination.duration}</span>
-                            <span className="mx-1">|</span>
-                            <span>{destination.distance}</span>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                </div>
-              </div> */}
             </div>
           </div>
         </div>
+      )}
+
+      {/* Render the EventModel component when modal is open */}
+      {isModalOpen && selectedEvent && (
+        <Eventmodel
+          event={selectedEvent}
+          isOpen={isModalOpen}
+          onClose={closeEventModal}
+        />
       )}
     </div>
   )
