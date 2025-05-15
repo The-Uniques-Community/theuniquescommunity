@@ -101,7 +101,72 @@ export default function Eventmodel({ event, isOpen, onClose }) {
     const [formErrors, setFormErrors] = useState({});
     const [registrationLoading, setRegistrationLoading] = useState(false);
     const [registrationSuccess, setRegistrationSuccess] = useState(false);
+    // Add these state variables at the beginning of your component
+const [teamMembers, setTeamMembers] = useState([]);
+const [teamsLoading, setTeamsLoading] = useState(false);
 
+// Define valid team types as a constant
+const VALID_TEAM_TYPES = [
+  "technical team",
+  "branding team",
+  "infra team", 
+  "sponsors team", 
+  "hospitality", 
+  "guest-management"
+];
+
+// Add this function to fetch team members
+// Update the fetchTeamMembers function to use the correct API endpoint
+const fetchTeamMembers = async (eventId) => {
+  if (!eventId) {
+    console.error("Missing event ID when fetching team members");
+    return;
+  }
+  
+  try {
+    setTeamsLoading(true);
+    console.log(`Fetching team members for event: ${eventId}`);
+    
+    // Use the same base URL as your other API calls
+    const response = await axios.get(`https://theuniquesbackend.vercel.app/api/events/${eventId}/members`, {
+      credentials: "include"
+    });
+    
+    console.log("Team members API response:", response.data);
+    
+    if (response.data && response.data.success && response.data.data) {
+      const eventData = response.data.data;
+      
+      // Transform event members data for UI display
+      const allMembers = [];
+      
+      if (eventData && eventData.eventMembers) {
+        eventData.eventMembers.forEach(team => {
+          if (team.contributionTeam && team.contributionTeam.length > 0) {
+            team.contributionTeam.forEach(member => {
+              allMembers.push({
+                ...member,
+                teamType: team.contributionType
+              });
+            });
+          }
+        });
+      }
+      
+      console.log(`Found ${allMembers.length} team members across all teams`);
+      setTeamMembers(allMembers);
+    } else {
+      console.warn("Invalid or empty response from team members API:", response.data);
+      setTeamMembers([]);
+    }
+  } catch (error) {
+    console.error("Error fetching team members:", error);
+    toast.error("Failed to load team information. Please try again later.");
+    setTeamMembers([]);
+  } finally {
+    setTeamsLoading(false);
+  }
+};
     // Check if this is the Bharat TechXperience Hackathon event
     const isBharatHackathon = event?.eventName === "Bharat TechXperience Hackathon 2.0";
 
@@ -375,6 +440,11 @@ export default function Eventmodel({ event, isOpen, onClose }) {
             setRegistrationLoading(false);
         }
     };
+    useEffect(() => {
+  if (event && event._id && activeTab === "organizers" && teamMembers.length === 0) {
+    fetchTeamMembers(event._id);
+  }
+}, [event, activeTab]);
 
     // Render form field based on type
     const renderFormField = (field) => {
@@ -576,17 +646,19 @@ export default function Eventmodel({ event, isOpen, onClose }) {
     }, [event]);
 
     const handleChange = (event, newValue) => {
-        setActiveTab(newValue);
-
-        // Filter events based on selected tab
-        if (newValue !== "about" && newValue !== "guests" && newValue !== "organizers" && 
-            newValue !== "gallery" && newValue !== "sponsors" && newValue !== "partners") {
-            const filtered = allEvents.filter(e =>
-                e.eventType === newValue && e._id !== event._id
-            );
-            setFilteredEvents(filtered);
-        }
-    };
+  setActiveTab(newValue);
+  
+  // Filter events based on selected tab
+  if (newValue === "organizers" && !teamMembers.length) {
+    fetchTeamMembers(event._id);
+  } else if (newValue !== "about" && newValue !== "guests" && newValue !== "organizers" && 
+      newValue !== "gallery" && newValue !== "sponsors" && newValue !== "partners") {
+    const filtered = allEvents.filter(e =>
+      e.eventType === newValue && e._id !== event._id
+    );
+    setFilteredEvents(filtered);
+  }
+};
 
     const fetchEventDetails = async (eventId) => {
         try {
@@ -855,16 +927,68 @@ export default function Eventmodel({ event, isOpen, onClose }) {
                                 )}
                             </>
                         ) : activeTab === "organizers" ? (
-                            <>
-                                <h2 className="text-xl sm:text-2xl font-bold mb-4">Event Organizers</h2>
-                                <div className="border rounded-lg p-3 sm:p-4">
-                                    <h3 className="font-semibold text-base sm:text-lg">{event.eventOrganizerBatch}</h3>
-                                    <p className="text-gray-600 mt-2 text-sm sm:text-base">
-                                        The event is organized by {event.eventOrganizerBatch}, a group of passionate individuals dedicated to creating impactful experiences.
-                                    </p>
-                                </div>
-                            </>
-                        ) : activeTab === "partners" ? (
+  <>
+    <h2 className="text-xl sm:text-2xl font-bold mb-4">Event Organizers</h2>
+    <div className="border rounded-lg p-3 sm:p-4 mb-6">
+      <h3 className="font-semibold text-base sm:text-lg">{event.eventOrganizerBatch}</h3>
+      <p className="text-gray-600 mt-2 text-sm sm:text-base">
+        The event is organized by {event.eventOrganizerBatch}, a group of passionate individuals dedicated to creating impactful experiences.
+      </p>
+    </div>
+    
+    <h3 className="text-lg font-semibold mb-3">Team Members</h3>
+    
+    {teamsLoading ? (
+      <div className="flex justify-center py-8">
+        <CircularProgress size={40} />
+      </div>
+    ) : teamMembers.length > 0 ? (
+      <div className="space-y-6">
+        {VALID_TEAM_TYPES.map(teamType => {
+          // Get members for this team type
+          const members = teamMembers.filter(m => m.teamType === teamType);
+          if (members.length === 0) return null;
+          
+          return (
+            <div key={teamType} className="border rounded-lg p-3 sm:p-4">
+              <h4 className="font-semibold mb-3 text-[#ca0019] capitalize">
+                {teamType.replace('-', ' ')}
+                <span className="ml-2 text-sm bg-gray-100 px-2 py-1 rounded-full text-gray-600">
+                  {members.length} members
+                </span>
+              </h4>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {members.map(member => (
+                  <div key={member._id} className="flex items-center p-2 border-b border-gray-100">
+                    <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
+                      <img 
+                        src={member.profilePic?.url || getInitialsAvatar(member.fullName)} 
+                        alt={member.fullName}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">{member.fullName}</p>
+                      <p className="text-xs text-gray-500">
+                        {member.batch && `Batch: ${member.batch}`}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    ) : (
+      <div className="text-center py-6 bg-gray-50 rounded-lg">
+        <UsersIcon className="mx-auto w-12 h-12 text-gray-400 mb-2" />
+        <p className="text-gray-500">No team members found for this event</p>
+      </div>
+    )}
+  </>
+)  : activeTab === "partners" ? (
                             <>
                                 <h2 className="text-xl sm:text-2xl font-bold mb-4">Community Partners</h2>
                                 <p className="text-gray-600 mb-6 text-sm sm:text-base">
