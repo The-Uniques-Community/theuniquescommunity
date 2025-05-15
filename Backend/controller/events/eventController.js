@@ -2,6 +2,7 @@ import Event from "../../models/member/eventModel.js";
 import Form from "../../models/member/formModel.js";
 import FormResponse from "../../models/member/formResponse.js";
 import Guest from "../../models/member/guestModel.js";
+import Member from "../../models/member/memberModel.js";
 
 import mongoose from "mongoose";
 

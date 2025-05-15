@@ -25,6 +25,37 @@ const Training = Loader(lazy(() => import("@/views/Landing/Training-model/Traini
 const NotFound = Loader(lazy(() => import("@/views/Landing/NotFound/index")));
 const CommunityPage = Loader(lazy(() => import("@/views/Landing/Community/index")));
 const SuccessStories  = Loader(lazy(() => import("@/views/Landing/SuccessStories/index")));
+const Timeline = Loader(lazy(()=>import('@/utils/Timeline/Timeline')));
+
+
+const timelineData = [
+  {
+    year: "1919",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQFlLk9mYa6d4a69Y5YTMUFDUaER76hZzkkRg&s",
+    heading: "Walter Gropius",
+    subheading: "Founding of Bauhaus",
+    brief: "Founded the Staatliches Bauhaus in Weimar, Germany, with the goal of uniting architecture, fine arts, and craft for mass-produced designs.",
+    quote: "Let us create a new guild of craftsmen, without the class distinctions which raise an arrogant barrier between craftsmen and artist.",
+    quoteAuthor: "WALTER GROPIUS"
+  },
+  {
+    year: "1920",
+    image: "/images/klee.jpg",
+    heading: "Paul Klee",
+    subheading: "Color Theory Pioneer",
+    brief: "Joins and brings his expertise in color theory and form.",
+    quote: ""
+  },
+  {
+    year: "1923",
+    image: "/images/moholy-nagy.jpg",
+    heading: "László Moholy-Nagy",
+    subheading: "New Vision",
+    brief: "Introduced new approaches to photography and typography, promoting the integration of technology and art."
+  }
+];
+
+
 const LandingRoutes = {
   path: "/",
   element: <LandingLayout />, // Wrap all pages inside LandingLayout
@@ -46,6 +77,7 @@ const LandingRoutes = {
     { path: "success-stories", element: <SuccessStories />  },
     // { path: "advisoryBoard", element: <AdvisoryBoard />  },
     { path: "notices", element: <Notices/>  },
+    {path:"test", element:<Timeline events= {timelineData}/>}
     
   ],
 };
