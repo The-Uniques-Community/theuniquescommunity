@@ -24,7 +24,15 @@ import {
   updateEventGallery,
   getEventGallery,
   deleteEventSponsor,
-  getEventCount
+  getEventCount,
+  migrateEventMembers,
+  // Import the event members controller functions
+  getEventWithMembers,
+  updateAllEventTeams,
+  updateEventTeam,
+  addMembersToTeam,
+  removeMembersFromTeam,
+  getAvailableMembers
 } from '../../controller/events/eventController.js';
 import verifyRole from '../../middlewares/verifyRole.js';
 import verifyToken from '../../middlewares/verifyToken.js';
@@ -38,6 +46,14 @@ eventRouter.get('/', getAllEvents);
 eventRouter.get('/:id', getEventById);
 eventRouter.get('/status/:status', getEventsByStatus);
 
+// team-member addition and removal in event
+eventRouter.get('/available-members', getAvailableMembers);
+eventRouter.get('/:id/members', getEventWithMembers);
+eventRouter.put('/:id/members', updateAllEventTeams);
+eventRouter.put('/:id/members/team', updateEventTeam);
+eventRouter.post('/:id/members/team/:teamType/add', addMembersToTeam);
+eventRouter.delete('/:id/members/team/:teamType/members',  removeMembersFromTeam);
+
 // Form response submission - public or authenticated
 eventRouter.post('/:eventId/form-response', ifTokenVerify ,submitFormResponse);
 
@@ -46,6 +62,7 @@ eventRouter.post('/:eventId/form-response', ifTokenVerify ,submitFormResponse);
 eventRouter.post('/', verifyToken, verifyRole(['admin', 'coordinator']), createEvent);
 eventRouter.put('/:id', verifyToken, verifyRole(['admin', 'coordinator']), updateEvent);
 eventRouter.delete('/:id', verifyToken, verifyRole(['admin', 'coordinator']), deleteEvent);
+eventRouter.put('/:id/migrate/event-members', migrateEventMembers);
 
 // Member management - admin/coordinator only
 eventRouter.patch('/:id/members', verifyToken, verifyRole(['admin', 'coordinator']), addEventMembers);

@@ -32,6 +32,29 @@ const eventSchema = new mongoose.Schema({
       "The Uniques 5.0",
     ],
   },
+  // newly added fields
+  eventMembers: [
+    {
+      contributionType: {
+        type: String,
+        required: true,
+        enum: [
+          "technical team",
+          "branding team",
+          "infra team", 
+          "sponsors team", 
+          "hospitality", 
+          "guest-management"
+        ]
+      },
+      contributionTeam: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Member" // Assuming Member is the model for team members
+        }
+      ]
+    }
+  ],
   eventGuests: [
     {
       guestId: {
