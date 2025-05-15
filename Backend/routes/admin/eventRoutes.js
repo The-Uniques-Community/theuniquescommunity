@@ -26,11 +26,13 @@ import {
   deleteEventSponsor,
   getEventCount,
   migrateEventMembers,
+  // Import the event members controller functions
   getEventWithMembers,
   updateAllEventTeams,
   updateEventTeam,
   addMembersToTeam,
-  removeMembersFromTeam
+  removeMembersFromTeam,
+  getAvailableMembers
 } from '../../controller/events/eventController.js';
 import verifyRole from '../../middlewares/verifyRole.js';
 import verifyToken from '../../middlewares/verifyToken.js';
@@ -45,11 +47,12 @@ eventRouter.get('/:id', getEventById);
 eventRouter.get('/status/:status', getEventsByStatus);
 
 // team-member addition and removal in event
+eventRouter.get('/available-members', verifyToken, getAvailableMembers);
 eventRouter.get('/:id/members', getEventWithMembers);
-eventRouter.put('/:id/members', updateAllEventTeams);
-eventRouter.put('/:id/members/team', updateEventTeam);
-eventRouter.post('/:id/members/team/:teamType/add', addMembersToTeam);
-eventRouter.delete('/:id/members/team/:teamType/members', removeMembersFromTeam);
+eventRouter.put('/:id/members', verifyToken, verifyRole(['admin', 'coordinator']), updateAllEventTeams);
+eventRouter.put('/:id/members/team', verifyToken, verifyRole(['admin', 'coordinator']), updateEventTeam);
+eventRouter.post('/:id/members/team/:teamType/add', verifyToken, verifyRole(['admin', 'coordinator']), addMembersToTeam);
+eventRouter.delete('/:id/members/team/:teamType/members', verifyToken, verifyRole(['admin', 'coordinator']), removeMembersFromTeam);
 
 // Form response submission - public or authenticated
 eventRouter.post('/:eventId/form-response', ifTokenVerify ,submitFormResponse);
