@@ -5,6 +5,7 @@ import trainingMethod from '@/assets/img/trainingMethod.png'
 import Trainingculture from './components/Trainingculture'
 import CallToAction from '../homComponents/CallToAction'
 import TrainingTimeline from './components/TrainingTimeLine'
+import Trainers from './components/Trainers'
 
 const Training = () => {
   return (
@@ -23,6 +24,8 @@ const Training = () => {
 		<div className='container w-9/12 mx-auto px-4 py-8'>
 			<img src={trainingMethod} />
 		</div>
+		<div className='p-10 '></div>
+		<Trainers />
 		<div className='p-10 '></div>
 		<TrainingTimeline />
 		<div className='p-10 '></div>

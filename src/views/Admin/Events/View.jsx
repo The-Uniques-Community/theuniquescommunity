@@ -200,13 +200,224 @@ const EventView = () => {
   const [formErrors, setFormErrors] = useState({});
   const [registrationLoading, setRegistrationLoading] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  // Add these state variables near the other state declarations in EventView component
+const [memberDialogOpen, setMemberDialogOpen] = useState(false);
+const [availableMembers, setAvailableMembers] = useState([]);
+const [selectedMember, setSelectedMember] = useState(null);
+const [memberRole, setMemberRole] = useState("");
+const [editingMemberId, setEditingMemberId] = useState(null);
+const [teamType, setTeamType] = useState("technical team");
+const [eventTeams, setEventTeams] = useState({});
+const [teamMembers, setTeamMembers] = useState([]);
+const [showTeamMembers, setShowTeamMembers] = useState(false);
+
+// Define valid team types as a constant
+const VALID_TEAM_TYPES = [
+  "technical team",
+  "branding team",
+  "infra team", 
+  "sponsors team", 
+  "hospitality", 
+  "guest-management"
+];
+// Add these functions after other similar functions in the component
+
+// Fetch available members
+// Fetch available members for selection
+const fetchAvailableMembers = async () => {
+  try {
+    const response = await fetch(
+      `https://theuniquesbackend.vercel.app/api/admin/member`,
+      {
+        credentials: "include",
+      }
+    );
+    const data = await response.json();
+
+    if (data.success) {
+      setAvailableMembers(data.data || []);
+    } else {
+      console.error("API returned error:", data);
+      toast.error(data.message || "Failed to load members list");
+    }
+  } catch (error) {
+    console.error("Error fetching available members:", error);
+    toast.error("Failed to load members list. Please try again.");
+  }
+};
+
+// Fetch event teams and their members
+// Fetch event teams and their members
+const fetchEventTeams = async () => {
+  try {
+    if (!id) {
+      console.error("Event ID is missing");
+      toast.error("Cannot load team data: Event ID is missing");
+      return;
+    }
+    
+    setLoading(true);
+    const response = await fetch(
+      `https://theuniquesbackend.vercel.app/api/events/${id}/members`,
+      {
+        credentials: "include",
+      }
+    );
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to fetch teams: ${response.status} ${errorText}`);
+    }
+    
+    const data = await response.json();
+
+    if (data.success) {
+      const eventData = data.data;
+      setEventTeams(eventData || {});
+      
+      // Transform event members data for UI display
+      const allMembers = [];
+      
+      if (eventData && eventData.eventMembers) {
+        eventData.eventMembers.forEach(team => {
+          if (team.contributionTeam && team.contributionTeam.length > 0) {
+            team.contributionTeam.forEach(member => {
+              allMembers.push({
+                ...member,
+                teamType: team.contributionType
+              });
+            });
+          }
+        });
+      }
+      
+      setTeamMembers(allMembers);
+      console.log("Teams loaded successfully:", allMembers);
+    } else {
+      toast.error(data.message || "Failed to load event teams");
+    }
+  } catch (error) {
+    console.error("Error fetching event teams:", error);
+    toast.error(`Error: ${error.message}`);
+  } finally {
+    setLoading(false);
+  }
+};
+
+// Open manage members dialog
+const handleOpenMemberDialog = async () => {
+  console.log("Fetching available members...");
+  await fetchAvailableMembers();
+  console.log("Available members:", availableMembers);
+  
+  setMemberDialogOpen(true);
+  
+  // Make sure we have the latest team data
+  await fetchEventTeams();
+};
+
+// Close manage members dialog
+const handleCloseMemberDialog = () => {
+  setMemberDialogOpen(false);
+  setSelectedMember(null);
+  setMemberRole("");
+  setEditingMemberId(null);
+};
+
+// Add or update team members
+const handleSaveMember = async () => {
+  if (!selectedMember) return;
+
+  try {
+    setLoading(true);
+    
+    // Prepare the API endpoint
+    const endpoint = `https://theuniquesbackend.vercel.app/api/events/${id}/members/team/${teamType}/add`;
+    
+    const memberIds = [selectedMember._id];
+    
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ memberIds }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to add member: ${response.status} ${errorText}`);
+    }
+
+    const result = await response.json();
+
+    if (result.success) {
+      // Refresh the event teams data
+      await fetchEventTeams();
+      toast.success(`Member added to ${teamType} successfully!`);
+      
+      // Reset form fields
+      handleCloseMemberDialog();
+    } else {
+      throw new Error(result.message || "Failed to add member");
+    }
+  } catch (error) {
+    console.error("Error adding member:", error);
+    toast.error(`Error: ${error.message}`);
+  } finally {
+    setLoading(false);
+  }
+};
+
+// Remove member from team
+const handleRemoveMember = async (memberId, memberTeam) => {
+  if (!memberId || !memberTeam) return;
+
+  try {
+    setLoading(true);
+
+    const endpoint = `https://theuniquesbackend.vercel.app/api/events/${id}/members/team/${memberTeam}/members`;
+    
+    const response = await fetch(endpoint, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ memberIds: [memberId] }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to remove member: ${response.status} ${errorText}`);
+    }
+
+    const result = await response.json();
+
+    if (result.success) {
+      // Refresh the event teams data
+      await fetchEventTeams();
+      toast.success("Member removed successfully!");
+    } else {
+      throw new Error(result.message || "Failed to remove member");
+    }
+  } catch (error) {
+    console.error("Error removing member:", error);
+    toast.error(`Error: ${error.message}`);
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Fetch event data
   useEffect(() => {
     const fetchEvent = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`https://theuniquesbackend.vercel.app/api/events/${id}`);
+        const response = await fetch(
+          `https://theuniquesbackend.vercel.app/api/events/${id}`
+        );
         const data = await response.json();
 
         if (data.success) {
@@ -321,14 +532,17 @@ const EventView = () => {
       // Show loading indicator
       setLoading(true);
 
-      const response = await fetch(`https://theuniquesbackend.vercel.app/api/events/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(editedEvent),
-      });
+      const response = await fetch(
+        `https://theuniquesbackend.vercel.app/api/events/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(editedEvent),
+        }
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -363,8 +577,7 @@ const EventView = () => {
       const files = Array.from(e.target.files);
       if (files.length === 0) return;
 
-  // Get authentication token
-
+      // Get authentication token
 
       // Show loading state
       setLoading(true);
@@ -395,7 +608,7 @@ const EventView = () => {
         "https://theuniquesbackend.vercel.app/upload/event_file_upload",
         {
           method: "POST",
-          
+
           credentials: "include",
           body: formData,
         }
@@ -560,8 +773,6 @@ const EventView = () => {
     if (!selectedGuest) return;
 
     try {
-
-
       // Show loading state
       setLoading(true);
 
@@ -621,8 +832,6 @@ const EventView = () => {
     if (!guestId) return;
 
     try {
-    
-
       setLoading(true);
 
       // Method 1: Using event update endpoint since there's no direct remove guest endpoint
@@ -640,14 +849,17 @@ const EventView = () => {
         })),
       };
 
-      const response = await fetch(`https://theuniquesbackend.vercel.app/api/events/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        `https://theuniquesbackend.vercel.app/api/events/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(payload),
+        }
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -677,8 +889,6 @@ const EventView = () => {
     try {
       const file = e.target.files[0];
       if (!file) return;
-
- 
 
       setLoading(true);
 
@@ -933,6 +1143,11 @@ const EventView = () => {
       setRegistrationLoading(false);
     }
   };
+  useEffect(() => {
+  if (id) {
+    fetchEventTeams();
+  }
+}, [id]);
 
   // Render form field based on type
   const renderFormField = (field) => {
@@ -1191,7 +1406,7 @@ const EventView = () => {
               ...(editMode
                 ? {}
                 : {
-                    backgroundColor:"#ca0019",
+                    backgroundColor: "#ca0019",
                   }),
               "&:hover": {
                 transform: "translateY(-2px)",
@@ -2276,6 +2491,142 @@ const EventView = () => {
               )}
             </CardContent>
           </Card>
+          
+          {/* Event Team Card - Replace existing card content */}
+<Card
+  sx={{
+    mb: 3,
+    borderRadius: 3,
+    boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
+    overflow: "hidden",
+  }}
+>
+  <CardContent>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        mb: 2,
+      }}
+    >
+      <Typography variant="h6" sx={{ fontWeight: 600 }}>
+        Event Team
+      </Typography>
+      <Box>
+        <Chip
+          label={`${teamMembers.length || 0} members`}
+          size="small"
+          color="primary"
+          sx={{ fontWeight: 500, mr: 1 }}
+        />
+        <Chip
+          label={`${Object.keys(
+            teamMembers.reduce((acc, member) => {
+              acc[member.teamType] = true;
+              return acc;
+            }, {})
+          ).length} teams`}
+          size="small"
+          color="secondary"
+          sx={{ fontWeight: 500 }}
+        />
+      </Box>
+    </Box>
+
+    {teamMembers.length > 0 ? (
+      <List sx={{ overflowY: "auto", maxHeight: 300 }}>
+        {VALID_TEAM_TYPES.map(teamType => {
+          const teamData = teamMembers.filter(m => m.teamType === teamType);
+          if (teamData.length === 0) return null;
+          
+          return (
+            <Box key={teamType} sx={{ mb: 2 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ 
+                fontWeight: 'bold',
+                ml: 1,
+                mb: 0.5 
+              }}>
+                {teamType.toUpperCase()}
+              </Typography>
+              <Divider sx={{ mb: 1 }} />
+              
+              {teamData.slice(0, 3).map((member) => (
+                <ListItem
+                  key={member._id}
+                  alignItems="flex-start"
+                  sx={{
+                    px: 1,
+                    py: 0.5,
+                    transition: "background-color 0.2s",
+                    "&:hover": { backgroundColor: "rgba(0,0,0,0.02)" },
+                    borderRadius: 1,
+                  }}
+                >
+                  <ListItemAvatar sx={{ minWidth: 40 }}>
+                    <Avatar
+                      src={member.profilePic?.url}
+                      sx={{ width: 30, height: 30 }}
+                    >
+                      {member.fullName?.charAt(0) || "M"}
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={member.fullName || "Unknown Member"}
+                    secondary={member.email}
+                    primaryTypographyProps={{ variant: 'body2' }}
+                    secondaryTypographyProps={{ variant: 'caption' }}
+                  />
+                </ListItem>
+              ))}
+              
+              {teamData.length > 3 && (
+                <Typography variant="caption" color="primary" sx={{ ml: 7 }}>
+                  + {teamData.length - 3} more members
+                </Typography>
+              )}
+            </Box>
+          );
+        })}
+      </List>
+    ) : (
+      <Box
+        sx={{
+          p: 3,
+          textAlign: "center",
+          bgcolor: "background.paper",
+          borderRadius: 2,
+          boxShadow: "inset 0 0 8px rgba(0,0,0,0.05)",
+        }}
+      >
+        <Typography variant="body2" color="text.secondary">
+          No team members added to this event yet
+        </Typography>
+      </Box>
+    )}
+
+    {!editMode && (
+      <Button
+        variant="outlined"
+        startIcon={<PersonAdd />}
+        size="medium"
+        sx={{
+          mt: 2,
+          width: "100%",
+          borderColor: "secondary.main",
+          color: "secondary.main",
+          "&:hover": {
+            backgroundColor: "rgba(156, 39, 176, 0.08)",
+            borderColor: "secondary.main",
+          },
+        }}
+        onClick={handleOpenMemberDialog}
+      >
+        Manage Team Members
+      </Button>
+    )}
+  </CardContent>
+</Card>
 
           {/* Quick Stats Card */}
           <Card
@@ -2520,6 +2871,235 @@ const EventView = () => {
           <Button onClick={handleCloseGuestDialog}>Close</Button>
         </DialogActions>
       </Dialog>
+      {/* Add this just after the Manage Guests Dialog */}
+      {/* Manage Members Dialog */}
+      {/* Team-based Member Management Dialog */}
+<Dialog
+  open={memberDialogOpen}
+  onClose={handleCloseMemberDialog}
+  maxWidth="md"
+  fullWidth
+>
+  <DialogTitle>Manage Event Team Members</DialogTitle>
+  <DialogContent>
+    {/* Add New Member Form */}
+    <Box sx={{ mb: 3 }}>
+      <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
+        Add New Team Member
+      </Typography>
+      
+      <FormControl fullWidth sx={{ mb: 2 }}>
+        <InputLabel>Team</InputLabel>
+        <Select
+          value={teamType}
+          onChange={(e) => setTeamType(e.target.value)}
+          label="Team"
+        >
+          {VALID_TEAM_TYPES.map((type) => (
+            <MenuItem key={type} value={type}>
+              {type.charAt(0).toUpperCase() + type.slice(1)}
+            </MenuItem>
+          ))}
+        </Select>
+        <FormHelperText>
+          Select which team this member will join
+        </FormHelperText>
+      </FormControl>
+      
+      <Autocomplete
+        options={availableMembers || []}
+        getOptionLabel={(option) =>
+          option.fullName
+            ? `${option.fullName} - ${option.email || "No email"}`
+            : ""
+        }
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Select Member"
+            variant="outlined"
+            fullWidth
+            required
+          />
+        )}
+        value={selectedMember}
+        onChange={(e, newValue) => setSelectedMember(newValue)}
+        sx={{ mb: 2 }}
+      />
+      
+      <Button
+        variant="contained"
+        color="secondary"
+        startIcon={<Add />}
+        onClick={handleSaveMember}
+        disabled={!selectedMember || !teamType}
+        sx={{ mt: 1 }}
+      >
+        Add to Team
+      </Button>
+    </Box>
+
+    <Divider sx={{ my: 3 }} />
+    
+    {/* Toggle View Button */}
+    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+      <Typography variant="subtitle1" fontWeight="bold">
+        Current Team Members
+      </Typography>
+      <Button
+        variant="outlined"
+        size="small"
+        onClick={() => setShowTeamMembers(!showTeamMembers)}
+      >
+        {showTeamMembers ? "View by Member" : "View by Team"}
+      </Button>
+    </Box>
+    
+    {/* Display Team Members */}
+    {showTeamMembers ? (
+      // View By Team
+      // View By Team (in the dialog)
+VALID_TEAM_TYPES.map((type) => {
+  // Find members with this team type
+  const teamMembers = teamMembers.filter(m => m.teamType === type);
+  
+  return (
+    <Box key={type} sx={{ mb: 3 }}>
+      <Typography 
+        variant="subtitle2" 
+        sx={{ 
+          mb: 1, 
+          display: 'flex', 
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}
+      >
+        <span>
+          {type.charAt(0).toUpperCase() + type.slice(1)} 
+          <Chip 
+            label={teamMembers.length} 
+            size="small" 
+            color="primary" 
+            sx={{ ml: 1 }}
+          />
+        </span>
+      </Typography>
+      
+      {teamMembers.length > 0 ? (
+        <List dense sx={{ bgcolor: "background.paper", borderRadius: 1 }}>
+          {teamMembers.map((member) => (
+            <ListItem
+              key={member._id}
+              secondaryAction={
+                <IconButton
+                  edge="end"
+                  size="small"
+                  onClick={() => handleRemoveMember(member._id, type)}
+                  color="error"
+                >
+                  <Delete fontSize="small" />
+                </IconButton>
+              }
+            >
+              <ListItemAvatar>
+                <Avatar src={member.profilePic?.url}>
+                  {member.fullName?.charAt(0) || "M"}
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={member.fullName || "Unknown Member"}
+                secondary={
+                  <>
+                    {member.email}
+                    {member.batch && (
+                      <Typography component="span" variant="caption" sx={{ ml: 1 }}>
+                        • Batch: {member.batch}
+                      </Typography>
+                    )}
+                  </>
+                }
+              />
+            </ListItem>
+          ))}
+        </List>
+      ) : (
+        <Box sx={{ p: 1, bgcolor: "background.paper", borderRadius: 1, textAlign: "center" }}>
+          <Typography variant="body2" color="text.secondary">
+            No members in this team
+          </Typography>
+        </Box>
+      )}
+    </Box>
+  );
+})
+    ) : (
+      // View all members
+      <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
+        <Table stickyHeader size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Member</TableCell>
+              <TableCell>Team</TableCell>
+              <TableCell align="right">Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {teamMembers.length > 0 ? (
+              teamMembers.map((member) => (
+                <TableRow key={`${member._id}-${member.teamType}`}>
+                  <TableCell>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <Avatar 
+                        src={member.profilePic?.url} 
+                        sx={{ width: 30, height: 30, mr: 1 }}
+                      >
+                        {member.fullName?.charAt(0) || "M"}
+                      </Avatar>
+                      <Box>
+                        <Typography variant="body2">{member.fullName}</Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {member.email}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Chip 
+                      label={member.teamType} 
+                      size="small" 
+                      color="primary" 
+                      variant="outlined"
+                    />
+                  </TableCell>
+                  <TableCell align="right">
+                    <IconButton
+                      size="small"
+                      onClick={() => handleRemoveMember(member._id, member.teamType)}
+                      color="error"
+                    >
+                      <Delete fontSize="small" />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={3} align="center">
+                  <Typography variant="body2" color="text.secondary">
+                    No team members added
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    )}
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={handleCloseMemberDialog}>Close</Button>
+  </DialogActions>
+</Dialog>
 
       {/* Registration Form Modal */}
       <Dialog
