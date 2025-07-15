@@ -46,7 +46,15 @@ const Batches = () => {
       icon: "🥉",
       description: "The newest members of The Uniques Community, bringing fresh perspectives and energy to our growing tech community.",
       memberCount: batchCounts["The Uniques 3.0"] || 0
-    }
+    },
+        {
+          id: "The Uniques 4.0",
+          name: "The Uniques 4.0",
+          icon: "🏅",
+          description: "The latest batch of The Uniques Community, driving innovation and collaboration in the tech space.",
+          memberCount: batchCounts["The Uniques 4.0"] || 0,
+          
+        }
   ], [batchCounts]);
 
   // Fetch batch counts
@@ -62,7 +70,8 @@ const Batches = () => {
           const counts = {
             "The Uniques 1.0": parseInt(batchData["The Uniques 1.0"] || 0),
             "The Uniques 2.0": parseInt(batchData["The Uniques 2.0"] || 0),
-            "The Uniques 3.0": parseInt(batchData["The Uniques 3.0"] || 0)
+            "The Uniques 3.0": parseInt(batchData["The Uniques 3.0"] || 0),
+            "The Uniques 4.0": parseInt(batchData["The Uniques 4.0"] || 0)
           };
           setBatchCounts(counts);
 
@@ -74,7 +83,8 @@ const Batches = () => {
         setBatchCounts({
           "The Uniques 1.0": 0,
           "The Uniques 2.0": 0,
-          "The Uniques 3.0": 0
+          "The Uniques 3.0": 0,
+          "The Uniques 4.0": 0,
         });
       } finally {
         setCountsLoading(false);
