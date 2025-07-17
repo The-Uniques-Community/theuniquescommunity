@@ -54,6 +54,14 @@ const index = () => {
       description: "The newest members of The Uniques Community, bringing fresh perspectives and energy to our growing tech community.",
       memberCount: batchCounts["The Uniques 3.0"] || 0,
       iconComponent: <SchoolIcon />
+    },
+    {
+      id: "The Uniques 4.0",
+      name: "The Uniques 4.0",
+      icon: "🏅",
+      description: "The latest batch of The Uniques Community, driving innovation and collaboration in the tech space.",
+      memberCount: batchCounts["The Uniques 4.0"] || 0,
+      iconComponent: <SchoolIcon />
     }
   ], [batchCounts]);
 
@@ -212,36 +220,44 @@ const index = () => {
   useEffect(() => {
     const defaultAchievements = {
       "All": [
-        {
-          id: "community-excellence",
-          title: "Community Excellence",
-          description: "Recognized for outstanding contributions to the tech ecosystem",
-          color: "rgb(59, 130, 246)"
-        }
+      {
+        id: "community-excellence",
+        title: "Community Excellence",
+        description: "Recognized for outstanding contributions to the tech ecosystem",
+        color: "rgb(59, 130, 246)"
+      }
       ],
       "The Uniques 1.0": [
-        {
-          id: "founding-milestone",
-          title: "Founding Milestone",
-          description: "Established the community and set the foundation for future growth",
-          color: "rgb(34, 197, 94)"
-        }
+      {
+        id: "founding-milestone",
+        title: "Founding Milestone",
+        description: "Established the community and set the foundation for future growth",
+        color: "rgb(34, 197, 94)"
+      }
       ],
       "The Uniques 2.0": [
-        {
-          id: "community-growth",
-          title: "Community Growth",
-          description: "Expanded membership by 200% and introduced mentorship programs",
-          color: "rgb(168, 85, 247)"
-        }
+      {
+        id: "community-growth",
+        title: "Community Growth",
+        description: "Expanded membership by 200% and introduced mentorship programs",
+        color: "rgb(168, 85, 247)"
+      }
       ],
       "The Uniques 3.0": [
-        {
-          id: "innovation-hub",
-          title: "Innovation Hub",
-          description: "Launched the innovation lab for members to collaborate on projects",
-          color: "rgb(249, 115, 22)"
-        }
+      {
+        id: "innovation-hub",
+        title: "Innovation Hub",
+        description: "Launched the innovation lab for members to collaborate on projects",
+        color: "rgb(249, 115, 22)"
+      }
+      ],
+      "The Uniques 4.0": [
+      {
+        id: "collaborative-leadership",
+        title: "Collaborative Leadership",
+        description: "Pioneered new initiatives and fostered cross-batch collaboration in 2024",
+        color: "rgb(239, 68, 68)"
+      }
       ]
     };
 
