@@ -16,8 +16,12 @@ import BatchesPage from "@/views/Landing/Batches/index"
 // import AdvisoryBoard from "@/views/Landing/AdvisoryBoard";
 import Notices from "@/views/Landing/Notices/index"
 import SuccessStoriesRoutes from "./successStories";
-const Landing = Loader(lazy(() => import("@/views/Landing/index")));
+import { element } from "prop-types";
 
+// Fix the import path - change from Batches/MemberProfile to Profile/MemberProfile
+import MemberProfile from "@/views/Landing/Profile/MemberProfile";
+
+const Landing = Loader(lazy(() => import("@/views/Landing/index")));
 
 const BlogPage = Loader(lazy(() => import("@/views/Landing/Blog/index")));
 const Contact = Loader(lazy(() => import("@/views/Landing/Contact/index")));
@@ -26,7 +30,6 @@ const NotFound = Loader(lazy(() => import("@/views/Landing/NotFound/index")));
 const CommunityPage = Loader(lazy(() => import("@/views/Landing/Community/index")));
 const SuccessStories  = Loader(lazy(() => import("@/views/Landing/SuccessStories/index")));
 const Timeline = Loader(lazy(()=>import('@/utils/Timeline/Timeline')));
-
 
 const timelineData = [
   {
@@ -55,7 +58,6 @@ const timelineData = [
   }
 ];
 
-
 const LandingRoutes = {
   path: "/",
   element: <LandingLayout />, // Wrap all pages inside LandingLayout
@@ -67,23 +69,22 @@ const LandingRoutes = {
     { path: "community-page", element: <CommunityPage /> },
     { path: "community-main", element: <Community /> },
     { path: "training", element: <Training /> },
-    // { path: "login", element: <div>Login</div> },
-    // { path: "batches", element: <div>Batches</div> },
-    //      all login will be in login router with diffrent layout please find the folder in routes
-    { path: "*", element: <NotFound /> },
     { path: "blogs", element: <BlogPage /> },
     { path: "contact", element: <Contact /> },
     { path: "batches", element: <BatchesPage />  },
     { path: "success-stories", element: <SuccessStories />  },
-    // { path: "advisoryBoard", element: <AdvisoryBoard />  },
     { path: "notices", element: <Notices/>  },
-    {path:"test", element:<Timeline events= {timelineData}/>}
+    { path: "test", element: <Timeline events={timelineData}/> },
     
+    // Member profile route - this should come BEFORE the wildcard route
+    { path: "profile/:id", element: <MemberProfile /> },
+    
+    // Wildcard route should be last
+    { path: "*", element: <NotFound /> },
   ],
 };
 
 const router = createBrowserRouter([
-
   LandingRoutes,  // ✅ Fix: Use object directly, no spread operator
   AdminRoutes,
   CommunityRoutes,
