@@ -225,7 +225,15 @@ const MemberProfile = () => {
         {/* Header with Back Button and Share */}
         <div className="flex justify-between items-center mb-8">
           <button
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              // Check if there's a previous page in history
+              if (window.history.length > 1) {
+                navigate(-1);
+              } else {
+                // If navigation stack is empty, redirect to home/batches page
+                navigate("/");
+              }
+            }}
             className="flex items-center gap-2 text-gray-600 hover:text-[#ca0019] transition-colors"
           >
             <ArrowLeft size={20} />
