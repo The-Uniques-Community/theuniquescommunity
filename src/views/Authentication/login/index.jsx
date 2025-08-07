@@ -11,6 +11,7 @@ import {
   Typography,
   IconButton,
   InputAdornment,
+  Link,
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
@@ -258,6 +259,27 @@ const Login = () => {
                   <FormHelperText error>{errors.password}</FormHelperText>
                 )}
               </FormControl>
+
+              {/* Forget Password Link */}
+              <Box sx={{ mb: 2, textAlign: "right" }}>
+                <Link
+                  component="button"
+                  variant="body2"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate("/forget-password");
+                  }}
+                  sx={{
+                    color: theme.palette.primary.main,
+                    textDecoration: "none",
+                    "&:hover": {
+                      textDecoration: "underline",
+                    },
+                  }}
+                >
+                  Forgot Password?
+                </Link>
+              </Box>
 
               {errors.submit && (
                 <FormHelperText error sx={{ mb: 2 }}>

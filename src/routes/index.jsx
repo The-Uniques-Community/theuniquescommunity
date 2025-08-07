@@ -12,6 +12,7 @@ import HowItStarted from "@/views/Landing/HowItStarted/index"
 import Community from "@/views/Community/index"
 
 import Event from "@/views/Landing/Event/Index"
+import EventDetailPage from "@/views/Landing/Event/Componant/EventDetailPage"
 import BatchesPage from "@/views/Landing/Batches/index"
 // import AdvisoryBoard from "@/views/Landing/AdvisoryBoard";
 import Notices from "@/views/Landing/Notices/index"
@@ -20,6 +21,8 @@ import { element } from "prop-types";
 
 // Fix the import path - change from Batches/MemberProfile to Profile/MemberProfile
 import MemberProfile from "@/views/Landing/Profile/MemberProfile";
+import ForgetPassword from "@/views/Authentication/login/ForgetPassword";
+
 
 const Landing = Loader(lazy(() => import("@/views/Landing/index")));
 
@@ -66,6 +69,7 @@ const LandingRoutes = {
     { path: "about", element: <About /> },
     { path: "howitstarted", element: <div><HowItStarted /></div> },
     { path: "events", element: <Event /> },
+    { path: "events/:id", element: <EventDetailPage /> }, // Add this line for event detail page
     { path: "community-page", element: <CommunityPage /> },
     { path: "community-main", element: <Community /> },
     { path: "training", element: <Training /> },
@@ -75,7 +79,7 @@ const LandingRoutes = {
     { path: "success-stories", element: <SuccessStories />  },
     { path: "notices", element: <Notices/>  },
     { path: "test", element: <Timeline events={timelineData}/> },
-    
+    { path: "forget-password", element: <ForgetPassword /> },
     // Member profile route - this should come BEFORE the wildcard route
     { path: "profile/:id", element: <MemberProfile /> },
     

@@ -8,6 +8,7 @@ import adminRoute from "./routes/admin/adminRoute.js";
 import blogRouter from "./routes/member/blogRoute.js";
 import passport from './config/passport.js';
 import authRoutes from './routes/Authentication/auth.routes.js';
+import passwordResetRoutes from './routes/member/otpRoute.js'
 import guestRoute from "./routes/member/guestRoute.js";
 import eventRouter from "./routes/admin/eventRoutes.js";
 import communityRoutes from './routes/community/community.routes.js'
@@ -46,6 +47,7 @@ app.use("/api/admin/member",memberAdminRouter)
 app.use("/api/community", communityRoutes);
 app.use("/api/blogs", blogRouter);
 app.use("/auth", authRoutes);
+app.use("/auth/password-reset", passwordResetRoutes); // Add this line
 app.use("/api/guest", guestRoute);
 app.use("/api/events", eventRouter)
 app.use('/upload', googleDriveRoutes);
