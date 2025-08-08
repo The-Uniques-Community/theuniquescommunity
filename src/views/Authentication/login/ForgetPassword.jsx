@@ -58,7 +58,7 @@ const ForgetPassword = () => {
   const handleSendOTP = async (values, { setErrors, setSubmitting, resetForm }) => {
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:5000/auth/password-reset/send-otp", {
+      const response = await axios.post("https://theuniquesbackend.vercel.app/auth/password-reset/send-otp", {
         email: values.email,
       });
 
@@ -87,7 +87,7 @@ const ForgetPassword = () => {
   const handleVerifyOTP = async (values, { setErrors, setSubmitting, resetForm }) => {
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:5000/auth/password-reset/verify-otp", {
+      const response = await axios.post("https://theuniquesbackend.vercel.app/auth/password-reset/verify-otp", {
         email,
         otp: values.otp,
       });
@@ -116,7 +116,7 @@ const ForgetPassword = () => {
   const handleResetPassword = async (values, { setErrors, setSubmitting }) => {
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:5000/auth/password-reset/reset-password", {
+      const response = await axios.post("https://theuniquesbackend.vercel.app/auth/password-reset/reset-password", {
         email,
         newPassword: values.newPassword,
         confirmPassword: values.confirmPassword,
@@ -148,7 +148,7 @@ const ForgetPassword = () => {
   const handleResendOTP = async () => {
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:5000/auth/password-reset/resend-otp", {
+      const response = await axios.post("https://theuniquesbackend.vercel.app/auth/password-reset/resend-otp", {
         email,
       });
 
