@@ -24,7 +24,7 @@ const testimonialData = {
     {
       name: "Ronit JaiPrakash",
       role: "Application Developer, Caelius Consultancy",
-      image: "https://media.licdn.com/dms/image/v2/D5603AQFewlI7VW09Fg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1708280686326?e=1750896000&v=beta&t=0R4Hv32FtHwwVjasXKxKdfRdrRIjmG-WsS3WtPzXrbk",
+      image: "https://media.licdn.com/dms/image/v2/D5603AQFewlI7VW09Fg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1708280686326?e=1758153600&v=beta&t=hikYCXE00z2JXiIWsLY2ip2_CWJxCXDn5ilAzxPINbw",
       testimonial: "The Uniques Community provided me with the skills and connections to launch my career as a Full Stack Developer. The mentorship I received was invaluable in helping me secure my role at Caelius Consultancy.",
       rating: 5,
       highlight: "MERN Stack Expert"
@@ -32,7 +32,7 @@ const testimonialData = {
     {
       name: "Naveen Jaiswal",
       role: "Software Developer, Thor Solutions",
-      image: "https://media.licdn.com/dms/image/v2/D5603AQHVwXFQ1mWrtA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1710089176344?e=1750896000&v=beta&t=aHOisuhFveYFq6GRDuF14B0vIfq5DvWZAgTK0zK_qQU",
+      image: "https://theuniquesbackend.vercel.app/api/image-proxy/1b9-mcMtoowSSiKr8wHHxLTnvjNzuhIsR",
       testimonial: "Through the practical projects and industry-focused training at The Uniques, I developed the technical expertise needed to excel in my role developing product customization platforms.",
       rating: 5,
       highlight: "Product Development"
@@ -40,7 +40,7 @@ const testimonialData = {
     {
       name: "Parveen Jaiswal",
       role: "Web Developer, SpacePepper Studios",
-      image: "https://media.licdn.com/dms/image/v2/D5603AQFnP2LqKHK4Tg/profile-displayphoto-shrink_400_400/B56ZXRMoqbGsAk-/0/1742971506111?e=1750896000&v=beta&t=YpcZyttRFoUJDxr-s0uaEkHz7azUendwExwEos5ITXQ",
+      image: "https://media.licdn.com/dms/image/v2/D5603AQFnP2LqKHK4Tg/profile-displayphoto-shrink_400_400/B56ZXRMoqbGsAk-/0/1742971506111?e=1758153600&v=beta&t=YeEw2VjRzdPeV6BLihJ2kYzZePYtb7lMVS2ElI0YsVo",
       testimonial: "As an MCD Level-1 certified developer, I can attribute much of my success to the guidance and opportunities provided by The Uniques Community. They helped transform my passion into expertise.",
       rating: 5,
       highlight: "MCD Certified"
@@ -48,7 +48,7 @@ const testimonialData = {
     {
       name: "Mantasha Tabassum",
       role: "Application Developer, Caelius Consulting",
-      image: "https://media.licdn.com/dms/image/v2/D4D03AQElXzWUBeGTYA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1697386293419?e=1750896000&v=beta&t=fHVOQ0t1DJ3-zImyPe3Z6ELvu4bIrcxbJJs3oJuZVtg",
+      image: "https://theuniquesbackend.vercel.app/api/image-proxy/1njlZ75EFgYTvki-8NIlgIsWvgwYccAXM",
       testimonial: "The Uniques Community gave me the confidence and AWS expertise I needed to implement cloud solutions and optimize infrastructure. Their hands-on approach truly made the difference.",
       rating: 5,
       highlight: "AWS Specialist"
