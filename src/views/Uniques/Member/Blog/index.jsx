@@ -38,7 +38,7 @@ import {
 import axios from "axios";
 
 // Base API URL
-const API_BASE_URL = "http://theuniquesbackend.vercel.app/api";
+const API_BASE_URL = "https://theuniquesbackend.vercel.app/api";
 
 // Create axios instance with default config
 const api = axios.create({
