@@ -263,7 +263,6 @@ const Login = () => {
               {/* Forget Password Link */}
               <Box sx={{ mb: 2, textAlign: "right" }}>
                 <Link
-                  component="button"
                   variant="body2"
                   onClick={(e) => {
                     e.preventDefault();
@@ -272,6 +271,7 @@ const Login = () => {
                   sx={{
                     color: theme.palette.primary.main,
                     textDecoration: "none",
+                    cursor: "pointer",
                     "&:hover": {
                       textDecoration: "underline",
                     },
