@@ -200,6 +200,11 @@ const EventView = () => {
   const [formErrors, setFormErrors] = useState({});
   const [registrationLoading, setRegistrationLoading] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  
+  // Loading states for manage buttons
+  const [guestButtonLoading, setGuestButtonLoading] = useState(false);
+  const [memberButtonLoading, setMemberButtonLoading] = useState(false);
+  
   // Add these state variables near the other state declarations in EventView component
 const [memberDialogOpen, setMemberDialogOpen] = useState(false);
 const [availableMembers, setAvailableMembers] = useState([]);
@@ -306,14 +311,21 @@ const fetchEventTeams = async () => {
 
 // Open manage members dialog
 const handleOpenMemberDialog = async () => {
-  console.log("Fetching available members...");
-  await fetchAvailableMembers();
-  console.log("Available members:", availableMembers);
-  
-  setMemberDialogOpen(true);
-  
-  // Make sure we have the latest team data
-  await fetchEventTeams();
+  setMemberButtonLoading(true);
+  try {
+    console.log("Fetching available members...");
+    await fetchAvailableMembers();
+    console.log("Available members:", availableMembers);
+    
+    setMemberDialogOpen(true);
+    
+    // Make sure we have the latest team data
+    await fetchEventTeams();
+  } catch (error) {
+    console.error("Error loading members:", error);
+  } finally {
+    setMemberButtonLoading(false);
+  }
 };
 
 // Close manage members dialog
@@ -322,6 +334,7 @@ const handleCloseMemberDialog = () => {
   setSelectedMember(null);
   setMemberRole("");
   setEditingMemberId(null);
+  setMemberButtonLoading(false);
 };
 
 // Add or update team members
@@ -758,8 +771,15 @@ const handleRemoveMember = async (memberId, memberTeam) => {
 
   // Open manage guests dialog
   const handleOpenGuestDialog = async () => {
-    await fetchAvailableGuests();
-    setGuestDialogOpen(true);
+    setGuestButtonLoading(true);
+    try {
+      await fetchAvailableGuests();
+      setGuestDialogOpen(true);
+    } catch (error) {
+      console.error("Error loading guests:", error);
+    } finally {
+      setGuestButtonLoading(false);
+    }
   };
 
   // Close manage guests dialog
@@ -767,6 +787,7 @@ const handleRemoveMember = async (memberId, memberTeam) => {
     setGuestDialogOpen(false);
     setSelectedGuest(null);
     setGuestTag("");
+    setGuestButtonLoading(false);
   };
 
   const handleAddGuest = async () => {
@@ -2472,8 +2493,9 @@ const handleRemoveMember = async (memberId, memberTeam) => {
               {!editMode && (
                 <Button
                   variant="outlined"
-                  startIcon={<PersonAdd />}
+                  startIcon={guestButtonLoading ? <CircularProgress size={16} /> : <PersonAdd />}
                   size="medium"
+                  disabled={guestButtonLoading}
                   sx={{
                     mt: 2,
                     width: "100%",
@@ -2486,7 +2508,7 @@ const handleRemoveMember = async (memberId, memberTeam) => {
                   }}
                   onClick={handleOpenGuestDialog}
                 >
-                  Manage Guests
+                  {guestButtonLoading ? "Loading Guests..." : "Manage Guests"}
                 </Button>
               )}
             </CardContent>
@@ -2608,8 +2630,9 @@ const handleRemoveMember = async (memberId, memberTeam) => {
     {!editMode && (
       <Button
         variant="outlined"
-        startIcon={<PersonAdd />}
+        startIcon={memberButtonLoading ? <CircularProgress size={16} /> : <PersonAdd />}
         size="medium"
+        disabled={memberButtonLoading}
         sx={{
           mt: 2,
           width: "100%",
@@ -2622,7 +2645,7 @@ const handleRemoveMember = async (memberId, memberTeam) => {
         }}
         onClick={handleOpenMemberDialog}
       >
-        Manage Team Members
+        {memberButtonLoading ? "Loading Members..." : "Manage Team Members"}
       </Button>
     )}
   </CardContent>
