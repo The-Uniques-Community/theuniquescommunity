@@ -17,7 +17,7 @@ const fineRouter = express.Router();
 fineRouter.get('/members/search', searchMembers);
 fineRouter.get('/fines/members', getAllMembersWithFines);
 // Fine management for a specific member
-fineRouter.post('/members/:memberId/fines', imposeFine);
+fineRouter.post('/members/:memberId/fine', imposeFine);
 fineRouter.patch('/members/:memberId/fines/:fineId', updateFineStatus);
 fineRouter.delete('/members/:memberId/fines/:fineId', removeFine);
 fineRouter.get('/members/:memberId/fines/pending', getPendingFines);
