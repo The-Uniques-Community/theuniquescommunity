@@ -38,10 +38,10 @@ const Counts = () => {
       const totalFrames = Math.round(duration / frameDuration);
 
       const finalValues = {
-        Earnings: 400000,
-        Clients: 50,
-        Projects: 100,
-        Events: 30
+        Earnings: 860000,
+        Clients: 100,
+        Projects: 150,
+        Events: 40
       };
 
       let frame = 0;
