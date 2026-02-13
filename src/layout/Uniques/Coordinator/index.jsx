@@ -66,7 +66,7 @@ function DashboardLayoutAppBar() {
 
   // Retrieve the saved active item from localStorage on mount
   const savedActiveItem = localStorage.getItem("activeItem") || "";
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [drawerOpen, setDrawerOpen] = React.useState(false); 
   const [activeItem, setActiveItem] = React.useState(savedActiveItem);
 
   const [isOpen, setIsOpen] = React.useState(false);
