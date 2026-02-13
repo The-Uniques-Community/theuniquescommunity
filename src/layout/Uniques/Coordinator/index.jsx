@@ -33,6 +33,7 @@ import uniques_white from "@/assets/logos/uniqueswhite.png";
 import Brightness4Icon from "@mui/icons-material/Brightness4"; // Dark Mode Icon
 import Brightness7Icon from "@mui/icons-material/Brightness7"; // Light Mode Icon
 import { UserIcon } from "lucide-react";
+import SchoolIcon from "@mui/icons-material/School";
 
 // Navigation items with full paths
 const STUDENT_NAVIGATION = [
@@ -42,8 +43,7 @@ const STUDENT_NAVIGATION = [
   { segment: "accounts", title: "Accounts", icon: <AccountBalance/> },
   { segment: "enquiry", title: "Enquiry", icon: <AnnouncementIcon/> },
   { segment: "profile", title: "Profile", icon: <UserIcon/> },
-  
-   
+  { segment: "trainers", title: "Trainers", icon: <SchoolIcon /> },
 ];
 
 function Branding() {

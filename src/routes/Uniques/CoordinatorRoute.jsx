@@ -32,6 +32,7 @@ const Profile = Loader(lazy(() => import("@/views/Uniques/Member")));
 const EventBudget = Loader(lazy(() => import("@/views/Uniques/Coordinator/Events/Budget")));
 const EventView = Loader(lazy(() => import("@/views/Uniques/Coordinator/Events/View")));
 const Enquiry = Loader(lazy(() => import("@/views/Uniques/Coordinator/Enquiry")));
+const Trainers = Loader(lazy(() => import("@/views/Uniques/Coordinator/Trainers")));
 
 const CoordinatorRoute = {
   path: "/coordinator",
@@ -72,6 +73,10 @@ const CoordinatorRoute = {
     {
       path: "/coordinator/enquiry",
       element: <Enquiry />,
+    },
+    {
+      path: "/coordinator/trainers",
+      element: <Trainers />,
     },
   ],
 };
