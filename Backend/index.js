@@ -23,6 +23,7 @@ import { getAuth } from "./controller/googleDriveService.js";
 import { google } from 'googleapis';
 import campusAmbassadorRouter from "./routes/community/campusAmbassadorRoute.js";
 import migrationRouter from "./routes/admin/migrationRoutes.js";
+import trainerRoute from "./routes/admin/trainerRoute.js";
 dotenv.config();
 
 const app = express();
@@ -57,6 +58,7 @@ app.use('/api/contact', publicEnquiryRouter);
 app.use('/api/admin/enquiry', enquiryRoute);
 app.use('/api', campusAmbassadorRouter);
 app.use('/api/admin/migration', migrationRouter);
+app.use("/api/admin/trainers", trainerRoute);
 
 app.use('/api/image-proxy/:fileId', async (req, res) => {
   try {

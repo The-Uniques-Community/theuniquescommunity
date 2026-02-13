@@ -43,6 +43,7 @@ import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 const Trainers = () => {
+    const burl = "http://localhost:5000"; // Ideally this should come from env or context
     const [search, setSearch] = useState("");
     const [trainers, setTrainers] = useState([]);
     const [tabValue, setTabValue] = useState("1");
@@ -52,6 +53,26 @@ const Trainers = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [menuTrainerId, setMenuTrainerId] = useState(null);
 
+    // Fetch Trainers from Backend
+    const fetchTrainers = async () => {
+        try {
+            const response = await fetch(`${burl}/api/admin/trainers/all-trainers`);
+            if (response.ok) {
+                const data = await response.json();
+                setTrainers(data);
+            } else {
+                toast.error("Failed to fetch trainers.");
+            }
+        } catch (error) {
+            console.error("Error fetching trainers:", error);
+            toast.error("An error occurred while fetching trainers.");
+        }
+    };
+
+    useEffect(() => {
+        fetchTrainers();
+    }, []);
+
     // Validation Schema
     const validationSchema = Yup.object({
         fullName: Yup.string().required("Full Name is required"),
@@ -59,7 +80,7 @@ const Trainers = () => {
         batch: Yup.string().required("Batch is required"),
         course: Yup.string().required("Course is required"),
         bio: Yup.string().required("Bio is required"),
-        skills: Yup.string().required("Skills are required (comma separated)"),
+        skills: Yup.string(), // Changed to string as we process it manually
     });
 
     // Formik
@@ -73,77 +94,50 @@ const Trainers = () => {
             skills: "",
         },
         validationSchema: validationSchema,
-        onSubmit: (values) => {
-            if (selectedTrainer) {
-                // Update Logic
-                const updatedTrainers = trainers.map(t =>
-                    t._id === selectedTrainer._id ? {
-                        ...t,
-                        ...values,
-                        skills: values.skills.split(',').map(s => s.trim())
-                    } : t
-                );
-                setTrainers(updatedTrainers);
-                toast.success("Trainer updated successfully!");
-            } else {
-                // Add Logic
-                const newTrainer = {
-                    _id: Date.now().toString(),
-                    ...values,
-                    profileStatus: "active",
-                    skills: values.skills.split(',').map(s => s.trim()),
-                    profilePic: null
-                };
-                setTrainers([...trainers, newTrainer]);
-                toast.success("Trainer added successfully!");
+        onSubmit: async (values) => {
+            // Process skills string to array
+            const skillsArray = values.skills ? values.skills.split(',').map(s => s.trim()) : [];
+            const payload = { ...values, skills: skillsArray };
+
+            try {
+                if (selectedTrainer) {
+                    // Update Logic
+                    const response = await fetch(`${burl}/api/admin/trainers/update-trainer/${selectedTrainer._id}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload),
+                    });
+                    
+                    if (response.ok) {
+                        toast.success("Trainer updated successfully!");
+                        fetchTrainers();
+                    } else {
+                        const errorData = await response.json();
+                        toast.error(errorData.message || "Failed to update trainer.");
+                    }
+                } else {
+                    // Add Logic
+                    const response = await fetch(`${burl}/api/admin/trainers/add-trainer`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload),
+                    });
+
+                    if (response.ok) {
+                        toast.success("Trainer added successfully!");
+                        fetchTrainers();
+                    } else {
+                        const errorData = await response.json();
+                        toast.error(errorData.message || "Failed to add trainer.");
+                    }
+                }
+                handleCloseDialog();
+            } catch (error) {
+                console.error("Error saving trainer:", error);
+                toast.error("An error occurred.");
             }
-            handleCloseDialog();
         },
     });
-
-    // Mock Data
-    useEffect(() => {
-        const mockTrainers = [
-            {
-                _id: "1",
-                fullName: "Jane Doe",
-                email: "jane.doe@example.com",
-                course: "M.Tech CSE",
-                batch: "Trainer Batch 1",
-                profileStatus: "active",
-                bio: "Senior Technical Trainer specializing in Full Stack Development.",
-                skills: ["React", "Node.js", "MongoDB", "Express"],
-                linkedinProfile: "https://linkedin.com",
-                githubProfile: "https://github.com",
-                profilePic: null
-            },
-            {
-                _id: "2",
-                fullName: "John Smith",
-                email: "john.smith@example.com",
-                course: "B.Tech CSE",
-                batch: "Trainer Batch 1",
-                profileStatus: "active",
-                bio: "Expert in Data Structures and Algorithms.",
-                skills: ["C++", "Java", "Python"],
-                linkedinProfile: "https://linkedin.com",
-                profilePic: null
-            },
-            {
-                _id: "3",
-                fullName: "Alice Johnson",
-                email: "alice.j@example.com",
-                course: "Ph.D CS",
-                batch: "Trainer Batch 2",
-                profileStatus: "active",
-                bio: "AI/ML Enthusiast and Trainer.",
-                skills: ["Python", "TensorFlow", "PyTorch"],
-                githubProfile: "https://github.com",
-                profilePic: null
-            }
-        ];
-        setTrainers(mockTrainers);
-    }, []);
 
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
@@ -179,11 +173,24 @@ const Trainers = () => {
         handleCloseMenu();
     };
 
-    const handleDeleteTrainer = () => {
-        setTrainers(trainers.filter(t => t._id !== selectedTrainer._id));
+    const handleDeleteTrainer = async () => {
+        try {
+            const response = await fetch(`${burl}/api/admin/trainers/delete-trainer/${selectedTrainer._id}`, {
+                method: "DELETE",
+            });
+
+            if (response.ok) {
+                toast.success("Trainer deleted successfully!");
+                fetchTrainers();
+            } else {
+                toast.error("Failed to delete trainer.");
+            }
+        } catch (error) {
+            console.error("Error deleting trainer:", error);
+            toast.error("An error occurred.");
+        }
         setDeleteDialogOpen(false);
         setSelectedTrainer(null);
-        toast.success("Trainer deleted successfully!");
     };
 
     const handleMenuClick = (event, trainerId) => {
@@ -313,14 +320,6 @@ const Trainers = () => {
                                                     sx={{ textTransform: 'capitalize' }}
                                                 />
                                             </TableCell>
-                                            {/* <TableCell>
-                                                <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                                                    {trainer.skills.slice(0, 2).map((skill, idx) => (
-                                                        <Chip key={idx} label={skill} size="small" sx={{ fontSize: '0.7rem' }} />
-                                                    ))}
-                                                    {trainer.skills.length > 2 && <Chip label={`+${trainer.skills.length - 2}`} size="small" sx={{ fontSize: '0.7rem' }} />}
-                                                </Box>
-                                            </TableCell> */}
                                             <TableCell sx={{ textAlign: 'right' }}>
                                                 <IconButton
                                                     aria-label="more"
