@@ -41,6 +41,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 const Trainers = () => {
     const burl = "http://localhost:5000"; // Ideally this should come from env or context
@@ -139,6 +140,50 @@ const Trainers = () => {
         },
     });
 
+    // Mock Data
+    useEffect(() => {
+        const mockTrainers = [
+            {
+                _id: "1",
+                fullName: "Jane Doe",
+                email: "jane.doe@example.com",
+                course: "M.Tech CSE",
+                batch: "Trainer Batch 1",
+                profileStatus: "active",
+                bio: "Senior Technical Trainer specializing in Full Stack Development.",
+                skills: ["React", "Node.js", "MongoDB", "Express"],
+                linkedinProfile: "https://linkedin.com",
+                githubProfile: "https://github.com",
+                profilePic: null
+            },
+            {
+                _id: "2",
+                fullName: "John Smith",
+                email: "john.smith@example.com",
+                course: "B.Tech CSE",
+                batch: "Trainer Batch 1",
+                profileStatus: "active",
+                bio: "Expert in Data Structures and Algorithms.",
+                skills: ["C++", "Java", "Python"],
+                linkedinProfile: "https://linkedin.com",
+                profilePic: null
+            },
+            {
+                _id: "3",
+                fullName: "Alice Johnson",
+                email: "alice.j@example.com",
+                course: "Ph.D CS",
+                batch: "Trainer Batch 2",
+                profileStatus: "active",
+                bio: "AI/ML Enthusiast and Trainer.",
+                skills: ["Python", "TensorFlow", "PyTorch"],
+                githubProfile: "https://github.com",
+                profilePic: null
+            }
+        ];
+        setTrainers(mockTrainers);
+    }, []);
+
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
     };
@@ -217,18 +262,33 @@ const Trainers = () => {
                 <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#ca0019', display: 'flex', alignItems: 'center', gap: 1 }}>
                     <SchoolIcon fontSize="large" /> Trainers Overview
                 </Typography>
-                <Button
-                    variant="contained"
-                    startIcon={<PersonAddIcon />}
-                    onClick={() => handleOpenDialog()}
-                    sx={{
-                        bgcolor: "#ca0019",
-                        "&:hover": { bgcolor: "#a30014" },
-                        textTransform: 'none'
-                    }}
-                >
-                    Add Trainer
-                </Button>
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Button
+                        variant="outlined"
+                        startIcon={<RefreshIcon />}
+                        onClick={handleRefresh}
+                        sx={{
+                            color: "#ca0019",
+                            borderColor: "#ca0019",
+                            "&:hover": { bgcolor: "#ffebee", borderColor: "#ca0019" },
+                            textTransform: 'none'
+                        }}
+                    >
+                        Refresh
+                    </Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<PersonAddIcon />}
+                        onClick={() => handleOpenDialog()}
+                        sx={{
+                            bgcolor: "#ca0019",
+                            "&:hover": { bgcolor: "#a30014" },
+                            textTransform: 'none'
+                        }}
+                    >
+                        Add Trainer
+                    </Button>
+                </Box>
             </Box>
 
             {/* Tabs */}
