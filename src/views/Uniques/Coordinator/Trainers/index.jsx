@@ -41,6 +41,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import RefreshIcon from "@mui/icons-material/Refresh";
 
 const Trainers = () => {
     const [search, setSearch] = useState("");
@@ -102,7 +103,8 @@ const Trainers = () => {
     });
 
     // Mock Data
-    useEffect(() => {
+    // Mock Data
+    const fetchTrainers = () => {
         const mockTrainers = [
             {
                 _id: "1",
@@ -143,7 +145,15 @@ const Trainers = () => {
             }
         ];
         setTrainers(mockTrainers);
+    };
+
+    useEffect(() => {
+        fetchTrainers();
     }, []);
+
+    const handleRefresh = () => {
+        window.location.reload();
+    };
 
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
@@ -210,18 +220,33 @@ const Trainers = () => {
                 <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#ca0019', display: 'flex', alignItems: 'center', gap: 1 }}>
                     <SchoolIcon fontSize="large" /> Trainers Overview
                 </Typography>
-                <Button
-                    variant="contained"
-                    startIcon={<PersonAddIcon />}
-                    onClick={() => handleOpenDialog()}
-                    sx={{
-                        bgcolor: "#ca0019",
-                        "&:hover": { bgcolor: "#a30014" },
-                        textTransform: 'none'
-                    }}
-                >
-                    Add Trainer
-                </Button>
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Button
+                        variant="outlined"
+                        startIcon={<RefreshIcon />}
+                        onClick={handleRefresh}
+                        sx={{
+                            color: "#ca0019",
+                            borderColor: "#ca0019",
+                            "&:hover": { bgcolor: "#ffebee", borderColor: "#ca0019" },
+                            textTransform: 'none'
+                        }}
+                    >
+                        Refresh
+                    </Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<PersonAddIcon />}
+                        onClick={() => handleOpenDialog()}
+                        sx={{
+                            bgcolor: "#ca0019",
+                            "&:hover": { bgcolor: "#a30014" },
+                            textTransform: 'none'
+                        }}
+                    >
+                        Add Trainer
+                    </Button>
+                </Box>
             </Box>
 
             {/* Tabs */}
