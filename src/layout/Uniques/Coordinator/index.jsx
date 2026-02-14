@@ -1,4 +1,5 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -62,12 +63,28 @@ function DashboardLayoutAppBar() {
   const { isDarkMode, toggleTheme } = useThemeContext(); // Access dark mode state and toggle function
   const theme = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Retrieve the saved active item from localStorage on mount
-  const savedActiveItem = localStorage.getItem("activeItem") || "";
+  // Determine active item based on current URL
+  const getActiveItemFromPath = () => {
+    // Expected path format: /coordinator/:segment/...
+    // pathSegments[0] is "", [1] is "coordinator", [2] is the segment
+    const pathSegments = location.pathname.split("/");
+    const currentSegment = pathSegments[2] || ""; 
+
+    // Find the item that matches the segment
+    const activeNav = STUDENT_NAVIGATION.find(item => item.segment === currentSegment);
+    return activeNav ? activeNav.title : "";
+  };
+
   const [drawerOpen, setDrawerOpen] = React.useState(false); 
-  const [activeItem, setActiveItem] = React.useState(savedActiveItem);
+  const [activeItem, setActiveItem] = React.useState(getActiveItemFromPath());
+
+  // Update active item when location changes
+  React.useEffect(() => {
+    setActiveItem(getActiveItemFromPath());
+  }, [location.pathname]);
 
   const [isOpen, setIsOpen] = React.useState(false);
   const onClose = () => setIsOpen(false);
@@ -77,7 +94,7 @@ function DashboardLayoutAppBar() {
       credentials: "include",
     })
       .then(() => {
-        localStorage.removeItem("activeItem");
+        localStorage.removeItem("activeItem"); // Clear it just in case, though we don't rely on it now
         localStorage.removeItem("role");
         toast.success("Logged out successfully");
         navigate("/");
