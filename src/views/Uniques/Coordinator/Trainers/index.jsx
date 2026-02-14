@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
+import axios from "axios";
 
 import { TrainerCardDashboard } from "@/utils/Card/TrainerCardDashboard";
 import {
@@ -28,8 +28,17 @@ import {
     Chip,
     Avatar,
     Menu,
+    // MenuItem,
     MenuItem,
-    ListItemIcon
+    ListItemIcon,
+    Radio,
+    RadioGroup,
+    FormControlLabel,
+    FormControl,
+    FormLabel,
+    Select,
+    InputLabel,
+    FormHelperText
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
@@ -42,11 +51,14 @@ import * as Yup from "yup";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import RefreshIcon from "@mui/icons-material/Refresh";
+import CustomLoader from "@/utils/Loader/CustomLoader";
+import tu from "@/assets/logos/tu.png";
 
 const Trainers = () => {
     const burl = "http://localhost:5000"; // Ideally this should come from env or context
     const [search, setSearch] = useState("");
     const [trainers, setTrainers] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [tabValue, setTabValue] = useState("1");
     const [openDialog, setOpenDialog] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -56,17 +68,15 @@ const Trainers = () => {
 
     // Fetch Trainers from Backend
     const fetchTrainers = async () => {
+        setLoading(true);
         try {
-            const response = await fetch(`${burl}/api/admin/trainers/all-trainers`);
-            if (response.ok) {
-                const data = await response.json();
-                setTrainers(data);
-            } else {
-                toast.error("Failed to fetch trainers.");
-            }
+            const response = await axios.get(`${burl}/api/admin/trainers/all-trainers`);
+            setTrainers(response.data);
         } catch (error) {
             console.error("Error fetching trainers:", error);
-            toast.error("An error occurred while fetching trainers.");
+            toast.error(error.response?.data?.message || "Failed to fetch trainers.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -78,10 +88,22 @@ const Trainers = () => {
     const validationSchema = Yup.object({
         fullName: Yup.string().required("Full Name is required"),
         email: Yup.string().email("Invalid email address").required("Email is required"),
-        batch: Yup.string().required("Batch is required"),
+        contact: Yup.string().required("Phone Number is required"),
+        origin: Yup.string().required("Origin is required"),
+        designation: Yup.string().when("origin", {
+            is: "external",
+            then: (schema) => schema.required("Designation is required"),
+            otherwise: (schema) => schema.notRequired(),
+        }),
+        trainerBatch: Yup.string().when("origin", {
+            is: "uniques",
+            then: (schema) => schema.required("Trainer Batch is required"),
+            otherwise: (schema) => schema.notRequired(),
+        }),
+        teachingBatch: Yup.string().required("Teaching Batch is required"),
         course: Yup.string().required("Course is required"),
         bio: Yup.string().required("Bio is required"),
-        skills: Yup.string(), // Changed to string as we process it manually
+        skills: Yup.string(),
     });
 
     // Formik
@@ -89,7 +111,11 @@ const Trainers = () => {
         initialValues: {
             fullName: "",
             email: "",
-            batch: "",
+            contact: "",
+            origin: "uniques",
+            designation: "",
+            trainerBatch: "",
+            teachingBatch: "",
             course: "",
             bio: "",
             skills: "",
@@ -103,45 +129,27 @@ const Trainers = () => {
             try {
                 if (selectedTrainer) {
                     // Update Logic
-                    const response = await fetch(`${burl}/api/admin/trainers/update-trainer/${selectedTrainer._id}`, {
-                        method: "PUT",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload),
-                    });
-                    
-                    if (response.ok) {
-                        toast.success("Trainer updated successfully!");
-                        fetchTrainers();
-                    } else {
-                        const errorData = await response.json();
-                        toast.error(errorData.message || "Failed to update trainer.");
-                    }
+                    await axios.put(`${burl}/api/admin/trainers/update-trainer/${selectedTrainer._id}`, payload);
+                    toast.success("Trainer updated successfully!");
                 } else {
                     // Add Logic
-                    const response = await fetch(`${burl}/api/admin/trainers/add-trainer`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload),
-                    });
-
-                    if (response.ok) {
-                        toast.success("Trainer added successfully!");
-                        fetchTrainers();
-                    } else {
-                        const errorData = await response.json();
-                        toast.error(errorData.message || "Failed to add trainer.");
-                    }
+                    await axios.post(`${burl}/api/admin/trainers/add-trainer`, payload);
+                    toast.success("Trainer added successfully!");
                 }
+                fetchTrainers();
                 handleCloseDialog();
             } catch (error) {
                 console.error("Error saving trainer:", error);
-                toast.error("An error occurred.");
+                toast.error(error.response?.data?.message || "An error occurred.");
             }
         },
     });
 
+<<<<<<<<< Temporary merge branch 1
+=========
     // Mock Data
-    useEffect(() => {
+    // Mock Data
+    const fetchTrainers = () => {
         const mockTrainers = [
             {
                 _id: "1",
@@ -182,8 +190,17 @@ const Trainers = () => {
             }
         ];
         setTrainers(mockTrainers);
+    };
+
+    useEffect(() => {
+        fetchTrainers();
     }, []);
 
+    const handleRefresh = () => {
+        window.location.reload();
+    };
+
+>>>>>>>>> Temporary merge branch 2
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
     };
@@ -194,10 +211,14 @@ const Trainers = () => {
             formik.setValues({
                 fullName: trainer.fullName,
                 email: trainer.email,
-                batch: trainer.batch,
+                contact: trainer.contact || "",
+                origin: trainer.origin || "uniques",
+                designation: trainer.designation || "",
+                trainerBatch: trainer.trainerBatch || "",
+                teachingBatch: trainer.teachingBatch || trainer.batch || "", // Fallback for old data
                 course: trainer.course,
                 bio: trainer.bio,
-                skills: trainer.skills.join(", "),
+                skills: Array.isArray(trainer.skills) ? trainer.skills.join(", ") : trainer.skills,
             });
         } else {
             formik.resetForm();
@@ -220,19 +241,12 @@ const Trainers = () => {
 
     const handleDeleteTrainer = async () => {
         try {
-            const response = await fetch(`${burl}/api/admin/trainers/delete-trainer/${selectedTrainer._id}`, {
-                method: "DELETE",
-            });
-
-            if (response.ok) {
-                toast.success("Trainer deleted successfully!");
-                fetchTrainers();
-            } else {
-                toast.error("Failed to delete trainer.");
-            }
+            await axios.delete(`${burl}/api/admin/trainers/delete-trainer/${selectedTrainer._id}`);
+            toast.success("Trainer deleted successfully!");
+            fetchTrainers();
         } catch (error) {
             console.error("Error deleting trainer:", error);
-            toast.error("An error occurred.");
+            toast.error(error.response?.data?.message || "Failed to delete trainer.");
         }
         setDeleteDialogOpen(false);
         setSelectedTrainer(null);
@@ -251,12 +265,13 @@ const Trainers = () => {
     const filteredTrainers = trainers.filter(trainer =>
         trainer.fullName.toLowerCase().includes(search.toLowerCase()) ||
         trainer.email.toLowerCase().includes(search.toLowerCase()) ||
-        trainer.skills.some(skill => skill.toLowerCase().includes(search.toLowerCase()))
+        (Array.isArray(trainer.skills) && trainer.skills.some(skill => skill.toLowerCase().includes(search.toLowerCase())))
     );
 
     return (
         <Box sx={{ width: "100%", typography: "body1", p: 3 }}>
             <ToastContainer position="top-right" autoClose={3000} />
+            {loading && <CustomLoader />}
             {/* Header */}
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
                 <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#ca0019', display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -352,7 +367,7 @@ const Trainers = () => {
                                 <TableRow>
                                     <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
                                     <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold' }}>Batch</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold' }}>Teaching Batch</TableCell>
                                     <TableCell sx={{ fontWeight: 'bold' }}>Course</TableCell>
                                     <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
                                     {/* <TableCell sx={{ fontWeight: 'bold' }}>Skills</TableCell> */}
@@ -370,9 +385,30 @@ const Trainers = () => {
                                                 </Box>
                                             </TableCell>
                                             <TableCell>{trainer.email}</TableCell>
-                                            <TableCell><Chip label={trainer.batch} size="small" variant="outlined" /></TableCell>
-                                            <TableCell>{trainer.course}</TableCell>
+                                            {/* <TableCell>{trainer.email}</TableCell> */}
                                             <TableCell>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                    <img src={tu} alt="TU" style={{ width: 20, height: 20, objectFit: 'contain' }} />
+                                                    <Chip label={trainer.teachingBatch || trainer.batch} size="small" variant="outlined" />
+                                                </Box>
+                                            </TableCell>
+                                            <TableCell>{trainer.course}</TableCell>
+                                            {/* <TableCell>
+                                                <Chip
+                                                    label={trainer.teachingBatch || trainer.batch}
+                                                    size="small"
+                                                    variant="outlined"
+                                                />
+                                            </TableCell> */}
+                                            {/* <TableCell>{trainer.course}</TableCell> */}
+                                            <TableCell>
+                                                {/* <Chip
+                                                    label={trainer.origin === 'external' ? (trainer.designation || 'External') : 'Uniques'}
+                                                    size="small"
+                                                    color={trainer.origin === 'uniques' ? 'primary' : 'secondary'}
+                                                    variant="filled"
+                                                    sx={{ mr: 1 }}
+                                                /> */}
                                                 <Chip
                                                     label={trainer.profileStatus}
                                                     size="small"
@@ -380,6 +416,14 @@ const Trainers = () => {
                                                     sx={{ textTransform: 'capitalize' }}
                                                 />
                                             </TableCell>
+                                            {/* <TableCell>
+                                                <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                                                    {trainer.skills.slice(0, 2).map((skill, idx) => (
+                                                        <Chip key={idx} label={skill} size="small" sx={{ fontSize: '0.7rem' }} />
+                                                    ))}
+                                                    {trainer.skills.length > 2 && <Chip label={`+${trainer.skills.length - 2}`} size="small" sx={{ fontSize: '0.7rem' }} />}
+                                                </Box>
+                                            </TableCell> */}
                                             <TableCell sx={{ textAlign: 'right' }}>
                                                 <IconButton
                                                     aria-label="more"
@@ -455,17 +499,93 @@ const Trainers = () => {
                                     helperText={formik.touched.email && formik.errors.email}
                                 />
                             </Grid>
-                            <Grid item xs={6}>
+                            <Grid item xs={12}>
                                 <TextField
                                     fullWidth
-                                    id="batch"
-                                    name="batch"
-                                    label="Batch"
-                                    value={formik.values.batch}
+                                    id="contact"
+                                    name="contact"
+                                    label="Phone Number"
+                                    value={formik.values.contact}
                                     onChange={formik.handleChange}
-                                    error={formik.touched.batch && Boolean(formik.errors.batch)}
-                                    helperText={formik.touched.batch && formik.errors.batch}
+                                    error={formik.touched.contact && Boolean(formik.errors.contact)}
+                                    helperText={formik.touched.contact && formik.errors.contact}
                                 />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl component="fieldset">
+                                    <FormLabel component="legend">Origin</FormLabel>
+                                    <RadioGroup
+                                        row
+                                        aria-label="origin"
+                                        name="origin"
+                                        value={formik.values.origin}
+                                        onChange={formik.handleChange}
+                                    >
+                                        <FormControlLabel value="uniques" control={<Radio color="primary" />} label="Uniques" />
+                                        <FormControlLabel value="external" control={<Radio color="primary" />} label="External" />
+                                    </RadioGroup>
+                                </FormControl>
+                            </Grid>
+
+                            {formik.values.origin === 'uniques' && (
+                                <Grid item xs={6}>
+                                    <FormControl fullWidth error={formik.touched.trainerBatch && Boolean(formik.errors.trainerBatch)}>
+                                        <InputLabel id="trainer-batch-label">Uniques Batch (From)</InputLabel>
+                                        <Select
+                                            labelId="trainer-batch-label"
+                                            id="trainerBatch"
+                                            name="trainerBatch"
+                                            value={formik.values.trainerBatch}
+                                            label="Uniques Batch (From)"
+                                            onChange={formik.handleChange}
+                                        >
+                                            <MenuItem value="Uniques 1.0">Uniques 1.0</MenuItem>
+                                            <MenuItem value="Uniques 2.0">Uniques 2.0</MenuItem>
+                                            <MenuItem value="Uniques 3.0">Uniques 3.0</MenuItem>
+                                            <MenuItem value="Uniques 4.0">Uniques 4.0</MenuItem>
+                                            <MenuItem value="Uniques 5.0">Uniques 5.0</MenuItem>
+                                        </Select>
+                                        {formik.touched.trainerBatch && formik.errors.trainerBatch && (
+                                            <FormHelperText>{formik.errors.trainerBatch}</FormHelperText>
+                                        )}
+                                    </FormControl>
+                                </Grid>
+                            )}
+
+                            {formik.values.origin === 'external' && (
+                                <Grid item xs={6}>
+                                    <TextField
+                                        fullWidth
+                                        id="designation"
+                                        name="designation"
+                                        label="Designation"
+                                        value={formik.values.designation}
+                                        onChange={formik.handleChange}
+                                        error={formik.touched.designation && Boolean(formik.errors.designation)}
+                                        helperText={formik.touched.designation && formik.errors.designation}
+                                    />
+                                </Grid>
+                            )}
+
+                            <Grid item xs={6}>
+                                <FormControl fullWidth error={formik.touched.teachingBatch && Boolean(formik.errors.teachingBatch)}>
+                                    <InputLabel id="teaching-batch-label">Teaching Batch</InputLabel>
+                                    <Select
+                                        labelId="teaching-batch-label"
+                                        id="teachingBatch"
+                                        name="teachingBatch"
+                                        value={formik.values.teachingBatch}
+                                        label="Teaching Batch"
+                                        onChange={formik.handleChange}
+                                    >
+                                        <MenuItem value="Uniques 3.0">Uniques 3.0</MenuItem>
+                                        <MenuItem value="Uniques 4.0">Uniques 4.0</MenuItem>
+                                        <MenuItem value="Uniques 5.0">Uniques 5.0</MenuItem>
+                                    </Select>
+                                    {formik.touched.teachingBatch && formik.errors.teachingBatch && (
+                                        <FormHelperText>{formik.errors.teachingBatch}</FormHelperText>
+                                    )}
+                                </FormControl>
                             </Grid>
                             <Grid item xs={6}>
                                 <TextField

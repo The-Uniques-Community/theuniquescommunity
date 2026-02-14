@@ -96,7 +96,7 @@ const TrainerProfileDialog = ({ open, handleClose, user }) => {
                             </div>
 
                             <span className="text-xs font-semibold tracking-wider text-slate-400 uppercase mb-1">
-                                {user.role || "TRAINER"}
+                                {user.origin === 'external' ? (user.designation || "External Trainer") : "Uniques Alumni"}
                             </span>
                             <h2 className="text-2xl font-bold text-slate-800 mb-2">{user.fullName}</h2>
 
@@ -135,8 +135,8 @@ const TrainerProfileDialog = ({ open, handleClose, user }) => {
                             <div className="flex items-center gap-3">
                                 <img src={tu} className="h-8 w-8 object-contain opacity-80" alt="" />
                                 <div>
-                                    <p className="text-xs text-slate-400 font-medium uppercase">Batch</p>
-                                    <p className="font-semibold text-slate-700">{user.batch}</p>
+                                    <p className="text-xs text-slate-400 font-medium uppercase">Teaching Batch</p>
+                                    <p className="font-semibold text-slate-700">{user.teachingBatch || user.batch}</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
@@ -150,7 +150,7 @@ const TrainerProfileDialog = ({ open, handleClose, user }) => {
                                 <BusinessIcon className="text-slate-400" />
                                 <div>
                                     <p className="text-xs text-slate-400 font-medium uppercase">Role</p>
-                                    <p className="font-semibold text-slate-700">Technical Trainer</p>
+                                    <p className="font-semibold text-slate-700">{user.designation || "Technical Trainer"}</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
@@ -256,7 +256,7 @@ export const TrainerCardDashboard = ({ user }) => {
                                 alt="The Uniques"
                                 className="w-5 inline h-5 object-contain object-center"
                             />{" "}
-                            {user.batch}
+                            {user.teachingBatch || user.batch}
                         </div>
                         <span className="bg-yellow-400 text-yellow-800 text-sm px-3 py-1 rounded-full">
                             {user.profileStatus}

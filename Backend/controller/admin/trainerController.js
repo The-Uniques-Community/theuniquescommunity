@@ -3,8 +3,8 @@ import Trainer from "../../models/admin/trainerModel.js";
 // Add a new trainer
 export const addTrainer = async (req, res) => {
     try {
-        const { fullName, email, batch, course, bio, skills, linkedinProfile, githubProfile } = req.body;
-        
+        const { fullName, email, contact, origin, designation, trainerBatch, teachingBatch, course, bio, skills, linkedinProfile, githubProfile } = req.body;
+
         const existingTrainer = await Trainer.findOne({ email });
         if (existingTrainer) {
             return res.status(400).json({ message: "Trainer with this email already exists." });
@@ -13,7 +13,12 @@ export const addTrainer = async (req, res) => {
         const newTrainer = new Trainer({
             fullName,
             email,
-            batch,
+            contact,
+            origin,
+            designation: origin === 'external' ? designation : undefined,
+            trainerBatch: origin === 'uniques' ? trainerBatch : undefined,
+            teachingBatch,
+            batch: teachingBatch, // Determine if we still need this field
             course,
             bio,
             skills,
