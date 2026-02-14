@@ -1,3 +1,5 @@
+
+
 // routes/apiRoutes.js
 import express from "express";
 import multer from "multer";
@@ -29,12 +31,12 @@ function cleanupTempDirectories() {
         }
       });
     }
-    
+
     // Ensure the directory exists after cleanup
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
-    
+
     console.log("Temporary directory cleanup completed");
   } catch (error) {
     console.error("Error during temp directory cleanup:", error);
@@ -48,20 +50,20 @@ function scheduleCleanup() {
   try {
     const MAX_AGE_MS = 15 * 60 * 1000; // 15 minutes
     const uploadDir = '/tmp/uploads';
-    
+
     if (fs.existsSync(uploadDir)) {
       const now = Date.now();
       const files = fs.readdirSync(uploadDir);
-      
+
       files.forEach(file => {
         const filePath = path.join(uploadDir, file);
         try {
           const stats = fs.statSync(filePath);
           const fileAge = now - stats.mtimeMs;
-          
+
           if (fileAge > MAX_AGE_MS) {
             fs.unlinkSync(filePath);
-            console.log(`Cleaned up old temp file: ${file} (${Math.round(fileAge/1000/60)} min old)`);
+            console.log(`Cleaned up old temp file: ${file} (${Math.round(fileAge / 1000 / 60)} min old)`);
           }
         } catch (err) {
           console.error(`Error checking/removing old file ${file}:`, err);
@@ -304,7 +306,7 @@ router.post("/file_upload", upload.array("files", 10), async (req, res) => {
     for (const file of req.files) {
       try {
         // Upload the file to Google Drive
-        const fileUploadResult = await uploadFile(file.path, targetFolderId,{
+        const fileUploadResult = await uploadFile(file.path, targetFolderId, {
           studentId,
           category: subfolder,
           customPrefix: file.originalname.substring(0, 15).replace(/[^a-zA-Z0-9-_]/g, '')
@@ -429,14 +431,14 @@ router.post("/file_upload", upload.array("files", 10), async (req, res) => {
  */
 router.post("/event_file_upload", upload.array("files", 10), async (req, res) => {
   const tempFiles = req.files || [];
-  
+
   try {
     const { eventName, eventId, fileKey, replaceGallery } = req.body;
     const mainFolderName = "The Uniques Event";
 
     if (tempFiles.length === 0 || !eventName || !fileKey) {
-      return res.status(400).json({ 
-        message: "Missing required fields or files." 
+      return res.status(400).json({
+        message: "Missing required fields or files."
       });
     }
 
@@ -454,7 +456,7 @@ router.post("/event_file_upload", upload.array("files", 10), async (req, res) =>
       eventName,
       ["files"] // Use a generic subfolder
     );
-    
+
     const targetFolderId = folderStructure.subfolders["files"].id;
     const uploadedFiles = [];
 
@@ -474,7 +476,7 @@ router.post("/event_file_upload", upload.array("files", 10), async (req, res) =>
         if (tempFiles.length > 1) {
           console.warn(`Multiple files uploaded for banner, using only the first one`);
         }
-        
+
         const file = tempFiles[0];
         const fileUploadResult = await uploadFile(file.path, targetFolderId, {
           eventName,
@@ -494,7 +496,7 @@ router.post("/event_file_upload", upload.array("files", 10), async (req, res) =>
             },
             { new: true }
           );
-          
+
           uploadedFiles.push({
             ...fileUploadResult,
             _id: event.eventBanner,
@@ -511,12 +513,12 @@ router.post("/event_file_upload", upload.array("files", 10), async (req, res) =>
             fileType: "event-banner"
           });
           await fileRecord.save();
-          
+
           // Update event
           await Event.findByIdAndUpdate(eventId, {
             eventBanner: fileRecord._id
           });
-          
+
           uploadedFiles.push({
             ...fileUploadResult,
             _id: fileRecord._id,
@@ -524,23 +526,23 @@ router.post("/event_file_upload", upload.array("files", 10), async (req, res) =>
             status: "created"
           });
         }
-      } 
+      }
       else if (fileKey === 'eventGallery') {
         // Array field - handle multiple files
         if (replaceGallery === 'true') {
           // Clear existing gallery if replace option is set
           // First get existing gallery items
           const existingGallery = event.eventGallery || [];
-          
+
           // Delete all file references
           if (existingGallery.length > 0) {
             await File.deleteMany({ _id: { $in: existingGallery } });
           }
-          
+
           // Clear gallery array in event
           await Event.findByIdAndUpdate(eventId, { eventGallery: [] });
         }
-        
+
         // Upload all new files
         for (const file of tempFiles) {
           const fileUploadResult = await uploadFile(file.path, targetFolderId, {
@@ -548,7 +550,7 @@ router.post("/event_file_upload", upload.array("files", 10), async (req, res) =>
             category: "event-gallery",
             customPrefix: file.originalname.substring(0, 15).replace(/[^a-zA-Z0-9-_]/g, '')
           });
-          
+
           // Create new File document
           const fileRecord = new File({
             fileName: fileUploadResult.fileName,
@@ -558,12 +560,12 @@ router.post("/event_file_upload", upload.array("files", 10), async (req, res) =>
             fileType: "event-gallery"
           });
           await fileRecord.save();
-          
+
           // Add to event gallery
           await Event.findByIdAndUpdate(eventId, {
             $push: { eventGallery: fileRecord._id }
           });
-          
+
           uploadedFiles.push({
             ...fileUploadResult,
             _id: fileRecord._id,
@@ -580,7 +582,7 @@ router.post("/event_file_upload", upload.array("files", 10), async (req, res) =>
           category: fileKey === 'eventBanner' ? "event-banner" : "event-gallery",
           customPrefix: file.originalname.substring(0, 15).replace(/[^a-zA-Z0-9-_]/g, '')
         });
-        
+
         // Create file record
         const fileRecord = new File({
           fileName: fileUploadResult.fileName,
@@ -591,7 +593,7 @@ router.post("/event_file_upload", upload.array("files", 10), async (req, res) =>
           fileType: fileKey === 'eventBanner' ? "event-banner" : "event-gallery"
         });
         await fileRecord.save();
-        
+
         uploadedFiles.push({
           ...fileUploadResult,
           _id: fileRecord._id,
@@ -603,8 +605,8 @@ router.post("/event_file_upload", upload.array("files", 10), async (req, res) =>
 
     // Send response
     res.status(200).json({
-      message: eventId 
-        ? `Event ${fileKey} updated successfully` 
+      message: eventId
+        ? `Event ${fileKey} updated successfully`
         : `Files uploaded successfully (unlinked)`,
       files: uploadedFiles,
       count: uploadedFiles.length,
@@ -614,7 +616,7 @@ router.post("/event_file_upload", upload.array("files", 10), async (req, res) =>
     });
   } catch (error) {
     console.error("Error in event file upload:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Error during event file upload.",
       error: error.message
     });
@@ -634,20 +636,20 @@ router.post("/event_file_upload", upload.array("files", 10), async (req, res) =>
 
 router.post("/budget_file_upload", upload.single("file"), async (req, res) => {
   const tempFile = req.file;
-  
+
   try {
     const { eventId, itemType, itemId } = req.body;
 
     if (!tempFile || !eventId || !itemType || !itemId) {
-      return res.status(400).json({ 
-        message: "Missing required fields or file." 
+      return res.status(400).json({
+        message: "Missing required fields or file."
       });
     }
 
     // Validate itemType
     if (!["expense", "sponsor"].includes(itemType)) {
-      return res.status(400).json({ 
-        message: "Invalid itemType. Must be 'expense' or 'sponsor'." 
+      return res.status(400).json({
+        message: "Invalid itemType. Must be 'expense' or 'sponsor'."
       });
     }
 
@@ -662,7 +664,7 @@ router.post("/budget_file_upload", upload.single("file"), async (req, res) => {
     // Find the specific item (expense or sponsorship)
     let itemArray = itemType === "expense" ? event.expenses : event.sponsors;
     const itemIndex = itemArray.findIndex(item => item._id.toString() === itemId);
-    
+
     if (itemIndex === -1) {
       return res.status(404).json({
         message: `${itemType} with ID ${itemId} not found in event`
@@ -678,7 +680,7 @@ router.post("/budget_file_upload", upload.single("file"), async (req, res) => {
       event.eventName,
       ["budget", itemType]
     );
-    
+
     const targetFolderId = folderStructure.subfolders[itemType].id;
 
     // Upload file to Google Drive
@@ -687,7 +689,7 @@ router.post("/budget_file_upload", upload.single("file"), async (req, res) => {
       category: `${itemType}-receipt`,
       customPrefix: `${itemType}-${itemId.substring(0, 8)}`
     });
-    
+
     // Create file record
     const fileRecord = new File({
       fileName: fileUploadResult.fileName,
@@ -698,59 +700,59 @@ router.post("/budget_file_upload", upload.single("file"), async (req, res) => {
       relatedId: itemId
     });
     await fileRecord.save();
-    
+
     // Update the event item with receipt reference
     const updatePath = `${itemType}s.${itemIndex}.receiptId`;
     const updateObj = { [updatePath]: fileRecord._id };
-    
+
     // Initialize budget updates object
     const budgetUpdates = {};
-    
+
     // Update budget totals based on item type
     if (itemType === "sponsor" && currentItem.receivedStatus !== "received") {
       // This is a new sponsorship being marked as received
       updateObj[`${itemType}s.${itemIndex}.receivedStatus`] = "received";
       updateObj[`${itemType}s.${itemIndex}.dateReceived`] = new Date();
-      
+
       // Update budget totals - increase total allocation/income
       const currentAllocation = event.budget?.totalAllocation || 0;
       budgetUpdates["budget.totalAllocation"] = currentAllocation + itemAmount;
-    } 
+    }
     else if (itemType === "expense" && currentItem.paymentStatus !== "completed") {
       // This is a new expense being marked as completed
       updateObj[`${itemType}s.${itemIndex}.paymentStatus`] = "completed";
       updateObj[`${itemType}s.${itemIndex}.paidOn`] = new Date();
-      
+
       // Update budget totals - increase total spent
       const currentSpent = event.budget?.totalSpent || 0;
       budgetUpdates["budget.totalSpent"] = currentSpent + itemAmount;
     }
-    
+
     // Calculate remaining budget
     if (Object.keys(budgetUpdates).length > 0) {
-      const updatedAllocation = 
-        budgetUpdates["budget.totalAllocation"] !== undefined 
-        ? budgetUpdates["budget.totalAllocation"] 
-        : (event.budget?.totalAllocation || 0);
-        
-      const updatedSpent = 
+      const updatedAllocation =
+        budgetUpdates["budget.totalAllocation"] !== undefined
+          ? budgetUpdates["budget.totalAllocation"]
+          : (event.budget?.totalAllocation || 0);
+
+      const updatedSpent =
         budgetUpdates["budget.totalSpent"] !== undefined
-        ? budgetUpdates["budget.totalSpent"]
-        : (event.budget?.totalSpent || 0);
-        
+          ? budgetUpdates["budget.totalSpent"]
+          : (event.budget?.totalSpent || 0);
+
       budgetUpdates["budget.remaining"] = updatedAllocation - updatedSpent;
     }
-    
+
     // Merge all updates
-    const finalUpdateObj = {...updateObj, ...budgetUpdates};
-    
+    const finalUpdateObj = { ...updateObj, ...budgetUpdates };
+
     // Update the event with all changes
     const updatedEvent = await Event.findByIdAndUpdate(
-      eventId, 
-      finalUpdateObj, 
+      eventId,
+      finalUpdateObj,
       { new: true }
     );
-    
+
     // Send response
     res.status(200).json({
       message: `Receipt uploaded and ${itemType} updated successfully`,
@@ -767,7 +769,7 @@ router.post("/budget_file_upload", upload.single("file"), async (req, res) => {
 
   } catch (error) {
     console.error(`Error in budget file upload:`, error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: `Error during budget file upload.`,
       error: error.message
     });
@@ -795,14 +797,14 @@ router.post("/budget_file_upload", upload.single("file"), async (req, res) => {
  */
 router.post("/fine_file_upload", upload.array("files", 5), async (req, res) => {
   const tempFiles = req.files || [];
-  
+
   try {
     const { memberId, fineId, fileType } = req.body;
     const mainFolderName = "The Uniques Fines";
 
     if (tempFiles.length === 0 || !memberId || !fileType) {
-      return res.status(400).json({ 
-        message: "Missing required fields or files." 
+      return res.status(400).json({
+        message: "Missing required fields or files."
       });
     }
 
@@ -829,7 +831,7 @@ router.post("/fine_file_upload", upload.array("files", 5), async (req, res) => {
         message: `Member with ID ${memberId} not found`
       });
     }
-    
+
     const memberName = member.fullName || member.admno || memberId;
     const fineFolderName = fineId ? `fine-${fineId.substring(0, 8)}` : `fine-${Date.now()}`;
 
@@ -839,7 +841,7 @@ router.post("/fine_file_upload", upload.array("files", 5), async (req, res) => {
       memberName,
       [fineFolderName]
     );
-    
+
     const targetFolderId = folderStructure.subfolders[fineFolderName].id;
     const uploadedFiles = [];
 
@@ -851,7 +853,7 @@ router.post("/fine_file_upload", upload.array("files", 5), async (req, res) => {
         category: `fine-${fileType}`,
         customPrefix: `${fileType}-${file.originalname.substring(0, 15).replace(/[^a-zA-Z0-9-_]/g, '')}`
       });
-      
+
       // Create new File document
       const fileRecord = new File({
         fileName: fileUploadResult.fileName,
@@ -863,7 +865,7 @@ router.post("/fine_file_upload", upload.array("files", 5), async (req, res) => {
         fileOwner: memberId
       });
       await fileRecord.save();
-      
+
       uploadedFiles.push({
         ...fileUploadResult,
         _id: fileRecord._id,
@@ -883,7 +885,7 @@ router.post("/fine_file_upload", upload.array("files", 5), async (req, res) => {
     });
   } catch (error) {
     console.error("Error in fine file upload:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
       message: "Error during fine file upload.",
       error: error.message

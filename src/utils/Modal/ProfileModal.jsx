@@ -103,33 +103,33 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
   const handleToggleBlockStatus = async () => {
     try {
       setBlockLoading(true);
-      
+
       // Make API call to toggle block status
       const response = await axios.patch(
         `https://theuniquesbackend.vercel.app/api/admin/member/${user._id}/block`
       );
-      
+
       // Show success message
       setAlert({
         open: true,
-        message: user.isSuspended 
-          ? `${user.fullName} has been unblocked successfully` 
+        message: user.isSuspended
+          ? `${user.fullName} has been unblocked successfully`
           : `${user.fullName} has been blocked successfully`,
         severity: "success",
       });
-      
+
       // Refresh data to show updated status
       if (refreshData && typeof refreshData === "function") {
         refreshData();
       }
     } catch (err) {
       console.error("Error toggling block status:", err);
-      
+
       // Show error message
       setAlert({
         open: true,
-        message: err.response?.data?.message || 
-                "Failed to update block status. Please try again.",
+        message: err.response?.data?.message ||
+          "Failed to update block status. Please try again.",
         severity: "error",
       });
     } finally {
@@ -235,7 +235,7 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
       console.error("Error imposing fine:", err);
       setError(
         err.response?.data?.message ||
-          "Failed to impose fine. Please try again."
+        "Failed to impose fine. Please try again."
       );
     } finally {
       setLoading(false);
@@ -388,37 +388,37 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
               </div>
             </div>
             <div className="col-span-1">
-          <div className="flex flex-wrap items-center h-full gap-3">
-            <Button
-              variant="contained"
-              color="primary"
-              size="medium"
-              startIcon={<CurrencyRupeeIcon />}
-              disabled={user.isSuspended}
-              onClick={handleOpenFineModal}
-            >
-              Impose Fine
-            </Button>
-            <Button
-              variant="contained"
-              color={user.isSuspended ? "success" : "error"}
-              size="medium"
-              startIcon={
-                blockLoading ? (
-                  <CircularProgress size={20} color="inherit" />
-                ) : user.isSuspended ? (
-                  <DoneIcon />
-                ) : (
-                  <BlockIcon />
-                )
-              }
-              onClick={handleToggleBlockStatus}
-              disabled={blockLoading}
-            >
-              {user.isSuspended ? "Unblock" : "Block"}
-            </Button>
-          </div>
-        </div>
+              <div className="flex flex-wrap items-center h-full gap-3">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="medium"
+                  startIcon={<CurrencyRupeeIcon />}
+                  disabled={user.isSuspended}
+                  onClick={handleOpenFineModal}
+                >
+                  Impose Fine
+                </Button>
+                <Button
+                  variant="contained"
+                  color={user.isSuspended ? "success" : "error"}
+                  size="medium"
+                  startIcon={
+                    blockLoading ? (
+                      <CircularProgress size={20} color="inherit" />
+                    ) : user.isSuspended ? (
+                      <DoneIcon />
+                    ) : (
+                      <BlockIcon />
+                    )
+                  }
+                  onClick={handleToggleBlockStatus}
+                  disabled={blockLoading}
+                >
+                  {user.isSuspended ? "Unblock" : "Block"}
+                </Button>
+              </div>
+            </div>
           </div>
           <div className="mt-4 grid grid-cols-4 gap-4">
             <div className="lg:col-span-1 col-span-4">
@@ -571,10 +571,10 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
                               !user.cgpa
                                 ? "default"
                                 : parseFloat(user.cgpa) >= 8.0
-                                ? "success"
-                                : parseFloat(user.cgpa) >= 6.0
-                                ? "primary"
-                                : "warning"
+                                  ? "success"
+                                  : parseFloat(user.cgpa) >= 6.0
+                                    ? "primary"
+                                    : "warning"
                             }
                             variant="outlined"
                           />
@@ -607,8 +607,8 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
                                         sem.sgpa >= 8.0
                                           ? "success"
                                           : sem.sgpa >= 6.0
-                                          ? "primary"
-                                          : "warning"
+                                            ? "primary"
+                                            : "warning"
                                       }
                                     />
                                   </div>
@@ -624,8 +624,8 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
                                           sem.sgpa >= 8.0
                                             ? "#4caf50"
                                             : sem.sgpa >= 6.0
-                                            ? "#2196f3"
-                                            : "#ff9800",
+                                              ? "#2196f3"
+                                              : "#ff9800",
                                       },
                                     }}
                                   />
@@ -683,8 +683,8 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
                                             subject.status === "passed"
                                               ? "success"
                                               : subject.status === "failed"
-                                              ? "error"
-                                              : "warning"
+                                                ? "error"
+                                                : "warning"
                                           }
                                         />
                                       </div>
@@ -737,9 +737,8 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
                           >
                             <div className="flex items-start gap-3">
                               <div
-                                className={`text-white p-2 rounded-full flex items-center justify-center ${
-                                  achievement.color || "bg-slate-100"
-                                }`}
+                                className={`text-white p-2 rounded-full flex items-center justify-center ${achievement.color || "bg-slate-100"
+                                  }`}
                               >
                                 {achievement.icon || (
                                   <Award className="w-10 h-10 text-slate-500" />
@@ -774,32 +773,15 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
                     <div className="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-3 gap-5">
                       {user.certifications && user.certifications.length > 0 ? (
                         user.certifications.map((certificate, idx) => {
-                          // Console log the entire certificate object to inspect
-                          console.log(`Certificate ${idx}:`, certificate);
-                          console.log(
-                            `Certificate ${idx} fileId:`,
-                            certificate?.fileId
-                          );
-                          console.log(
-                            `Certificate ${idx} fileUrl:`,
-                            certificate?.fileUrl
-                          );
-
                           // Convert Drive URL to preview URL for iframe embedding
                           const getPreviewUrl = (url) => {
                             if (!url) return null;
-                            console.log(`Original URL for cert ${idx}:`, url);
 
                             // For uc?id= format (direct download links)
                             if (url.includes("drive.google.com/uc?id=")) {
                               const fileId = url.split("id=")[1]?.split("&")[0];
-                              console.log(`Extracted fileId from URL:`, fileId);
                               if (fileId) {
                                 const previewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-                                console.log(
-                                  `Generated preview URL:`,
-                                  previewUrl
-                                );
                                 return previewUrl;
                               }
                             }
@@ -812,10 +794,6 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
                           const previewUrl = fileUrl
                             ? getPreviewUrl(fileUrl)
                             : null;
-
-                          // Log the final URLs being used
-                          console.log(`Final fileUrl:`, fileUrl);
-                          console.log(`Final previewUrl:`, previewUrl);
 
                           return (
                             <div
@@ -1039,7 +1017,7 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
                 <CustomTabPanel value={value} index={5}>
                   <div className="space-y-4">
                     {user.event_participation &&
-                    user.event_participation.length > 0 ? (
+                      user.event_participation.length > 0 ? (
                       <div>
                         <h4 className="font-medium text-lg mb-4 flex items-center gap-2">
                           <EventAvailableIcon className="text-[#ca0019]" />
@@ -1061,8 +1039,8 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
                                       event.eventStatus === "upcoming"
                                         ? "primary"
                                         : event.eventStatus === "completed"
-                                        ? "success"
-                                        : "default"
+                                          ? "success"
+                                          : "default"
                                     }
                                   />
                                 </div>

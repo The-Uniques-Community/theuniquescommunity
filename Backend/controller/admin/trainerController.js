@@ -1,4 +1,6 @@
 import Trainer from "../../models/admin/trainerModel.js";
+import mongoose from "mongoose";
+import File from "../../models/member/fileModel.js";
 
 // Add a new trainer
 export const addTrainer = async (req, res) => {
@@ -68,11 +70,42 @@ export const updateTrainer = async (req, res) => {
 export const deleteTrainer = async (req, res) => {
     try {
         const { id } = req.params;
-        const deletedTrainer = await Trainer.findByIdAndDelete(id);
+        const trainer = await Trainer.findById(id);
 
-        if (!deletedTrainer) {
+        if (!trainer) {
             return res.status(404).json({ message: "Trainer not found." });
         }
+
+        // Check if trainer has a profile picture and delete the file record
+        if (trainer.profilePic) {
+            try {
+                // Assuming profilePic stores the File ID or we need to find it
+                // Based on previous context, profilePic in Trainer model is a reference to File model
+                // We should delete the File document. 
+                // Note: This does not delete from Google Drive, only the DB record.
+                // To delete from Drive, we would need a drive service helper.
+                // For now, we are cleaning up the DB reference as requested.
+
+                // If profilePic is an object (populated), use ._id, else use it directly
+                const fileId = trainer.profilePic._id || trainer.profilePic;
+
+                // Import File model dynamically or ensure it's imported at top (it's not, so we'll just use mongoose model if not imported, 
+                // but better to rely on what we have or just import it)
+                // Let's add the import at the top in a separate edit if needed, or assume it's global? 
+                // No, ES modules. I'll add the import in a minute, but for now let's write the logic.
+                // Actually, checking previous steps, I should probably import File model.
+                // But wait, I can't add import here easily without changing top of file. 
+                // I will use mongoose.model("File") to retrieve it without restart.
+
+                const File = mongoose.model("File");
+                await File.findByIdAndDelete(fileId);
+            } catch (fileError) {
+                console.error("Error deleting trainer profile picture record:", fileError);
+                // Continue with trainer deletion even if file deletion fails
+            }
+        }
+
+        await Trainer.findByIdAndDelete(id);
 
         res.status(200).json({ message: "Trainer deleted successfully!" });
     } catch (error) {

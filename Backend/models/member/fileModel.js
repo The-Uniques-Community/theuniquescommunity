@@ -1,17 +1,17 @@
 import mongoose from 'mongoose'
 const fileSchema = new mongoose.Schema({
-    fileName:{
+    fileName: {
         type: String,
     },
-    fileUrl:{
-        type: String,
-    
-    },
-    fileId:{
+    fileUrl: {
         type: String,
 
     },
-    fileOwner:{
+    fileId: {
+        type: String,
+
+    },
+    fileOwner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Member',
     },

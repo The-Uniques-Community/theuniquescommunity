@@ -15,6 +15,8 @@ import {
   Twitter,
   GitHub,
   Email,
+  Edit,
+  Delete,
 } from "@mui/icons-material";
 import "tailwindcss/tailwind.css";
 import ProfileModal from "../Modal/ProfileModal";
@@ -74,11 +76,10 @@ const UserProfileModal = ({ open, handleClose, userData }) => {
             <Typography variant="body2" className="text-gray-500">
               Status:{" "}
               <span
-                className={`capitalize ${
-                  userData?.profileStatus === "active"
-                    ? "text-green-600"
-                    : "text-red-600"
-                }`}
+                className={`capitalize ${userData?.profileStatus === "active"
+                  ? "text-green-600"
+                  : "text-red-600"
+                  }`}
               >
                 {userData?.profileStatus}
               </span>
@@ -295,13 +296,13 @@ const sampleUserData = {
   ],
 };
 
-export const MemberCardDashboard = ({ user }) => {
+export const MemberCardDashboard = ({ user, onEdit, onDelete, refreshData }) => {
   const [open, setOpen] = useState(false);
 
   const handleClose = () => setOpen(false);
   const getProxyImageUrl = (fileId) => {
     if (!fileId) return "/placeholder.svg"; // Fallback image
-    return `https://theuniquesbackend.vercel.app/api/image-proxy/${fileId}`;
+    return `http://localhost:5000/api/image-proxy/${fileId}`;
   };
   return (
     <>
@@ -322,6 +323,38 @@ export const MemberCardDashboard = ({ user }) => {
               {user.profileStatus}
             </span>
           </div>
+
+          {/* Action Buttons (Edit/Delete) - Only show if handlers are provided */}
+          {(onEdit || onDelete) && (
+            <div className="flex justify-end gap-1 mb-2">
+              {onEdit && (
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(user);
+                  }}
+                  className="text-blue-600 hover:bg-blue-50"
+                  title="Edit Member"
+                >
+                  <Edit fontSize="small" />
+                </IconButton>
+              )}
+              {onDelete && (
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(user._id);
+                  }}
+                  className="text-red-600 hover:bg-red-50"
+                  title="Delete Member"
+                >
+                  <Delete fontSize="small" />
+                </IconButton>
+              )}
+            </div>
+          )}
 
           {/* User Details */}
           <div className="flex items-center gap-3">
