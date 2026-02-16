@@ -348,14 +348,22 @@ const Trainers = () => {
               />
             )}
 
-            <TextField
-              label="Teaching Batch"
-              name="teachingBatch"
-              value={formData.teachingBatch}
-              onChange={handleChange}
-              fullWidth
-              helperText="Batch they are teaching"
-            />
+            <FormControl fullWidth>
+              <InputLabel>Teaching Batch</InputLabel>
+              <Select
+                label="Teaching Batch"
+                name="teachingBatch"
+                value={formData.teachingBatch}
+                onChange={handleChange}
+              >
+                <MenuItem value="The Uniques 1.0">The Uniques 1.0</MenuItem>
+                <MenuItem value="The Uniques 2.0">The Uniques 2.0</MenuItem>
+                <MenuItem value="The Uniques 3.0">The Uniques 3.0</MenuItem>
+                <MenuItem value="The Uniques 4.0">The Uniques 4.0</MenuItem>
+                <MenuItem value="The Uniques 5.0">The Uniques 5.0</MenuItem>
+              </Select>
+              <FormHelperText>Batch they are teaching</FormHelperText>
+            </FormControl>
              <TextField
               label="Course"
               name="course"

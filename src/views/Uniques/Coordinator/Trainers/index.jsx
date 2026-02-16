@@ -526,11 +526,11 @@ const Trainers = () => {
                                             label="Uniques Batch (From)"
                                             onChange={formik.handleChange}
                                         >
-                                            <MenuItem value="Uniques 1.0">Uniques 1.0</MenuItem>
-                                            <MenuItem value="Uniques 2.0">Uniques 2.0</MenuItem>
-                                            <MenuItem value="Uniques 3.0">Uniques 3.0</MenuItem>
-                                            <MenuItem value="Uniques 4.0">Uniques 4.0</MenuItem>
-                                            <MenuItem value="Uniques 5.0">Uniques 5.0</MenuItem>
+                                            <MenuItem value="The Uniques 1.0">The Uniques 1.0</MenuItem>
+                                            <MenuItem value="The Uniques 2.0">The Uniques 2.0</MenuItem>
+                                            <MenuItem value="The Uniques 3.0">The Uniques 3.0</MenuItem>
+                                            <MenuItem value="The Uniques 4.0">The Uniques 4.0</MenuItem>
+                                            <MenuItem value="The Uniques 5.0">The Uniques 5.0</MenuItem>
                                         </Select>
                                         {formik.touched.trainerBatch && formik.errors.trainerBatch && (
                                             <FormHelperText>{formik.errors.trainerBatch}</FormHelperText>
@@ -565,9 +565,11 @@ const Trainers = () => {
                                         label="Teaching Batch"
                                         onChange={formik.handleChange}
                                     >
-                                        <MenuItem value="Uniques 3.0">Uniques 3.0</MenuItem>
-                                        <MenuItem value="Uniques 4.0">Uniques 4.0</MenuItem>
-                                        <MenuItem value="Uniques 5.0">Uniques 5.0</MenuItem>
+                                        <MenuItem value="The Uniques 1.0">The Uniques 1.0</MenuItem>
+                                        <MenuItem value="The Uniques 2.0">The Uniques 2.0</MenuItem>
+                                        <MenuItem value="The Uniques 3.0">The Uniques 3.0</MenuItem>
+                                        <MenuItem value="The Uniques 4.0">The Uniques 4.0</MenuItem>
+                                        <MenuItem value="The Uniques 5.0">The Uniques 5.0</MenuItem>
                                     </Select>
                                     {formik.touched.teachingBatch && formik.errors.teachingBatch && (
                                         <FormHelperText>{formik.errors.teachingBatch}</FormHelperText>

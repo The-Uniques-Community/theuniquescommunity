@@ -11,6 +11,7 @@ const Trainers = () => {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [error, setError] = useState(null);
+    const [activeTab, setActiveTab] = useState(0);
 
     useEffect(() => {
         const fetchTrainers = async () => {
@@ -29,11 +30,46 @@ const Trainers = () => {
         fetchTrainers();
     }, []);
 
-    const filteredTrainers = trainers.filter(trainer =>
-        trainer.fullName.toLowerCase().includes(search.toLowerCase()) ||
-        trainer.email.toLowerCase().includes(search.toLowerCase()) ||
-        (trainer.skills && trainer.skills.some(skill => skill.toLowerCase().includes(search.toLowerCase())))
-    );
+    // Fixed batch versions for tabs (just the version numbers for matching)
+    const batchVersions = [
+        null, // Tab 0: All Batches
+        "1.0",
+        "2.0",
+        "3.0",
+        "4.0",
+        "5.0"
+    ];
+
+    // Filter trainers based on active tab and search
+    const getFilteredTrainers = () => {
+        let filtered = trainers;
+
+        // Filter by batch if not on "All Batches" tab
+        if (activeTab > 0 && batchVersions[activeTab]) {
+            const version = batchVersions[activeTab];
+            filtered = filtered.filter(trainer => {
+                const tb = (trainer.teachingBatch || trainer.batch || "").toLowerCase();
+                return tb.includes(version);
+            });
+        }
+
+        // Apply search filter only if search text exists
+        if (search.trim()) {
+            const q = search.trim().toLowerCase();
+            filtered = filtered.filter(trainer => {
+                const name = (trainer.fullName || "").toLowerCase();
+                const email = (trainer.email || "").toLowerCase();
+                const course = (trainer.course || "").toLowerCase();
+                const designation = (trainer.designation || "").toLowerCase();
+                const skillMatch = Array.isArray(trainer.skills) && trainer.skills.some(skill => (skill || "").toLowerCase().includes(q));
+                return name.includes(q) || email.includes(q) || course.includes(q) || designation.includes(q) || skillMatch;
+            });
+        }
+
+        return filtered;
+    };
+
+    const filteredTrainers = getFilteredTrainers();
 
     return (
         <Box sx={{ minHeight: "100vh", bgcolor: "#f8fafc", py: 8 }}>
@@ -67,39 +103,83 @@ const Trainers = () => {
                         They are dedicated to shaping the next generation of tech leaders.
                     </Typography>
 
-                    {/* Search Bar */}
-                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                        <TextField
-                            placeholder="Search by name, skill, or role..."
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            variant="outlined"
-                            sx={{
-                                width: { xs: "100%", md: "500px" },
-                                bgcolor: "white",
-                                borderRadius: "50px",
-                                "& .MuiOutlinedInput-root": {
-                                    borderRadius: "50px",
-                                    "& fieldset": {
-                                        borderColor: "#e2e8f0",
-                                        borderWidth: "2px",
-                                    },
-                                    "&:hover fieldset": {
-                                        borderColor: "#cbd5e1",
-                                    },
-                                    "&.Mui-focused fieldset": {
-                                        borderColor: "#ca0019",
-                                    },
-                                },
-                            }}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon sx={{ color: "#94a3b8", ml: 1 }} />
-                                    </InputAdornment>
-                                ),
-                            }}
-                        />
+                    {/* Batch Tabs */}
+                    <Box sx={{ mb: 6 }}>
+                       
+                        
+                        <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 2 }}>
+                            {/* All Batches Button */}
+                            <button
+                                onClick={() => setActiveTab(0)}
+                                className={`px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
+                                    activeTab === 0
+                                        ? 'bg-[#ca0019] text-white shadow-lg'
+                                        : 'bg-white text-slate-700 border border-slate-200 hover:border-[#ca0019] hover:text-[#ca0019]'
+                                }`}
+                            >
+                                🏆 All Batches
+                            </button>
+
+                            {/* Batch 1.0 */}
+                            <button
+                                onClick={() => setActiveTab(1)}
+                                className={`px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
+                                    activeTab === 1
+                                        ? 'bg-[#ca0019] text-white shadow-lg'
+                                        : 'bg-white text-slate-700 border border-slate-200 hover:border-[#ca0019] hover:text-[#ca0019]'
+                                }`}
+                            >
+                                🏆 The Uniques 1.0
+                            </button>
+
+                            {/* Batch 2.0 */}
+                            <button
+                                onClick={() => setActiveTab(2)}
+                                className={`px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
+                                    activeTab === 2
+                                        ? 'bg-[#ca0019] text-white shadow-lg'
+                                        : 'bg-white text-slate-700 border border-slate-200 hover:border-[#ca0019] hover:text-[#ca0019]'
+                                }`}
+                            >
+                                🏆 The Uniques 2.0
+                            </button>
+
+                            {/* Batch 3.0 */}
+                            <button
+                                onClick={() => setActiveTab(3)}
+                                className={`px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
+                                    activeTab === 3
+                                        ? 'bg-[#ca0019] text-white shadow-lg'
+                                        : 'bg-white text-slate-700 border border-slate-200 hover:border-[#ca0019] hover:text-[#ca0019]'
+                                }`}
+                            >
+                                🏆 The Uniques 3.0
+                            </button>
+
+                            {/* Batch 4.0 */}
+                            <button
+                                onClick={() => setActiveTab(4)}
+                                className={`px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
+                                    activeTab === 4
+                                        ? 'bg-[#ca0019] text-white shadow-lg'
+                                        : 'bg-white text-slate-700 border border-slate-200 hover:border-[#ca0019] hover:text-[#ca0019]'
+                                }`}
+                            >
+                                🏆 The Uniques 4.0
+                            </button>
+
+                            {/* Batch 5.0 */}
+                            <button
+                                onClick={() => setActiveTab(5)}
+                                className={`px-6 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
+                                    activeTab === 5
+                                        ? 'bg-[#ca0019] text-white shadow-lg'
+                                        : 'bg-white text-slate-700 border border-slate-200 hover:border-[#ca0019] hover:text-[#ca0019]'
+                                }`}
+                            >
+                                🏆 The Uniques 5.0
+                            </button>
+                        </Box>
                     </Box>
                 </Box>
 
