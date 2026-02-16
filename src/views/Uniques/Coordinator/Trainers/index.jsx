@@ -145,62 +145,11 @@ const Trainers = () => {
         },
     });
 
-<<<<<<<<< Temporary merge branch 1
-=========
-    // Mock Data
-    // Mock Data
-    const fetchTrainers = () => {
-        const mockTrainers = [
-            {
-                _id: "1",
-                fullName: "Jane Doe",
-                email: "jane.doe@example.com",
-                course: "M.Tech CSE",
-                batch: "Trainer Batch 1",
-                profileStatus: "active",
-                bio: "Senior Technical Trainer specializing in Full Stack Development.",
-                skills: ["React", "Node.js", "MongoDB", "Express"],
-                linkedinProfile: "https://linkedin.com",
-                githubProfile: "https://github.com",
-                profilePic: null
-            },
-            {
-                _id: "2",
-                fullName: "John Smith",
-                email: "john.smith@example.com",
-                course: "B.Tech CSE",
-                batch: "Trainer Batch 1",
-                profileStatus: "active",
-                bio: "Expert in Data Structures and Algorithms.",
-                skills: ["C++", "Java", "Python"],
-                linkedinProfile: "https://linkedin.com",
-                profilePic: null
-            },
-            {
-                _id: "3",
-                fullName: "Alice Johnson",
-                email: "alice.j@example.com",
-                course: "Ph.D CS",
-                batch: "Trainer Batch 2",
-                profileStatus: "active",
-                bio: "AI/ML Enthusiast and Trainer.",
-                skills: ["Python", "TensorFlow", "PyTorch"],
-                githubProfile: "https://github.com",
-                profilePic: null
-            }
-        ];
-        setTrainers(mockTrainers);
-    };
-
-    useEffect(() => {
-        fetchTrainers();
-    }, []);
 
     const handleRefresh = () => {
-        window.location.reload();
+        fetchTrainers();
+        toast.info("Trainers list refreshed.");
     };
-
->>>>>>>>> Temporary merge branch 2
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
     };

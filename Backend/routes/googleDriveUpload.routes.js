@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 import Member from "../models/member/memberModel.js";
 import Event from "../models/member/eventModel.js";
 import File from "../models/member/fileModel.js";
+import Trainer from "../models/admin/trainerModel.js";
 import {
   createFolder,
   findFolder,
@@ -901,6 +902,115 @@ router.post("/fine_file_upload", upload.array("files", 5), async (req, res) => {
         console.error("Error deleting temp file:", file.path, err);
       }
     });
+  }
+});
+
+
+/**
+ * POST /api/trainer_file_upload
+ * Uploads files for trainers and updates their profile picture.
+ * 
+ * Expected form-data:
+ * - trainerName: Name of the trainer (used for folder creation)
+ * - trainerId: MongoDB ID of the trainer
+ * - file: The image file to upload
+ */
+router.post("/trainer_file_upload", upload.single("file"), async (req, res) => {
+  const tempFile = req.file;
+
+  try {
+    const { trainerName, trainerId } = req.body;
+    const mainFolderName = "The Uniques Trainers";
+
+    if (!tempFile || !trainerName || !trainerId) {
+      return res.status(400).json({
+        message: "Missing required fields or file."
+      });
+    }
+
+    // Find the trainer
+    const trainer = await Trainer.findById(trainerId);
+    if (!trainer) {
+      return res.status(404).json({
+        message: `Trainer with ID ${trainerId} not found`
+      });
+    }
+
+    // Create folder structure: Main Folder -> Trainer Folder
+    const folderStructure = await createFolderStructure(
+      mainFolderName,
+      trainerName,
+      ["profile"]
+    );
+
+    const targetFolderId = folderStructure.subfolders["profile"].id;
+
+    // Upload file to Google Drive
+    const fileUploadResult = await uploadFile(tempFile.path, targetFolderId, {
+      trainerName,
+      category: "trainer-profile",
+      customPrefix: tempFile.originalname.substring(0, 15).replace(/[^a-zA-Z0-9-_]/g, '')
+    });
+
+    if (trainer.profilePic) {
+      // Check if profilePic is an ID string or object
+      const profilePicId = typeof trainer.profilePic === 'object' ? trainer.profilePic._id : trainer.profilePic;
+      
+      // Update existing File document
+      await File.findByIdAndUpdate(
+        profilePicId,
+        {
+          fileName: fileUploadResult.fileName,
+          fileUrl: fileUploadResult.fileUrl,
+          fileId: fileUploadResult.fileId,
+          lastUpdated: new Date()
+        },
+        { new: true }
+      );
+    } else {
+      // Create new File document
+      const fileRecord = new File({
+        fileName: fileUploadResult.fileName,
+        fileUrl: fileUploadResult.fileUrl,
+        fileId: fileUploadResult.fileId,
+        relatedTo: "trainer",
+        relatedId: trainerId,
+        fileType: "trainer-profile"
+      });
+      await fileRecord.save();
+
+      // Update trainer
+      await Trainer.findByIdAndUpdate(trainerId, {
+        profilePic: fileRecord._id
+      });
+    }
+
+    // Send response
+    res.status(200).json({
+      message: `Trainer profile picture updated successfully`,
+      file: {
+        ...fileUploadResult,
+        _id: trainer.profilePic || "new_id", 
+      },
+      trainerId: trainerId,
+      trainerName: trainerName
+    });
+
+  } catch (error) {
+    console.error("Error in trainer file upload:", error);
+    res.status(500).json({
+      message: "Error during trainer file upload.",
+      error: error.message
+    });
+  } finally {
+    // Clean up temporary file
+    try {
+      if (fs.existsSync(tempFile.path)) {
+        fs.unlinkSync(tempFile.path);
+      }
+    } catch (err) {
+      console.error("Error deleting temp file:", tempFile.path, err);
+    }
   }
 });
 
