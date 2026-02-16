@@ -31,8 +31,9 @@ const Contact = Loader(lazy(() => import("@/views/Landing/Contact/index")));
 const Training = Loader(lazy(() => import("@/views/Landing/Training-model/Training")));
 const NotFound = Loader(lazy(() => import("@/views/Landing/NotFound/index")));
 const CommunityPage = Loader(lazy(() => import("@/views/Landing/Community/index")));
-const SuccessStories  = Loader(lazy(() => import("@/views/Landing/SuccessStories/index")));
-const Timeline = Loader(lazy(()=>import('@/utils/Timeline/Timeline')));
+const SuccessStories = Loader(lazy(() => import("@/views/Landing/SuccessStories/index")));
+const Trainers = Loader(lazy(() => import("@/views/Landing/Trainers/index")));
+const Timeline = Loader(lazy(() => import('@/utils/Timeline/Timeline')));
 
 const timelineData = [
   {
@@ -75,14 +76,15 @@ const LandingRoutes = {
     { path: "training", element: <Training /> },
     { path: "blogs", element: <BlogPage /> },
     { path: "contact", element: <Contact /> },
-    { path: "batches", element: <BatchesPage />  },
-    { path: "success-stories", element: <SuccessStories />  },
-    { path: "notices", element: <Notices/>  },
-    { path: "test", element: <Timeline events={timelineData}/> },
+    { path: "batches", element: <BatchesPage /> },
+    { path: "success-stories", element: <SuccessStories /> },
+    { path: "trainers", element: <Trainers /> },
+    { path: "notices", element: <Notices /> },
+    { path: "test", element: <Timeline events={timelineData} /> },
     { path: "forget-password", element: <ForgetPassword /> },
     // Member profile route - this should come BEFORE the wildcard route
     { path: "profile/:id", element: <MemberProfile /> },
-    
+
     // Wildcard route should be last
     { path: "*", element: <NotFound /> },
   ],

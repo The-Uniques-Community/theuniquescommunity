@@ -46,7 +46,7 @@ const Navbar = () => {
     // Check for token in localStorage or sessionStorage
     try {
       // Call the backend endpoint that verifies the role using the verifyRole middleware
-     const response = await axios.get(`https://theuniquesbackend.vercel.app/auth/verify_user`, {
+      const response = await axios.get(`http://localhost:5000/auth/verify_user`, {
         withCredentials: true,
       });
       setUser(response?.data.user); // Set user data from response
@@ -59,7 +59,7 @@ const Navbar = () => {
 
       setIsLoggedIn(false);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -67,7 +67,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "https://theuniquesbackend.vercel.app/auth/logout",
+        "http://localhost:5000/auth/logout",
         {},
         { withCredentials: true }
       );
@@ -88,6 +88,7 @@ const Navbar = () => {
       { text: "Batches", icon: <SchoolIcon />, link: "/batches" },
       { text: "Training Model", icon: <ScienceIcon />, link: "/training" },
       { text: "Success Stories", icon: <CheckCircleIcon />, link: "/success-stories" },
+      { text: "Trainers", icon: <SchoolIcon />, link: "/trainers" },
       { text: "Events", icon: <EventIcon />, link: "/events" },
       { text: "Community", icon: <GroupsIcon />, link: "/community-main" },
       { text: "Blogs", icon: <ArticleIcon />, link: "/blogs" },
