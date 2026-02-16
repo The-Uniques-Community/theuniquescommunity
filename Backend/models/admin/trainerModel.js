@@ -56,7 +56,8 @@ const trainerSchema = new mongoose.Schema({
         default: "active",
     },
     profilePic: {
-        type: String, // URL or File ID
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'File',
         default: null,
     },
     linkedinProfile: {

@@ -55,15 +55,15 @@ const Trainers = () => {
   const [uploading, setUploading] = useState(false);
   const [tabValue, setTabValue] = useState(0);
 
-  const fetchTrainers = async () => {
+  const fetchTrainers = async (showLoading = true) => {
     try {
-      setLoading(true);
+      if (showLoading) setLoading(true);
       const data = await getAllTrainers();
       setTrainers(data);
     } catch (err) {
       setError("Failed to fetch trainers");
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   };
 
@@ -143,10 +143,15 @@ const Trainers = () => {
       }
 
       if (selectedImage && trainerId) {
-        await uploadTrainerImage(trainerId, trainerName, selectedImage);
+        try {
+          await uploadTrainerImage(trainerId, trainerName, selectedImage);
+        } catch (uploadErr) {
+          console.error("Image upload failed:", uploadErr);
+          // Optional: Add toast here if Admin dashboard has toast support (it seems to use Alert currently)
+        }
       }
 
-      fetchTrainers();
+      fetchTrainers(false);
       handleClose();
     } catch (err) {
       console.error("Error saving trainer:", err);
@@ -184,7 +189,7 @@ const Trainers = () => {
     
     // Let's assume profilePic is the ID of the File document (or populated object with _id).
     // Using simple logic:
-    const id =  fileData._id || fileData;
+    const id =  fileData.fileId || fileData;
     return `https://theuniquesbackend.vercel.app/api/image-proxy/${id}`;
   };
 

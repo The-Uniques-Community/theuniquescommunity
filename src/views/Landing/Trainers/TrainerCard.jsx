@@ -30,8 +30,8 @@ export const TrainerCard = ({ user }) => {
         return `http://localhost:5000/api/image-proxy/${fileId}`;
     };
 
-    const initialImg = user.profilePic?.fileId
-        ? getProxyImageUrl(user.profilePic.fileId)
+    const initialImg = user.profilePic
+        ? getProxyImageUrl(user.profilePic.fileId || user.profilePic)
         : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName)}&background=random`;
 
     const [imgSrc, setImgSrc] = useState(initialImg);

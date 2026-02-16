@@ -65,10 +65,18 @@ const Trainers = () => {
     const [selectedTrainer, setSelectedTrainer] = useState(null);
     const [anchorEl, setAnchorEl] = useState(null);
     const [menuTrainerId, setMenuTrainerId] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(null);
+
+    const handleFileChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setSelectedImage(e.target.files[0]);
+        }
+    };
 
     // Fetch Trainers from Backend
-    const fetchTrainers = async () => {
-        setLoading(true);
+    // Fetch Trainers from Backend
+    const fetchTrainers = async (showLoading = true) => {
+        if (showLoading) setLoading(true);
         try {
             const response = await axios.get(`${burl}/api/admin/trainers/all-trainers`);
             setTrainers(response.data);
@@ -76,8 +84,15 @@ const Trainers = () => {
             console.error("Error fetching trainers:", error);
             toast.error(error.response?.data?.message || "Failed to fetch trainers.");
         } finally {
-            setLoading(false);
+            if (showLoading) setLoading(false);
         }
+    };
+
+    const getProxyImageUrl = (profilePic) => {
+        if (!profilePic) return "/placeholder.svg";
+        const fileId = profilePic.fileId || (typeof profilePic === 'string' ? profilePic : null);
+        if (fileId) return `${burl}/api/image-proxy/${fileId}`;
+        return "/placeholder.svg";
     };
 
     useEffect(() => {
@@ -127,16 +142,38 @@ const Trainers = () => {
             const payload = { ...values, skills: skillsArray };
 
             try {
+                let trainerId;
+                let trainerName = values.fullName;
+
                 if (selectedTrainer) {
                     // Update Logic
-                    await axios.put(`${burl}/api/admin/trainers/update-trainer/${selectedTrainer._id}`, payload);
+                    const response = await axios.put(`${burl}/api/admin/trainers/update-trainer/${selectedTrainer._id}`, payload);
+                    trainerId = selectedTrainer._id;
                     toast.success("Trainer updated successfully!");
                 } else {
                     // Add Logic
-                    await axios.post(`${burl}/api/admin/trainers/add-trainer`, payload);
+                    const response = await axios.post(`${burl}/api/admin/trainers/add-trainer`, payload);
+                    trainerId = response.data.trainer._id;
                     toast.success("Trainer added successfully!");
                 }
-                fetchTrainers();
+
+                if (selectedImage && trainerId) {
+                    try {
+                        const formData = new FormData();
+                        formData.append("trainerId", trainerId);
+                        formData.append("trainerName", trainerName);
+                        formData.append("file", selectedImage);
+
+                        await axios.post(`${burl}/upload/trainer_file_upload`, formData, {
+                            headers: { "Content-Type": "multipart/form-data" },
+                        });
+                    } catch (uploadErr) {
+                        console.error("Image upload failed:", uploadErr);
+                        toast.warn("Trainer saved, but image upload failed.");
+                    }
+                }
+
+                fetchTrainers(false);
                 handleCloseDialog();
             } catch (error) {
                 console.error("Error saving trainer:", error);
@@ -179,6 +216,7 @@ const Trainers = () => {
     const handleCloseDialog = () => {
         setOpenDialog(false);
         setSelectedTrainer(null);
+        setSelectedImage(null);
         formik.resetForm();
     };
 
@@ -329,7 +367,7 @@ const Trainers = () => {
                                         <TableRow key={trainer._id} hover>
                                             <TableCell>
                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                                    <Avatar src={trainer.profilePic || "/placeholder.svg"} alt={trainer.fullName} />
+                                                    <Avatar src={getProxyImageUrl(trainer.profilePic)} alt={trainer.fullName} />
                                                     <Typography variant="subtitle2">{trainer.fullName}</Typography>
                                                 </Box>
                                             </TableCell>
@@ -423,8 +461,8 @@ const Trainers = () => {
                 </DialogTitle>
                 <DialogContent dividers>
                     <form onSubmit={formik.handleSubmit}>
-                        <Grid container spacing={2} sx={{ mt: 0.5 }}>
-                            <Grid item xs={12}>
+                        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 2 }}>
+                            <Box sx={{ gridColumn: 'span 12' }}>
                                 <TextField
                                     fullWidth
                                     id="fullName"
@@ -435,8 +473,8 @@ const Trainers = () => {
                                     error={formik.touched.fullName && Boolean(formik.errors.fullName)}
                                     helperText={formik.touched.fullName && formik.errors.fullName}
                                 />
-                            </Grid>
-                            <Grid item xs={12}>
+                            </Box>
+                            <Box sx={{ gridColumn: 'span 12' }}>
                                 <TextField
                                     fullWidth
                                     id="email"
@@ -447,8 +485,8 @@ const Trainers = () => {
                                     error={formik.touched.email && Boolean(formik.errors.email)}
                                     helperText={formik.touched.email && formik.errors.email}
                                 />
-                            </Grid>
-                            <Grid item xs={12}>
+                            </Box>
+                            <Box sx={{ gridColumn: 'span 12' }}>
                                 <TextField
                                     fullWidth
                                     id="contact"
@@ -459,8 +497,8 @@ const Trainers = () => {
                                     error={formik.touched.contact && Boolean(formik.errors.contact)}
                                     helperText={formik.touched.contact && formik.errors.contact}
                                 />
-                            </Grid>
-                            <Grid item xs={12}>
+                            </Box>
+                            <Box sx={{ gridColumn: 'span 12' }}>
                                 <FormControl component="fieldset">
                                     <FormLabel component="legend">Origin</FormLabel>
                                     <RadioGroup
@@ -474,10 +512,10 @@ const Trainers = () => {
                                         <FormControlLabel value="external" control={<Radio color="primary" />} label="External" />
                                     </RadioGroup>
                                 </FormControl>
-                            </Grid>
+                            </Box>
 
                             {formik.values.origin === 'uniques' && (
-                                <Grid item xs={6}>
+                                <Box sx={{ gridColumn: 'span 6' }}>
                                     <FormControl fullWidth error={formik.touched.trainerBatch && Boolean(formik.errors.trainerBatch)}>
                                         <InputLabel id="trainer-batch-label">Uniques Batch (From)</InputLabel>
                                         <Select
@@ -498,11 +536,11 @@ const Trainers = () => {
                                             <FormHelperText>{formik.errors.trainerBatch}</FormHelperText>
                                         )}
                                     </FormControl>
-                                </Grid>
+                                </Box>
                             )}
 
                             {formik.values.origin === 'external' && (
-                                <Grid item xs={6}>
+                                <Box sx={{ gridColumn: 'span 6' }}>
                                     <TextField
                                         fullWidth
                                         id="designation"
@@ -513,10 +551,10 @@ const Trainers = () => {
                                         error={formik.touched.designation && Boolean(formik.errors.designation)}
                                         helperText={formik.touched.designation && formik.errors.designation}
                                     />
-                                </Grid>
+                                </Box>
                             )}
 
-                            <Grid item xs={6}>
+                            <Box sx={{ gridColumn: 'span 6' }}>
                                 <FormControl fullWidth error={formik.touched.teachingBatch && Boolean(formik.errors.teachingBatch)}>
                                     <InputLabel id="teaching-batch-label">Teaching Batch</InputLabel>
                                     <Select
@@ -535,8 +573,8 @@ const Trainers = () => {
                                         <FormHelperText>{formik.errors.teachingBatch}</FormHelperText>
                                     )}
                                 </FormControl>
-                            </Grid>
-                            <Grid item xs={6}>
+                            </Box>
+                            <Box sx={{ gridColumn: 'span 6' }}>
                                 <TextField
                                     fullWidth
                                     id="course"
@@ -547,8 +585,8 @@ const Trainers = () => {
                                     error={formik.touched.course && Boolean(formik.errors.course)}
                                     helperText={formik.touched.course && formik.errors.course}
                                 />
-                            </Grid>
-                            <Grid item xs={12}>
+                            </Box>
+                            <Box sx={{ gridColumn: 'span 12' }}>
                                 <TextField
                                     fullWidth
                                     id="skills"
@@ -560,8 +598,8 @@ const Trainers = () => {
                                     error={formik.touched.skills && Boolean(formik.errors.skills)}
                                     helperText={formik.touched.skills && formik.errors.skills}
                                 />
-                            </Grid>
-                            <Grid item xs={12}>
+                            </Box>
+                            <Box sx={{ gridColumn: 'span 12' }}>
                                 <TextField
                                     fullWidth
                                     id="bio"
@@ -574,9 +612,21 @@ const Trainers = () => {
                                     error={formik.touched.bio && Boolean(formik.errors.bio)}
                                     helperText={formik.touched.bio && formik.errors.bio}
                                 />
-                            </Grid>
+                            </Box>
 
-                        </Grid>
+                            <Box sx={{ gridColumn: 'span 12' }}>
+                                <Typography variant="subtitle2" gutterBottom>Profile Image</Typography>
+                                <input
+                                    accept="image/*"
+                                    type="file"
+                                    onChange={handleFileChange}
+                                    style={{ display: 'block', width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }}
+                                />
+                                <Typography variant="caption" color="textSecondary">
+                                    {selectedTrainer ? "Upload to replace current image." : "Upload an image."}
+                                </Typography>
+                            </Box>
+                        </Box>
                     </form>
                 </DialogContent>
                 <DialogActions sx={{ p: 2 }}>

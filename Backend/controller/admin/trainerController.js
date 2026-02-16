@@ -39,7 +39,7 @@ export const addTrainer = async (req, res) => {
 // Get all trainers
 export const getAllTrainers = async (req, res) => {
     try {
-        const trainers = await Trainer.find().sort({ createdAt: -1 });
+        const trainers = await Trainer.find().populate('profilePic').sort({ createdAt: -1 });
         res.status(200).json(trainers);
     } catch (error) {
         console.error("Error fetching trainers:", error);
@@ -53,7 +53,7 @@ export const updateTrainer = async (req, res) => {
         const { id } = req.params;
         const updates = req.body;
 
-        const updatedTrainer = await Trainer.findByIdAndUpdate(id, updates, { new: true });
+        const updatedTrainer = await Trainer.findByIdAndUpdate(id, updates, { new: true }).populate('profilePic');
 
         if (!updatedTrainer) {
             return res.status(404).json({ message: "Trainer not found." });

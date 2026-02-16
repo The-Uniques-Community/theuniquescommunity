@@ -35,7 +35,7 @@ import "tailwindcss/tailwind.css";
 const TrainerProfileDialog = ({ open, handleClose, user }) => {
     const getProxyImageUrl = (fileId) => {
         if (!fileId) return "/placeholder.svg"; // Fallback image
-        return `https://theuniquesbackend.vercel.app/api/image-proxy/${fileId}`;
+        return `http://localhost:5000/api/image-proxy/${fileId}`;
     };
 
     const formatDate = (dateString) => {
@@ -80,8 +80,8 @@ const TrainerProfileDialog = ({ open, handleClose, user }) => {
                                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-slate-50">
                                     <img
                                         src={
-                                            user?.profilePic?.fileId
-                                                ? getProxyImageUrl(user.profilePic.fileId)
+                                            user?.profilePic
+                                                ? getProxyImageUrl(user.profilePic.fileId || user.profilePic)
                                                 : userIcon
                                         }
                                         alt="Profile"
@@ -241,7 +241,7 @@ export const TrainerCardDashboard = ({ user }) => {
     const handleClose = () => setOpen(false);
     const getProxyImageUrl = (fileId) => {
         if (!fileId) return "/placeholder.svg"; // Fallback image
-        return `https://theuniquesbackend.vercel.app/api/image-proxy/${fileId}`;
+        return `http://localhost:5000/api/image-proxy/${fileId}`;
     };
     return (
         <>
@@ -267,8 +267,8 @@ export const TrainerCardDashboard = ({ user }) => {
                     <div className="flex items-center gap-3">
                         <img
                             src={
-                                user?.profilePic?.fileId
-                                    ? getProxyImageUrl(user.profilePic.fileId)
+                                user?.profilePic
+                                    ? getProxyImageUrl(user.profilePic.fileId || user.profilePic)
                                     : userIcon
                             }
                             alt={user.fullName}

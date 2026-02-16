@@ -55,7 +55,7 @@ export const uploadTrainerImage = async (trainerId, trainerName, file) => {
     formData.append("trainerName", trainerName);
     formData.append("file", file);
 
-    const response = await axios.post(`${UPLOAD_URL}/trainer_file_upload`, formData, {
+    const response = await axios.post(`https://theuniquesbackend.vercel.app/upload/trainer_file_upload`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
