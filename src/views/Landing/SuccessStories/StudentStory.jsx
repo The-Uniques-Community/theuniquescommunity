@@ -14,8 +14,7 @@ import {
 import {
   School as SchoolIcon,
   Timeline as TimelineIcon,
-  PlayCircleOutline as VideoIcon,
-  ChatBubbleOutline as ChatIcon
+  PlayCircleOutline as VideoIcon
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -343,11 +342,6 @@ const StudentStory = () => {
                   iconPosition="start"
                   label="Video Message"
                 />
-                <StyledTab
-                  icon={<ChatIcon />}
-                  iconPosition="start"
-                  label="Chatbot"
-                />
               </StyledTabs>
             </Box>
 
@@ -379,13 +373,11 @@ const StudentStory = () => {
               <VideoMessage student={student} SectionHeading={SectionHeading} />
             </TabPanel>
 
-            {/* Chatbot Tab */}
-            <TabPanel value={mainTabValue} index={3}>
-              <ChatbotLink student={student} SectionHeading={SectionHeading} />
-            </TabPanel>
           </motion.div>
         </Box>
       </ContentWrapper>
+
+      <ChatbotLink student={student} />
     </Box>
   );
 };

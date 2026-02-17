@@ -1,54 +1,59 @@
 import React, { useState } from 'react';
-import { Box, Typography, Paper, Button, Dialog, IconButton } from '@mui/material';
+import { Box, Typography, Dialog, IconButton, Button } from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 
-const ChatbotLink = ({ student, SectionHeading }) => {
+const ChatbotLink = ({ student }) => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   return (
-    <Paper
-      elevation={2}
-      sx={{
-        p: { xs: 3, md: 5 },
-        borderRadius: 3,
-        border: '1px solid #eee',
-        background: 'linear-gradient(180deg, #ffffff 0%, #faf7f7 100%)'
-      }}
-    >
-      <SectionHeading variant="h5">Chat With {student.name}</SectionHeading>
-      <Typography variant="body1" sx={{ maxWidth: '720px', color: '#4a4a4a', mt: 1, mb: 3 }}>
-        Ask {student.name} about their journey, skills, and the decisions that shaped their success.
-        This chatbot is built to share insights and guidance in their voice.
-      </Typography>
-
-      {student.chatbotUrl ? (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
-          <Button
-            variant="contained"
-            startIcon={<ChatBubbleOutlineIcon />}
-            onClick={handleOpen}
+    <>
+      {student.chatbotUrl && (
+        <Box
+          sx={{
+            position: 'fixed',
+            right: { xs: 16, md: 24 },
+            bottom: { xs: 16, md: 24 },
+            zIndex: 1300,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5
+          }}
+        >
+          <Box
             sx={{
+              display: { xs: 'none', sm: 'block' },
               bgcolor: '#ca0019',
-              textTransform: 'none',
+              color: '#fff',
+              px: 2,
+              py: 1,
+              borderRadius: 999,
               fontWeight: 600,
-              px: 3,
-              py: 1.2,
-              borderRadius: 2,
+              boxShadow: '0 10px 25px rgba(202, 0, 25, 0.3)'
+            }}
+          >
+            Hey, I'm {student.name}.
+          </Box>
+          <Button
+            onClick={handleOpen}
+            aria-label={`Open ${student.name}'s chatbot`}
+            sx={{
+              minWidth: 56,
+              width: 56,
+              height: 56,
+              borderRadius: '50%',
+              bgcolor: '#ca0019',
+              color: '#fff',
+              boxShadow: '0 12px 24px rgba(202, 0, 25, 0.35)',
               '&:hover': { bgcolor: '#a50014' }
             }}
           >
-            Open {student.name}'s Chatbot
+            <ChatBubbleOutlineIcon />
           </Button>
-          <Typography variant="body2" sx={{ color: '#666' }}>
-            Tip: You can ask about projects, career choices, or advice for beginners.
-          </Typography>
         </Box>
-      ) : (
-        <Typography color="text.secondary">Chatbot link will be available soon.</Typography>
       )}
 
       <Dialog
@@ -104,7 +109,7 @@ const ChatbotLink = ({ student, SectionHeading }) => {
           />
         </Box>
       </Dialog>
-    </Paper>
+    </>
   );
 };
 
