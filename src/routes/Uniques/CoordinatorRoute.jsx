@@ -33,6 +33,8 @@ const EventBudget = Loader(lazy(() => import("@/views/Uniques/Coordinator/Events
 const EventView = Loader(lazy(() => import("@/views/Uniques/Coordinator/Events/View")));
 const Enquiry = Loader(lazy(() => import("@/views/Uniques/Coordinator/Enquiry")));
 const Trainers = Loader(lazy(() => import("@/views/Uniques/Coordinator/Trainers")));
+const Activities = Loader(lazy(() => import("@/views/Uniques/Coordinator/Activity")));
+const ActivityForm = Loader(lazy(() => import("@/views/Uniques/Coordinator/Activity/ActivityForm")));
 
 const CoordinatorRoute = {
   path: "/coordinator",
@@ -77,6 +79,14 @@ const CoordinatorRoute = {
     {
       path: "/coordinator/trainers",
       element: <Trainers />,
+    },
+    {
+      path: "/coordinator/activity",
+      element: <Activities />,
+    },
+    {
+      path: "/coordinator/activity/create",
+      element: <ActivityForm />,
     },
   ],
 };

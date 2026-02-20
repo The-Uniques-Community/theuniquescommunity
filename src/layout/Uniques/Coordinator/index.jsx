@@ -35,6 +35,7 @@ import Brightness4Icon from "@mui/icons-material/Brightness4"; // Dark Mode Icon
 import Brightness7Icon from "@mui/icons-material/Brightness7"; // Light Mode Icon
 import { UserIcon } from "lucide-react";
 import SchoolIcon from "@mui/icons-material/School";
+import { LocalActivity } from "@mui/icons-material";
 
 // Navigation items with full paths
 const STUDENT_NAVIGATION = [
@@ -45,6 +46,7 @@ const STUDENT_NAVIGATION = [
   { segment: "enquiry", title: "Enquiry", icon: <AnnouncementIcon/> },
   { segment: "profile", title: "Profile", icon: <UserIcon/> },
   { segment: "trainers", title: "Trainers", icon: <SchoolIcon /> },
+  { segment: "activity", title: "Activities", icon: <LocalActivity /> },
 ];
 
 function Branding() {
