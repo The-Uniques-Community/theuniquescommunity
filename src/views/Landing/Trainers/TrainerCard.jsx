@@ -73,11 +73,17 @@ export const TrainerCard = ({ user }) => {
             <div className="mr-16 flex flex-col h-full bg-white relative">
 
                 {/* Image Container */}
-                <div onClick={handleOpen} className="relative h-64 w-full cursor-pointer bg-slate-50">
+                <div
+                    onClick={handleOpen}
+                    className="relative h-64 w-full cursor-pointer bg-slate-50"
+                    style={{
+                        clipPath: "polygon(30% 0%, 85% 0, 100% 12%, 100% 100%, 60% 100%, 40% 85%, 0 85%, 0 0)",
+                    }}
+                >
                     <img
                         src={imgSrc}
                         onError={handleImgError}
-                        className="w-full h-full object-cover custom-clip grayscale group-hover:grayscale-0 transition-all duration-500 rounded-tl-xl"
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                         alt={user.fullName}
                     />
                     {/* Batch Badge (Overlapping Image) */}
