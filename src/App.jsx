@@ -1,5 +1,5 @@
 import React from "react";
-import router from "@/routes";
+import { router } from "@/routes";
 import { RouterProvider } from "react-router-dom";
 import GridBackground from "./utils/GridBackground.jsx/GridBackground";
 

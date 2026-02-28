@@ -33,7 +33,7 @@ const EventBudget = Loader(lazy(() => import("@/views/Uniques/Coordinator/Events
 const EventView = Loader(lazy(() => import("@/views/Uniques/Coordinator/Events/View")));
 const Enquiry = Loader(lazy(() => import("@/views/Uniques/Coordinator/Enquiry")));
 
-const CoordinatorRoute = {
+export const CoordinatorRoute = {
   path: "/coordinator",
   element: <ProtectedRoute role={"coordinator"} element={<CoordinatorLayout />} />,
   children: [
@@ -76,4 +76,3 @@ const CoordinatorRoute = {
   ],
 };
 
-export default CoordinatorRoute;

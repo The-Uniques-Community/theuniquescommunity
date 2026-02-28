@@ -33,7 +33,7 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
-const index = () => {
+const CoordinatorEvents = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -431,6 +431,17 @@ const index = () => {
                           sx={{ borderRadius: 2 }}
                         >
                           View
+                          {/* TODO: Add Delete functionality */}
+                        </Button>
+                         <Button
+                          variant="outlined"
+                          color="primary"
+                          size="small"
+                          startIcon={<Visibility />}
+                          onClick={() => handleViewEvent(event._id)}
+                          sx={{ borderRadius: 2 }}
+                        >
+                          Delete
                         </Button>
 
                         <Tooltip title="Manage Budget">
@@ -492,4 +503,6 @@ const index = () => {
   );
 };
 
-export default index;
+CoordinatorEvents.displayName = "CoordinatorEvents";
+
+export default CoordinatorEvents;
