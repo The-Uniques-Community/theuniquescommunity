@@ -23,6 +23,7 @@ import logo from "@/assets/logos/theuniquesCommunity.png";
 import loginImage from "@/assets/img/login/login.svg";
 import { useNavigate } from "react-router-dom";
 import bg from "@/assets/img/login/bg.png";
+import { API_BASE, BASE } from "@/config/api";
 
 const Login = () => {
   const theme = useTheme();
@@ -63,7 +64,7 @@ const Login = () => {
 
   // Google login using a popup
   const handleGoogleLogin = () => {
-    const googleLoginUrl = "https://theuniquesbackend.vercel.app/auth/google";
+    const googleLoginUrl = `${BASE}/auth/google`
     const width = 500;
     const height = 600;
     const left = window.innerWidth / 2 - width / 2;
@@ -154,7 +155,8 @@ const Login = () => {
           })}
           onSubmit={async (values, { setErrors, setSubmitting }) => {
             try {
-              const res = await fetch("https://theuniquesbackend.vercel.app/auth/emaillogin", {
+              `${API_BASE}/auth/emaillogin`
+              const res = await fetch(`${BASE}/auth/emaillogin`, {
                 method: "POST",
                 credentials: "include", // include cookie with the request
                 headers: { "Content-Type": "application/json" },

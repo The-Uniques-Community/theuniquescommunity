@@ -27,14 +27,13 @@ import { LogIn, LogOut } from "lucide-react"; // Add LogOut import
 // Add this to your imports at the top
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import axios from "axios"; // For logout API call
-import { set } from "date-fns";
+import { BASE } from "@/config/api";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 const Navbar = () => {
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
   const [activeLink, setActiveLink] = React.useState("");
   const [user, setUser] = useState({}); // State to hold user data
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate();
 
   // Check authentication status on component mount
   useEffect(() => {
@@ -46,7 +45,8 @@ const Navbar = () => {
     // Check for token in localStorage or sessionStorage
     try {
       // Call the backend endpoint that verifies the role using the verifyRole middleware
-     const response = await axios.get(`https://theuniquesbackend.vercel.app/auth/verify_user`, {
+
+      const response = await axios.get(`${BASE}/auth/verify_user`, {
         withCredentials: true,
       });
       setUser(response?.data.user); // Set user data from response
@@ -67,7 +67,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "https://theuniquesbackend.vercel.app/auth/logout",
+        `${BASE}/auth/logout`,
         {},
         { withCredentials: true }
       );
