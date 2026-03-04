@@ -32,8 +32,9 @@ import {
   AttachMoney,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "@/config/api";
 
-const index = () => {
+const CoordinatorEvents = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -156,7 +157,7 @@ const index = () => {
   const handleCreateEvent = () => {
     navigate("/coordinator/events-overview/create");
   };
- 
+
   const handleViewEvent = (eventId) => {
     navigate(`/coordinator/events-overview/view/${eventId}`);
   };
@@ -165,8 +166,31 @@ const index = () => {
     navigate(`/coordinator/events-overview/${eventId}/budget`);
   };
 
-  const handleViewGallery = (eventId) => {
-    navigate(`/coordinator/events/${eventId}/gallery`);
+  const handleDeleteEvent = async (eventId) => {
+    const proceed = window.confirm("Are you sure you want to delete this event?");
+    if (!proceed) return;
+
+    try {
+      const response = await fetch(
+        `${API_BASE}/events/${eventId}`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to delete event");
+      }
+
+      setEvents((prev) => prev.filter((e) => e._id !== eventId));
+      setStats((prev) => ({ ...prev, total: prev.total - 1 }));
+    } catch (err) {
+      console.error("Error deleting event", err);
+      alert(err.message || "Error deleting event");
+    }
   };
 
   const getStatusColor = (status) => {
@@ -431,6 +455,17 @@ const index = () => {
                           sx={{ borderRadius: 2 }}
                         >
                           View
+                          {/* TODO: Add Delete functionality */}
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          size="small"
+                          startIcon={<Visibility />}
+                          onClick={() => handleDeleteEvent(event._id)}
+                          sx={{ borderRadius: 2 }}
+                        >
+                          Delete
                         </Button>
 
                         <Tooltip title="Manage Budget">
@@ -492,4 +527,6 @@ const index = () => {
   );
 };
 
-export default index;
+CoordinatorEvents.displayName = "CoordinatorEvents";
+
+export default CoordinatorEvents;

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
+import { BASE } from "@/config/api";
 
 const ProtectedRoute = ({ role, element, redirectPath = "/401" }) => {
   const [authorized, setAuthorized] = useState(false);
@@ -10,7 +11,7 @@ const ProtectedRoute = ({ role, element, redirectPath = "/401" }) => {
   // Function to log out the user (clearing the token on the backend)
   const logout = async () => {
     try {
-      await axios.post("https://theuniquesbackend.vercel.app/auth/logout", {}, { withCredentials: true });
+      await axios.post(`${BASE}/auth/logout`, {}, { withCredentials: true });
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -21,7 +22,7 @@ const ProtectedRoute = ({ role, element, redirectPath = "/401" }) => {
       try {
         if (role) {
           // Call the backend endpoint that verifies the role using the verifyRole middleware
-          await axios.get(`https://theuniquesbackend.vercel.app/auth/verify_role?role=${role}`, {
+          await axios.get(`${BASE}/auth/verify_role?role=${role}`, {
             withCredentials: true,
           });
         }

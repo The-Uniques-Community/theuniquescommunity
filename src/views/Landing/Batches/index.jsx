@@ -4,10 +4,11 @@ import { Search, Award, RefreshCw, Users } from "lucide-react";
 import axios from "axios";
 import MemberCard from "./components/MemberCard";
 import Header from "../About/componants/Header";
-import { Card, CardContent, Typography, Box, Tooltip } from "@mui/material";
+import { Card, CardContent, Typography, Box } from "@mui/material";
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import SchoolIcon from '@mui/icons-material/School';
 import GroupsIcon from '@mui/icons-material/Groups';
+import { API_BASE } from "@/config/api";
 
 const index = () => {
   // State management
@@ -71,9 +72,9 @@ const index = () => {
       try {
         setCountsLoading(true);
         console.log("Fetching batch counts...");
-        
-        const response = await axios.get("https://theuniquesbackend.vercel.app/api/public/members/counts");
-        
+
+        const response = await axios.get(`${API_BASE}/public/members/counts`);
+
         if (response.data.success) {
           console.log("Batch counts received:", response.data.data);
           setBatchCounts(response.data.data);
@@ -101,14 +102,14 @@ const index = () => {
     if (!searchTerm.trim() || !Array.isArray(members)) {
       return members;
     }
-    
+
     const term = searchTerm.toLowerCase();
     return members.filter(member => {
       // Safely check properties (they might be missing in incomplete profiles)
       const nameMatch = member.fullName && member.fullName.toLowerCase().includes(term);
       const bioMatch = member.bio && member.bio.toLowerCase().includes(term);
       const courseMatch = member.course && member.course.toLowerCase().includes(term);
-      
+
       // Check for skills - handle both array of objects and array of strings
       const skillsMatch = Array.isArray(member.skills) && member.skills.some(skill => {
         if (typeof skill === 'string') {
@@ -116,7 +117,7 @@ const index = () => {
         }
         return (skill && skill.name && skill.name.toLowerCase().includes(term));
       });
-      
+
       return nameMatch || bioMatch || courseMatch || skillsMatch;
     });
   }, [members, searchTerm]);
@@ -130,7 +131,7 @@ const index = () => {
 
         // Fetch all members for the selected batch without search parameter
         // We'll handle search client-side for better filtering of incomplete profiles
-        const response = await axios.get("https://theuniquesbackend.vercel.app/api/public/members", {
+        const response = await axios.get(`${API_BASE}/api/public/members`, {
           params: {
             batch: selectedBatch !== "All" ? selectedBatch : undefined
           }
@@ -138,7 +139,7 @@ const index = () => {
 
         if (response.data.success) {
           console.log(`Received ${response.data.data.length} members out of ${response.data.count} total`);
-          
+
           // Process members to ensure no null/undefined values that might break rendering
           const processedMembers = response.data.data.map(member => ({
             ...member,
@@ -150,7 +151,7 @@ const index = () => {
             achievements: Array.isArray(member.achievements) ? member.achievements : [],
             certifications: Array.isArray(member.certifications) ? member.certifications : []
           }));
-          
+
           setMembers(processedMembers);
           setTotalMembers(response.data.count);
           setError(null);
@@ -178,9 +179,9 @@ const index = () => {
   // Achievement Card Component using MUI
   const AchievementCard = ({ title, description, icon, color }) => {
     return (
-      <Card sx={{ 
-        borderRadius: 2, 
-        boxShadow: '0 4px 8px rgba(0,0,0,0.05)', 
+      <Card sx={{
+        borderRadius: 2,
+        boxShadow: '0 4px 8px rgba(0,0,0,0.05)',
         transition: 'transform 0.2s, box-shadow 0.2s',
         '&:hover': {
           transform: 'translateY(-4px)',
@@ -189,10 +190,10 @@ const index = () => {
       }}>
         <CardContent>
           <Box display="flex" alignItems="flex-start" gap={2}>
-            <Box 
-              sx={{ 
-                backgroundColor: color || '#ca0019', 
-                color: 'white', 
+            <Box
+              sx={{
+                backgroundColor: color || '#ca0019',
+                color: 'white',
                 borderRadius: '50%',
                 p: 1,
                 display: 'flex',
@@ -220,44 +221,44 @@ const index = () => {
   useEffect(() => {
     const defaultAchievements = {
       "All": [
-      {
-        id: "community-excellence",
-        title: "Community Excellence",
-        description: "Recognized for outstanding contributions to the tech ecosystem",
-        color: "rgb(59, 130, 246)"
-      }
+        {
+          id: "community-excellence",
+          title: "Community Excellence",
+          description: "Recognized for outstanding contributions to the tech ecosystem",
+          color: "rgb(59, 130, 246)"
+        }
       ],
       "The Uniques 1.0": [
-      {
-        id: "founding-milestone",
-        title: "Founding Milestone",
-        description: "Established the community and set the foundation for future growth",
-        color: "rgb(34, 197, 94)"
-      }
+        {
+          id: "founding-milestone",
+          title: "Founding Milestone",
+          description: "Established the community and set the foundation for future growth",
+          color: "rgb(34, 197, 94)"
+        }
       ],
       "The Uniques 2.0": [
-      {
-        id: "community-growth",
-        title: "Community Growth",
-        description: "Expanded membership by 200% and introduced mentorship programs",
-        color: "rgb(168, 85, 247)"
-      }
+        {
+          id: "community-growth",
+          title: "Community Growth",
+          description: "Expanded membership by 200% and introduced mentorship programs",
+          color: "rgb(168, 85, 247)"
+        }
       ],
       "The Uniques 3.0": [
-      {
-        id: "innovation-hub",
-        title: "Innovation Hub",
-        description: "Launched the innovation lab for members to collaborate on projects",
-        color: "rgb(249, 115, 22)"
-      }
+        {
+          id: "innovation-hub",
+          title: "Innovation Hub",
+          description: "Launched the innovation lab for members to collaborate on projects",
+          color: "rgb(249, 115, 22)"
+        }
       ],
       "The Uniques 4.0": [
-      {
-        id: "collaborative-leadership",
-        title: "Collaborative Leadership",
-        description: "Pioneered new initiatives and fostered cross-batch collaboration in 2024",
-        color: "rgb(239, 68, 68)"
-      }
+        {
+          id: "collaborative-leadership",
+          title: "Collaborative Leadership",
+          description: "Pioneered new initiatives and fostered cross-batch collaboration in 2024",
+          color: "rgb(239, 68, 68)"
+        }
       ]
     };
 
@@ -271,23 +272,23 @@ const index = () => {
     setLoading(true);
     setError(null);
     setCountsLoading(true);
-    
+
     // Fetch both counts and members data
     const fetchAll = async () => {
       try {
         // First fetch counts
-        const countsResponse = await axios.get("https://theuniquesbackend.vercel.app/api/public/members/counts");
+        const countsResponse = await axios.get(`${API_BASE}/public/members/counts`);
         if (countsResponse.data.success) {
           setBatchCounts(countsResponse.data.data);
         }
-        
+
         // Then fetch members
-        const membersResponse = await axios.get("https://theuniquesbackend.vercel.app/api/public/members", {
+        const membersResponse = await axios.get(`${API_BASE}/public/members`, {
           params: {
             batch: selectedBatch !== "All" ? selectedBatch : undefined
           }
         });
-        
+
         if (membersResponse.data.success) {
           const processedMembers = membersResponse.data.data.map(member => ({
             ...member,
@@ -298,7 +299,7 @@ const index = () => {
             achievements: Array.isArray(member.achievements) ? member.achievements : [],
             certifications: Array.isArray(member.certifications) ? member.certifications : []
           }));
-          
+
           setMembers(processedMembers);
           setTotalMembers(membersResponse.data.count);
         } else {
@@ -312,14 +313,14 @@ const index = () => {
         setCountsLoading(false);
       }
     };
-    
+
     fetchAll();
   };
 
   return (
     <div className="min-h-screen ">
       <Header />
-      
+
       {/* Header */}
       <motion.div
         className="bg-white py-12 px-4 sm:px-6 lg:px-8 shadow-sm"
@@ -337,21 +338,20 @@ const index = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-wrap gap-4 mb-8 justify-center">
           {batchesData.map((batch) => (
-            
-              <motion.button
-                className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all ${
-                  selectedBatch === batch.id
-                    ? "bg-[#ca0019] text-white shadow-lg"
-                    : "bg-white text-gray-700 hover:bg-gray-100 shadow"
+
+            <motion.button
+              className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all ${selectedBatch === batch.id
+                ? "bg-[#ca0019] text-white shadow-lg"
+                : "bg-white text-gray-700 hover:bg-gray-100 shadow"
                 }`}
-                onClick={() => setSelectedBatch(batch.id)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {batch.icon}
-                <span>{batch.name}</span>
-                
-              </motion.button>
+              onClick={() => setSelectedBatch(batch.id)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {batch.icon}
+              <span>{batch.name}</span>
+
+            </motion.button>
           ))}
         </div>
       </div>
@@ -393,9 +393,9 @@ const index = () => {
                 </h2>
                 <p className="mt-2 text-gray-600">{currentBatch.description}</p>
               </div>
-              
+
               {/* Add refresh button */}
-              <button 
+              <button
                 onClick={refreshData}
                 className="text-gray-500 hover:text-[#ca0019] p-2 rounded-full hover:bg-gray-100 transition-colors"
                 title="Refresh data"
@@ -454,12 +454,12 @@ const index = () => {
                 {filteredMembers.map((member) => (
                   <MemberCard key={member._id} member={member} />
                 ))}
-                
+
                 {/* Show count of members displayed */}
                 <div className="col-span-full text-center py-8">
                   <p className="text-gray-500">
-                    {searchTerm ? 
-                      `Found ${filteredMembers.length} of ${members.length} members matching "${searchTerm}"` : 
+                    {searchTerm ?
+                      `Found ${filteredMembers.length} of ${members.length} members matching "${searchTerm}"` :
                       `Displaying all ${members.length} members`}
                   </p>
                 </div>

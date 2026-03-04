@@ -3,7 +3,7 @@ import { lazy } from "react";
 import Loader from "@/utils/Loader";
 import AdminRoutes from "@/routes/Admin/AdminRoutes";
 import CommunityRoutes from "@/routes/Community/CommunityRoutes";
-import CoordinatorRoutes from "@/routes/Uniques/CoordinatorRoute";
+import { CoordinatorRoute } from "@/routes/Uniques/CoordinatorRoute";
 import MemberRoutes from "@/routes/Uniques/MemberRoutes";
 import LandingLayout from "@/layout/Landing/index";
 import Auth from "@/routes/Authentication/Auth";
@@ -88,14 +88,14 @@ const LandingRoutes = {
   ],
 };
 
-const router = createBrowserRouter([
+export const router = createBrowserRouter([
   LandingRoutes,  // ✅ Fix: Use object directly, no spread operator
-  AdminRoutes,
+  AdminRoutes(),
   CommunityRoutes,
-  CoordinatorRoutes,
+  CoordinatorRoute,
   MemberRoutes,
   Auth,
   SuccessStoriesRoutes
 ]);
 
-export default router;
+// export default router; (we use named export to avoid Fast Refresh warnings)
