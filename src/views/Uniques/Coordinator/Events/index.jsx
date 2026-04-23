@@ -20,6 +20,13 @@ import {
   Chip,
   Tooltip,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import {
   AddCircleOutline,
@@ -30,6 +37,7 @@ import {
   CurrencyRupee,
   PhotoLibrary,
   AttachMoney,
+  Delete,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
@@ -49,6 +57,14 @@ const index = () => {
     totalPages: 1,
     count: 0,
     total: 0,
+  });
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
   });
 
   const navigate = useNavigate();
@@ -167,6 +183,61 @@ const index = () => {
 
   const handleViewGallery = (eventId) => {
     navigate(`/coordinator/events/${eventId}/gallery`);
+  };
+
+  const handleDeleteClick = (eventId) => {
+    setEventToDelete(eventId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!eventToDelete) return;
+
+    try {
+      setDeleteLoading(true);
+      const response = await fetch(
+        `https://theuniquesbackend.vercel.app/api/events/${eventToDelete}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSnackbar({
+          open: true,
+          message: "Event deleted successfully",
+          severity: "success",
+        });
+        fetchEvents(pagination.currentPage);
+      } else {
+        setSnackbar({
+          open: true,
+          message: data.message || "Failed to delete event",
+          severity: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      setSnackbar({
+        open: true,
+        message: "An error occurred while deleting the event",
+        severity: "error",
+      });
+    } finally {
+      setDeleteLoading(false);
+      setDeleteDialogOpen(false);
+      setEventToDelete(null);
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   const getStatusColor = (status) => {
@@ -424,6 +495,17 @@ const index = () => {
                       >
                         <Button
                           variant="outlined"
+                          color="error"
+                          size="small"
+                          startIcon={<Delete />}
+                          onClick={() => handleDeleteClick(event._id)}
+                          sx={{ borderRadius: 2 }}
+                        >
+                          Delete
+                        </Button>
+
+                        <Button
+                          variant="outlined"
                           color="primary"
                           size="small"
                           startIcon={<Visibility />}
@@ -447,17 +529,6 @@ const index = () => {
                             <AttachMoney />
                           </IconButton>
                         </Tooltip>
-
-                        {/* <Tooltip title="Manage Gallery">
-                          <IconButton 
-                            color="success" 
-                            size="small"
-                            onClick={() => handleViewGallery(event._id)}
-                            sx={{ borderRadius: 2, border: '1px solid', borderColor: 'divider' }}
-                          >
-                            <PhotoLibrary />
-                          </IconButton>
-                        </Tooltip> */}
                       </Box>
                     </TableCell>
                   </TableRow>
@@ -488,6 +559,56 @@ const index = () => {
           </Box>
         </>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => !deleteLoading && setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this event? This action is permanent
+            and will also delete all associated registration forms and
+            responses.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setDeleteDialogOpen(false)}
+            disabled={deleteLoading}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmDelete}
+            color="error"
+            variant="contained"
+            disabled={deleteLoading}
+            startIcon={
+              deleteLoading ? <CircularProgress size={20} /> : <Delete />
+            }
+          >
+            {deleteLoading ? "Deleting..." : "Delete"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Feedback Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

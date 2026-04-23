@@ -200,6 +200,16 @@ const EventView = () => {
   const [formErrors, setFormErrors] = useState({});
   const [registrationLoading, setRegistrationLoading] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [newGuestDialogOpen, setNewGuestDialogOpen] = useState(false);
+  const [newGuest, setNewGuest] = useState({
+    guestName: "",
+    guestEmail: "",
+    guestContact: "",
+    guestLinkedin: "",
+    guestCompany: "",
+    guestDesignation: "",
+    guestImage: null,
+  });
   
   // Loading states for manage buttons
   const [guestButtonLoading, setGuestButtonLoading] = useState(false);
@@ -790,14 +800,110 @@ const handleRemoveMember = async (memberId, memberTeam) => {
     setGuestButtonLoading(false);
   };
 
+  const handleOpenNewGuestDialog = () => {
+    setNewGuest({
+      guestName: "",
+      guestEmail: "",
+      guestContact: "",
+      guestLinkedin: "",
+      guestCompany: "",
+      guestDesignation: "",
+      guestImage: null,
+    });
+    setNewGuestDialogOpen(true);
+  };
+
+  const handleNewGuestInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewGuest({ ...newGuest, [name]: value });
+  };
+
+  const handleSaveNewGuest = async () => {
+    try {
+      if (!newGuest.guestName) {
+        toast.error("Guest name is required");
+        return;
+      }
+
+      setLoading(true);
+      const response = await fetch(
+        "https://theuniquesbackend.vercel.app/api/guest/add-guest",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(newGuest),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast.success("New guest created successfully!");
+        setNewGuestDialogOpen(false);
+        // Refresh available guests list
+        await fetchAvailableGuests();
+        // Automatically select the newly created guest
+        setSelectedGuest(data.guest);
+      } else {
+        toast.error(data.message || "Failed to create guest");
+      }
+    } catch (error) {
+      console.error("Error creating new guest:", error);
+      toast.error("An error occurred while creating the guest");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleAddGuest = async () => {
     if (!selectedGuest) return;
 
     try {
-      // Show loading state
       setLoading(true);
 
-      // Use link-guest route as defined in your eventRouter
+      let guestIdToLink;
+      let finalGuestTag = guestTag;
+
+      // If selectedGuest is a string, it means a new name was typed (freeSolo)
+      if (typeof selectedGuest === "string") {
+        // First check if a guest with this name already exists in availableGuests
+        const existingGuest = availableGuests.find(
+          (g) => g.guestName?.toLowerCase() === selectedGuest.toLowerCase()
+        );
+
+        if (existingGuest) {
+          guestIdToLink = existingGuest._id;
+          if (!finalGuestTag) finalGuestTag = existingGuest.guestDesignation;
+        } else {
+          // Create a new guest record first
+          const createResponse = await fetch(
+            "https://theuniquesbackend.vercel.app/api/guest/add-guest",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+              body: JSON.stringify({ guestName: selectedGuest }),
+            }
+          );
+          const createData = await createResponse.json();
+          if (createData.success) {
+            guestIdToLink = createData.guest._id;
+          } else {
+            throw new Error(createData.message || "Failed to create new guest");
+          }
+        }
+      } else {
+        // Existing guest object selected
+        guestIdToLink = selectedGuest._id;
+        if (!finalGuestTag) finalGuestTag = selectedGuest.guestDesignation;
+      }
+
+      // Now link the guest to the event
       const response = await fetch(
         "https://theuniquesbackend.vercel.app/api/events/link-guest",
         {
@@ -808,8 +914,8 @@ const handleRemoveMember = async (memberId, memberTeam) => {
           credentials: "include",
           body: JSON.stringify({
             eventId: id,
-            guestId: selectedGuest._id,
-            guestTag: guestTag || selectedGuest.guestDesignation,
+            guestId: guestIdToLink,
+            guestTag: finalGuestTag || "others",
           }),
         }
       );
@@ -2794,24 +2900,32 @@ const handleRemoveMember = async (memberId, memberTeam) => {
               Add New Guest
             </Typography>
             <Autocomplete
+              freeSolo
               options={availableGuests || []}
-              getOptionLabel={(option) =>
-                option.guestName
+              getOptionLabel={(option) => {
+                if (typeof option === "string") return option;
+                return option.guestName
                   ? `${option.guestName} - ${
                       option.guestDesignation || "No designation"
                     }`
-                  : ""
-              }
+                  : "";
+              }}
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Select Guest"
+                  label="Guest Name"
+                  placeholder="Type a name or select existing"
                   variant="outlined"
                   fullWidth
                 />
               )}
               value={selectedGuest}
               onChange={(e, newValue) => setSelectedGuest(newValue)}
+              onInputChange={(e, newInputValue) => {
+                if (!selectedGuest || typeof selectedGuest === "string") {
+                  setSelectedGuest(newInputValue);
+                }
+              }}
               sx={{ mb: 2 }}
             />
             <TextField
@@ -2823,16 +2937,27 @@ const handleRemoveMember = async (memberId, memberTeam) => {
               placeholder="Speaker, Judge, Mentor, etc."
               helperText="How would you like to describe this guest's role?"
             />
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<Add />}
-              onClick={handleAddGuest}
-              disabled={!selectedGuest}
-              sx={{ mt: 2 }}
-            >
-              Add Guest
-            </Button>
+            <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<Add />}
+                onClick={handleAddGuest}
+                disabled={!selectedGuest}
+                fullWidth
+              >
+                Add Guest to Event
+              </Button>
+              <Button
+                variant="outlined"
+                color="secondary"
+                startIcon={<PersonAdd />}
+                onClick={handleOpenNewGuestDialog}
+                fullWidth
+              >
+                Create New Guest
+              </Button>
+            </Box>
           </Box>
 
           <Divider sx={{ my: 3 }} />
@@ -3201,6 +3326,82 @@ VALID_TEAM_TYPES.map((type) => {
               {registrationLoading ? "Submitting..." : "Submit Registration"}
             </Button>
           )}
+        </DialogActions>
+      </Dialog>
+      {/* New Guest Dialog */}
+      <Dialog
+        open={newGuestDialogOpen}
+        onClose={() => setNewGuestDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Create New Guest</DialogTitle>
+        <DialogContent dividers>
+          <Box sx={{ pt: 1, display: "flex", flexDirection: "column", gap: 2 }}>
+            <TextField
+              name="guestName"
+              label="Guest Name"
+              value={newGuest.guestName}
+              onChange={handleNewGuestInputChange}
+              fullWidth
+              required
+            />
+            <TextField
+              name="guestEmail"
+              label="Guest Email"
+              value={newGuest.guestEmail}
+              onChange={handleNewGuestInputChange}
+              fullWidth
+            />
+            <TextField
+              name="guestDesignation"
+              label="Designation"
+              value={newGuest.guestDesignation}
+              onChange={handleNewGuestInputChange}
+              fullWidth
+              placeholder="e.g. Senior Developer"
+            />
+            <TextField
+              name="guestCompany"
+              label="Company"
+              value={newGuest.guestCompany}
+              onChange={handleNewGuestInputChange}
+              fullWidth
+              placeholder="e.g. Google"
+            />
+            <TextField
+              name="guestContact"
+              label="Contact Number"
+              value={newGuest.guestContact}
+              onChange={handleNewGuestInputChange}
+              fullWidth
+            />
+            <TextField
+              name="guestLinkedin"
+              label="LinkedIn URL"
+              value={newGuest.guestLinkedin}
+              onChange={handleNewGuestInputChange}
+              fullWidth
+            />
+            <TextField
+              name="guestImage"
+              label="Image URL"
+              value={newGuest.guestImage}
+              onChange={handleNewGuestInputChange}
+              fullWidth
+              placeholder="https://example.com/image.jpg"
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setNewGuestDialogOpen(false)}>Cancel</Button>
+          <Button
+            onClick={handleSaveNewGuest}
+            variant="contained"
+            color="primary"
+          >
+            Create Guest
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>
