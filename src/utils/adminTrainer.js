@@ -1,7 +1,8 @@
 import axios from "axios";
+import { BASE_URL } from "@/config";
 
-const API_URL = "https://theuniquesbackend.vercel.app/api/admin";
-const UPLOAD_URL = "https://theuniquesbackend.vercel.app/api";
+const API_URL = `${BASE_URL}/api/admin`;
+const UPLOAD_URL = `${BASE_URL}/api`;
 
 // Get all trainers
 export const getAllTrainers = async () => {
@@ -55,7 +56,7 @@ export const uploadTrainerImage = async (trainerId, trainerName, file) => {
     formData.append("trainerName", trainerName);
     formData.append("file", file);
 
-    const response = await axios.post(`https://theuniquesbackend.vercel.app/upload/trainer_file_upload`, formData, {
+    const response = await axios.post(`${BASE_URL}/upload/trainer_file_upload`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
