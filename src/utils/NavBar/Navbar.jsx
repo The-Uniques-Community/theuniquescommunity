@@ -29,6 +29,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import axios from "axios"; // For logout API call
 import { set } from "date-fns";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { BASE_URL } from "@/config";
 const Navbar = () => {
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
   const [activeLink, setActiveLink] = React.useState("");
@@ -46,7 +47,7 @@ const Navbar = () => {
     // Check for token in localStorage or sessionStorage
     try {
       // Call the backend endpoint that verifies the role using the verifyRole middleware
-      const response = await axios.get(`http://localhost:5000/auth/verify_user`, {
+      const response = await axios.get(`${BASE_URL}/auth/verify_user`, {
         withCredentials: true,
       });
       setUser(response?.data.user); // Set user data from response
@@ -67,7 +68,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/auth/logout",
+        `${BASE_URL}/auth/logout`,
         {},
         { withCredentials: true }
       );

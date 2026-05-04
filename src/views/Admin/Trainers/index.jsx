@@ -30,6 +30,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import { getAllTrainers, addTrainer, updateTrainer, deleteTrainer, uploadTrainerImage } from "@/utils/adminTrainer";
+import { BASE_URL } from "@/config";
 
 const Trainers = () => {
   const [trainers, setTrainers] = useState([]);
@@ -190,7 +191,7 @@ const Trainers = () => {
     // Let's assume profilePic is the ID of the File document (or populated object with _id).
     // Using simple logic:
     const id =  fileData.fileId || fileData;
-    return `https://theuniquesbackend.vercel.app/api/image-proxy/${id}`;
+    return `${BASE_URL}/api/image-proxy/${id}`;
   };
 
   // Helper to filter trainers based on tab

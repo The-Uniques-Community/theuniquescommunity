@@ -19,6 +19,7 @@ import {
   Avatar,
 } from "@mui/material";
 import axios from "axios";
+import { BASE_URL } from "@/config";
 import tu from "@/assets/logos/tu.png";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import GitHubIcon from "@mui/icons-material/GitHub";
@@ -106,7 +107,7 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
 
       // Make API call to toggle block status
       const response = await axios.patch(
-        `https://theuniquesbackend.vercel.app/api/admin/member/${user._id}/block`
+        `${BASE_URL}/api/admin/member/${user._id}/block`
       );
 
       // Show success message
@@ -175,7 +176,7 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
 
   const getProxyImageUrl = (fileId) => {
     if (!fileId) return '/placeholder.svg'; // Fallback image
-    return `https://theuniquesbackend.vercel.app/api/image-proxy/${fileId}`;
+    return `${BASE_URL}/api/image-proxy/${fileId}`;
   };
 
 
@@ -210,7 +211,7 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
 
       // Make API call to impose fine
       await axios.post(
-        `https://theuniquesbackend.vercel.app/api/admin/member/${user._id}/fine`,
+        `${BASE_URL}/api/admin/member/${user._id}/fine`,
         {
           amount: Number(fineAmount),
           reason: fineReason.trim(),

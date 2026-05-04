@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { BASE_URL } from '@/config';
 import { Users, X, Calendar, Clock, MapPin, User, Users as UsersIcon, Award } from 'lucide-react';
 import Button from "@/utils/Buttons/Button";
 import { Tabs, Tab } from '@mui/material';
@@ -128,7 +129,7 @@ const fetchTeamMembers = async (eventId) => {
     console.log(`Fetching team members for event: ${eventId}`);
     
     // Use the same base URL as your other API calls
-    const response = await axios.get(`https://theuniquesbackend.vercel.app/api/events/${eventId}/members`, {
+    const response = await axios.get(`${BASE_URL}/api/events/${eventId}/members`, {
       credentials: "include"
     });
     
@@ -205,7 +206,7 @@ const fetchTeamMembers = async (eventId) => {
 
                 try {
                     const response = await fetch(
-                        `https://theuniquesbackend.vercel.app/api/events/${id}/register`,
+                        `${BASE_URL}/api/events/${event._id}/register`,
                         {
                             method: "POST",
                             headers: {
@@ -390,7 +391,7 @@ const fetchTeamMembers = async (eventId) => {
             };
 
             const response = await fetch(
-                `https://theuniquesbackend.vercel.app/api/events/${event._id}/form-response`,
+                `${BASE_URL}/api/events/${event._id}/form-response`,
                 {
                     method: "POST",
                     headers: {
@@ -605,7 +606,7 @@ const fetchTeamMembers = async (eventId) => {
 
     useEffect(() => {
         // Fetch all events to populate related events and tabs
-        axios.get('https://theuniquesbackend.vercel.app/api/events')
+        axios.get(`${BASE_URL}/api/events`)
             .then(response => {
                 const events = response.data.data || response.data || [];
                 setAllEvents(events);
@@ -634,7 +635,7 @@ const fetchTeamMembers = async (eventId) => {
 
                 // If the current event doesn't have populated gallery data, you might need to fetch it
                 if (event && (!event.eventGallery || event.eventGallery.length === 0)) {
-                    axios.get(`https://theuniquesbackend.vercel.app/api/events/${event._id}/gallery`)
+                    axios.get(`${BASE_URL}/api/events/${event._id}/gallery`)
                         .catch(err => console.error("Error fetching gallery:", err));
                 }
             })
@@ -662,7 +663,7 @@ const fetchTeamMembers = async (eventId) => {
 
     const fetchEventDetails = async (eventId) => {
         try {
-            const response = await axios.get(`https://theuniquesbackend.vercel.app/api/events/${eventId}`);
+            const response = await axios.get(`${BASE_URL}/api/events/${eventId}`);
             setSelectedDetailEvent(response.data.data || response.data);
         } catch (error) {
             console.error("Error fetching event details:", error);

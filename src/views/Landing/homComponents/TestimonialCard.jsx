@@ -2,6 +2,7 @@
 import React from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import { useRef, useState, useEffect } from "react"
+import { BASE_URL } from "@/config";
 import { 
   School, 
   Work, 
@@ -32,7 +33,7 @@ const testimonialData = {
     {
       name: "Naveen Jaiswal",
       role: "Software Developer, Thor Solutions",
-      image: "https://theuniquesbackend.vercel.app/api/image-proxy/1b9-mcMtoowSSiKr8wHHxLTnvjNzuhIsR",
+      image: `${BASE_URL}/api/image-proxy/1b9-mcMtoowSSiKr8wHHxLTnvjNzuhIsR`,
       testimonial: "Through the practical projects and industry-focused training at The Uniques, I developed the technical expertise needed to excel in my role developing product customization platforms.",
       rating: 5,
       highlight: "Product Development"
@@ -48,7 +49,7 @@ const testimonialData = {
     {
       name: "Mantasha Tabassum",
       role: "Application Developer, Caelius Consulting",
-      image: "https://theuniquesbackend.vercel.app/api/image-proxy/1njlZ75EFgYTvki-8NIlgIsWvgwYccAXM",
+      image: `${BASE_URL}/api/image-proxy/1njlZ75EFgYTvki-8NIlgIsWvgwYccAXM`,
       testimonial: "The Uniques Community gave me the confidence and AWS expertise I needed to implement cloud solutions and optimize infrastructure. Their hands-on approach truly made the difference.",
       rating: 5,
       highlight: "AWS Specialist"

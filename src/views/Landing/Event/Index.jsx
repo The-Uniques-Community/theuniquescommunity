@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { BASE_URL } from '@/config';
 import Event from './Componant/Event';
 import CommunityCard from '@/utils/Card/CommunityCard';
 import Header from '@/utils/Header/index';
@@ -69,7 +70,7 @@ const Index = () => {
         if (eventType) params.append('type', eventType);
         
         const response = await axios.get(
-          `https://theuniquesbackend.vercel.app/api/events?${params.toString()}`
+          `${BASE_URL}/api/events?${params.toString()}`
         );
         
         if (response.data && Array.isArray(response.data.events)) {

@@ -29,6 +29,7 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { BASE_URL } from "@/config";
 import logo from "@/assets/logos/theuniquesCommunity.png";
 import bg from "@/assets/img/login/bg.png";
 
@@ -58,7 +59,7 @@ const ForgetPassword = () => {
   const handleSendOTP = async (values, { setErrors, setSubmitting, resetForm }) => {
     try {
       setLoading(true);
-      const response = await axios.post("https://theuniquesbackend.vercel.app/auth/password-reset/send-otp", {
+      const response = await axios.post(`${BASE_URL}/auth/password-reset/send-otp`, {
         email: values.email,
       });
 
@@ -87,7 +88,7 @@ const ForgetPassword = () => {
   const handleVerifyOTP = async (values, { setErrors, setSubmitting, resetForm }) => {
     try {
       setLoading(true);
-      const response = await axios.post("https://theuniquesbackend.vercel.app/auth/password-reset/verify-otp", {
+      const response = await axios.post(`${BASE_URL}/auth/password-reset/verify-otp`, {
         email,
         otp: values.otp,
       });
@@ -116,7 +117,7 @@ const ForgetPassword = () => {
   const handleResetPassword = async (values, { setErrors, setSubmitting }) => {
     try {
       setLoading(true);
-      const response = await axios.post("https://theuniquesbackend.vercel.app/auth/password-reset/reset-password", {
+      const response = await axios.post(`${BASE_URL}/auth/password-reset/reset-password`, {
         email,
         newPassword: values.newPassword,
         confirmPassword: values.confirmPassword,
@@ -148,7 +149,7 @@ const ForgetPassword = () => {
   const handleResendOTP = async () => {
     try {
       setLoading(true);
-      const response = await axios.post("https://theuniquesbackend.vercel.app/auth/password-reset/resend-otp", {
+      const response = await axios.post(`${BASE_URL}/auth/password-reset/resend-otp`, {
         email,
       });
 

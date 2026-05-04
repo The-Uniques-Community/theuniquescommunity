@@ -22,8 +22,9 @@ import ReceiptIcon from '@mui/icons-material/Receipt';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import axios from 'axios';
+import { BASE_URL } from '@/config';
 
-const API_BASE_URL = 'https://theuniquesbackend.vercel.app/api/admin';
+const API_BASE_URL = `${BASE_URL}/api/admin`;
 
 const index = () => {
   // State for statistics

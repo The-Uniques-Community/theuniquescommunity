@@ -51,6 +51,7 @@ import {
 } from "@mui/icons-material";
 import axios from "axios";
 import { format } from "date-fns";
+import { BASE_URL } from "@/config";
 
 const EnquiryManagement = () => {
   // State variables
@@ -96,7 +97,7 @@ const EnquiryManagement = () => {
     try {
       setLoading(true);
 
-      let url = `https://theuniquesbackend.vercel.app/api/admin/enquiry?page=${currentPage}&limit=${limit}`;
+      let url = `${BASE_URL}/api/admin/enquiry?page=${currentPage}&limit=${limit}`;
       if (statusFilter !== "all") {
         url += `&status=${statusFilter}`;
       }
@@ -152,7 +153,7 @@ const EnquiryManagement = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `https://theuniquesbackend.vercel.app/api/admin/enquiry/${id}`,
+        `${BASE_URL}/api/admin/enquiry/${id}`,
         {
           withCredentials: true,
         }
@@ -202,7 +203,7 @@ const EnquiryManagement = () => {
         // Only send the replyMessage in the request body
         // The backend extracts the ID from the URL params
         const response = await axios.post(
-          `https://theuniquesbackend.vercel.app/api/admin/enquiry/${enquiryId}/reply`,
+          `${BASE_URL}/api/admin/enquiry/${enquiryId}/reply`,
           { replyMessage },
           { withCredentials: true }
         );
@@ -242,7 +243,7 @@ const EnquiryManagement = () => {
     try {
       setStatusUpdateLoading(true);
       const response = await axios.patch(
-        `https://theuniquesbackend.vercel.app/api/admin/enquiry/${selectedEnquiry._id}/status`,
+        `${BASE_URL}/api/admin/enquiry/${selectedEnquiry._id}/status`,
         {
           status: newStatus,
           notes,
@@ -277,7 +278,7 @@ const EnquiryManagement = () => {
   const handleDeleteEnquiry = async () => {
     try {
       const response = await axios.delete(
-        `https://theuniquesbackend.vercel.app/api/admin/enquiry/${deleteId}`,
+        `${BASE_URL}/api/admin/enquiry/${deleteId}`,
         { withCredentials: true }
       );
 

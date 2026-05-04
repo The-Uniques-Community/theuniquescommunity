@@ -6,6 +6,7 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import { Link } from "react-router";
 import axios from "axios";
+import { BASE_URL } from "@/config";
 
 const ContactForm = () => {
   // Form state
@@ -107,7 +108,7 @@ const ContactForm = () => {
     
     setLoading(true);
     try {
-      const response = await axios.post('https://theuniquesbackend.vercel.app/api/contact', formData);
+      const response = await axios.post(`${BASE_URL}/api/contact`, formData);
       
       if (response.data.success) {
         // Show success message

@@ -5,6 +5,7 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import axios from "axios";
+import { BASE_URL } from "@/config";
 
 import { TrainerCardDashboard } from "@/utils/Card/TrainerCardDashboard";
 import {
@@ -55,7 +56,7 @@ import CustomLoader from "@/utils/Loader/CustomLoader";
 import tu from "@/assets/logos/tu.png";
 
 const Trainers = () => {
-    const burl = "http://localhost:5000"; // Ideally this should come from env or context
+    const burl = BASE_URL; // Ideally this should come from env or context
     const [search, setSearch] = useState("");
     const [trainers, setTrainers] = useState([]);
     const [loading, setLoading] = useState(false);

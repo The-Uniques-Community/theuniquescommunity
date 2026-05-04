@@ -40,6 +40,7 @@ import {
 import { Close, ContactMail } from '@mui/icons-material';
 import { FaLinkedinIn, FaWhatsapp, FaTwitter, FaFacebookF } from "react-icons/fa";
 import { toast } from 'react-toastify';
+import { BASE_URL } from "@/config";
 import Button from "@/utils/Buttons/Button";
 
 // Static data for community partners (only for Bharat TechXperience Hackathon 2.0)
@@ -186,7 +187,7 @@ const EventDetailPage = () => {
         
         console.log("Fetching event with ID:", id);
         
-        const response = await axios.get(`https://theuniquesbackend.vercel.app/api/events/${id}`);
+        const response = await axios.get(`${BASE_URL}/api/events/${id}`);
         console.log("API Response:", response.data);
         
         // Handle different possible response structures
@@ -249,7 +250,7 @@ const EventDetailPage = () => {
     
     try {
       setTeamsLoading(true);
-      const response = await axios.get(`https://theuniquesbackend.vercel.app/api/events/${eventId}/members`);
+      const response = await axios.get(`${BASE_URL}/api/events/${eventId}/members`);
       
       if (response.data && response.data.success && response.data.data) {
         const eventData = response.data.data;
@@ -343,7 +344,7 @@ const EventDetailPage = () => {
         setRegistrationLoading(true);
         try {
           const response = await fetch(
-            `https://theuniquesbackend.vercel.app/api/events/${id}/register`,
+            `${BASE_URL}/api/events/${id}/register`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -498,7 +499,7 @@ const EventDetailPage = () => {
       };
 
       const response = await fetch(
-        `https://theuniquesbackend.vercel.app/api/events/${event._id}/form-response`,
+        `${BASE_URL}/api/events/${event._id}/form-response`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

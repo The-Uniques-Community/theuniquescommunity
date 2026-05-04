@@ -15,6 +15,7 @@ import { FaLinkedinIn, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { FaXTwitter, FaGithub } from "react-icons/fa6";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import axios from "axios";
+import { BASE_URL } from "@/config";
 import { toast } from "react-toastify";
 
 // Helper function for formatting dates
@@ -45,7 +46,7 @@ const MemberProfile = () => {
         console.log(`Fetching member with ID: ${id}`);
         
         // First try to get all members and filter by ID (since we don't have a direct endpoint)
-        const response = await axios.get("https://theuniquesbackend.vercel.app/api/public/members");
+        const response = await axios.get(`${BASE_URL}/api/public/members`);
         
         if (response.data.success && response.data.data) {
           // Find the member with the matching ID
@@ -129,7 +130,7 @@ const MemberProfile = () => {
   // Format profile image
   const getProxyImageUrl = (fileId) => {
     if (!fileId) return '/placeholder.svg';
-    return `https://theuniquesbackend.vercel.app/api/image-proxy/${fileId}`;
+    return `${BASE_URL}/api/image-proxy/${fileId}`;
   };
 
   const profileImg =

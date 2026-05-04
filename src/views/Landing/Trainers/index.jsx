@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Container, Stack, Chip } from "@mui/material";
 import axios from "axios";
+import { BASE_URL } from "@/config";
 import { TrainerCard } from "./TrainerCard";
 import SearchIcon from "@mui/icons-material/Search";
 import CustomLoader from "@/utils/Loader/CustomLoader";
@@ -27,7 +28,7 @@ const Trainers = () => {
     useEffect(() => {
         const fetchTrainers = async () => {
             try {
-                const response = await axios.get("http://localhost:5000/api/admin/trainers/all-trainers");
+                const response = await axios.get(`${BASE_URL}/api/admin/trainers/all-trainers`);
                 setTrainers(response.data);
                 setLoading(false);
             } catch (err) {

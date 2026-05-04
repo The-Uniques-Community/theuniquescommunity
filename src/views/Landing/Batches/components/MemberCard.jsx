@@ -8,6 +8,7 @@ import {
 import { FaLinkedinIn, FaInstagram } from "react-icons/fa";
 import { FaXTwitter, FaGithub } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "@/config";
 
 const MemberCard = ({ member }) => {
   const navigate = useNavigate();
@@ -83,7 +84,7 @@ const MemberCard = ({ member }) => {
 
   const getProxyImageUrl = (fileId) => {
     if (!fileId) return '/placeholder.svg'; // Fallback image
-    return `https://theuniquesbackend.vercel.app/api/image-proxy/${fileId}`;
+    return `${BASE_URL}/api/image-proxy/${fileId}`;
   };
 
   // Handle navigation to profile page

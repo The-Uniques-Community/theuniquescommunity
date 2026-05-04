@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, forwardRef } from 'react';
 import axios from 'axios';
+import { BASE_URL } from '@/config';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import Eventmodel from '../Event/Componant/Event';
@@ -386,7 +387,7 @@ const Event = () => {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('https://theuniquesbackend.vercel.app/api/events');
+        const response = await axios.get(`${BASE_URL}/api/events`);
         
         if (response.data && Array.isArray(response.data.events)) {
           const eventsData = response.data.events;

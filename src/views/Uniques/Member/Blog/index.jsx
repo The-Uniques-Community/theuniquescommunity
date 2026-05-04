@@ -36,9 +36,10 @@ import {
   Save as SaveIcon,
 } from "@mui/icons-material";
 import axios from "axios";
+import { BASE_URL } from "@/config";
 
 // Base API URL
-const API_BASE_URL = "https://theuniquesbackend.vercel.app/api";
+const API_BASE_URL = `${BASE_URL}/api`;
 
 // Create axios instance with default config
 const api = axios.create({

@@ -72,14 +72,15 @@ import {
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import axios from "axios";
+import { BASE_URL } from "@/config";
 // Import date-fns without destructuring to avoid the missing module error
 import * as dateFns from 'date-fns';
 import tu from '@/assets/logos/tu.png';
 import * as XLSX from 'xlsx';
 
 // Base API URL
-const API_BASE_URL = 'https://theuniquesbackend.vercel.app/api/admin/fine';
-const UPLOAD_API_URL = 'https://theuniquesbackend.vercel.app/upload/fine_file_upload';
+const API_BASE_URL = `${BASE_URL}/api/admin/fine`;
+const UPLOAD_API_URL = `${BASE_URL}/upload/fine_file_upload`;
 
 // Fine Payment Modal Component - Fix Receipt icon reference
 const FinePaymentModal = ({ open, onClose, memberId, fine, onPaymentComplete }) => {

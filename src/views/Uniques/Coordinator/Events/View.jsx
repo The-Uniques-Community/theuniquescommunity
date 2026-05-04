@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { BASE_URL } from "@/config";
 import { toast } from "react-toastify"; // Make sure this is installed
 import dayjs from "dayjs"; // Make sure this is installed
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -216,7 +217,7 @@ const EventView = () => {
     const fetchEvent = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`https://theuniquesbackend.vercel.app/api/events/${id}`);
+        const response = await fetch(`${BASE_URL}/api/events/${id}`);
         const data = await response.json();
 
         if (data.success) {
@@ -247,7 +248,7 @@ const EventView = () => {
   const fetchAvailableGuests = async () => {
     try {
       const response = await fetch(
-        `https://theuniquesbackend.vercel.app/api/guest/get-all-guests`
+        `${BASE_URL}/api/guest/get-all-guests`
       );
       const data = await response.json();
 
@@ -263,7 +264,7 @@ const EventView = () => {
   const fetchFormResponses = async (eventId) => {
     try {
       const response = await fetch(
-        `https://theuniquesbackend.vercel.app/api/events/${eventId}/form-responses`,
+        `${BASE_URL}/api/events/${eventId}/form-responses`,
         {
           credentials: "include",
         }
@@ -331,7 +332,7 @@ const EventView = () => {
       // Show loading indicator
       setLoading(true);
 
-      const response = await fetch(`https://theuniquesbackend.vercel.app/api/events/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/events/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -402,7 +403,7 @@ const EventView = () => {
       }
 
       const uploadResponse = await fetch(
-        "https://theuniquesbackend.vercel.app/upload/event_file_upload",
+        `${BASE_URL}/upload/event_file_upload`,
         {
           method: "POST",
           
@@ -423,7 +424,7 @@ const EventView = () => {
       if (uploadResult.success !== false) {
         // Refresh the gallery
         const galleryResponse = await fetch(
-          `https://theuniquesbackend.vercel.app/api/events/${id}/gallery`
+          `${BASE_URL}/api/events/${id}/gallery`
         );
         const galleryResult = await galleryResponse.json();
 
@@ -458,7 +459,7 @@ const EventView = () => {
   const handleRemoveImage = async (imageId) => {
     try {
       const response = await fetch(
-        `https://theuniquesbackend.vercel.app/api/events/${id}/gallery`,
+        `${BASE_URL}/api/events/${id}/gallery`,
         {
           method: "PATCH",
           headers: {
@@ -516,7 +517,7 @@ const EventView = () => {
 
         try {
           const response = await fetch(
-            `https://theuniquesbackend.vercel.app/api/events/${id}/register`,
+            `${BASE_URL}/api/events/${id}/register`,
             {
               method: "POST",
               headers: {
@@ -593,7 +594,7 @@ const EventView = () => {
 
       setLoading(true);
       const response = await fetch(
-        "https://theuniquesbackend.vercel.app/api/guest/add-guest",
+        `${BASE_URL}/api/guest/add-guest`,
         {
           method: "POST",
           headers: {
@@ -646,7 +647,7 @@ const EventView = () => {
         } else {
           // Create a new guest record first
           const createResponse = await fetch(
-            "https://theuniquesbackend.vercel.app/api/guest/add-guest",
+            `${BASE_URL}/api/guest/add-guest`,
             {
               method: "POST",
               headers: {
@@ -671,7 +672,7 @@ const EventView = () => {
 
       // Now link the guest to the event
       const response = await fetch(
-        "https://theuniquesbackend.vercel.app/api/events/link-guest",
+        `${BASE_URL}/api/events/link-guest`,
         {
           method: "POST",
           headers: {
@@ -696,7 +697,7 @@ const EventView = () => {
       if (result.success) {
         // Refresh the event data to get updated guest list
         const eventResponse = await fetch(
-          `https://theuniquesbackend.vercel.app/api/events/${id}`
+          `${BASE_URL}/api/events/${id}`
         );
         const eventData = await eventResponse.json();
 
@@ -743,7 +744,7 @@ const EventView = () => {
         })),
       };
 
-      const response = await fetch(`https://theuniquesbackend.vercel.app/api/events/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/events/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -791,7 +792,7 @@ const EventView = () => {
       formData.append("files", file);
 
       const response = await fetch(
-        "https://theuniquesbackend.vercel.app/upload/event_file_upload",
+        `${BASE_URL}/upload/event_file_upload`,
         {
           method: "POST",
           credentials: "include",
@@ -811,7 +812,7 @@ const EventView = () => {
       if (result.success !== false) {
         // Refresh event data to get updated banner
         const eventResponse = await fetch(
-          `https://theuniquesbackend.vercel.app/api/events/${id}`
+          `${BASE_URL}/api/events/${id}`
         );
         const eventData = await eventResponse.json();
 
@@ -984,7 +985,7 @@ const EventView = () => {
       };
 
       const response = await fetch(
-        `https://theuniquesbackend.vercel.app/api/events/${id}/form-response`,
+        `${BASE_URL}/api/events/${id}/form-response`,
         {
           method: "POST",
           headers: {

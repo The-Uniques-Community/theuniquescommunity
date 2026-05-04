@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react"
 import axios from 'axios'
+import { BASE_URL } from '@/config';
 import { motion, AnimatePresence } from "framer-motion"
 import { Play, ChevronRight, ChevronLeft } from "lucide-react"
 import useEmblaCarousel from "embla-carousel-react"
@@ -10,7 +11,7 @@ import Eventmodel from '../Event/Componant/Event' // Import the EventModel compo
 // Update the helper function to use your proxy endpoint
 const getProxiedImageUrl = (fileId) => {
   if (!fileId) return "/placeholder.svg"
-  return `https://theuniquesbackend.vercel.app/api/image-proxy/${fileId}`
+  return `${BASE_URL}/api/image-proxy/${fileId}`
 }
 
 // Update the transformEventToDestination function
@@ -144,7 +145,7 @@ export default function Highlight() {
     const fetchEvents = async () => {
       try {
         setLoading(true)
-        const response = await axios.get('https://theuniquesbackend.vercel.app/api/events', {
+        const response = await axios.get(`${BASE_URL}/api/events`, {
           params: {
             status: 'completed',  // Only fetch completed events
             limit: 10  // Adjust limit as needed

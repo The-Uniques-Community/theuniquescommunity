@@ -9,6 +9,7 @@ import Calender from "./dashboardComponents/Calender";
 import Banner from "./dashboardComponents/Banner";
 import EventOverView from "./dashboardComponents/EventOverView";
 import axios from "axios";
+import { BASE_URL } from "@/config";
 import {
   Table,
   TableBody,
@@ -130,7 +131,7 @@ const FinePaymentModal = ({
 
       // Upload the file - make sure the URL is correct
       const uploadResponse = await axios.post(
-        "https://theuniquesbackend.vercel.app/upload/fine_file_upload",
+        `${BASE_URL}/upload/fine_file_upload`,
         formData,
         {
           headers: {
@@ -150,7 +151,7 @@ const FinePaymentModal = ({
         const fileId = uploadResponse.data.files[0]._id;
 
         // API endpoint for updating fine status - this needs to match your backend routes
-        const updateEndpoint = `https://theuniquesbackend.vercel.app/api/admin/fine/members/${memberId}/fines/${fine._id}`;
+        const updateEndpoint = `${BASE_URL}/api/admin/fine/members/${memberId}/fines/${fine._id}`;
 
         // Update the fine status and attach the proof
         const updateResponse = await axios.patch(updateEndpoint, {
@@ -615,7 +616,7 @@ const index = () => {
   const [selectedFine, setSelectedFine] = useState(null);
   const [openViewModal, setOpenViewModal] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
-  const API_BASE_URL = "https://theuniquesbackend.vercel.app/api/admin";
+  const API_BASE_URL = `${BASE_URL}/api/admin`;
 
   // Fetch data when component mounts
   useEffect(() => {
@@ -624,7 +625,7 @@ const index = () => {
         setLoading(true);
         // Fetch all members
         const membersRes = await axios.get(
-          "https://theuniquesbackend.vercel.app/api/admin/member?page=1&limit=10"
+          `${BASE_URL}/api/admin/member?page=1&limit=10`
         );
         // Get recently added members (sorted by creation date)
         const sortedMembers = [...membersRes.data.data].sort(
@@ -638,7 +639,7 @@ const index = () => {
 
         // Fetch members with fines
         const fineRes = await axios.get(
-          "https://theuniquesbackend.vercel.app/api/admin/fine/fines/members"
+          `${BASE_URL}/api/admin/fine/fines/members`
         );
         setFineMembers(
           fineRes.data.data.members.filter((member) => Number(member.totalPendingAmount) > 0)
@@ -660,7 +661,7 @@ const index = () => {
         try {
           // Try to get the total fine from a dedicated API endpoint
           const fineStatsRes = await axios.get(
-            "https://theuniquesbackend.vercel.app/api/admin/fine/fines/statistics"
+            `${BASE_URL}/api/admin/fine/fines/statistics`
           );
           if (
             fineStatsRes.data &&
@@ -678,7 +679,7 @@ const index = () => {
 
         // Fetch events from the correct API endpoint
         try {
-          const eventsRes = await axios.get("https://theuniquesbackend.vercel.app/api/events");
+          const eventsRes = await axios.get(`${BASE_URL}/api/events`);
           // Handle API response based on its structure (data property or direct array)
           const eventsList = eventsRes.data.events || [];
           setEvents(eventsList.slice(0, 3));
@@ -730,7 +731,7 @@ const index = () => {
 
         // Fetch members with supplementary exams for semester 1
         const supplementaryRes = await axios.get(
-          `https://theuniquesbackend.vercel.app/api/admin/member/supplementary/semester/${currentSemester}`
+          `${BASE_URL}/api/admin/member/supplementary/semester/${currentSemester}`
         );
         setSupplementaryMembers(supplementaryRes.data.data || []);
 
@@ -751,7 +752,7 @@ const index = () => {
       setCurrentSemester(semester);
 
       const res = await axios.get(
-        `https://theuniquesbackend.vercel.app/api/admin/member/supplementary/semester/${semester}`
+        `${BASE_URL}/api/admin/member/supplementary/semester/${semester}`
       );
 
       // Debug the API response
@@ -799,7 +800,7 @@ const index = () => {
     // Refresh the data
     try {
       const fineRes = await axios.get(
-        "https://theuniquesbackend.vercel.app/api/admin/member/fines/all"
+        `${BASE_URL}/api/admin/member/fines/all`
       );
 
       if (fineRes.data && fineRes.data.data) {
@@ -885,7 +886,7 @@ const index = () => {
   };
   const getProxyImageUrl = (fileId) => {
     if (!fileId) return '/placeholder.svg'; // Fallback image
-    return `${API_BASE_URL}/api/image-proxy/${fileId}`;
+    return `${BASE_URL}/api/image-proxy/${fileId}`;
   };
 
   return (
@@ -1020,8 +1021,8 @@ const index = () => {
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <Avatar
-                                src={member.profilePic}
-                                alt={member.name  }
+                                src={member.profilePic ? (typeof member.profilePic === 'object' ? getProxyImageUrl(member.profilePic.fileId) : getProxyImageUrl(member.profilePic)) : "/placeholder.svg"}
+                                alt={member.name}
                               />
                               <div>
                                 <div className="font-medium">
@@ -1117,10 +1118,10 @@ const index = () => {
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <Avatar
-                           src={user?.profilePic?.fileId ? 
-                            getProxyImageUrl(user.profilePic.fileId) : 
-                            '/placeholder.svg'
-                          }
+                                src={member?.profilePic?.fileId ? 
+                                 getProxyImageUrl(member.profilePic.fileId) : 
+                                 '/placeholder.svg'
+                               }
                               />
                               <div>
                                 <div className="font-medium">
@@ -1220,7 +1221,7 @@ const index = () => {
               {/* Member Basic Info */}
               <div className="flex items-center gap-4 mb-6">
                 <Avatar
-                  src={selectedMember.profilePic}
+                  src={selectedMember.profilePic ? (typeof selectedMember.profilePic === 'object' ? getProxyImageUrl(selectedMember.profilePic.fileId) : getProxyImageUrl(selectedMember.profilePic)) : "/placeholder.svg"}
                   alt={selectedMember.name}
                   sx={{ width: 64, height: 64 }}
                   className="border-2 border-[#ca0019]"

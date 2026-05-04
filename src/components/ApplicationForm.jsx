@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { BASE_URL } from "@/config";
 
 const ApplicationForm = ({ onClose }) => {
     const [formData, setFormData] = useState({
@@ -33,7 +34,7 @@ const ApplicationForm = ({ onClose }) => {
 
         try {
             const response = await axios.post(
-                'http://localhost:5000/api/campus-ambassador/apply', 
+                `${BASE_URL}/api/campus-ambassador/apply`, 
                 formData
             );
             

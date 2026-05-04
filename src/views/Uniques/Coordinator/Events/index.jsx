@@ -40,6 +40,7 @@ import {
   Delete,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "@/config";
 
 const index = () => {
   const [events, setEvents] = useState([]);
@@ -75,7 +76,7 @@ const index = () => {
       setLoading(true);
       // Add page parameter to the API endpoint
       const response = await fetch(
-        `https://theuniquesbackend.vercel.app/api/events?page=${page}`
+        `${BASE_URL}/api/events?page=${page}`
       );
       const data = await response.json();
 
@@ -196,7 +197,7 @@ const index = () => {
     try {
       setDeleteLoading(true);
       const response = await fetch(
-        `https://theuniquesbackend.vercel.app/api/events/${eventToDelete}`,
+        `${BASE_URL}/api/events/${eventToDelete}`,
         {
           method: "DELETE",
           headers: {

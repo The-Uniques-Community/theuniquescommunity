@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { BASE_URL } from "@/config";
 import { useTheme } from "@mui/material/styles";
 import { FaLinkedinIn, FaInstagram, FaGithub } from "react-icons/fa";
 import { GoArrowUpRight } from "react-icons/go";
@@ -27,7 +28,7 @@ export const TrainerCard = ({ user }) => {
     // Image Handling
     const getProxyImageUrl = (fileId) => {
         if (!fileId) return null;
-        return `http://localhost:5000/api/image-proxy/${fileId}`;
+        return `${BASE_URL}/api/image-proxy/${fileId}`;
     };
 
     const initialImg = user.profilePic

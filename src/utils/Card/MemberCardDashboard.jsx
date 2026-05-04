@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { BASE_URL } from "@/config";
 import { Button, Card, CardContent, Avatar, IconButton } from "@mui/material";
 import { FaEye } from "react-icons/fa";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
@@ -44,7 +45,7 @@ const UserProfileModal = ({ open, handleClose, userData }) => {
   };
   const getProxyImageUrl = (fileId) => {
     if (!fileId) return "/placeholder.svg"; // Fallback image
-    return `https://theuniquesbackend.vercel.app/api/image-proxy/${fileId}`;
+    return `${BASE_URL}/api/image-proxy/${fileId}`;
   };
 
   return (
@@ -302,7 +303,7 @@ export const MemberCardDashboard = ({ user, onEdit, onDelete, refreshData }) => 
   const handleClose = () => setOpen(false);
   const getProxyImageUrl = (fileId) => {
     if (!fileId) return "/placeholder.svg"; // Fallback image
-    return `http://localhost:5000/api/image-proxy/${fileId}`;
+    return `${BASE_URL}/api/image-proxy/${fileId}`;
   };
   return (
     <>

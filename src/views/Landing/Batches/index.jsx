@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Search, Award, RefreshCw, Users } from "lucide-react";
 import axios from "axios";
+import { BASE_URL } from "@/config";
 import MemberCard from "./components/MemberCard";
 import Header from "../About/componants/Header";
 import { Card, CardContent, Typography, Box, Tooltip } from "@mui/material";
@@ -72,7 +73,7 @@ const index = () => {
         setCountsLoading(true);
         console.log("Fetching batch counts...");
         
-        const response = await axios.get("https://theuniquesbackend.vercel.app/api/public/members/counts");
+        const response = await axios.get(`${BASE_URL}/api/public/members/counts`);
         
         if (response.data.success) {
           console.log("Batch counts received:", response.data.data);
@@ -130,7 +131,7 @@ const index = () => {
 
         // Fetch all members for the selected batch without search parameter
         // We'll handle search client-side for better filtering of incomplete profiles
-        const response = await axios.get("https://theuniquesbackend.vercel.app/api/public/members", {
+        const response = await axios.get(`${BASE_URL}/api/public/members`, {
           params: {
             batch: selectedBatch !== "All" ? selectedBatch : undefined
           }
@@ -276,13 +277,13 @@ const index = () => {
     const fetchAll = async () => {
       try {
         // First fetch counts
-        const countsResponse = await axios.get("https://theuniquesbackend.vercel.app/api/public/members/counts");
+        const countsResponse = await axios.get(`${BASE_URL}/api/public/members/counts`);
         if (countsResponse.data.success) {
           setBatchCounts(countsResponse.data.data);
         }
         
         // Then fetch members
-        const membersResponse = await axios.get("https://theuniquesbackend.vercel.app/api/public/members", {
+        const membersResponse = await axios.get(`${BASE_URL}/api/public/members`, {
           params: {
             batch: selectedBatch !== "All" ? selectedBatch : undefined
           }

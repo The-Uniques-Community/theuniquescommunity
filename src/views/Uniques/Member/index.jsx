@@ -72,9 +72,10 @@
 // } from "chart.js";
 // import { Line, Bar, Pie } from "react-chartjs-2";
 // import { toast } from "react-toastify";
+// import { BASE_URL } from "@/config";
 
 // // Define the API base URL
-// const API_URL = "https://theuniquesbackend.vercel.app";
+// const API_URL = BASE_URL;
 
 // // Register ChartJS components
 // ChartJS.register(

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Search, Award, Users } from "lucide-react";
 import axios from "axios";
+import { BASE_URL } from "@/config";
 import MemberCard from "../Batches/components/MemberCard";
 import AchievementCard from "../Batches/components/AchievementCard";
 import { achievementsData } from "../Batches/data/achievementsData";
@@ -62,7 +63,7 @@ const Batches = () => {
     const fetchBatchCounts = async () => {
       try {
         setCountsLoading(true);
-        const response = await axios.get("https://theuniquesbackend.vercel.app/api/public/members/counts");
+        const response = await axios.get(`${BASE_URL}/api/public/members/counts`);
 
         if (response.data.success) {
           // Transform the response data to ensure proper count format
@@ -100,7 +101,7 @@ const Batches = () => {
       try {
         setLoading(true);
 
-        const response = await axios.get("https://theuniquesbackend.vercel.app/api/public/members", {
+        const response = await axios.get(`${BASE_URL}/api/public/members`, {
           params: {
             batch: selectedBatch !== "All" ? selectedBatch : undefined
           }

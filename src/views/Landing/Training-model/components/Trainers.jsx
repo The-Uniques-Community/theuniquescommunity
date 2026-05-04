@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import { ChevronLeft, ChevronRight, Github, Linkedin, ExternalLink, Code, Star } from 'lucide-react';
+import { BASE_URL } from '@/config';
 
 const TrainerCard = ({ trainer }) => {
   return (
@@ -209,7 +210,7 @@ const Trainers = () => {
       name: "Nishant Singh",
       position: "Campus Tech Lead, Video Production",
       program: "Taught Uniques 3.0",
-      image: "https://theuniquesbackend.vercel.app/api/image-proxy/1SH3BoI8y1FcIPnOq4--cwjLxAx_MxcWB",
+      image: `${BASE_URL}/api/image-proxy/1SH3BoI8y1FcIPnOq4--cwjLxAx_MxcWB`,
       bio: "Talented student mentor specializing in Adobe video editing suite, helping peers create professional-grade video content.",
       expertise: ["Adobe Premiere", "After Effects", "Video Editing"],
       social: {
@@ -222,7 +223,7 @@ const Trainers = () => {
       name: "Vasu Malhotra",
       position: "Creative Tech Mentor, Digital Imaging",
       program: "Taught Uniques 3.0",
-      image: "https://theuniquesbackend.vercel.app/api/image-proxy/1gaipJxoPrOHb8D0B_p_rSsOhSg2EoHpJ",
+      image: `${BASE_URL}/api/image-proxy/1gaipJxoPrOHb8D0B_p_rSsOhSg2EoHpJ`,
       bio: "Rising talent in digital imaging and photo manipulation, teaching fellow students the art of Photoshop.",
       expertise: ["Photoshop", "Digital Imaging", "Graphic Design"],
       social: {
@@ -235,7 +236,7 @@ const Trainers = () => {
       name: "Vaishnavi Bajpai",
       position: "Design Innovator & Student Mentor",
       program: "Taught Uniques 3.0",
-      image: "https://theuniquesbackend.vercel.app/api/image-proxy/1vdN4PkGf9C5NZwLZSff2ZUc3m5VvUYdw",
+      image: `${BASE_URL}/api/image-proxy/1vdN4PkGf9C5NZwLZSff2ZUc3m5VvUYdw`,
       bio: "Passionate design enthusiast sharing Canva expertise to help students create compelling visual content for their projects.",
       expertise: ["Canva", "Graphic Design", "Social Media Graphics"],
       social: {
@@ -261,7 +262,7 @@ const Trainers = () => {
       name: "Amandeep",
       position: "Algorithm Specialist & Peer Mentor",
       program: "Taught Uniques 3.0",
-      image: "https://theuniquesbackend.vercel.app/api/image-proxy/19gzh7aEwbwEyyI3ZP0xbgjdzRF_kcnVd",
+      image: `${BASE_URL}/api/image-proxy/19gzh7aEwbwEyyI3ZP0xbgjdzRF_kcnVd`,
       bio: "Enthusiastic student mentor introducing peers to C++ programming fundamentals and problem-solving techniques.",
       expertise: ["C++", "Data Structures", "Algorithms"],
       social: {
@@ -274,7 +275,7 @@ const Trainers = () => {
       name: "Harshit",
       position: "Campus Coding Coach",
       program: "Taught Uniques 3.0",
-      image: "https://theuniquesbackend.vercel.app/api/image-proxy/1kJKQdp3dPwF6f28yjS-EIf0m6SoChWvj",
+      image: `${BASE_URL}/api/image-proxy/1kJKQdp3dPwF6f28yjS-EIf0m6SoChWvj`,
       bio: "Skilled student trainer breaking down complex C++ concepts into understandable lessons for fellow undergraduates.",
       expertise: ["C++", "OOP", "Problem Solving"],
       social: {
@@ -287,7 +288,7 @@ const Trainers = () => {
       name: "Riya",
       position: "Programming Peer Leader",
       program: "Taught Uniques 3.0",
-      image: "https://theuniquesbackend.vercel.app/api/image-proxy/1AhUVLUwrplop3WRvTsagm6aR6WPZaYOK",
+      image: `${BASE_URL}/api/image-proxy/1AhUVLUwrplop3WRvTsagm6aR6WPZaYOK`,
       bio: "Talented student mentor sharing practical C++ programming knowledge and fostering a collaborative learning environment.",
       expertise: ["C++", "STL", "Programming Logic"],
       social: {
@@ -300,7 +301,7 @@ const Trainers = () => {
       name: "Shreya",
       position: "Code Craft Ambassador",
       program: "Taught Uniques 3.0",
-      image: "https://theuniquesbackend.vercel.app/api/image-proxy/1aF3Obu9-3OHz1cOmsFq2iB_8NA4RVMLQ",
+      image: `${BASE_URL}/api/image-proxy/1aF3Obu9-3OHz1cOmsFq2iB_8NA4RVMLQ`,
       bio: "Motivated student leader guiding peers through C++ programming concepts while developing her own competitive coding skills.",
       expertise: ["C++", "Competitive Programming", "Code Optimization"],
       social: {
@@ -313,7 +314,7 @@ const Trainers = () => {
       name: "Laxmi",
       position: "Emerging Software Engineer & Mentor",
       program: "Taught Uniques 3.0",
-      image: "https://theuniquesbackend.vercel.app/api/image-proxy/1LNk-bN89GS2JNlxTrp0dPGOeXgI2rL0O",
+      image: `${BASE_URL}/api/image-proxy/1LNk-bN89GS2JNlxTrp0dPGOeXgI2rL0O`,
       bio: "Promising student mentor passionate about practical C++ application development and helping others build their coding foundation.",
       expertise: ["C++", "App Development", "System Programming"],
       social: {
@@ -326,7 +327,7 @@ const Trainers = () => {
       name: "Aryan Kamboj",
       position: "Frontend Innovation Champion",
       program: "Taught Uniques 3.0",
-      image: "https://theuniquesbackend.vercel.app/api/image-proxy/1qoV-I6YPWaKM-58pOrWhLRHX8KIsRKv0",
+      image: `${BASE_URL}/api/image-proxy/1qoV-I6YPWaKM-58pOrWhLRHX8KIsRKv0`,
       bio: "Rising talent in React ecosystem development with a passion for teaching fellow students modern frontend techniques and architecture patterns.",
       expertise: ["React", "Next.js", "UI Architecture"],
       social: {
@@ -339,7 +340,7 @@ const Trainers = () => {
       name: "Niraj Gupta",
       position: "Web Development Star Mentor",
       program: "Taught Uniques 3.0",
-      image: "https://theuniquesbackend.vercel.app/api/image-proxy/1NytyadYPCgmHJRz_5KNWG25FChu63ptB",
+      image: `${BASE_URL}/api/image-proxy/1NytyadYPCgmHJRz_5KNWG25FChu63ptB`,
       bio: "Ambitious student leader sharing full stack expertise with peers, focusing on creating complete web solutions from frontend to backend.",
       expertise: ["React", "Node.js", "Full Stack"],
       social: {
@@ -352,7 +353,7 @@ const Trainers = () => {
       name: "Kumar Sujal",
       position: "Emerging Web Technologies Coach",
       program: "Taught Uniques 3.0",
-      image: "https://theuniquesbackend.vercel.app/api/image-proxy/1t4yp_I4NSXxR2af685GQAOw8mEed0QJ3",
+      image: `${BASE_URL}/api/image-proxy/1t4yp_I4NSXxR2af685GQAOw8mEed0QJ3`,
       bio: "Talented student mentor passionate about React and modern JavaScript frameworks, helping fellow students build interactive web experiences.",
       expertise: ["React", "JavaScript", "Web Development"],
       social: {

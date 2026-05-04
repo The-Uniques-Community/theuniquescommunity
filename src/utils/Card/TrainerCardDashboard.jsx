@@ -1,5 +1,6 @@
 
 import React, { useState, forwardRef } from "react";
+import { BASE_URL } from "@/config";
 import {
     Button,
     Card,
@@ -35,7 +36,7 @@ import "tailwindcss/tailwind.css";
 const TrainerProfileDialog = ({ open, handleClose, user }) => {
     const getProxyImageUrl = (fileId) => {
         if (!fileId) return "/placeholder.svg"; // Fallback image
-        return `http://localhost:5000/api/image-proxy/${fileId}`;
+        return `${BASE_URL}/api/image-proxy/${fileId}`;
     };
 
     const formatDate = (dateString) => {
@@ -241,7 +242,7 @@ export const TrainerCardDashboard = ({ user }) => {
     const handleClose = () => setOpen(false);
     const getProxyImageUrl = (fileId) => {
         if (!fileId) return "/placeholder.svg"; // Fallback image
-        return `http://localhost:5000/api/image-proxy/${fileId}`;
+        return `${BASE_URL}/api/image-proxy/${fileId}`;
     };
     return (
         <>
