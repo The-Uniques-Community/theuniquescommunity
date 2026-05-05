@@ -18,7 +18,7 @@ import {
   Facebook as FacebookIcon,
   Home as HomeIcon
 } from '@mui/icons-material';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { styled } from '@mui/system';
 import logo from "@/assets/logos/uniqueswhite.png";
 
@@ -122,7 +122,9 @@ const SocialIcon = styled(IconButton)({
 const Sidebar = ({ students, onDrawerToggle, isDrawerOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { studentId } = useParams();
   const currentPath = location.pathname.split('/').pop();
+  const activeId = studentId || (currentPath !== 'success-stories' ? currentPath : null);
 
   const handleHomeClick = () => {
     navigate('/');
@@ -166,7 +168,7 @@ const Sidebar = ({ students, onDrawerToggle, isDrawerOpen }) => {
             key={student.id}
             component={Link}
             to={`/success-stories/${student.id}`}
-            active={currentPath === student.id ? 1 : 0}
+            active={activeId === student.id}
             onClick={() => onDrawerToggle && onDrawerToggle()}
           >
             <ListItemAvatar>

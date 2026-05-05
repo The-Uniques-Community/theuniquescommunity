@@ -1,10 +1,158 @@
 export const successStories = [
   // Add this new entry to your successStories array
-  {
+{
+  id: "SagarModi2023102",
+  video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
+  chatbotUrl: "https://cdn.botpress.cloud/webchat/v3.6/shareable.html?configUrl=https://files.bpcontent.cloud/2026/02/17/11/20260217110628-WT8X3OBM.json",
+  name: "Sagar Modi",
+  image: "https://media.licdn.com/dms/image/v2/D5635AQG08VSATRN-Cw/profile-framedphoto-shrink_800_800/B56Zx7zvNFJMAg-/0/1771603686559?e=1772532000&v=beta&t=4fpHLGJcVN9fLKPS5eoYrvPBCuYMcO-pRCd24X7bpuc",
+  batch: "The Uniques 3.0",
+  company: "JalAI",
+  role: "Research Intern & Software Developer at IIT Roorkee",
+  summary: "A Research Intern at IIT Roorkee and Full Stack Developer specializing in MERN stack, IoT systems, and real-time analytics platforms. Sagar led the development of JalAI, an AI-powered water intelligence platform integrating IoT sensors with live dashboards. He combines strong foundations in Data Structures, System Design, and Machine Learning with production-level application development.",
+  
+  timeline: [
+    {
+      year: 2020,
+      achievements: [
+        "Completed Matriculation with 86.8%",
+        "Built strong foundation in mathematics and science"
+      ]
+    },
+    {
+      year: 2022,
+      achievements: [
+        "Completed Intermediate with 86.8%",
+        "Started exploring programming and problem solving"
+      ]
+    },
+    {
+      year: 2023,
+      achievements: [
+        "Started B.Tech in Computer Science & Design at SVIET",
+        "Built multiple MERN stack production-level projects",
+        "Ranked 35th in CodeCrafters Challenge (5000+ participants)"
+      ]
+    },
+    {
+      year: 2025,
+      achievements: [
+        "Research Intern – Software Developer at IIT Roorkee",
+        "Led development of JalAI IoT Water Intelligence Platform",
+        "NASA ARSET Trainee – ICESat-2 Satellite Program",
+        "IIRS–ISRO Trainee – Remote Sensing & Image Analysis"
+      ]
+    }
+  ],
+
+  education: {
+    institution: "Swami Vivekananda Institute of Engineering & Technology (SVIET)",
+    degree: "Bachelor of Technology in Computer Science & Design",
+    duration: "2023-2027",
+    location: "Chandigarh",
+    details: "CGPA: 8.32/10.0"
+  },
+
+  experience: [
+    {
+      company: "Indian Institute of Technology (IIT) Roorkee",
+      role: "Research Intern – Software Developer",
+      duration: "Dec 2025 - Jan 2026",
+      location: "Roorkee, India",
+      responsibilities: [
+        "Led end-to-end development of JalAI – IoT-based water intelligence research platform",
+        "Integrated real-world IoT sensor data pipelines",
+        "Implemented secure role-based authentication",
+        "Developed analytics dashboards and automated reporting workflows",
+        "Performed system validation using live sensor data",
+        "Prepared technical documentation and research summaries"
+      ]
+    },
+    {
+      company: "Skill India – Digital India Initiative",
+      role: "Technical Trainer (Part-Time)",
+      duration: "Dec 2025 - Present",
+      location: "Remote",
+      responsibilities: [
+        "Training students in Full Stack Web Development",
+        "Teaching core programming and problem-solving concepts",
+        "Mentoring learners on real-world project development"
+      ]
+    },
+    {
+      company: "CodeAlpha Tech Solutions",
+      role: "Frontend Web Developer Intern",
+      duration: "Jul 2024 - Aug 2024",
+      location: "Remote",
+      responsibilities: [
+        "Developed responsive frontend applications",
+        "Worked on UI/UX improvements and optimization",
+        "Collaborated with backend team for API integration"
+      ]
+    }
+  ],
+
+  projects: [
+    {
+      name: "JalAI – IoT Water Intelligence Platform",
+      technologies: "MERN Stack, Supabase, Chart.js, TensorFlow.js, Arduino, Raspberry Pi",
+      date: "2025-Present",
+      description: "AI-powered water quality monitoring and decision-support platform",
+      achievements: [
+        "Built real-time dashboards with automated alerts",
+        "Integrated IoT devices for live sensing",
+        "Implemented downloadable analytical reports",
+        "Project Link: https://jalaitech.com"
+      ]
+    },
+    {
+      name: "RiseVerse – Startup Ecosystem Platform",
+      technologies: "MERN Stack, Leaflet.js, OpenAI API",
+      date: "2024",
+      description: "Geospatial startup discovery platform with investor insights",
+      achievements: [
+        "Developed ML-powered chatbot",
+        "Built interactive startup Deal Room",
+        "Implemented geospatial startup visualization"
+      ]
+    },
+    {
+      name: "The Uniques Community Platform",
+      technologies: "MERN Stack, AI Models, Email Automation",
+      date: "2024",
+      description: "Community-driven student platform with AI career guidance",
+      achievements: [
+        "Built role-based dashboards",
+        "Integrated AI chatbot for career assistance",
+        "Developed analytics and engagement insights",
+        "Project Link: https://theuniques.in"
+      ]
+    }
+  ],
+
+  skills: {
+    languages: ["Python", "JavaScript", "C", "C++", "Java", "SQL"],
+    technologies: ["React.js", "Node.js", "Express.js", "MERN Stack", "TensorFlow.js", "Leaflet.js"],
+    tools: ["MongoDB", "PostgreSQL", "Supabase", "Firebase", "Git", "GitHub", "Postman", "Jupyter Notebook"]
+  },
+
+  leadership: {
+    organization: "The Uniques Community",
+    role: "Outreach Coordinator",
+    duration: "2024 - Present",
+    achievements: [
+      "Managed community engagement initiatives",
+      "Coordinated student outreach programs",
+      "Promoted technical learning opportunities",
+      "Recognized as CodeCrafters Challenge Rank 35 achiever"
+    ]
+  }
+},
+{
     id: "RonitJaiPrakash2021003",
-    video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
-    chatbotUrl: "https://cdn.botpress.cloud/webchat/v3.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/11/01/10/20251101103205-NNXEIEGC.json&_gl=1*53pqd*_gcl_au*MTQ3Mjg5ODA1Ny4xNzYxOTkzMTE1*_ga*MTIwNDEyMDYzOC4xNzYxOTkyOTUy*_ga_HKHSWES9V9*czE3NjE5OTI5NTIkbzEkZzEkdDE3NjE5OTM0MDIkajYwJGwwJGgxMDc0NTQ1MDEz",
     name: "Ronit JaiPrakash",
+    video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
+    chatbotUrl: "https://cdn.botpress.cloud/webchat/v3.6/shareable.html?configUrl=https://files.bpcontent.cloud/2026/02/17/11/20260217110628-WT8X3OBM.json",
     image: "https://media.licdn.com/dms/image/v2/D5603AQFewlI7VW09Fg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1708280686326?e=1750896000&v=beta&t=0R4Hv32FtHwwVjasXKxKdfRdrRIjmG-WsS3WtPzXrbk",
     batch: "The Uniques 1.0",
     company: "Caelius Consultancy",
@@ -178,7 +326,7 @@ export const successStories = [
   {
     id: "NaveenJaiswal2021004",
     video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
-    chatbotUrl: "https://cdn.botpress.cloud/webchat/v3.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/11/01/10/20251101103205-NNXEIEGC.json&_gl=1*53pqd*_gcl_au*MTQ3Mjg5ODA1Ny4xNzYxOTkzMTE1*_ga*MTIwNDEyMDYzOC4xNzYxOTkyOTUy*_ga_HKHSWES9V9*czE3NjE5OTI5NTIkbzEkZzEkdDE3NjE5OTM0MDIkajYwJGwwJGgxMDc0NTQ1MDEz",
+    chatbotUrl: "https://cdn.botpress.cloud/webchat/v3.6/shareable.html?configUrl=https://files.bpcontent.cloud/2026/02/17/11/20260217110628-WT8X3OBM.json",
     name: "Naveen Jaiswal",
     image: "https://media.licdn.com/dms/image/v2/D5603AQHVwXFQ1mWrtA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1710089176344?e=1750896000&v=beta&t=aHOisuhFveYFq6GRDuF14B0vIfq5DvWZAgTK0zK_qQU",
     batch: "The Uniques 1.0",
