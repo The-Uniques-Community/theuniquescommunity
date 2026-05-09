@@ -23,13 +23,15 @@ import ScienceIcon from "@mui/icons-material/Science";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import { LogIn, LogOut } from "lucide-react"; // Add LogOut import
+import { LogIn, LogOut, ChevronRight } from "lucide-react"; // Add LogOut import
 // Add this to your imports at the top
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import axios from "axios"; // For logout API call
 import { set } from "date-fns";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { BASE_URL } from "@/config";
+import { motion, AnimatePresence } from "framer-motion";
+
 const Navbar = () => {
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
   const [activeLink, setActiveLink] = React.useState("");
@@ -84,45 +86,43 @@ const Navbar = () => {
     // Base navigation items that are always shown
     const baseItems = [
       { text: "Home", icon: <HomeIcon />, link: "/" },
-      { text: "About Us", icon: <InfoIcon />, link: "/about" },
       { text: "How it started", icon: <WorkIcon />, link: "/howitstarted" },
       { text: "Batches", icon: <SchoolIcon />, link: "/batches" },
       { text: "Training Model", icon: <ScienceIcon />, link: "/training" },
       { text: "Success Stories", icon: <CheckCircleIcon />, link: "/success-stories" },
       { text: "Trainers", icon: <SchoolIcon />, link: "/trainers" },
-      { text: "Events", icon: <EventIcon />, link: "/events" },
       { text: "Community", icon: <GroupsIcon />, link: "/community-main" },
       { text: "Blogs", icon: <ArticleIcon />, link: "/blogs" },
       { text: "Contact", icon: <ContactMailIcon />, link: "/contact" },
     ];
 
+    const authItems = [];
     if (isLoggedIn) {
-      baseItems.push({
+      authItems.push({
         text: "Dashboard",
         icon: <DashboardIcon />,
         link: `/${user?.role}`,
       });
-
-      // Add logout button after dashboard
-      baseItems.push({
+      authItems.push({
         text: "Logout",
         icon: <LogOut />,
         onClick: handleLogout,
-        link: "#", // Dummy link as we'll handle with onClick
+        link: "#",
       });
     } else {
-      baseItems.push({
+      authItems.push({
         text: "Login",
         icon: <LogIn />,
         link: "/auth/login",
       });
     }
 
-    return baseItems;
+    return { baseItems, authItems };
   };
 
   // Get nav items based on auth status
-  const navItems = generateNavItems();
+  const { baseItems: mainNavItems, authItems: authNavItems } = generateNavItems();
+
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -163,200 +163,279 @@ const Navbar = () => {
   const drawerContent = (
     <Box
       sx={{
-        width: 270,
+        width: { xs: 'calc(100vw - 32px)', sm: 320 },
         height: "100%",
         display: "flex",
         flexDirection: "column",
+        background: "rgba(255, 248, 248, 0.98)", // Subtle rose tint
+        backdropFilter: "blur(25px)",
       }}
       role="presentation"
+
     >
+      {/* Drawer Header */}
+      <Box sx={{ pt: 2, px: 2, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+        <motion.div
+          whileHover={{ rotate: 90, scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={toggleDrawer(false)}
+          className="p-2 rounded-full hover:bg-red-50 cursor-pointer transition-colors text-neutral-500 hover:text-red-600"
+        >
+          <RiMenu3Line size={24} />
+        </motion.div>
+
+      </Box>
+
       <List
-        sx={{ flexGrow: 1 }}
+        sx={{ 
+          flexGrow: 1, 
+          px: 2, 
+          pt: 1, 
+          pb: 2,
+          overflowY: "auto",
+          scrollbarWidth: "none",
+          "&::-webkit-scrollbar": { display: "none" },
+        }}
         onClick={toggleDrawer(false)}
         onKeyDown={toggleDrawer(false)}
       >
-        {navItems.map((item, index) => (
-          <React.Fragment key={item.text}>
-            <ListItem disablePadding>
-              <ListItemButton
-                component={item.onClick ? "button" : Link}
-                to={!item.onClick ? item.link : undefined}
-                onClick={() => {
-                  handleLinkClick(item.text);
-                  if (item.onClick) item.onClick();
-                }}
-                sx={{
-                  transition: "all 0.3s ease",
-                  position: "relative",
-                  overflow: "hidden",
-                  pl: 2,
-                  "&:hover": {
-                    backgroundColor: "#CA0019",
-                    color: "#fff",
-                    pl: 3,
-                    "& .MuiListItemIcon-root": {
-                      color: "#fff",
-                    },
-                    "& .MuiTypography-root": {
-                      transform: "translateX(10px)",
-                      transition: "transform 0.3s ease",
-                    },
-                  },
-                  ...(activeLink === item.text && {
-                    backgroundColor: "#CA0019",
-                    color: "#fff",
-                    "& .MuiListItemIcon-root": {
-                      color: "#fff",
-                    },
-                    "& .MuiTypography-root": {
-                      transform: "translateX(10px)",
-                    },
-                  }),
-                }}
-              >
-                <ListItemIcon
+        <AnimatePresence>
+          {mainNavItems.map((item, index) => (
+            <motion.div
+              key={item.text}
+              initial={{ x: 20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: index * 0.05, duration: 0.3 }}
+            >
+              <ListItem disablePadding sx={{ mb: 0.5 }}>
+                <ListItemButton
+                  component={item.onClick ? "button" : Link}
+                  to={!item.onClick ? item.link : undefined}
+                  onClick={() => {
+                    handleLinkClick(item.text);
+                    if (item.onClick) item.onClick();
+                  }}
                   sx={{
-                    minWidth: "45px",
-                    color: activeLink === item.text ? "#fff" : "inherit",
-                    transition: "color 0.3s ease",
+                    borderRadius: "8px",
+                    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                    py: 1.6,
+                    mb: 0.8,
+                    px: 2,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    "&::before": {
+                      content: '""',
+                      position: 'absolute',
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: '4px',
+                      backgroundColor: '#CA0019',
+                      transform: activeLink === item.text ? 'scaleY(0.6)' : 'scaleY(0)',
+                      transition: 'transform 0.3s ease',
+                      borderRadius: '0 4px 4px 0',
+                    },
+                    "&:hover": {
+                      backgroundColor: "rgba(202, 0, 25, 0.04)",
+                      transform: "translateX(4px)",
+                      "& .MuiListItemIcon-root": { color: "#CA0019", transform: "scale(1.1)" },
+                      "& .MuiTypography-root": { color: "#CA0019", fontWeight: 600 },
+                    },
+                    ...(activeLink === item.text && {
+                      backgroundColor: "rgba(202, 0, 25, 0.08)",
+                      boxShadow: '0 4px 12px rgba(202, 0, 25, 0.1)',
+                      "& .MuiListItemIcon-root": { color: "#CA0019" },
+                      "& .MuiTypography-root": { color: "#CA0019", fontWeight: 600 },
+                    }),
                   }}
                 >
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.text}
-                  sx={{
-                    transition: "transform 0.3s ease",
-                    transform:
-                      activeLink === item.text
-                        ? "translateX(10px)"
-                        : "translateX(0)",
-                  }}
-                />
-              </ListItemButton>
-            </ListItem>
-            {/* Add divider after Contact item */}
-            {item.text === "Contact" && <Divider sx={{ my: 1 }} />}
-          </React.Fragment>
-        ))}
+                  <ListItemIcon
+                    sx={{
+                      minWidth: "36px",
+                      color: activeLink === item.text ? "#CA0019" : "text.secondary",
+                      transition: "color 0.2s ease",
+                      "& .MuiSvgIcon-root": { fontSize: "1.2rem" }
+                    }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={item.text}
+                    primaryTypographyProps={{
+                      fontSize: "0.85rem",
+                      fontWeight: activeLink === item.text ? 600 : 500,
+                      color: activeLink === item.text ? "#CA0019" : "text.primary",
+                      letterSpacing: "0.01em",
+                    }}
+                  />
+                  {activeLink === item.text && (
+                    <motion.div layoutId="active-indicator">
+                      <ChevronRight size={16} color="#CA0019" />
+                    </motion.div>
+                  )}
+                </ListItemButton>
+              </ListItem>
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </List>
 
-      {/* Social Media Section at Bottom */}
-      <Box sx={{ p: 2, mt: "auto" }}>
-        <Divider sx={{ mb: 2 }} />
-        <Typography
-          variant="subtitle2"
-          sx={{
-            mb: 1.5,
-            paddingLeft: 1,
-            fontWeight: 500,
-            color: "text.secondary",
-            textAlign: "start",
-          }}
-        >
-          Connect With Us
-        </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "start",
-            gap: 2,
-          }}
-        >
-          {socialLinks.map((social, index) => (
-            <a
-              key={index}
-              href={social.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ textDecoration: "none" }}
-            >
-              <Box
-                sx={{
-                  width: 40,
-                  height: 40,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  backgroundColor: "#f5f5f5",
-                  borderRadius: "50%",
-
-                  color: social.color,
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    backgroundColor: social.color,
-                    color: "white",
-                    transform: "translateY(-3px)",
+      {/* Auth & Actions Section (Fixed) */}
+      <Box sx={{ px: 2, pb: 2 }}>
+        <Divider sx={{ mb: 3, opacity: 0.5 }} />
+        {authNavItems.map((item) => (
+          <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
+            <ListItemButton
+              component={item.onClick ? "button" : Link}
+              to={!item.onClick ? item.link : undefined}
+              onClick={() => {
+                if (item.onClick) item.onClick();
+              }}
+              sx={{
+                borderRadius: "8px",
+                py: 1.5,
+                backgroundColor: item.text === "Login" ? "#CA0019" : "rgba(0,0,0,0.03)",
+                color: item.text === "Login" ? "white" : "text.primary",
+                position: 'relative',
+                overflow: 'hidden',
+                zIndex: 1,
+                "&::before": {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: 0,
+                  height: '100%',
+                  backgroundColor: 'black',
+                  transition: 'width 0.4s ease-in-out',
+                  zIndex: -1,
+                },
+                "&:hover": {
+                  color: "white",
+                  "&::before": {
+                    width: '100%',
                   },
-                }}
-              >
-                {social.icon}
-              </Box>
-            </a>
-          ))}
-        </Box>
+                  "& .MuiListItemIcon-root": { color: "white" },
+                },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: "40px", color: 'inherit' }}>
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText
+                primary={item.text}
+                primaryTypographyProps={{ fontWeight: 600, fontSize: "0.9rem" }}
+              />
+            </ListItemButton>
+          </ListItem>
+        ))}
       </Box>
+
     </Box>
   );
 
   return (
-    <div className="lg:px-12 py-4 md:px-12 sm:px-8 px-5 flex justify-between sticky top-0 z-[100] bg-white bg-opacity-90 items-center shadow-sm backdrop-blur-sm">
-      <div>
-        <div className="grid grid-cols-6 gap-x-5">
-          <div className="lg:col-span-2 md:col-span-2 sm:col-span-4 col-span-5">
-            <Link to={"/"}>
-              <img
-                src={logo}
-                className="w-40 object-contain object-left"
-                alt="Logo"
-              />
+    <motion.nav
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className="lg:px-16 py-4 md:px-12 sm:px-8 px-5 flex justify-between sticky top-0 z-[100] bg-white/80 border-b border-white/20 items-center shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] backdrop-blur-xl"
+    >
+      <div className="flex items-center gap-12">
+        <Link to={"/"} className="group">
+          <motion.img
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            src={logo}
+            className="w-40 object-contain object-left filter drop-shadow-sm transition-all duration-300 group-hover:brightness-110"
+            alt="Logo"
+          />
+        </Link>
+
+        {/* Desktop Links */}
+        <div className="hidden lg:flex items-center gap-2">
+          {[
+            { name: "ABOUT US", path: "/about" },
+            { name: "COMMUNITY", path: "/community-main" },
+            { name: "EVENTS", path: "/events" },
+          ].map((item) => (
+            <Link key={item.name} to={item.path}>
+              <div className="relative px-5 py-2.5 group overflow-hidden">
+                <span className="relative z-10 text-sm font-semibold tracking-wide text-neutral-700 group-hover:text-neutral-900 transition-colors duration-300">
+                  {item.name}
+                </span>
+                <motion.div
+                  className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-red-600 rounded-full group-hover:w-1/2 transition-all duration-300 ease-out"
+                  layoutId="underline"
+                />
+              </div>
             </Link>
-          </div>
-          <div className="col-span-1"></div>
-          <Link to="/about">
-            <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
-              <span>ABOUT US</span>
-            </div>
-          </Link>
-          <Link to="/community-main">
-            <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
-              <span>COMMUNITY</span>
-            </div>
-          </Link>
-          <Link to="/events">
-            <div className="lg:block md:block lg:col-span-1 md:col-span-1 sm:hidden hidden text-center self-center px-3 py-2 rounded-full hover:bg-slate-100 duration-75">
-              <span>EVENTS</span>
-            </div>
-          </Link>
+          ))}
         </div>
       </div>
-      <div>
-        <div
-          className="rounded-full hover:bg-slate-100 duration-75 cursor-pointer"
+
+      <div className="flex items-center gap-4">
+        {/* Action Button - If space allows */}
+        {isLoggedIn ? (
+          <Link
+            to={`/${user?.role}`}
+            className="hidden md:flex items-center gap-2 px-6 py-2.5 bg-neutral-900 text-white rounded-md text-sm font-semibold hover:bg-neutral-800 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0"
+          >
+            Dashboard <ChevronRight size={16} />
+          </Link>
+        ) : (
+          <Link
+            to="/auth/login"
+            className="hidden md:flex items-center gap-2 px-6 py-2.5 bg-red-600 text-white rounded-md text-sm font-semibold hover:bg-red-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0"
+          >
+            Join Now
+          </Link>
+        )}
+
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="p-2.5 rounded-xl hover:bg-neutral-100/80 transition-all duration-300 cursor-pointer border border-transparent hover:border-neutral-200"
           onClick={toggleDrawer(true)}
         >
-          <div className="h-12 w-12 flex items-center justify-center">
-            <RiMenu3Line
-              size={30}
-              className="inline-block mx-auto"
-              color="black"
-            />
-          </div>
-        </div>
+          <RiMenu3Line size={24} color="black" />
+        </motion.div>
       </div>
+
       <Drawer
         anchor="right"
         open={isDrawerOpen}
         onClose={toggleDrawer(false)}
+        transitionDuration={{ enter: 500, exit: 400 }}
         sx={{
-          "& .MuiDrawer-paper": { boxSizing: "border-box" },
-          "& .MuiPaper-root": { boxShadow: "0 0 15px rgba(0,0,0,0.1)" },
+          "& .MuiDrawer-paper": { 
+            boxSizing: "border-box",
+            m: { xs: 1, sm: 2 },
+            height: { xs: 'calc(100% - 16px)', sm: 'calc(100% - 32px)' },
+            borderRadius: '20px',
+            boxShadow: '0 25px 50px -12px rgba(202, 0, 25, 0.1)',
+            border: '1px solid rgba(202, 0, 25, 0.05)',
+            background: 'linear-gradient(135deg, rgba(255, 252, 252, 0.98), rgba(255, 245, 245, 0.95))',
+          },
+
+
+          "& .MuiBackdrop-root": {
+            backdropFilter: 'blur(4px)',
+            backgroundColor: 'rgba(0,0,0,0.2)',
+          },
           overflow: "hidden",
         }}
       >
-        {drawerContent}
+        <motion.div
+          initial={{ x: 300, opacity: 0, rotate: 5, scale: 0.9 }}
+          animate={isDrawerOpen ? { x: 0, opacity: 1, rotate: 0, scale: 1 } : {}}
+          transition={{ type: "spring", stiffness: 200, damping: 25 }}
+          style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+        >
+          {drawerContent}
+        </motion.div>
       </Drawer>
-    </div>
+    </motion.nav>
   );
 };
 

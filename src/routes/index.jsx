@@ -24,15 +24,15 @@ import MemberProfile from "@/views/Landing/Profile/MemberProfile";
 import ForgetPassword from "@/views/Authentication/login/ForgetPassword";
 
 
-const Landing = Loader(lazy(() => import("@/views/Landing/index")));
+const Landing = Loader(lazy(() => import("@/views/Landing/index")), false);
 
-const BlogPage = Loader(lazy(() => import("@/views/Landing/Blog/index")));
-const Contact = Loader(lazy(() => import("@/views/Landing/Contact/index")));
-const Training = Loader(lazy(() => import("@/views/Landing/Training-model/Training")));
-const NotFound = Loader(lazy(() => import("@/views/Landing/NotFound/index")));
-const CommunityPage = Loader(lazy(() => import("@/views/Landing/Community/index")));
-const SuccessStories = Loader(lazy(() => import("@/views/Landing/SuccessStories/index")));
-const Trainers = Loader(lazy(() => import("@/views/Landing/Trainers/index")));
+const BlogPage = Loader(lazy(() => import("@/views/Landing/Blog/index")), false);
+const Contact = Loader(lazy(() => import("@/views/Landing/Contact/index")), false);
+const Training = Loader(lazy(() => import("@/views/Landing/Training-model/Training")), false);
+const NotFound = Loader(lazy(() => import("@/views/Landing/NotFound/index")), false);
+const CommunityPage = Loader(lazy(() => import("@/views/Landing/Community/index")), false);
+const SuccessStories = Loader(lazy(() => import("@/views/Landing/SuccessStories/index")), false);
+const Trainers = Loader(lazy(() => import("@/views/Landing/Trainers/index")), false);
 const Timeline = Loader(lazy(() => import('@/utils/Timeline/Timeline')));
 
 const timelineData = [

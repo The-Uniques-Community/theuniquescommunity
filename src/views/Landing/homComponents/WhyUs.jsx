@@ -18,12 +18,12 @@ const WhyUs = () => {
       A Community Like No Other
     </h1>
   </div>
-  <h1 className=" text-2xl md:text-4xl font-semibold">
-    Driving Innovation Through  
+  <h2 className=" text-2xl md:text-4xl font-semibold leading-relaxed">
+    Driving <span className="brush-bg text-white">Innovation</span> Through  
     <span className="text-[#ca0019] text-2xl md:text-5xl md:py-2 block mb-5">
       Collaboration & Visionary Thinking
     </span>
-  </h1>
+  </h2>
 </div>
 
         {/* Features Grid */}

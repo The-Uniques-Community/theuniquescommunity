@@ -130,7 +130,7 @@ const FinePaymentModal = ({
 
       // Upload the file - make sure the URL is correct
       const uploadResponse = await axios.post(
-        "https://theuniquesbackend.vercel.app/upload/fine_file_upload",
+        "http://localhost:5000/upload/fine_file_upload",
         formData,
         {
           headers: {
@@ -150,7 +150,7 @@ const FinePaymentModal = ({
         const fileId = uploadResponse.data.files[0]._id;
 
         // API endpoint for updating fine status - this needs to match your backend routes
-        const updateEndpoint = `https://theuniquesbackend.vercel.app/api/admin/fine/members/${memberId}/fines/${fine._id}`;
+        const updateEndpoint = `http://localhost:5000/api/admin/fine/members/${memberId}/fines/${fine._id}`;
 
         // Update the fine status and attach the proof
         const updateResponse = await axios.patch(updateEndpoint, {
@@ -615,7 +615,7 @@ const Index = () => {
   const [selectedFine, setSelectedFine] = useState(null);
   const [openViewModal, setOpenViewModal] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
-  const API_BASE_URL = "https://theuniquesbackend.vercel.app/api/admin";
+  const API_BASE_URL = "http://localhost:5000/api/admin";
 
   // Fetch data when component mounts
   useEffect(() => {
@@ -624,7 +624,7 @@ const Index = () => {
         setLoading(true);
         // Fetch all members
         const membersRes = await axios.get(
-          "https://theuniquesbackend.vercel.app/api/admin/member?page=1&limit=10"
+          "http://localhost:5000/api/admin/member?page=1&limit=10"
         );
         // Get recently added members (sorted by creation date)
         const sortedMembers = [...membersRes.data.data].sort(
@@ -638,7 +638,7 @@ const Index = () => {
 
         // Fetch members with fines
         const fineRes = await axios.get(
-          "https://theuniquesbackend.vercel.app/api/admin/fine/fines/members"
+          "http://localhost:5000/api/admin/fine/fines/members"
         );
         setFineMembers(
           fineRes.data.data.members.filter((member) => Number(member.totalPendingAmount) > 0)
@@ -660,7 +660,7 @@ const Index = () => {
         try {
           // Try to get the total fine from a dedicated API endpoint
           const fineStatsRes = await axios.get(
-            "https://theuniquesbackend.vercel.app/api/admin/fine/fines/statistics"
+            "http://localhost:5000/api/admin/fine/fines/statistics"
           );
           if (
             fineStatsRes.data &&
@@ -678,7 +678,7 @@ const Index = () => {
 
         // Fetch events from the correct API endpoint
         try {
-          const eventsRes = await axios.get("https://theuniquesbackend.vercel.app/api/events");
+          const eventsRes = await axios.get("http://localhost:5000/api/events");
           // Handle API response based on its structure (data property or direct array)
           const eventsList = eventsRes.data.events || [];
           setEvents(eventsList.slice(0, 3));
@@ -730,7 +730,7 @@ const Index = () => {
 
         // Fetch members with supplementary exams for semester 1
         const supplementaryRes = await axios.get(
-          `https://theuniquesbackend.vercel.app/api/admin/member/supplementary/semester/${currentSemester}`
+          `http://localhost:5000/api/admin/member/supplementary/semester/${currentSemester}`
         );
         setSupplementaryMembers(supplementaryRes.data.data || []);
 
@@ -751,7 +751,7 @@ const Index = () => {
       setCurrentSemester(semester);
 
       const res = await axios.get(
-        `https://theuniquesbackend.vercel.app/api/admin/member/supplementary/semester/${semester}`
+        `http://localhost:5000/api/admin/member/supplementary/semester/${semester}`
       );
 
       // Debug the API response
@@ -799,7 +799,7 @@ const Index = () => {
     // Refresh the data
     try {
       const fineRes = await axios.get(
-        "https://theuniquesbackend.vercel.app/api/admin/member/fines/all"
+        "http://localhost:5000/api/admin/member/fines/all"
       );
 
       if (fineRes.data && fineRes.data.data) {

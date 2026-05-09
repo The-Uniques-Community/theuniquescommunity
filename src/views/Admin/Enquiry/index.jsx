@@ -96,7 +96,7 @@ const EnquiryManagement = () => {
     try {
       setLoading(true);
 
-      let url = `https://theuniquesbackend.vercel.app/api/admin/enquiry?page=${currentPage}&limit=${limit}`;
+      let url = `http://localhost:5000/api/admin/enquiry?page=${currentPage}&limit=${limit}`;
       if (statusFilter !== "all") {
         url += `&status=${statusFilter}`;
       }
@@ -152,7 +152,7 @@ const EnquiryManagement = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `https://theuniquesbackend.vercel.app/api/admin/enquiry/${id}`,
+        `http://localhost:5000/api/admin/enquiry/${id}`,
         {
           withCredentials: true,
         }
@@ -202,7 +202,7 @@ const EnquiryManagement = () => {
         // Only send the replyMessage in the request body
         // The backend extracts the ID from the URL params
         const response = await axios.post(
-          `https://theuniquesbackend.vercel.app/api/admin/enquiry/${enquiryId}/reply`,
+          `http://localhost:5000/api/admin/enquiry/${enquiryId}/reply`,
           { replyMessage },
           { withCredentials: true }
         );
@@ -242,7 +242,7 @@ const EnquiryManagement = () => {
     try {
       setStatusUpdateLoading(true);
       const response = await axios.patch(
-        `https://theuniquesbackend.vercel.app/api/admin/enquiry/${selectedEnquiry._id}/status`,
+        `http://localhost:5000/api/admin/enquiry/${selectedEnquiry._id}/status`,
         {
           status: newStatus,
           notes,
@@ -277,7 +277,7 @@ const EnquiryManagement = () => {
   const handleDeleteEnquiry = async () => {
     try {
       const response = await axios.delete(
-        `https://theuniquesbackend.vercel.app/api/admin/enquiry/${deleteId}`,
+        `http://localhost:5000/api/admin/enquiry/${deleteId}`,
         { withCredentials: true }
       );
 

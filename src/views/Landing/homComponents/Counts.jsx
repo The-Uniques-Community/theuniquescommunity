@@ -128,7 +128,8 @@ const Counts = () => {
             <div className="absolute h-2 w-full bottom-0 left-0 bg-[#ca0019]/10 -z-0"></div>
           </div><br/><br/>
           <p className="text-3xl sm:text-4xl font-bold text-gray-900 relative inline-block">
-            <span className="border-b-2 border-[#ca0019] pb-1">Making an Impact</span>
+            <span className="pb-1">Making an </span>
+            <span className="">Impact</span>
             <span className="absolute -right-6 -top-6 text-6xl text-[#ca0019]/5 font-serif">&#8221;</span>
           </p>
         </div>
@@ -144,7 +145,7 @@ const Counts = () => {
               style={{ transitionDelay: `${index * 100}ms` }}
             >
               {/* Improved card with more initial visual interest */}
-              <div className="bg-white p-6 rounded-lg shadow-[0_4px_20px_-4px_rgba(202,0,25,0.1)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-gray-100 group relative overflow-hidden">
+              <div className="bg-white/60 backdrop-blur-lg p-6 rounded-lg shadow-[0_4px_20px_-4px_rgba(202,0,25,0.1)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-white/40 group relative overflow-hidden">
                 {/* Card corner accent (visible without hover) */}
                 <div className="absolute top-0 right-0 w-16 h-16">
                   <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-[#ca0019]/5 to-transparent"></div>

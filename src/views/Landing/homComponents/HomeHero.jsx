@@ -21,7 +21,7 @@ export default function Landing() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const heroRef = useRef(null);
-  
+
   useEffect(() => {
     const updateDimensions = () => {
       if (heroRef.current) {
@@ -31,7 +31,7 @@ export default function Landing() {
         });
       }
     };
-    
+
     const handleMouseMove = (event) => {
       if (heroRef.current) {
         const rect = heroRef.current.getBoundingClientRect();
@@ -45,11 +45,11 @@ export default function Landing() {
     if (heroElement) {
       heroElement.addEventListener('mousemove', handleMouseMove);
       updateDimensions();
-      
+
       // Update dimensions on window resize
       window.addEventListener('resize', updateDimensions);
     }
-    
+
     return () => {
       if (heroElement) {
         heroElement.removeEventListener('mousemove', handleMouseMove);
@@ -57,18 +57,18 @@ export default function Landing() {
       window.removeEventListener('resize', updateDimensions);
     };
   }, []);
-  
+
   const cellSize = 50;
-  
+
   // Calculate number of columns and rows needed to cover the entire container
   const columns = Math.ceil(dimensions.width / cellSize) + 1;
   const rows = Math.ceil(dimensions.height / cellSize) + 1;
-  
+
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center bg-white relative" ref={heroRef}>
       {/* Grid Background Overlay */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        <div className="grid-bg w-full h-full" 
+        <div className="grid-bg w-full h-full"
           style={{
             backgroundSize: '50px 50px',
             backgroundImage: 'linear-gradient(to right, rgba(202, 0, 25, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(202, 0, 25, 0.03) 1px, transparent 1px)',
@@ -81,19 +81,19 @@ export default function Landing() {
                 // Calculate cell position
                 const cellX = colIndex * cellSize;
                 const cellY = rowIndex * cellSize;
-                
+
                 // Calculate distance from mouse
                 const distance = Math.sqrt(
-                  Math.pow(mousePosition.x - (cellX + cellSize/2), 2) + 
-                  Math.pow(mousePosition.y - (cellY + cellSize/2), 2)
+                  Math.pow(mousePosition.x - (cellX + cellSize / 2), 2) +
+                  Math.pow(mousePosition.y - (cellY + cellSize / 2), 2)
                 );
-                
+
                 // Apply highlight based on distance
                 const maxDistance = 150;
                 const opacity = distance < maxDistance ? (1 - distance / maxDistance) * 0.36 : 0;
-                
+
                 return (
-                  <div 
+                  <div
                     key={`${rowIndex}-${colIndex}`}
                     className="absolute"
                     style={{
@@ -113,7 +113,7 @@ export default function Landing() {
           ))}
         </div>
       </div>
-      
+
       {/* Content (z-index to place above grid) */}
       <div className="relative z-10 w-full flex flex-col items-center">
         <div className='text-lg font-medium'>
@@ -121,17 +121,18 @@ export default function Landing() {
           <span className='text-[#ca0019]'>The</span> Uniques Community
         </div>
         <div className="text-center px-6 pt-12 pb-10">
-            <Link to="/events">
-          <p className="text-sm font-medium px-2 py-1 border border-slate-400 bg-white rounded-full w-max mx-auto text-red-500 mb-2">View Our Vibrant Events ✨</p>
-             </Link>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
-          A Community of Creators, <br /> Dreamers & Doers.
+          <Link to="/events">
+            <p className="text-sm font-medium px-2 py-1 border border-slate-400 bg-white rounded-full w-max mx-auto text-red-500 mb-2">View Our Vibrant Events ✨</p>
+          </Link>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-[1.4]">
+            A Community of Creators, <br /> 
+            <span className="brush-bg text-white [--brush-color:#ca0019] inline-block mt-2">Dreamers & Doers.</span>
           </h1>
           <p className="text-gray-600 my-4 max-w-2xl mx-auto">
-          Experience tech like never before with The UNIQUES Community — vibrant events, hands-on sessions, and pure innovation.
+            Experience tech like never before with The UNIQUES Community — vibrant events, hands-on sessions, and pure innovation.
           </p>
           <Button path="https://chat.whatsapp.com/HYOloogGXKcIkR83DnOjFj" bgColor="#ca0019" color="white" iconColor="black">
-              Join Us
+            Join Us
           </Button>
         </div>
 

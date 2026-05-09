@@ -178,7 +178,7 @@ const Trainers = () => {
     const fileId = typeof fileData === 'object' ? fileData.fileId : fileData;
     // Assuming backend file object structure or ID.
     // Actually our backend returns file object in profilePic often populated, or just ID.
-    // Code in existing components uses: https://theuniquesbackend.vercel.app/api/image-proxy/[fileId]
+    // Code in existing components uses: http://localhost:5000/api/image-proxy/[fileId]
     // The googleDriveUpload route saves File document.
     // The File document has `fileId` (Google Drive ID).
     // The `profilePic` field in Trainer might be populated with File doc.

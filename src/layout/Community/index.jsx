@@ -66,7 +66,7 @@ function DashboardLayoutAppBar() {
   const [isOpen, setIsOpen] = React.useState(false);
   const onClose = () => setIsOpen(false);
   const onConfirm = () => {
-    fetch("https://theuniquesbackend.vercel.app/auth/logout", {
+    fetch("http://localhost:5000/auth/logout", {
       method: "POST",
       credentials: "include",
     })

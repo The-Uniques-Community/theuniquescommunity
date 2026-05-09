@@ -7,7 +7,9 @@ const CallToAction = () => {
         <div className='relative w-full mx-auto my-8'>
             <img src="https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1rwhWULuzIBoNhPGFRMty2dXZHT8VQuqiwxelD" className='cta-clip w-full lg:h-72 h-80 object-cover' alt="" />
             <div className='absolute w-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center'>
-                <h1 className='text-4xl font-bold py-2 text-white'>Join Us Today</h1>
+                <h1 className='text-4xl font-bold py-2 text-white'>
+                  Join Us <span className='brush-bg text-white [--brush-color:#000]'>Today</span>
+                </h1>
                 <p className='text-white p-3 text-lg'>Join the community of unique individuals and learn from the best</p>
                 <Button
                   path="/auth/login"

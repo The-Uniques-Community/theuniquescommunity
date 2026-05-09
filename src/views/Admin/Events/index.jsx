@@ -75,7 +75,7 @@ const index = () => {
       setLoading(true);
       // Add page parameter to the API endpoint
       const response = await fetch(
-        `https://theuniquesbackend.vercel.app/api/events?page=${page}`
+        `http://localhost:5000/api/events?page=${page}`
       );
       const data = await response.json();
 
@@ -196,7 +196,7 @@ const index = () => {
     try {
       setDeleteLoading(true);
       const response = await fetch(
-        `https://theuniquesbackend.vercel.app/api/events/${eventToDelete}`,
+        `http://localhost:5000/api/events/${eventToDelete}`,
         {
           method: "DELETE",
           headers: {
