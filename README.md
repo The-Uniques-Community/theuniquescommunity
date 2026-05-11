@@ -63,7 +63,7 @@ const STUDENT_NAVIGATION = [
 ];
 ````
 
-### Routes
+### Routes ###
 
 Individual routes have been segregated into separate files to simplify management. These are then combined into a single configuration file for easy access.
 
