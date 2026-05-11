@@ -23,7 +23,6 @@ import { successStories } from './successStoriesData';
 import ProfileInformation from './ProfileInformation';
 import SuccessTimeline from './SuccessTimeline';
 import VideoMessage from './VideoMessage';
-import ChatbotLink from './ChatbotLink';
 
 const HeroSection = styled(Box)(({ theme }) => ({
   position: 'relative',
@@ -221,7 +220,6 @@ const StudentStory = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mainTabValue, setMainTabValue] = useState(0);
   const [detailTabValue, setDetailTabValue] = useState(0);
-
   // Tab change handlers
   const handleMainTabChange = (event, newValue) => {
     setMainTabValue(newValue);
@@ -307,6 +305,7 @@ const StudentStory = () => {
             <ProfileImage
               src={student.image}
               alt={student.name}
+              referrerPolicy="no-referrer"
             />
           </motion.div>
         </ProfileImageContainer>
@@ -331,11 +330,6 @@ const StudentStory = () => {
                   icon={<SchoolIcon />}
                   iconPosition="start"
                   label="Profile Information"
-                />
-                <StyledTab
-                  icon={<TimelineIcon />}
-                  iconPosition="start"
-                  label="Success Timeline"
                 />
                 <StyledTab
                   icon={<VideoIcon />}
@@ -376,8 +370,6 @@ const StudentStory = () => {
           </motion.div>
         </Box>
       </ContentWrapper>
-
-      <ChatbotLink student={student} />
     </Box>
   );
 };

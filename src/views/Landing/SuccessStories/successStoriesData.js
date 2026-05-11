@@ -3,9 +3,9 @@ export const successStories = [
   {
     id: "RonitJaiPrakash2021003",
     video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
-    chatbotUrl: "https://cdn.botpress.cloud/webchat/v3.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/11/01/10/20251101103205-NNXEIEGC.json&_gl=1*53pqd*_gcl_au*MTQ3Mjg5ODA1Ny4xNzYxOTkzMTE1*_ga*MTIwNDEyMDYzOC4xNzYxOTkyOTUy*_ga_HKHSWES9V9*czE3NjE5OTI5NTIkbzEkZzEkdDE3NjE5OTM0MDIkajYwJGwwJGgxMDc0NTQ1MDEz",
+    
     name: "Ronit JaiPrakash",
-    image: "https://media.licdn.com/dms/image/v2/D5603AQFewlI7VW09Fg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1708280686326?e=1750896000&v=beta&t=0R4Hv32FtHwwVjasXKxKdfRdrRIjmG-WsS3WtPzXrbk",
+    image: "https://tse3.mm.bing.net/th/id/OIP.SoIXzq-q3SWPC1zi1cwe3wHaHa?pid=ImgDet&w=199&h=199&c=7&dpr=1.3&o=7&rm=3",
     batch: "The Uniques 1.0",
     company: "Caelius Consultancy",
     role: "Application Developer",
@@ -178,9 +178,10 @@ export const successStories = [
   {
     id: "NaveenJaiswal2021004",
     video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
-    chatbotUrl: "https://cdn.botpress.cloud/webchat/v3.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/11/01/10/20251101103205-NNXEIEGC.json&_gl=1*53pqd*_gcl_au*MTQ3Mjg5ODA1Ny4xNzYxOTkzMTE1*_ga*MTIwNDEyMDYzOC4xNzYxOTkyOTUy*_ga_HKHSWES9V9*czE3NjE5OTI5NTIkbzEkZzEkdDE3NjE5OTM0MDIkajYwJGwwJGgxMDc0NTQ1MDEz",
+    
     name: "Naveen Jaiswal",
-    image: "https://media.licdn.com/dms/image/v2/D5603AQHVwXFQ1mWrtA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1710089176344?e=1750896000&v=beta&t=aHOisuhFveYFq6GRDuF14B0vIfq5DvWZAgTK0zK_qQU",
+    image: "https://tse3.mm.bing.net/th/id/OIP.SoIXzq-q3SWPC1zi1cwe3wHaHa?pid=ImgDet&w=199&h=199&c=7&dpr=1.3&o=7&rm=3",
+    
     batch: "The Uniques 1.0",
     company: "Thor Solutions",
     role: "Software Developer",
@@ -298,10 +299,10 @@ export const successStories = [
   {
     id: "ParveenJaiswal2021001",
     video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
-    chatbotUrl: "https://cdn.botpress.cloud/webchat/v3.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/11/01/10/20251101103205-NNXEIEGC.json&_gl=1*53pqd*_gcl_au*MTQ3Mjg5ODA1Ny4xNzYxOTkzMTE1*_ga*MTIwNDEyMDYzOC4xNzYxOTkyOTUy*_ga_HKHSWES9V9*czE3NjE5OTI5NTIkbzEkZzEkdDE3NjE5OTM0MDIkajYwJGwwJGgxMDc0NTQ1MDEz",
     name: "Parveen Jaiswal",
     admissionNo: "2021001",
-    image: "https://media.licdn.com/dms/image/v2/D5603AQFnP2LqKHK4Tg/profile-displayphoto-shrink_400_400/B56ZXRMoqbGsAk-/0/1742971506111?e=1750896000&v=beta&t=YpcZyttRFoUJDxr-s0uaEkHz7azUendwExwEos5ITXQ",
+    image: "https://tse3.mm.bing.net/th/id/OIP.SoIXzq-q3SWPC1zi1cwe3wHaHa?pid=ImgDet&w=199&h=199&c=7&dpr=1.3&o=7&rm=3",
+    
     batch: "The Uniques 1.0",
     company: "SpacePepper Studios",
     role: "Web Developer",
@@ -417,9 +418,9 @@ export const successStories = [
   {
     id: "MantashaTabassum2021002",
     video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
-    chatbotUrl: "https://cdn.botpress.cloud/webchat/v3.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/11/01/10/20251101103205-NNXEIEGC.json&_gl=1*53pqd*_gcl_au*MTQ3Mjg5ODA1Ny4xNzYxOTkzMTE1*_ga*MTIwNDEyMDYzOC4xNzYxOTkyOTUy*_ga_HKHSWES9V9*czE3NjE5OTI5NTIkbzEkZzEkdDE3NjE5OTM0MDIkajYwJGwwJGgxMDc0NTQ1MDEz",
     name: "Mantasha Tabassum",
-    image: "https://media.licdn.com/dms/image/v2/D4D03AQElXzWUBeGTYA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1697386293419?e=1750896000&v=beta&t=fHVOQ0t1DJ3-zImyPe3Z6ELvu4bIrcxbJJs3oJuZVtg",
+    image: "https://tse3.mm.bing.net/th/id/OIP.SoIXzq-q3SWPC1zi1cwe3wHaHa?pid=ImgDet&w=199&h=199&c=7&dpr=1.3&o=7&rm=3",
+    
     batch: "The Uniques 1.0",
     company: "Caelius Consulting",
     role: "Application Developer",
