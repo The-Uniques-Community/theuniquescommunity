@@ -332,6 +332,11 @@ const StudentStory = () => {
                   label="Profile Information"
                 />
                 <StyledTab
+                  icon={<TimelineIcon />}
+                  iconPosition="start"
+                  label="Success Timeline"
+                />
+                <StyledTab
                   icon={<VideoIcon />}
                   iconPosition="start"
                   label="Video Message"
