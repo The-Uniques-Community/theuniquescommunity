@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Navbar from "@/utils/NavBar/Navbar";
 import Footer from "@/utils/Footer/Footer";
 import CustomLoader from "@/utils/Loader/CustomLoader";
+import ChatBot from "@/components/ChatBot";
 
 const LandingLayout = () => {
   const footerRef = useRef(null);
@@ -51,6 +52,7 @@ const LandingLayout = () => {
       >
         <Footer />
       </div>
+      <ChatBot />
     </div>
   );
 };
