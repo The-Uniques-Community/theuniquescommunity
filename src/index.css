@@ -20,7 +20,10 @@
 
 @layer utilities{
     .cta-clip{
-      clip-path: polygon(0% 0%, 21% 0%, 24% 13%, 100% 13%, 100% 100%, 77% 100%, 74% 88%, 0 88%);
+      clip-path: polygon(0% 0%, 21% 0%, 24% 40px, 100% 40px, 100% 100%, 77% 100%, 74% calc(100% - 40px), 0 calc(100% - 40px));
+    }
+    .layout-bottom-clip {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 77% 100%, 74% calc(100% - 40px), 0 calc(100% - 40px));
     }
 }
 @layer utilities {

@@ -1,91 +1,103 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 const GridBackground = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  
+  const canvasRef = useRef(null);
+  const mouseRef = useRef({ x: 0, y: 0 });
+
+  /*
   useEffect(() => {
-    const updateDimensions = () => {
-      setDimensions({
-        width: window.innerWidth,
-        height: window.innerHeight
-      });
-    };
-    
-    const handleMouseMove = (event) => {
-      setMousePosition({ 
-        x: event.clientX, 
-        y: event.clientY 
-      });
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    let animationFrameId;
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     };
 
-    // Initial dimensions
-    updateDimensions();
-    
-    // Event listeners
+    const handleMouseMove = (e) => {
+      mouseRef.current = { x: e.clientX, y: e.clientY };
+    };
+
+    window.addEventListener('resize', handleResize);
     window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('resize', updateDimensions);
-    
+    handleResize();
+
+    const cellSize = 45;
+    const maxDistance = 250;
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const cols = Math.ceil(canvas.width / cellSize);
+      const rows = Math.ceil(canvas.height / cellSize);
+
+      for (let i = 0; i <= cols; i++) {
+        for (let j = 0; j <= rows; j++) {
+          const x = i * cellSize;
+          const y = j * cellSize;
+
+          const dx = x - mouseRef.current.x;
+          const dy = y - mouseRef.current.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          // Base grid opacity (almost invisible)
+          let opacity = 0.05;
+
+          // Highlight opacity based on distance
+          if (distance < maxDistance) {
+            const factor = 1 - distance / maxDistance;
+            opacity = 0.05 + factor * 0.65;
+          }
+
+          ctx.strokeStyle = `rgba(202, 0, 25, ${opacity})`;
+          ctx.lineWidth = distance < maxDistance ? 2 : 1;
+
+          // Draw vertical line segment
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x, y + cellSize);
+          ctx.stroke();
+
+          // Draw horizontal line segment
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x + cellSize, y);
+          ctx.stroke();
+        }
+      }
+
+      animationFrameId = requestAnimationFrame(draw);
+    };
+
+    draw();
+
     return () => {
+      window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('resize', updateDimensions);
+      cancelAnimationFrame(animationFrameId);
     };
   }, []);
-  
-  const cellSize = 50;
-  
-  // Calculate number of columns and rows needed to cover the entire viewport
-  const columns = Math.ceil(dimensions.width / cellSize) + 1;
-  const rows = Math.ceil(dimensions.height / cellSize) + 1;
-  
+  */
+
+
+  return null;
+  /*
   return (
-    <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-      {/* Base grid lines */}
-      <div className="absolute inset-0 z-0" 
-        style={{
-          backgroundSize: '50px 50px',
-          backgroundImage: 'linear-gradient(to right, rgba(202, 0, 25, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(202, 0, 25, 0.03) 1px, transparent 1px)',
-        }}
-      />
-      
-      {/* Dynamic hover effect grid cells */}
-      {dimensions.width > 0 && Array.from({ length: rows }).map((_, rowIndex) => (
-        <div key={`row-${rowIndex}`} className="flex">
-          {Array.from({ length: columns }).map((_, colIndex) => {
-            // Calculate cell position
-            const cellX = colIndex * cellSize;
-            const cellY = rowIndex * cellSize;
-            
-            // Calculate distance from mouse
-            const distance = Math.sqrt(
-              Math.pow(mousePosition.x - (cellX + cellSize/2), 2) + 
-              Math.pow(mousePosition.y - (cellY + cellSize/2), 2)
-            );
-            
-            // Apply highlight based on distance
-            const maxDistance = 150;
-            const opacity = distance < maxDistance ? (1 - distance / maxDistance) * 0.36 : 0;
-            
-            return (
-              <div 
-                key={`${rowIndex}-${colIndex}`}
-                className="absolute"
-                style={{
-                  left: `${cellX}px`,
-                  top: `${cellY}px`,
-                  width: `${cellSize}px`,
-                  height: `${cellSize}px`,
-                  border: '1px solid rgba(202, 0, 25, 0)',
-                  borderColor: `rgba(202, 0, 25, ${opacity})`,
-                  transition: 'border-color 0.15s ease',
-                }}
-              />
-            );
-          })}
-        </div>
-      ))}
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 z-[100] pointer-events-none opacity-80"
+      style={{ 
+        background: 'transparent',
+        mixBlendMode: 'multiply'
+      }}
+    />
   );
+  */
 };
 
 export default GridBackground;
+
+

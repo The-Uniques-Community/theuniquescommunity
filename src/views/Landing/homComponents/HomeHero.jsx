@@ -65,54 +65,17 @@ export default function Landing() {
   const rows = Math.ceil(dimensions.height / cellSize) + 1;
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-white relative" ref={heroRef}>
-      {/* Grid Background Overlay */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <div className="grid-bg w-full h-full"
-          style={{
-            backgroundSize: '50px 50px',
-            backgroundImage: 'linear-gradient(to right, rgba(202, 0, 25, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(202, 0, 25, 0.03) 1px, transparent 1px)',
-          }}
-        >
-          {/* Dynamic hover effect grid cells */}
-          {dimensions.width > 0 && Array.from({ length: rows }).map((_, rowIndex) => (
-            <div key={`row-${rowIndex}`} className="flex">
-              {Array.from({ length: columns }).map((_, colIndex) => {
-                // Calculate cell position
-                const cellX = colIndex * cellSize;
-                const cellY = rowIndex * cellSize;
-
-                // Calculate distance from mouse
-                const distance = Math.sqrt(
-                  Math.pow(mousePosition.x - (cellX + cellSize / 2), 2) +
-                  Math.pow(mousePosition.y - (cellY + cellSize / 2), 2)
-                );
-
-                // Apply highlight based on distance
-                const maxDistance = 150;
-                const opacity = distance < maxDistance ? (1 - distance / maxDistance) * 0.36 : 0;
-
-                return (
-                  <div
-                    key={`${rowIndex}-${colIndex}`}
-                    className="absolute"
-                    style={{
-                      left: `${cellX}px`,
-                      top: `${cellY}px`,
-                      width: `${cellSize}px`,
-                      height: `${cellSize}px`,
-                      border: '1px solid rgba(202, 0, 25, 0)',
-                      borderColor: `rgba(202, 0, 25, ${opacity})`,
-                      transition: 'border-color 0.15s ease',
-                      pointerEvents: 'none'
-                    }}
-                  />
-                );
-              })}
-            </div>
-          ))}
-        </div>
+    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-transparent relative" ref={heroRef}>
+      {/* Decorative Square Grid (Left Side) - Commented out
+      <div className="absolute left-8 md:left-16 top-1/2 -translate-y-1/2 hidden lg:grid grid-cols-4 gap-0 opacity-15 pointer-events-none group">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div 
+            key={i} 
+            className="w-14 h-14 border border-red-800/40 transition-all duration-300 hover:bg-red-800/10 hover:border-red-800/60 pointer-events-auto" 
+          />
+        ))}
       </div>
+      */}
 
       {/* Content (z-index to place above grid) */}
       <div className="relative z-10 w-full flex flex-col items-center">
@@ -125,7 +88,7 @@ export default function Landing() {
             <p className="text-sm font-medium px-2 py-1 border border-slate-400 bg-white rounded-full w-max mx-auto text-red-500 mb-2">View Our Vibrant Events ✨</p>
           </Link>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-[1.4]">
-            A Community of Creators, <br /> 
+            A Community of Creators, <br />
             <span className="brush-bg text-white [--brush-color:#ca0019] inline-block mt-2">Dreamers & Doers.</span>
           </h1>
           <p className="text-gray-600 my-4 max-w-2xl mx-auto">

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import logo from "../../assets/logos/theuniquesCommunity.png";
-import { RiMenu3Line } from "react-icons/ri";
+import { RiMenu3Line, RiCloseLine } from "react-icons/ri";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -163,7 +163,7 @@ const Navbar = () => {
   const drawerContent = (
     <Box
       sx={{
-        width: { xs: 'calc(100vw - 32px)', sm: 320 },
+        width: { xs: 'calc(100vw - 32px)', sm: 280 },
         height: "100%",
         display: "flex",
         flexDirection: "column",
@@ -181,7 +181,7 @@ const Navbar = () => {
           onClick={toggleDrawer(false)}
           className="p-2 rounded-full hover:bg-red-50 cursor-pointer transition-colors text-neutral-500 hover:text-red-600"
         >
-          <RiMenu3Line size={24} />
+          <RiCloseLine size={24} />
         </motion.div>
 
       </Box>
@@ -339,9 +339,9 @@ const Navbar = () => {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="lg:px-16 py-4 md:px-12 sm:px-8 px-5 flex justify-between sticky top-0 z-[100] bg-white/80 border-b border-white/20 items-center shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] backdrop-blur-xl"
+      className="lg:px-16 py-4 md:px-12 sm:px-8 px-5 grid grid-cols-2 lg:grid-cols-3 sticky top-0 z-[100] bg-white/80 border-b border-white/20 items-center shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] backdrop-blur-xl"
     >
-      <div className="flex items-center gap-12">
+      <div className="flex items-center justify-start">
         <Link to={"/"} className="group">
           <motion.img
             whileHover={{ scale: 1.02 }}
@@ -351,54 +351,43 @@ const Navbar = () => {
             alt="Logo"
           />
         </Link>
-
-        {/* Desktop Links */}
-        <div className="hidden lg:flex items-center gap-2">
-          {[
-            { name: "ABOUT US", path: "/about" },
-            { name: "COMMUNITY", path: "/community-main" },
-            { name: "EVENTS", path: "/events" },
-          ].map((item) => (
-            <Link key={item.name} to={item.path}>
-              <div className="relative px-5 py-2.5 group overflow-hidden">
-                <span className="relative z-10 text-sm font-semibold tracking-wide text-neutral-700 group-hover:text-neutral-900 transition-colors duration-300">
-                  {item.name}
-                </span>
-                <motion.div
-                  className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-red-600 rounded-full group-hover:w-1/2 transition-all duration-300 ease-out"
-                  layoutId="underline"
-                />
-              </div>
-            </Link>
-          ))}
-        </div>
       </div>
 
-      <div className="flex items-center gap-4">
-        {/* Action Button - If space allows */}
-        {isLoggedIn ? (
-          <Link
-            to={`/${user?.role}`}
-            className="hidden md:flex items-center gap-2 px-6 py-2.5 bg-neutral-900 text-white rounded-md text-sm font-semibold hover:bg-neutral-800 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0"
-          >
-            Dashboard <ChevronRight size={16} />
+      {/* Desktop Links - Centered */}
+      <div className="hidden lg:flex items-center justify-center gap-2">
+        {[
+          { name: "ABOUT US", path: "/about" },
+          { name: "COMMUNITY", path: "/community-main" },
+          { name: "EVENTS", path: "/events" },
+        ].map((item) => (
+          <Link key={item.name} to={item.path} className="group px-5 py-2.5">
+            <div className="relative inline-block">
+              <motion.span 
+                whileHover={{ scale: 1.02 }}
+                className="relative z-10 text-sm font-bold tracking-wider text-neutral-700 group-hover:text-red-600 transition-colors duration-300"
+              >
+                {item.name}
+              </motion.span>
+              <span 
+                className="absolute -bottom-1 left-0 w-full h-0.5 bg-red-600 transform scale-x-0 origin-right transition-transform duration-300 ease-out group-hover:scale-x-100 group-hover:origin-left"
+              />
+            </div>
           </Link>
-        ) : (
-          <Link
-            to="/auth/login"
-            className="hidden md:flex items-center gap-2 px-6 py-2.5 bg-red-600 text-white rounded-md text-sm font-semibold hover:bg-red-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0"
-          >
-            Join Now
-          </Link>
-        )}
+        ))}
+      </div>
 
+      <div className="flex items-center justify-end gap-4">
         <motion.div
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="p-2.5 rounded-xl hover:bg-neutral-100/80 transition-all duration-300 cursor-pointer border border-transparent hover:border-neutral-200"
-          onClick={toggleDrawer(true)}
+          onClick={toggleDrawer(!isDrawerOpen)}
         >
-          <RiMenu3Line size={24} color="black" />
+          {isDrawerOpen ? (
+            <RiCloseLine size={24} color="black" />
+          ) : (
+            <RiMenu3Line size={24} color="black" />
+          )}
         </motion.div>
       </div>
 

@@ -156,10 +156,8 @@ const AboutSection = () => {
   }, []);
 
   return (
-    <div ref={sectionRef} className="bg-white text-gray-900 py-24 lg:py-48 px-6 relative overflow-hidden">
+    <div ref={sectionRef} className="bg-transparent text-gray-900 py-24 lg:py-48 px-6 relative overflow-hidden">
       {/* Decorative Background Elements */}
-      <div className="absolute inset-0 opacity-[0.02] pointer-events-none -z-0" 
-           style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
       
       {/* Background Text */}
       <div ref={leftTextRef} className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-[35%] text-[10rem] lg:text-[18rem] font-black text-neutral-100 select-none pointer-events-none uppercase tracking-tighter -rotate-90 origin-center whitespace-nowrap">
@@ -172,7 +170,7 @@ const AboutSection = () => {
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header Section */}
-        <div className="flex flex-col gap-10 lg:gap-6 mb-36">
+        <div className="flex flex-col gap-10 lg:gap-6 mb-20">
           <div ref={headerLeftRef} className="text-left max-w-4xl">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-1 h-6 bg-red-600 rounded-full" />
@@ -199,7 +197,7 @@ const AboutSection = () => {
         </div>
 
         {/* H-Shape Features Layout */}
-        <div className="relative mt-20">
+        <div className="relative">
           <div className="text-center mb-32">
              <div className="inline-flex flex-col items-center">
                <h3 className="text-2xl font-black text-neutral-200 uppercase tracking-[0.4em] relative">
