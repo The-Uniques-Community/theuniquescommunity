@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import logo from "../../assets/logos/theuniquesCommunity.png";
+import darkLogo from "../../assets/logos/theuniquesCommunity copy.png";
 import { RiMenu3Line, RiCloseLine } from "react-icons/ri";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -23,7 +24,7 @@ import ScienceIcon from "@mui/icons-material/Science";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import { LogIn, LogOut, ChevronRight } from "lucide-react"; // Add LogOut import
+import { LogIn, LogOut, ChevronRight, Sun, Moon } from "lucide-react"; // Add LogOut import
 // Add this to your imports at the top
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import axios from "axios"; // For logout API call
@@ -31,6 +32,7 @@ import { set } from "date-fns";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { BASE_URL } from "@/config";
 import { motion, AnimatePresence } from "framer-motion";
+import { useThemeContext } from "../../theme/ThemeProvider";
 
 const Navbar = () => {
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
@@ -38,6 +40,7 @@ const Navbar = () => {
   const [user, setUser] = useState({}); // State to hold user data
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+  const { isDarkMode, toggleTheme } = useThemeContext();
 
   // Check authentication status on component mount
   useEffect(() => {
@@ -167,7 +170,7 @@ const Navbar = () => {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        background: "rgba(255, 248, 248, 0.98)", // Subtle rose tint
+        background: isDarkMode ? "rgba(30, 30, 30, 0.98)" : "rgba(255, 248, 248, 0.98)", // Dynamic tint based on mode
         backdropFilter: "blur(25px)",
       }}
       role="presentation"
@@ -339,14 +342,14 @@ const Navbar = () => {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="lg:px-16 py-4 md:px-12 sm:px-8 px-5 grid grid-cols-2 lg:grid-cols-3 sticky top-0 z-[100] bg-white/80 border-b border-white/20 items-center shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] backdrop-blur-xl"
+      className="lg:px-16 py-4 md:px-12 sm:px-8 px-5 grid grid-cols-2 lg:grid-cols-3 sticky top-0 z-[100] bg-white/80 dark:bg-neutral-900/80 border-b border-white/20 dark:border-neutral-800/50 items-center shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] backdrop-blur-xl"
     >
       <div className="flex items-center justify-start">
         <Link to={"/"} className="group">
           <motion.img
             whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
-            src={logo}
+            src={isDarkMode ? darkLogo : logo}
             className="w-40 object-contain object-left filter drop-shadow-sm transition-all duration-300 group-hover:brightness-110"
             alt="Logo"
           />
@@ -364,7 +367,7 @@ const Navbar = () => {
             <div className="relative inline-block">
               <motion.span 
                 whileHover={{ scale: 1.02 }}
-                className="relative z-10 text-sm font-bold tracking-wider text-neutral-700 group-hover:text-red-600 transition-colors duration-300"
+                className="relative z-10 text-sm font-bold tracking-wider text-neutral-700 dark:text-neutral-300 group-hover:text-red-600 dark:group-hover:text-red-500 transition-colors duration-300"
               >
                 {item.name}
               </motion.span>
@@ -377,16 +380,26 @@ const Navbar = () => {
       </div>
 
       <div className="flex items-center justify-end gap-4">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={toggleTheme}
+          className="p-2.5 rounded-xl hover:bg-neutral-100/80 dark:hover:bg-neutral-800/80 transition-all duration-300 cursor-pointer border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 flex items-center justify-center"
+          aria-label="Toggle Dark Mode"
+        >
+          {isDarkMode ? <Sun size={20} className="text-yellow-500" /> : <Moon size={20} className="text-slate-700" />}
+        </motion.button>
+
         <motion.div
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="p-2.5 rounded-xl hover:bg-neutral-100/80 transition-all duration-300 cursor-pointer border border-transparent hover:border-neutral-200"
+          className="p-2.5 rounded-xl hover:bg-neutral-100/80 dark:hover:bg-neutral-800/80 transition-all duration-300 cursor-pointer border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700"
           onClick={toggleDrawer(!isDrawerOpen)}
         >
           {isDrawerOpen ? (
-            <RiCloseLine size={24} color="black" />
+            <RiCloseLine size={24} className="text-black dark:text-white" />
           ) : (
-            <RiMenu3Line size={24} color="black" />
+            <RiMenu3Line size={24} className="text-black dark:text-white" />
           )}
         </motion.div>
       </div>
@@ -404,7 +417,7 @@ const Navbar = () => {
             borderRadius: '20px',
             boxShadow: '0 25px 50px -12px rgba(202, 0, 25, 0.1)',
             border: '1px solid rgba(202, 0, 25, 0.05)',
-            background: 'linear-gradient(135deg, rgba(255, 252, 252, 0.98), rgba(255, 245, 245, 0.95))',
+            background: isDarkMode ? 'linear-gradient(135deg, rgba(30, 30, 30, 0.98), rgba(20, 20, 20, 0.95))' : 'linear-gradient(135deg, rgba(255, 252, 252, 0.98), rgba(255, 245, 245, 0.95))',
           },
 
 

@@ -11,7 +11,7 @@ const images = [
 
 const Gallery = () => {
   return (
-    <div className="w-full h-screen mt-30 mb-20 flex flex-col items-center lg:justify-center justify-start bg-white p-6">
+    <div className="w-full h-screen mt-30 mb-20 flex flex-col items-center lg:justify-center justify-start bg-white dark:bg-transparent p-6">
 
       {/* Header Section */}
       <div className="w-[85%] mx-auto flex flex-col align-middle justify-start">

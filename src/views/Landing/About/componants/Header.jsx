@@ -1,12 +1,17 @@
 import React from "react";
 import Person2OutlinedIcon from '@mui/icons-material/Person2Outlined';
 import { Box, Container, Stack, Chip, Typography, CardMedia } from "@mui/material";
+import { useThemeContext } from "@/theme/ThemeProvider";
 
 const CelebrationComponent = () => {
+  const { isDarkMode } = useThemeContext();
+  const currentBgColor = isDarkMode ? "#49565A" : "rgb(241, 244, 249)";
+  const currentTextColor = isDarkMode ? "white" : "inherit";
+
   return (
     <Box className="MuiBox-root rounded-b-[50px]  " sx={{
       overflow: "hidden",
-      background: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 60"><text x="0" y="25" fill="%23E6E8EE" font-size="60px">.</text></svg>') 0px 0px / 30px 30px rgb(241, 244, 249)`,
+      background: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 60"><text x="0" y="25" fill="%23E6E8EE" font-size="60px">.</text></svg>') 0px 0px / 30px 30px ${currentBgColor}`,
 
       padding: "2rem 0",
     }}>
@@ -34,7 +39,7 @@ const CelebrationComponent = () => {
                 <Typography
                   variant="caption"
                   className="MuiTypography-root"
-                  sx={{ fontSize: { xs: "0.6rem", sm: "0.75rem" } }}
+                  sx={{ fontSize: { xs: "0.6rem", sm: "0.75rem" }, color: currentTextColor }}
                 >
                   Over 200+
                 </Typography>
@@ -82,6 +87,7 @@ const CelebrationComponent = () => {
               padding: { xs: "0.25rem", sm: "0.5rem" }, // Smaller padding
               fontSize: "0.75rem", // Reduced font size for outlined Chip
               borderWidth: "1px", // Thinner border for outlined Chip
+              borderColor: isDarkMode ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.23)",
             }}
           />
 
@@ -90,7 +96,8 @@ const CelebrationComponent = () => {
           <Typography align="center" className="text-5xl" sx={{
             fontSize: "45px",
             lineHeight: "1.5",
-            maxWidth: "800.95px"
+            maxWidth: "800.95px",
+            color: currentTextColor,
           }}>
             More Than a Community →
             The Uniques ✦

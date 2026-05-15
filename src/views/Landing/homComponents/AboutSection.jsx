@@ -108,17 +108,20 @@ const AboutSection = () => {
         }
       });
 
-      gsap.from([headerLeftRef.current, headerRightRef.current], {
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.2,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 85%",
+      gsap.fromTo([headerLeftRef.current, headerRightRef.current], 
+        { y: 30, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 85%",
+          }
         }
-      });
+      );
 
       gsap.fromTo(bridgeRef.current, 
         { scaleX: 0 },
@@ -137,18 +140,21 @@ const AboutSection = () => {
 
       cardRefs.current.forEach((card, i) => {
         if (!card) return;
-        gsap.from(card, {
-          y: 40,
-          opacity: 0,
-          duration: 0.6,
-          ease: "power2.out",
-          force3D: true,
-          scrollTrigger: {
-            trigger: card,
-            start: "top 90%",
-            toggleActions: "play none none reverse"
+        gsap.fromTo(card, 
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.6,
+            ease: "power2.out",
+            force3D: true,
+            scrollTrigger: {
+              trigger: card,
+              start: "top 90%",
+              toggleActions: "play none none reverse"
+            }
           }
-        });
+        );
       });
     }, sectionRef);
 
@@ -160,11 +166,11 @@ const AboutSection = () => {
       {/* Decorative Background Elements */}
       
       {/* Background Text */}
-      <div ref={leftTextRef} className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-[35%] text-[10rem] lg:text-[18rem] font-black text-neutral-100 select-none pointer-events-none uppercase tracking-tighter -rotate-90 origin-center whitespace-nowrap">
+      <div ref={leftTextRef} className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-[35%] text-[10rem] lg:text-[18rem] font-black text-neutral-100 dark:opacity-5 select-none pointer-events-none uppercase tracking-tighter -rotate-90 origin-center whitespace-nowrap">
         The Uniques
       </div>
 
-      <div ref={rightTextRef} className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-[35%] text-[10rem] lg:text-[18rem] font-black text-neutral-100 select-none pointer-events-none uppercase tracking-tighter rotate-90 origin-center whitespace-nowrap">
+      <div ref={rightTextRef} className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-[35%] text-[10rem] lg:text-[18rem] font-black text-neutral-100 dark:opacity-5 select-none pointer-events-none uppercase tracking-tighter rotate-90 origin-center whitespace-nowrap">
         Community
       </div>
 

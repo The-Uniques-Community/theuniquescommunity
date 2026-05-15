@@ -3,11 +3,12 @@ import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import { ChevronLeft, ChevronRight, Github, Linkedin, ExternalLink, Code, Star } from 'lucide-react';
 import { BASE_URL } from '@/config';
+import { useThemeContext } from '@/theme/ThemeProvider';
 
 const TrainerCard = ({ trainer }) => {
   return (
     <div className="h-full">
-      <div className={`group relative h-full bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 ${trainer.isIndustryPro ? "ring-1 ring-[#ca0019]/20" : ""}`}>
+      <div className={`group relative h-full bg-white dark:bg-[#424D53]/20 border border-gray-100 dark:border-white/10 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 ${trainer.isIndustryPro ? "ring-1 ring-[#ca0019]/20" : ""}`}>
         {/* Tech-inspired decorative elements */}
         <div className="absolute top-0 right-0 w-32 h-32 -mt-16 -mr-16 bg-[#ca0019]/5 rounded-full"></div>
         <div className="absolute bottom-0 left-0 w-24 h-24 -mb-12 -ml-12 bg-[#ca0019]/5 rounded-full"></div>
@@ -47,9 +48,9 @@ const TrainerCard = ({ trainer }) => {
             
             <div className="flex-grow">
               <div className="flex items-center">
-                <h3 className="text-xl font-bold text-gray-900">{trainer.name}</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">{trainer.name}</h3>
                 {/* Program tag */}
-                <span className="ml-2 inline-block px-1.5 py-0.5 bg-gray-900 text-green-400 text-xs font-mono rounded">
+                <span className="ml-2 inline-block px-1.5 py-0.5 bg-gray-900 dark:bg-black text-green-400 text-xs font-mono rounded">
                   {trainer.program}
                 </span>
               </div>
@@ -61,7 +62,7 @@ const TrainerCard = ({ trainer }) => {
                 {trainer.expertise.map((tech, i) => (
                   <span 
                     key={i}
-                    className="inline-flex items-center px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-md font-mono"
+                    className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-white/10 text-gray-800 dark:text-gray-200 text-xs rounded-md font-mono"
                   >
                     <Code size={10} className="mr-1 text-[#ca0019]" />
                     {tech}
@@ -73,7 +74,7 @@ const TrainerCard = ({ trainer }) => {
           
           {/* Bio with code comment style */}
           <div className="mb-4 flex-grow">
-            <div className="relative pl-3 border-l-2 border-gray-300 text-sm text-gray-600">
+            <div className="relative pl-3 border-l-2 border-gray-300 dark:border-white/20 text-sm text-gray-600 dark:text-gray-400">
               <span className="font-mono text-[#ca0019] absolute left-3 -top-1 opacity-60">/**</span>
               <p className="py-5">{trainer.bio}</p>
               <span className="font-mono text-[#ca0019] absolute left-3 bottom-0 opacity-60">*/</span>
@@ -81,14 +82,14 @@ const TrainerCard = ({ trainer }) => {
           </div>
           
           {/* Social links with tech-inspired styling */}
-          <div className="flex items-center justify-between mt-auto pt-3 border-t border-dashed border-gray-200">
+          <div className="flex items-center justify-between mt-auto pt-3 border-t border-dashed border-gray-200 dark:border-white/10">
             <div className="flex space-x-2">
               {trainer.social?.linkedin && (
                 <a 
                   href={trainer.social.linkedin}
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 hover:bg-[#ca0019] hover:border-[#ca0019] hover:text-white transition-colors duration-200"
+                  className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 dark:border-white/20 dark:text-white hover:bg-[#ca0019] hover:border-[#ca0019] hover:text-white transition-colors duration-200"
                 >
                   <Linkedin size={14} />
                 </a>
@@ -98,16 +99,12 @@ const TrainerCard = ({ trainer }) => {
                   href={trainer.social.github}
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 hover:bg-[#ca0019] hover:border-[#ca0019] hover:text-white transition-colors duration-200"
+                  className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 dark:border-white/20 dark:text-white hover:bg-[#ca0019] hover:border-[#ca0019] hover:text-white transition-colors duration-200"
                 >
                   <Github size={14} />
                 </a>
               )}
             </div>
-            {/* <button className="group flex items-center text-xs font-semibold text-[#ca0019]">
-              <span>View Profile</span>
-              <div className="ml-1 font-mono transform group-hover:translate-x-1 transition-transform duration-200">&gt;</div>
-            </button> */}
           </div>
         </div>
       </div>
@@ -116,6 +113,7 @@ const TrainerCard = ({ trainer }) => {
 };
 
 const Trainers = () => {
+  const { isDarkMode } = useThemeContext();
   const [viewportRef, embla] = useEmblaCarousel({ 
     loop: false, 
     align: 'start',
@@ -367,7 +365,7 @@ const Trainers = () => {
   const studentMentors = trainers.filter(trainer => !trainer.isIndustryPro);
 
   return (
-    <section className="py-16 bg-[#f7f9fc]" id="trainers">
+    <section className="py-16 bg-[#f7f9fc] dark:bg-[#161616] transition-colors duration-500" id="trainers">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           {/* Tech-inspired section header */}
@@ -376,18 +374,18 @@ const Trainers = () => {
             <span className="text-sm font-mono text-[#ca0019] uppercase tracking-wider">Meet Our Mentors</span>
           </div>
           
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Learn from <span className="text-[#ca0019]">Industry Pros</span> & <span className="text-[#ca0019]">Rising Tech Talent</span>
           </h2>
           
-          <p className="max-w-2xl mx-auto text-gray-600">
+          <p className="max-w-2xl mx-auto text-gray-600 dark:text-gray-400">
             Our unique blend of experienced professionals and passionate student mentors creates a dynamic learning environment that combines real-world expertise with fresh perspectives.
           </p>
         </div>
 
         {/* Industry pros section - always displayed as grid */}
         <div className="mb-12">
-          <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
             <span className="w-12 h-px bg-[#ca0019] mr-4"></span>
             Industry Professionals
             <span className="w-12 h-px bg-[#ca0019] ml-4"></span>
@@ -403,7 +401,7 @@ const Trainers = () => {
         
         {/* Student mentors section */}
         <div>
-          <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
             <span className="w-12 h-px bg-[#ca0019] mr-4"></span>
             Student Tech Mentors
             <span className="w-12 h-px bg-[#ca0019] ml-4"></span>
@@ -424,7 +422,7 @@ const Trainers = () => {
               
               {/* Navigation buttons with tech styling */}
               <button
-                className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-10 h-10 rounded-md bg-white shadow-lg flex items-center justify-center z-10 transition-all duration-300 border border-gray-100 focus:outline-none
+                className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-10 h-10 rounded-md bg-white dark:bg-[#424D53] shadow-lg flex items-center justify-center z-10 transition-all duration-300 border border-gray-100 dark:border-white/10 dark:text-white focus:outline-none
                   ${!studentPrevEnabled ? 'opacity-40 cursor-not-allowed' : 'opacity-100 hover:border-[#ca0019] hover:text-[#ca0019]'}`}
                 onClick={scrollStudentPrev}
                 disabled={!studentPrevEnabled}
@@ -434,7 +432,7 @@ const Trainers = () => {
               </button>
               
               <button
-                className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-10 h-10 rounded-md bg-white shadow-lg flex items-center justify-center z-10 transition-all duration-300 border border-gray-100 focus:outline-none
+                className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-10 h-10 rounded-md bg-white dark:bg-[#424D53] shadow-lg flex items-center justify-center z-10 transition-all duration-300 border border-gray-100 dark:border-white/10 dark:text-white focus:outline-none
                   ${!studentNextEnabled ? 'opacity-40 cursor-not-allowed' : 'opacity-100 hover:border-[#ca0019] hover:text-[#ca0019]'}`}
                 onClick={scrollStudentNext}
                 disabled={!studentNextEnabled}
@@ -449,7 +447,7 @@ const Trainers = () => {
                   <button
                     key={index}
                     className={`mx-1 w-8 h-2 rounded-sm transition-all duration-300 focus:outline-none
-                      ${index === studentSelectedIndex ? 'bg-[#ca0019]' : 'bg-gray-300 hover:bg-gray-400'}`}
+                      ${index === studentSelectedIndex ? 'bg-[#ca0019]' : 'bg-gray-300 dark:bg-white/20 hover:bg-gray-400 dark:hover:bg-white/30'}`}
                     onClick={() => studentMentorsEmbla?.scrollTo(index)}
                     aria-label={`Go to slide ${index + 1}`}
                   />
@@ -471,7 +469,7 @@ const Trainers = () => {
         <div className="mt-10 text-center">
           <button 
             onClick={() => setShowAllMentors(!showAllMentors)}
-            className="inline-flex items-center px-6 py-3 bg-white border-2 border-[#ca0019] text-[#ca0019] font-medium rounded-lg hover:bg-[#ca0019] hover:text-white transition-all duration-300 group"
+            className="inline-flex items-center px-6 py-3 bg-white dark:bg-transparent border-2 border-[#ca0019] text-[#ca0019] font-medium rounded-lg hover:bg-[#ca0019] hover:text-white transition-all duration-300 group"
           >
             <span className="font-mono mr-2">&lt;</span>
             {showAllMentors ? 'Show Featured Student Mentors' : 'View All Student Mentors'}

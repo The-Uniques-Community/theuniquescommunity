@@ -2,6 +2,7 @@ import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { useScroll, useTransform, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
+import { useThemeContext } from "@/theme/ThemeProvider";
 import ONE from "@/assets/img/HowItStarted/1.jpg";
 import TWO from "@/assets/img/HowItStarted/2.jpg";
 import THREE from "@/assets/img/HowItStarted/3.jpg";
@@ -66,89 +67,82 @@ export function cn(...inputs) {
 }
 
 export const Timeline = ({ data, title, description }) => {
-    const ref = useRef(null);
     const containerRef = useRef(null);
-    const [height, setHeight] = useState(0);
-
-    useEffect(() => {
-        if (ref.current) {
-            const rect = ref.current.getBoundingClientRect();
-            setHeight(rect.height);
-        }
-    }, [ref]);
-
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start 10%", "end 90%"],
-    });
-
-    const heightTransform = useTransform(scrollYProgress, [0, 1], [0, height]);
-    const opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
+    const { isDarkMode } = useThemeContext();
 
     return (
         <div
-            className="w-full bg-white font-sans md:px-10 py-10"
+            className="w-full bg-slate-50 dark:bg-[#161616] transition-colors duration-500 font-sans md:px-10 py-20 overflow-hidden"
             ref={containerRef}
         >
-            <div className="max-w-7xl mx-auto py-8 md:py-16 px-4 md:px-8 lg:px-10">
-                <h2 className="text-2xl md:text-5xl font-bold mb-4 text-black max-w-5xl bg-gradient-to-r from-black to-gray-600 inline-block text-transparent bg-clip-text">
-                    {title || "Sparking Success: The Uniques' Odyssey from Idea to Impact"}
-                </h2>
+            <div className="max-w-7xl mx-auto py-12 md:py-24 px-4 md:px-8 lg:px-10 text-center">
+                <motion.h2 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="text-3xl md:text-6xl font-bold mb-6 text-gray-900 dark:text-white leading-tight"
+                >
+                    {title || "Sparking Success: The Uniques' Odyssey"}
+                </motion.h2>
                 {description && (
-                    <p className="text-neutral-700 text-sm md:text-lg max-w-3xl">
-                        {description}
-                    </p>
-                )}
-            </div>
-
-            <div ref={ref} className="relative max-w-7xl mx-auto pb-20">
-                {data.map((item, index) => (
-                    <motion.div
-                        key={index}
+                    <motion.p 
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="flex justify-start pt-10 md:pt-32 md:gap-10"
+                        transition={{ delay: 0.2 }}
+                        className="text-gray-600 dark:text-gray-400 text-base md:text-xl max-w-3xl mx-auto leading-relaxed"
                     >
-                        <div className="sticky flex flex-col md:flex-row z-40 items-center top-24 self-start max-w-xs lg:max-w-sm md:w-full">
-                            <div className="h-12 absolute left-3 md:left-3 w-12 rounded-full bg-white border-4 border-red-100 shadow-md flex items-center justify-center">
-                                <div className="h-4 w-4 rounded-full bg-red-500 animate-pulse" />
-                            </div>
-                            <h3 className="hidden md:block text-xl md:pl-20 md:text-5xl font-bold text-black bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-800">
-                                {item.title}
-                            </h3>
+                        {description}
+                    </motion.p>
+                )}
+            </div>
+
+            <div className="relative max-w-7xl mx-auto">
+                {/* Central Timeline Line (Desktop) */}
+                <div className="absolute left-[21px] md:left-1/2 md:-ml-[1.5px] top-0 bottom-0 w-[3px] bg-gradient-to-b from-[#ca0019] via-[#ca0019]/20 to-transparent dark:via-[#ca0019]/40" />
+
+                {data.map((item, index) => (
+                    <div key={index} className="relative mb-24 md:mb-40 group">
+                        {/* Dot */}
+                        <div className="absolute left-0 md:left-1/2 md:-ml-4 top-0 z-10 w-11 h-11 rounded-full bg-white dark:bg-[#161616] border-4 border-[#ca0019] flex items-center justify-center shadow-lg group-hover:scale-125 transition-transform duration-300">
+                           <div className="w-3 h-3 rounded-full bg-[#ca0019] animate-pulse" />
                         </div>
 
-                        <div className="relative pl-16 md:pl-4 pr-4 w-full">
-                            <div className="mb-6">
-                                <span className="inline-block md:hidden mb-2 text-sm font-semibold text-red-600 tracking-wider">
-                                    {item.title}
-                                </span>
-                                <h3 className="text-3xl md:text-4xl mb-4 text-left font-bold text-black">
-                                    {item.subtitle}
-                                </h3>
-                                <div className="prose prose-sm md:prose-base prose-slate max-w-none">
-                                    {item.content}
-                                </div>
+                        <div className={`flex flex-col md:flex-row items-start ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                            {/* Year/Title (Sticky-ish on mobile, side on desktop) */}
+                            <div className="w-full md:w-1/2 px-12 md:px-16 pt-1">
+                                <motion.div
+                                    initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true, margin: "-100px" }}
+                                    transition={{ duration: 0.7, ease: "easeOut" }}
+                                >
+                                    <span className="text-[#ca0019] font-black text-4xl md:text-7xl mb-2 block opacity-30 group-hover:opacity-100 transition-opacity">
+                                        {item.title}
+                                    </span>
+                                    <h3 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                                        {item.subtitle}
+                                    </h3>
+                                </motion.div>
+                            </div>
+
+                            {/* Content Card */}
+                            <div className="w-full md:w-1/2 px-12 md:px-16 mt-6 md:mt-0">
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.95, y: 30 }}
+                                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                                    viewport={{ once: true, margin: "-50px" }}
+                                    transition={{ duration: 0.6, delay: 0.1 }}
+                                    className="p-6 md:p-8 rounded-3xl bg-white dark:bg-[#424D53]/30 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-xl hover:shadow-2xl transition-all"
+                                >
+                                    <div className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+                                        {item.content}
+                                    </div>
+                                </motion.div>
                             </div>
                         </div>
-                    </motion.div>
+                    </div>
                 ))}
-                
-                {/* Vertical Timeline Scroll Line */}
-                <div
-                    style={{ height: height + "px" }}
-                    className="absolute md:left-8 left-8 top-0 overflow-hidden w-[3px] bg-[linear-gradient(to_bottom,var(--tw-gradient-stops))] from-transparent from-[0%] via-gray-200 to-transparent to-[99%] [mask-image:linear-gradient(to_bottom,transparent_0%,black_10%,black_90%,transparent_100%)]"
-                >
-                    <motion.div
-                        style={{
-                            height: heightTransform,
-                            opacity: opacityTransform,
-                        }}
-                        className="absolute inset-x-0 top-0 w-[3px] bg-gradient-to-t from-red-600 via-red-400 to-transparent from-[0%] via-[10%] rounded-full shadow-lg"
-                    />
-                </div>
             </div>
         </div>
     );

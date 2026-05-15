@@ -24,6 +24,7 @@ import BlogCard from "@/utils/Card/BlogCard";
 import CelebrationComponent from "@/utils/Header";
 import CallToAction from "../homComponents/CallToAction";
 import { blogData } from "@/assets/dummyData/blogData";
+import { useThemeContext } from "@/theme/ThemeProvider";
 
 const BlogPage = () => {
   const [selectedBlog, setSelectedBlog] = useState(null);
@@ -32,6 +33,7 @@ const BlogPage = () => {
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const { isDarkMode } = useThemeContext();
 
   // Extract unique categories from blogData
   const categories = [...new Set(blogData.map((blog) => blog.category || "Uncategorized"))];
@@ -75,14 +77,16 @@ const BlogPage = () => {
       width: isMobile ? 280 : 260, 
       p: 3,
       height: '100%',
-      backgroundColor: '#fff' // Keep filter background white
+      backgroundColor: isDarkMode ? '#1E1E1E' : '#fff',
+      color: isDarkMode ? '#fff' : '#333',
+      transition: 'all 0.3s ease'
     }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h6" fontWeight="600" color="#333">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h6" fontWeight="700" sx={{ color: isDarkMode ? '#fff' : '#333' }}>
           Filters
         </Typography>
         {isMobile && (
-          <IconButton onClick={() => setMobileFilterOpen(false)} size="small">
+          <IconButton onClick={() => setMobileFilterOpen(false)} size="small" sx={{ color: isDarkMode ? '#fff' : 'inherit' }}>
             <CloseIcon />
           </IconButton>
         )}
@@ -94,20 +98,36 @@ const BlogPage = () => {
         placeholder="Search blogs..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        sx={{ mb: 3 }}
+        sx={{ 
+          mb: 3,
+          '& .MuiOutlinedInput-root': {
+            backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)',
+            color: isDarkMode ? '#fff' : 'inherit',
+            '& fieldset': {
+              borderColor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+            },
+            '&:hover fieldset': {
+              borderColor: '#CA0019',
+            },
+          },
+          '& .MuiInputBase-input::placeholder': {
+            color: isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)',
+            opacity: 1
+          }
+        }}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <SearchIcon color="action" />
+              <SearchIcon sx={{ color: isDarkMode ? 'rgba(255,255,255,0.5)' : 'action' }} />
             </InputAdornment>
           ),
         }}
         size="small"
       />
 
-      <Divider sx={{ mb: 2 }} />
+      <Divider sx={{ mb: 3, borderColor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)' }} />
       
-      <Typography variant="subtitle1" fontWeight="500" sx={{ mb: 1 }}>
+      <Typography variant="subtitle1" fontWeight="600" sx={{ mb: 2, color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'text.secondary' }}>
         Categories
       </Typography>
       
@@ -121,7 +141,7 @@ const BlogPage = () => {
                 onChange={() => handleCategoryChange(category)}
                 size="small"
                 sx={{
-                  color: '#CA0019',
+                  color: isDarkMode ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)',
                   '&.Mui-checked': {
                     color: '#CA0019',
                   },
@@ -129,10 +149,15 @@ const BlogPage = () => {
               />
             }
             label={
-              <Typography variant="body2" sx={{ textTransform: 'capitalize' }}>
+              <Typography variant="body2" sx={{ 
+                textTransform: 'capitalize',
+                color: isDarkMode ? 'rgba(255,255,255,0.8)' : '#444',
+                fontWeight: selectedCategories.includes(category) ? 600 : 400
+              }}>
                 {category || "Uncategorized"}
               </Typography>
             }
+            sx={{ mb: 0.5 }}
           />
         ))}
       </FormGroup>
@@ -142,12 +167,13 @@ const BlogPage = () => {
         fullWidth 
         onClick={clearFilters}
         sx={{ 
-          mt: 3, 
+          mt: 4, 
           color: '#CA0019', 
           borderColor: '#CA0019',
+          fontWeight: 600,
           '&:hover': {
             borderColor: '#CA0019',
-            backgroundColor: 'rgba(202, 0, 25, 0.04)',
+            backgroundColor: 'rgba(202, 0, 25, 0.08)',
           }
         }}
       >
@@ -157,21 +183,23 @@ const BlogPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className={`min-h-screen transition-colors duration-500 ${isDarkMode ? 'bg-[#161616]' : 'bg-gray-50/50'}`}>
       <CelebrationComponent title="Shaping Perspectives → Read & Grow ✦" />
 
       <div className="flex">
         {/* Filter Sidebar - Desktop */}
         {!isMobile && (
           <Paper 
-            elevation={1} 
+            elevation={0} 
             sx={{ 
               display: { xs: 'none', md: 'block' },
               position: 'sticky',
               top: 0,
               height: 'calc(100vh - 64px)',
               overflowY: 'auto',
-              backgroundColor: '#fff' // Keep filter background white
+              backgroundColor: isDarkMode ? '#1E1E1E' : '#fff',
+              borderRight: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}`,
+              borderRadius: 0
             }}
           >
             {filterContent}
@@ -183,15 +211,18 @@ const BlogPage = () => {
           anchor="left"
           open={mobileFilterOpen}
           onClose={() => setMobileFilterOpen(false)}
+          PaperProps={{
+            sx: { backgroundColor: 'transparent' }
+          }}
         >
           {filterContent}
         </Drawer>
 
-        {/* Main Content - Transparent Background */}
-        <div className="flex-1 lg:max-w-7xl md:max-w-5xl mx-auto py-12 mt-5 px-4 bg-transparent">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="lg:text-4xl text-2xl font-bold text-gray-800">
-              Latest Blogs
+        {/* Main Content */}
+        <div className="flex-1 lg:max-w-7xl md:max-w-5xl mx-auto py-12 mt-5 px-6">
+          <div className="flex justify-between items-center mb-8">
+            <h1 className={`lg:text-5xl text-3xl font-black tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              Latest <span className="text-[#CA0019]">Blogs</span>
             </h1>
             
             {/* Mobile filter button */}
@@ -199,7 +230,11 @@ const BlogPage = () => {
               <Button 
                 startIcon={<FilterListIcon />}
                 onClick={() => setMobileFilterOpen(true)}
-                sx={{ color: '#CA0019' }}
+                variant="contained"
+                sx={{ 
+                  backgroundColor: '#CA0019',
+                  '&:hover': { backgroundColor: '#A50014' }
+                }}
               >
                 Filters
               </Button>
@@ -207,23 +242,23 @@ const BlogPage = () => {
           </div>
           
           {/* Results info */}
-          <div className="mb-6">
-            <Typography variant="body2" color="text.secondary">
-              Showing {filteredBlogs.length} {filteredBlogs.length === 1 ? 'result' : 'results'}
-              {(selectedCategories.length > 0 || searchQuery) && (
-                <Button 
-                  size="small" 
-                  onClick={clearFilters}
-                  sx={{ ml: 1, color: '#CA0019', p: 0, minWidth: 'auto' }}
-                >
-                  Clear
-                </Button>
-              )}
+          <div className="mb-8 flex items-center justify-between">
+            <Typography variant="body1" sx={{ color: isDarkMode ? 'rgba(255,255,255,0.6)' : 'text.secondary', fontWeight: 500 }}>
+              Showing <span className="text-[#CA0019]">{filteredBlogs.length}</span> {filteredBlogs.length === 1 ? 'result' : 'results'}
             </Typography>
+            {(selectedCategories.length > 0 || searchQuery) && (
+              <Button 
+                size="small" 
+                onClick={clearFilters}
+                sx={{ color: '#CA0019', fontWeight: 700 }}
+              >
+                Clear All
+              </Button>
+            )}
           </div>
 
-          {/* Blog Grid - Cards will have their own backgrounds */}
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 place-items-center">
+          {/* Blog Grid */}
+          <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-8 place-items-stretch">
             {filteredBlogs.length > 0 ? (
               filteredBlogs.map((blog, index) => (
                 <BlogCard 
@@ -233,8 +268,11 @@ const BlogPage = () => {
                 />
               ))
             ) : (
-              <div className="col-span-full py-12 text-center">
-                <Typography variant="h6" color="text.secondary">
+              <div className="col-span-full py-24 text-center">
+                <Box sx={{ opacity: 0.5, mb: 2 }}>
+                  <SearchIcon sx={{ fontSize: 64, color: isDarkMode ? '#fff' : '#333' }} />
+                </Box>
+                <Typography variant="h5" sx={{ color: isDarkMode ? '#fff' : '#333', fontWeight: 700 }}>
                   No blogs found matching your filters
                 </Typography>
                 <Button 
@@ -242,10 +280,11 @@ const BlogPage = () => {
                   onClick={clearFilters}
                   sx={{ 
                     mt: 2, 
-                    color: '#CA0019'
+                    color: '#CA0019',
+                    fontWeight: 700
                   }}
                 >
-                  Clear Filters
+                  Try clearing all filters
                 </Button>
               </div>
             )}
@@ -258,7 +297,7 @@ const BlogPage = () => {
       <CallToAction />
       <div className="py-8"></div>
 
-      {/* Blog Modal - Semi-transparent Background */}
+      {/* Blog Modal */}
       <Modal
         open={!!selectedBlog}
         onClose={() => setSelectedBlog(null)}
@@ -267,62 +306,96 @@ const BlogPage = () => {
       >
         <Box className="fixed inset-0 overflow-auto" 
           sx={{
-            backgroundColor: 'rgba(255, 255, 255, 0.85)', // Semi-transparent white
-            backdropFilter: 'blur(5px)' // Slight blur effect
+            backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.98)',
+            backdropFilter: 'blur(10px)',
+            transition: 'all 0.3s ease'
           }}
         >
           {selectedBlog && (
-            <div className="max-w-6xl mx-auto p-6 bg-transparent">
+            <div className="max-w-4xl mx-auto p-8 lg:py-16 bg-transparent">
               {/* Close Button */}
-              <div className="flex justify-between items-center">
-                <h2 id="blog-title" className="text-4xl font-bold text-gray-800">
-                  {selectedBlog.title}
-                </h2>
-                <IconButton onClick={() => setSelectedBlog(null)}>
-                  <CloseIcon className="text-gray-600" />
+              <div className="flex justify-between items-start mb-8">
+                <div className="flex-1 pr-8">
+                  <h2 id="blog-title" className={`text-4xl lg:text-5xl font-black leading-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                    {selectedBlog.title}
+                  </h2>
+                </div>
+                <IconButton 
+                  onClick={() => setSelectedBlog(null)}
+                  sx={{ 
+                    backgroundColor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                    '&:hover': { backgroundColor: '#CA0019', color: '#fff' }
+                  }}
+                >
+                  <CloseIcon sx={{ color: isDarkMode ? '#fff' : 'inherit' }} />
                 </IconButton>
               </div>
 
               {/* Blog Meta Info */}
-              <p className="text-gray-600 text-lg mt-2">
-                {selectedBlog.category || "Uncategorized"} • {selectedBlog.readTime || "5"} Mins Read
-              </p>
-
-              {/* Blog Tags */}
-              <div className="flex flex-wrap gap-2 mt-4">
-                {selectedBlog.tags && selectedBlog.tags.map((tag, index) => (
-                  <Chip 
-                    key={index} 
-                    label={tag} 
-                    sx={{ 
-                      backgroundColor: 'rgba(229, 231, 235, 0.7)'  // Semi-transparent gray
-                    }} 
-                  />
-                ))}
+              <div className="flex items-center gap-4 mb-8">
+                <Chip 
+                  label={selectedBlog.category || "Uncategorized"} 
+                  sx={{ 
+                    backgroundColor: '#CA0019', 
+                    color: '#fff',
+                    fontWeight: 700,
+                    borderRadius: '6px'
+                  }} 
+                />
+                <Typography variant="body1" sx={{ color: isDarkMode ? 'rgba(255,255,255,0.6)' : 'text.secondary' }}>
+                   • {selectedBlog.readTime || "5"} Mins Read
+                </Typography>
               </div>
 
               {/* Blog Image */}
-              <img
-                src={selectedBlog.image}
-                alt={selectedBlog.title}
-                className="w-full h-[400px] object-cover rounded-lg mt-6"
-              />
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl mb-12">
+                <img
+                  src={selectedBlog.image}
+                  alt={selectedBlog.title}
+                  className="w-full h-[500px] object-cover"
+                />
+              </div>
 
               {/* Blog Content Sections */}
               <div
                 id="blog-content"
-                className="mt-6 text-gray-700 text-lg leading-7 space-y-6"
+                className={`mt-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xl leading-relaxed space-y-10`}
               >
                 {selectedBlog.subContents && selectedBlog.subContents.map((section, index) => (
-                  <div key={index}>
+                  <div key={index} className="space-y-4">
                     {section.heading && (
-                      <h3 className="text-2xl font-semibold text-gray-800">
+                      <h3 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                         {section.heading}
                       </h3>
                     )}
-                    <p className="mt-2">{section.paragraph}</p>
+                    <p>{section.paragraph}</p>
                   </div>
                 ))}
+              </div>
+
+              {/* Tags Section */}
+              <div className="mt-16 pt-8 border-t border-white/10">
+                <Typography variant="h6" sx={{ mb: 3, color: isDarkMode ? '#fff' : '#333', fontWeight: 700 }}>
+                  Tags
+                </Typography>
+                <div className="flex flex-wrap gap-3">
+                  {selectedBlog.tags && selectedBlog.tags.map((tag, index) => (
+                    <Chip 
+                      key={index} 
+                      label={tag} 
+                      variant="outlined"
+                      sx={{ 
+                        borderColor: isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)',
+                        color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'text.secondary',
+                        '&:hover': {
+                          backgroundColor: '#CA0019',
+                          color: '#fff',
+                          borderColor: '#CA0019'
+                        }
+                      }} 
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           )}

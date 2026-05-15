@@ -3,10 +3,11 @@ import { Box, Typography, Container, Stack, Chip } from "@mui/material";
 import axios from "axios";
 import { BASE_URL } from "@/config";
 import { TrainerCard } from "./TrainerCard";
-import SearchIcon from "@mui/icons-material/Search";
+import SearchIcon from "@mui/icons-material";
 import CustomLoader from "@/utils/Loader/CustomLoader";
 import { School } from "@mui/icons-material";
 import { motion, AnimatePresence } from "framer-motion";
+import { useThemeContext } from "@/theme/ThemeProvider";
 
 const batchTabs = [
     { label: "All Batches", version: null },
@@ -24,6 +25,7 @@ const Trainers = () => {
     const [error, setError] = useState(null);
     const [activeTab, setActiveTab] = useState(0);
     const [searchFocused, setSearchFocused] = useState(false);
+    const { isDarkMode } = useThemeContext();
 
     useEffect(() => {
         const fetchTrainers = async () => {
@@ -70,14 +72,17 @@ const Trainers = () => {
 
     const filteredTrainers = getFilteredTrainers();
 
+    const currentBgColor = isDarkMode ? "#49565A" : "#f1f4f9";
+    const currentTextColor = isDarkMode ? "white" : "inherit";
+
     return (
-        <>
+        <div className={`transition-colors duration-500 ${isDarkMode ? 'bg-[#161616]' : 'bg-white'}`}>
             {/* ========== CELEBRATION-STYLE HEADER ========== */}
             <Box
                 className="rounded-b-[50px]"
                 sx={{
                     overflow: "hidden",
-                    background: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 60"><text x="0" y="25" fill="%23E6E8EE" font-size="60px">.</text></svg>') 0px 0px / 30px 30px #f1f4f9`,
+                    background: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 60"><text x="0" y="25" fill="%23E6E8EE" font-size="60px">.</text></svg>') 0px 0px / 30px 30px ${currentBgColor}`,
                     padding: "2rem 0",
                 }}
             >
@@ -92,7 +97,7 @@ const Trainers = () => {
                                 variant="outlined"
                                 label={
                                     <Stack direction={{ xs: "column", sm: "row" }} alignItems="center" justifyContent="center" spacing={1}>
-                                        <Typography variant="caption" sx={{ fontSize: { xs: "0.6rem", sm: "0.75rem" } }}>
+                                        <Typography variant="caption" sx={{ fontSize: { xs: "0.6rem", sm: "0.75rem" }, color: currentTextColor }}>
                                             Over {trainers.length}+
                                         </Typography>
                                         <Chip
@@ -112,12 +117,12 @@ const Trainers = () => {
                                         />
                                     </Stack>
                                 }
-                                sx={{ width: "100%", maxWidth: "250px", margin: "0 auto", padding: { xs: "0.25rem", sm: "0.5rem" }, fontSize: "0.75rem", borderWidth: "1px" }}
+                                sx={{ width: "100%", maxWidth: "250px", margin: "0 auto", padding: { xs: "0.25rem", sm: "0.5rem" }, fontSize: "0.75rem", borderWidth: "1px", borderColor: isDarkMode ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.23)" }}
                             />
                         )}
 
                         {/* Heading Section */}
-                        <Typography align="center" sx={{ fontSize: { xs: "32px", md: "45px" }, lineHeight: "1.5", maxWidth: "800px", fontWeight: 600 }}>
+                        <Typography align="center" sx={{ fontSize: { xs: "32px", md: "45px" }, lineHeight: "1.5", maxWidth: "800px", fontWeight: 600, color: currentTextColor }}>
                             Mentors Who Shape{" "}
                             <span style={{ color: "#ca0019" }}>Future</span> Tech Leaders ✦
                         </Typography>
@@ -151,7 +156,7 @@ const Trainers = () => {
                                     className={`relative px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 outline-none ${
                                         activeTab === idx
                                             ? "bg-[#ca0019] text-white shadow-lg shadow-red-200/50"
-                                            : "bg-white text-slate-600 border border-slate-200 hover:border-[#ca0019]/40 hover:text-[#ca0019] hover:shadow-md"
+                                            : isDarkMode ? "bg-white/5 text-gray-300 border border-white/10 hover:border-[#ca0019]/40 hover:text-[#ca0019]" : "bg-white text-slate-600 border border-slate-200 hover:border-[#ca0019]/40 hover:text-[#ca0019] hover:shadow-md"
                                     }`}
                                     style={{
                                         ...(activeTab === idx && {
@@ -186,13 +191,13 @@ const Trainers = () => {
                                     px: 2.5,
                                     py: 1.5,
                                     borderRadius: "16px",
-                                    background: searchFocused
-                                        ? "rgba(255,255,255,0.95)"
-                                        : "rgba(255,255,255,0.7)",
+                                    background: isDarkMode 
+                                        ? (searchFocused ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.05)")
+                                        : (searchFocused ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.7)"),
                                     backdropFilter: "blur(12px)",
-                                    border: searchFocused
-                                        ? "1.5px solid rgba(202,0,25,0.25)"
-                                        : "1.5px solid rgba(226,232,240,0.8)",
+                                    border: isDarkMode
+                                        ? (searchFocused ? "1.5px solid rgba(202,0,25,0.4)" : "1.5px solid rgba(255,255,255,0.1)")
+                                        : (searchFocused ? "1.5px solid rgba(202,0,25,0.25)" : "1.5px solid rgba(226,232,240,0.8)"),
                                     boxShadow: searchFocused
                                         ? "0 8px 32px rgba(202,0,25,0.08), 0 2px 8px rgba(0,0,0,0.04)"
                                         : "0 2px 8px rgba(0,0,0,0.03)",
@@ -219,7 +224,7 @@ const Trainers = () => {
                                         outline: "none",
                                         background: "transparent",
                                         fontSize: "0.95rem",
-                                        color: "#1e293b",
+                                        color: isDarkMode ? "#e2e8f0" : "#1e293b",
                                         fontFamily: "inherit",
                                     }}
                                 />
@@ -286,7 +291,7 @@ const Trainers = () => {
                                                     width: 80,
                                                     height: 80,
                                                     borderRadius: "50%",
-                                                    background: "linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)",
+                                                    background: isDarkMode ? "rgba(255,255,255,0.05)" : "linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)",
                                                     display: "flex",
                                                     alignItems: "center",
                                                     justifyContent: "center",
@@ -298,7 +303,7 @@ const Trainers = () => {
                                             </Box>
                                             <Typography
                                                 variant="h6"
-                                                sx={{ color: "#475569", fontWeight: 600, mb: 1 }}
+                                                sx={{ color: isDarkMode ? "#cbd5e1" : "#475569", fontWeight: 600, mb: 1 }}
                                             >
                                                 No trainers found
                                             </Typography>
@@ -318,7 +323,7 @@ const Trainers = () => {
                     )}
                 </Container>
             </Box>
-        </>
+        </div>
     );
 };
 

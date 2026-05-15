@@ -29,7 +29,7 @@ const LandingLayout = () => {
 
         {/* Main Content: Slides over the footer */}
         <div 
-          className="relative z-10 bg-white layout-bottom-clip overflow-hidden min-h-screen"
+          className="relative z-10 bg-white dark:bg-background layout-bottom-clip overflow-hidden min-h-screen"
           style={{ 
             marginBottom: `${footerHeight}px`,
             filter: 'drop-shadow(0 20px 50px rgba(0,0,0,0.1))'

@@ -7,6 +7,7 @@ import Filter1Icon from "@mui/icons-material/Filter1";
 import Filter4Icon from "@mui/icons-material/Filter4";
 import { Tabs, Tab, Box, Typography, Fade, Grid } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { useThemeContext } from "@/theme/ThemeProvider";
 
 // Import images for each year (you should replace these with actual images)
 import firstYearImg from "../../../../assets/img/Community/Training1.png"; // Replace with your actual image path
@@ -52,6 +53,7 @@ function TabPanel(props) {
 
 const FourPhase = () => {
   const [activeTab, setActiveTab] = useState(0);
+  const { isDarkMode } = useThemeContext();
   
   const handleChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -131,7 +133,7 @@ const FourPhase = () => {
   ];
 
   return (
-    <div className="bg-white text-gray-900 py-14 px-6 lg:px-12">
+    <div className={`transition-colors duration-500 py-14 px-6 lg:px-12 ${isDarkMode ? 'bg-[#161616] text-white' : 'bg-white text-gray-900'}`}>
       <div className="max-w-screen-xl mx-auto">
         <div
           className="relative"
@@ -140,17 +142,18 @@ const FourPhase = () => {
             backgroundSize: 180,
             backgroundRepeat: "no-repeat",
             backgroundPosition: "bottom right",
+            opacity: isDarkMode ? 0.8 : 1
           }}
         >
           <div className="mb-12">
-            <h4 className="text-sm uppercase text-gray-500 mb-2">
+            <h4 className={`text-sm uppercase mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
               About Our Community
             </h4>
             <h2 className="text-3xl lg:text-4xl font-bold mb-6 leading-tight">
               The <span className="text-[#ca0019]">Uniques</span> Community – Learn,
               Build, and Grow Together.
             </h2>
-            <p className="text-gray-600 max-w-3xl">
+            <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} max-w-3xl`}>
               The Uniques Community is a community where everyone is welcome. We help
               students bridge the gap between theory and practice and grow their
               knowledge by providing a peer-to-peer learning environment, conducting
@@ -163,7 +166,7 @@ const FourPhase = () => {
           </div>
   
           {/* Tabs */}
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Box sx={{ borderBottom: 1, borderColor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'divider' }}>
             <Tabs
               value={activeTab}
               onChange={handleChange}
@@ -174,6 +177,12 @@ const FourPhase = () => {
                 '& .MuiTabs-indicator': {
                   backgroundColor: '#ca0019',
                   borderRadius: '4px',
+                },
+                '& .MuiTab-root': {
+                    color: isDarkMode ? 'rgba(255,255,255,0.6)' : 'gray',
+                    '&.Mui-selected': {
+                        color: '#ca0019',
+                    }
                 }
               }}
             >
@@ -224,24 +233,24 @@ const FourPhase = () => {
                           {tab.icon}
                         </div>
                         <div>
-                          <Typography variant="h5" fontWeight="bold">
+                          <Typography variant="h5" fontWeight="bold" sx={{ color: isDarkMode ? 'white' : 'inherit' }}>
                             {tab.title}
                           </Typography>
-                          <Typography variant="subtitle1" color="text.secondary">
+                          <Typography variant="subtitle1" sx={{ color: isDarkMode ? 'rgba(255,255,255,0.6)' : 'text.secondary' }}>
                             {tab.subtitle}
                           </Typography>
                         </div>
                       </div>
   
-                      <Typography variant="body1" className="text-gray-700 text-base mb-4">
+                      <Typography variant="body1" sx={{ color: isDarkMode ? 'rgba(255,255,255,0.8)' : 'text-gray-700' }} className="text-base mb-4">
                         {tab.description}
                       </Typography>
   
-                      <div className="bg-gray-100 rounded-xl p-5 mt-4 shadow-sm">
+                      <div className={`rounded-xl p-5 mt-4 shadow-sm ${isDarkMode ? 'bg-white/5 border border-white/10' : 'bg-gray-100'}`}>
                         <Typography variant="h6" className="font-semibold mb-3">
                           Key Focus Areas:
                         </Typography>
-                        <ul className="list-disc pl-5 text-gray-800 space-y-1 text-sm">
+                        <ul className={`list-disc pl-5 space-y-1 text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
                           {tab.focusAreas.map((area, i) => (
                             <li key={i}>{area}</li>
                           ))}

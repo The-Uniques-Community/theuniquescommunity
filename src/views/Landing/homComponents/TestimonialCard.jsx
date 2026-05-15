@@ -275,7 +275,7 @@ const Testimonials = () => {
   return (
     <section 
       ref={sectionRef} 
-      className="py-20 px-4 sm:px-6 lg:px-8 overflow-hidden relative bg-gradient-to-b from-white to-gray-100"
+      className="py-20 px-4 sm:px-6 lg:px-8 overflow-hidden relative bg-gradient-to-b from-white to-gray-100 dark:bg-none dark:bg-transparent"
     >
       {/* Background decorative elements */}
       <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full opacity-5"

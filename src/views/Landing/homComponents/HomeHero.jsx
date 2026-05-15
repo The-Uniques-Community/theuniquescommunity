@@ -65,7 +65,7 @@ export default function Landing() {
   const rows = Math.ceil(dimensions.height / cellSize) + 1;
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-transparent relative" ref={heroRef}>
+    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-transparent relative pt-10" ref={heroRef}>
       {/* Decorative Square Grid (Left Side) - Commented out
       <div className="absolute left-8 md:left-16 top-1/2 -translate-y-1/2 hidden lg:grid grid-cols-4 gap-0 opacity-15 pointer-events-none group">
         {Array.from({ length: 20 }).map((_, i) => (
@@ -111,7 +111,7 @@ export default function Landing() {
       </div>
 
       {/* Image Carousel */}
-      <div className="w-full overflow-hidden bg-gradient-to-t from-slate-100 to-white py-6 relative z-10">
+      <div className="w-full overflow-hidden py-6 relative z-10 bg-transparent">
         <Marquee gradient={false} speed={40}>
           <div className="flex gap-4">
             {images.concat(images).map((src, i) => (

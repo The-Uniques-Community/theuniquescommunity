@@ -7,8 +7,10 @@ import uniques2 from "../../../../assets/img/About/uniques2.jpg";
 import uniques3 from "../../../../assets/img/About/uniques3.jpg";
 
 import { useNavigate } from "react-router-dom";
+import { useThemeContext } from "../../../../theme/ThemeProvider";
 
 const BatchProfile = () => {
+  const { isDarkMode } = useThemeContext();
   const [value, setValue] = React.useState(0);
   const theme = useTheme();
 
@@ -58,7 +60,7 @@ const BatchProfile = () => {
         </Stack>
 
         {/* Tabs Section */}
-        <Box sx={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 1, backgroundColor: theme.palette.background.default, borderRadius: "16px", padding: "8px 16px", width: "fit-content", margin: "auto" }}>
+        <Box sx={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 1, backgroundColor: isDarkMode ? "rgba(255,255,255,0.05)" : theme.palette.background.default, borderRadius: "16px", padding: "8px 16px", width: "fit-content", margin: "auto" }}>
           {batchData.map((batch, index) => (
             <Chip
               key={index}
@@ -69,13 +71,14 @@ const BatchProfile = () => {
                 width: { xs: "auto", sm: "110px" },
                 height: "36px",
                 fontSize: "0.75rem",
-                backgroundColor: value === index ? theme.palette.primary.main : theme.palette.action.hover,
-                color: value === index ? theme.palette.primary.light : theme.palette.text.secondary,
+                backgroundColor: value === index ? "#CA0019" : (isDarkMode ? "rgba(255,255,255,0.1)" : theme.palette.action.hover),
+                color: value === index ? "#fff" : (isDarkMode ? "rgba(255,255,255,0.7)" : theme.palette.text.secondary),
                 borderRadius: "16px",
                 fontWeight: value === index ? "bold" : "normal",
                 cursor: "pointer",
+                border: "none",
                 ":hover": {
-                  backgroundColor: value === index ? theme.palette.primary.dark : theme.palette.action.selected,
+                  backgroundColor: value === index ? "#A50014" : (isDarkMode ? "rgba(255,255,255,0.2)" : theme.palette.action.selected),
                 },
               }}
             />
@@ -83,7 +86,7 @@ const BatchProfile = () => {
         </Box>
 
         {/* Dynamic Tab Content */}
-        <Grid container spacing={3} alignItems="center" justifyContent="center" sx={{ marginTop: "1.5rem" }}>
+        <Grid container spacing={4} alignItems="center" justifyContent="center" sx={{ marginTop: "2rem" }}>
           {/* Left Section */}
           <Grid item xs={12} sm={6} sx={{ textAlign: "center" }}>
             <Card
@@ -92,8 +95,9 @@ const BatchProfile = () => {
                 backgroundImage: `url(${batchData[value].image})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
-                height: { xs: "250px", sm: "350px", md: "450px" },
-                borderRadius: "12px",
+                height: { xs: "300px", sm: "400px", md: "500px" },
+                borderRadius: "20px",
+                boxShadow: isDarkMode ? "0 20px 40px rgba(0,0,0,0.4)" : "0 20px 40px rgba(0,0,0,0.1)",
               }}
             />
           </Grid>
@@ -102,19 +106,24 @@ const BatchProfile = () => {
           <Grid item xs={12} sm={6}>
             <Typography
               variant="body1"
-              sx={{ color: theme.palette.text.secondary, fontSize: { xs: "0.85rem", sm: "1rem" }, whiteSpace: "pre-line" }}
+              sx={{ 
+                color: isDarkMode ? "rgba(255,255,255,0.7)" : theme.palette.text.secondary, 
+                fontSize: { xs: "0.9rem", sm: "1.1rem" }, 
+                lineHeight: 1.8,
+                whiteSpace: "pre-line" 
+              }}
             >
               {batchData[value].description}
             </Typography>
 
             {/* Know More Button */}
-            <Box sx={{ marginTop: "1rem" }}>
+            <Box sx={{ marginTop: "2.5rem" }}>
               <Button
-                bgColor={theme.palette.primary.main}
-                borderColor={theme.palette.primary.dark}
-                textColor={theme.palette.primary.light}
-                iconColor={theme.palette.primary.dark}
-                color={theme.palette.primary.light}
+                bgColor="#CA0019"
+                borderColor="#CA0019"
+                textColor="#fff"
+                iconColor="#CA0019"
+                color="#fff"
                 onClick={() => navigate("/batches")}
               >
                 Know More
