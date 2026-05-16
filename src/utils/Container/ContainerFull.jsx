@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ContainerFull = ({ children, bgColor = '#fff', bgImg }) => {
+const ContainerFull = ({ children, bgColor = 'transparent', bgImg }) => {
   return (
     <div
       style={{

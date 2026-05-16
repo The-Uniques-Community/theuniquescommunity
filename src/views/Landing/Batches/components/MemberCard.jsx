@@ -9,6 +9,7 @@ import { FaLinkedinIn, FaInstagram } from "react-icons/fa";
 import { FaXTwitter, FaGithub } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "@/config";
+import { motion } from "framer-motion";
 
 const MemberCard = ({ member }) => {
   const navigate = useNavigate();
@@ -49,37 +50,37 @@ const MemberCard = ({ member }) => {
   // Format achievements for display
   const formattedAchievements = Array.isArray(achievements)
     ? achievements.map((achievement, index) => ({
-        id: achievement.id || index,
-        title: achievement.title || achievement.name || achievement,
-        description: achievement.description || "",
-        date: achievement.date || "",
-        color: achievement.color || "bg-gray-700",
-        icon: achievement.icon || null,
-      }))
+      id: achievement.id || index,
+      title: achievement.title || achievement.name || achievement,
+      description: achievement.description || "",
+      date: achievement.date || "",
+      color: achievement.color || "bg-gray-700",
+      icon: achievement.icon || null,
+    }))
     : [];
 
   // Format projects for display
   const formattedProjects = Array.isArray(projects)
     ? projects.map((project, index) => ({
-        id: project.id || index,
-        title: project.title || project.name || "Project",
-        description: project.description || "",
-        link: project.link || project.url || null,
-        imageUrl: project.imageUrl || project.image || null,
-        technologies: Array.isArray(project.technologies)
-          ? project.technologies
-          : project.tech
-            ? [project.tech]
-            : [],
-      }))
+      id: project.id || index,
+      title: project.title || project.name || "Project",
+      description: project.description || "",
+      link: project.link || project.url || null,
+      imageUrl: project.imageUrl || project.image || null,
+      technologies: Array.isArray(project.technologies)
+        ? project.technologies
+        : project.tech
+          ? [project.tech]
+          : [],
+    }))
     : [];
 
   // Format skills as objects if they're strings
   const formattedSkills = Array.isArray(skills)
     ? skills.map((skill, index) => {
-        if (typeof skill === "object") return skill;
-        return { name: skill, id: index };
-      })
+      if (typeof skill === "object") return skill;
+      return { name: skill, id: index };
+    })
     : [];
 
   const getProxyImageUrl = (fileId) => {
@@ -93,139 +94,90 @@ const MemberCard = ({ member }) => {
   };
 
   return (
-    <div className="bg-white group hover:cursor-pointer hover:shadow-lg transition-shadow duration-200 px-2 py-2 border border-gray-200 shadow-md rounded-lg relative max-w-72">
-      {/* Main Card Content */}
-      <div className="flex flex-col h-full">
-        {/* Profile Image */}
-        <div className="relative">
-          <div onClick={handleViewProfile} className="overflow-hidden rounded-lg">
-            <img
-              src={profilePic ? getProxyImageUrl(profilePic?.fileId) : profileImg}
-              className="hover:scale-105 duration-300 custom-clip rounded-t-lg rounded-l-lg lg:w-[42vh] w-[70vh] h-56 object-cover"
-              alt={`${fullName}'s Profile`}
-            />
-          </div>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      whileHover={{ y: -5 }}
+      transition={{ duration: 0.3 }}
+      className="bg-white group hover:cursor-pointer transition-all duration-300 border border-gray-100 shadow-sm hover:shadow-2xl rounded-2xl relative max-w-[280px] w-full overflow-hidden h-full flex flex-col"
+      onClick={handleViewProfile}
+    >
+      {/* Profile Image Wrapper */}
+      <div className="relative aspect-[4/5] overflow-hidden">
+        <img
+          src={profilePic ? getProxyImageUrl(profilePic?.fileId) : profileImg}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          alt={`${fullName}'s Profile`}
+        />
 
-          {/* Batch Badge */}
-          <div className="absolute bottom-0 left-0 bg-[#ca0019] px-2 py-1">
-            <p className="text-white text-sm font-medium">{batch}</p>
-          </div>
+        {/* Overlay Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+
+        {/* Batch Badge - Premium Style */}
+        <div className="absolute top-4 left-4">
+          <span className="bg-white/90 backdrop-blur-md text-[#ca0019] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
+            {batch}
+          </span>
         </div>
 
-        {/* Card Content */}
-        <div className="py-4 flex flex-col flex-grow">
-          <h3 className="text-xl font-bold border-b border-gray-300 pb-1">
-            {fullName}
-          </h3>
-          <p className="text-gray-600 text-sm mt-1">{position}</p>
-
-          {/* Skills Count */}
-          <div className="">
-            <div className="mt-3 w-3/4 flex flex-wrap items-center gap-2">
-              <span className="text-xs bg-gray-100 px-3 py-1 rounded-full flex items-center">
-                <span className="font-medium mr-1">
-                  {formattedSkills.length}
-                </span>{" "}
-                Skills
-              </span>
-
-              {/* Achievements Count */}
-              {formattedAchievements.length > 0 && (
-                <span className="text-xs bg-gray-100 px-3 py-1 rounded-full flex items-center">
-                  <Award className="w-3 h-3 mr-1 text-[#ca0019]" />
-                  <span className="font-medium mr-1">
-                    {formattedAchievements.length}
-                  </span>{" "}
-                  Achievements
-                </span>
-              )}
-
-              {/* Projects Count - Optional */}
-              {formattedProjects.length > 0 && (
-                <span className="text-xs bg-gray-100 px-3 py-1 rounded-full flex items-center">
-                  <Briefcase className="w-3 h-3 mr-1 text-[#ca0019]" />
-                  <span className="font-medium mr-1">
-                    {formattedProjects.length}
-                  </span>{" "}
-                  Projects
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Social Media Links */}
-        <div className="absolute right-0 top-0 bottom-0 flex flex-col pt-4 gap-2 bg-black bg-opacity-80 lg:p-[8px] p-[7px]">
+        {/* Floating Social Media Links - Glassmorphism */}
+        <div className="absolute top-4 right-[-50px] group-hover:right-4 transition-all duration-500 flex flex-col gap-2">
           {socialLinks.github && (
-            <a
-              href={socialLinks.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <FaGithub size={16} />
-            </a>
+            <SocialIcon href={socialLinks.github} icon={<FaGithub size={14} />} />
           )}
           {socialLinks.linkedin && (
-            <a
-              href={socialLinks.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <FaLinkedinIn size={16} />
-            </a>
+            <SocialIcon href={socialLinks.linkedin} icon={<FaLinkedinIn size={14} />} />
           )}
           {socialLinks.twitter && (
-            <a
-              href={socialLinks.twitter}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <FaXTwitter size={16} />
-            </a>
-          )}
-          {socialLinks.instagram && (
-            <a
-              href={socialLinks.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <FaInstagram size={16} />
-            </a>
-          )}
-          {socialLinks.website && (
-            <a
-              href={socialLinks.website}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Globe size={16} />
-            </a>
+            <SocialIcon href={socialLinks.twitter} icon={<FaXTwitter size={14} />} />
           )}
         </div>
 
-        {/* View Details Button */}
-        <button
-          onClick={handleViewProfile}
-          className="absolute bottom-4 right-4 w-10 h-10 bg-black rounded-full flex items-center justify-center text-white group-hover:bg-[#ca0019] transition-colors"
-        >
-          <ArrowUpRight
-            size={18}
-            className="group-hover:rotate-45 transition-transform duration-300"
-          />
-        </button>
+        {/* Member Name and Position Overlay */}
+        <div className="absolute bottom-0 left-0 right-0 p-5 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+          <h3 className="text-xl font-bold leading-tight mb-1 truncate">
+            {fullName}
+          </h3>
+          <p className="text-gray-300 text-xs font-medium uppercase tracking-wider truncate">
+            {position}
+          </p>
+        </div>
       </div>
-    </div>
+
+      {/* Card Footer Content */}
+      <div className="p-5 bg-white border-t border-gray-50 flex items-center justify-between mt-auto">
+        <div className="flex gap-4">
+          <div className="flex flex-col">
+            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Skills</span>
+            <span className="text-sm font-bold text-gray-900">{formattedSkills.length}</span>
+          </div>
+          {formattedAchievements.length > 0 && (
+            <div className="flex flex-col">
+              <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Awards</span>
+              <span className="text-sm font-bold text-[#ca0019]">{formattedAchievements.length}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="w-10 h-10 rounded-full bg-gray-50 text-gray-900 flex items-center justify-center group-hover:bg-[#ca0019] group-hover:text-white transition-all duration-300 shadow-inner">
+          <ArrowUpRight size={16} className="group-hover:rotate-45 transition-transform duration-300" />
+        </div>
+      </div>
+    </motion.div>
   );
 };
+
+const SocialIcon = ({ href, icon }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="w-8 h-8 bg-white/20 backdrop-blur-xl border border-white/30 rounded-full flex items-center justify-center text-white hover:bg-[#ca0019] hover:border-[#ca0019] transition-all duration-300 shadow-xl"
+    onClick={(e) => e.stopPropagation()}
+  >
+    {icon}
+  </a>
+);
 
 export default MemberCard;

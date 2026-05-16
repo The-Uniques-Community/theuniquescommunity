@@ -1,4 +1,5 @@
 import React from 'react';
+import CelebrationComponent from '@/utils/Header';
 import { 
   Typography, 
   Box,
@@ -27,28 +28,7 @@ const HomeContent = () => {
       animate="visible"
       variants={contentVariants}
     >
-      <Box sx={{ 
-        height: '60vh', 
-        display: 'flex', 
-        flexDirection: 'column',
-        alignItems: 'center', 
-        justifyContent: 'center',
-        backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80)',
-        backgroundSize: 'cover',
-        color: 'white',
-        textAlign: 'center',
-        p: 4
-      }}>
-        <Typography variant="h2" component="h1" gutterBottom>
-          Success Stories
-        </Typography>
-        <Typography variant="h5" sx={{ maxWidth: 800, mb: 4 }}>
-          Inspiring journeys of The Uniques Community members who have achieved remarkable success in their careers.
-        </Typography>
-        <Typography variant="body1" sx={{ maxWidth: 700 }}>
-          Select a community member from the sidebar to explore their journey, achievements, and the impact of being part of The Uniques Community.
-        </Typography>
-      </Box>
+      <CelebrationComponent title="Success Stories → Inspiring Journeys ✦" />
       
       <Container maxWidth="lg" sx={{ py: 6 }}>
         <Paper elevation={3} sx={{ p: 4 }}>

@@ -1,50 +1,56 @@
-.card {
+:root {
+  --card-cutout-bg: #ffffff;
+  --card-cutout-shadow: #ffffff;
+}
 
-  max-width: 320px;
-  margin: 20px;
-  border-radius: 20px;
+.dark-mode-cutout {
+  --card-cutout-bg: #0a0a0a; /* Match the dark background of the section */
+  --card-cutout-shadow: #0a0a0a;
+}
+
+.card {
+  max-width: 380px;
+  margin: 10px;
+  border-radius: 24px;
   padding: 8px;
   overflow: hidden;
-  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .card .top-section {
-  height: 150px;
-  border-radius: 15px;
+  min-height: 180px;
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   position: relative;
-  border-bottom-right-radius: 42px;
+  border-bottom-right-radius: 48px;
+  padding: 24px;
 }
 
 .border2 {
   position: absolute;
   bottom: -1px;
   right: 0;
-  /* Ensure it's in the bottom-right */
-  border-top-left-radius: 10px;
-  /* border-top-right-radius: 25px; Adding curve at top-right */
-  height: 30px;
-  width: 80px;
-  background: #ffffff;
+  border-top-left-radius: 12px;
+  height: 35px;
+  width: 90px;
+  background: var(--card-cutout-bg);
   transform: skew(-40deg);
-  /* Match the top skew but mirrored */
-  box-shadow: 10px 10px 0 0 #ffffff;
+  box-shadow: 10px 10px 0 0 var(--card-cutout-shadow);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .border2::before {
   content: "";
   position: absolute;
   bottom: 100%;
-  /* Moves it above the border2 div */
   right: -10px;
-  /* Slightly shifts it right for alignment */
-  width: 20px;
-  height: 20px;
-  background: #ffffff;
+  width: 24px;
+  height: 24px;
+  background: var(--card-cutout-bg);
   border-radius: -85%;
-  box-shadow: -5px 5px 0 2px #ffffff;
-  /* Flipped shadow for an upward effect */
+  box-shadow: -6px 6px 0 2px var(--card-cutout-shadow);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card .top-section::before {
@@ -52,14 +58,11 @@
   position: absolute;
   top: 0px;
   left: 0px;
-  border-bottom-right-radius: 10px;
-  background: rgb(255, 255, 255);
-  height: 50px;
-  width: 64px;
+  border-bottom-right-radius: 12px;
+  background: var(--card-cutout-bg);
+  height: 60px;
+  width: 70px;
   border-top-left-radius: -22px;
-  box-shadow: -5px -5px 0 2px #ffffff;
-}
-
-.card .top-section .icons .logo .top-section {
-  height: 100%;
+  box-shadow: -5px -5px 0 2px var(--card-cutout-shadow);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }

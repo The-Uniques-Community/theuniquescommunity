@@ -93,7 +93,6 @@ const Navbar = () => {
       { text: "Batches", icon: <SchoolIcon />, link: "/batches" },
       { text: "Training Model", icon: <ScienceIcon />, link: "/training" },
       { text: "Success Stories", icon: <CheckCircleIcon />, link: "/success-stories" },
-      { text: "Trainers", icon: <SchoolIcon />, link: "/trainers" },
       { text: "Community", icon: <GroupsIcon />, link: "/community-main" },
       { text: "Blogs", icon: <ArticleIcon />, link: "/blogs" },
       { text: "Contact", icon: <ContactMailIcon />, link: "/contact" },

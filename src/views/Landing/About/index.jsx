@@ -1,5 +1,6 @@
 import React from "react";
-import Header from "./componants/Header";
+import CelebrationComponent from "@/utils/Header";
+import Infrastructure from "./componants/Infrastructure";
 import Second from "./componants/Batches";
 import Third from "./componants/Third";
 import Fourth from "./componants/Fourth";
@@ -16,7 +17,7 @@ import CallToAction from "../homComponents/CallToAction";
 const index = () => {
   return (
     <div>
-      <Header />
+      <CelebrationComponent title="Empowering Innovators → Our Story ✦" />
       <Second />
       {/* <Third/> */}
       {/* <Fourth /> */}
@@ -24,12 +25,13 @@ const index = () => {
       <TrainingTabs />
       <VisionMission />
       <Mentor />
-     
+      <Infrastructure />
+
       <Testimonial />
       <Faq />
       <CallToAction />
 
-      
+
     </div>
   );
 };

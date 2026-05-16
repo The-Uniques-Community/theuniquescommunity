@@ -28,9 +28,9 @@ const LandingLayout = () => {
         <Navbar />
 
         {/* Main Content: Slides over the footer */}
-        <div 
-          className="relative z-10 bg-white dark:bg-background layout-bottom-clip overflow-hidden min-h-screen"
-          style={{ 
+        <div
+          className="relative z-10 bg-white dark:bg-[#0a0a0a] layout-bottom-clip overflow-hidden min-h-screen"
+          style={{
             marginBottom: `${footerHeight}px`,
             filter: 'drop-shadow(0 20px 50px rgba(0,0,0,0.1))'
           }}
@@ -46,7 +46,7 @@ const LandingLayout = () => {
       </Suspense>
 
       {/* Reveal Footer: Stays fixed at the bottom */}
-      <div 
+      <div
         ref={footerRef}
         className="fixed bottom-0 left-0 w-full z-0"
       >

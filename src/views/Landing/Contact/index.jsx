@@ -4,19 +4,19 @@ import ContainerFull from '@/utils/Container/ContainerFull'
 import CallToAction from '../homComponents/CallToAction'
 import CelebrationComponent from '@/utils/Header'
 
+import { useThemeContext } from "@/theme/ThemeProvider";
+
 const index = () => {
+  const { isDarkMode } = useThemeContext();
+
   return (
-    <div>
-        <CelebrationComponent title='Connect & Collaborate → Reach Out ✦'/>
+    <div className={`transition-colors duration-500 ${isDarkMode ? 'bg-[#161616]' : 'bg-gray-50'}`}>
+      <CelebrationComponent title='Connect & Collaborate → Reach Out ✦' />
       <ContainerFull >
-        <div className="py-7"></div>
-          <ContactForm/>
-        <div className="py-7"></div>
-        <div className="py-7"></div>
+        <ContactForm />
       </ContainerFull>
-        <CallToAction/>
+      <CallToAction />
     </div>
-    
   )
 }
 

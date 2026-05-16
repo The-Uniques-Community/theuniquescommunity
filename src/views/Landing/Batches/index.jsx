@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Search, Award, RefreshCw, Users } from "lucide-react";
+import { Search, Award, RefreshCw, Users, ChevronDown, Check } from "lucide-react";
 import axios from "axios";
 import { BASE_URL } from "@/config";
 import MemberCard from "./components/MemberCard";
-import Header from "../About/componants/Header";
-import { Card, CardContent, Typography, Box, Tooltip } from "@mui/material";
+import CelebrationComponent from "@/utils/Header";
+import { Card, CardContent, Typography, Box, Tooltip, MenuItem, Select, FormControl, InputLabel } from "@mui/material";
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import SchoolIcon from '@mui/icons-material/School';
 import GroupsIcon from '@mui/icons-material/Groups';
+import { AnimatePresence } from "framer-motion";
 
 const index = () => {
   // State management
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [members, setMembers] = useState([]);
   const [selectedBatch, setSelectedBatch] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
@@ -72,9 +74,9 @@ const index = () => {
       try {
         setCountsLoading(true);
         console.log("Fetching batch counts...");
-        
+
         const response = await axios.get(`${BASE_URL}/api/public/members/counts`);
-        
+
         if (response.data.success) {
           console.log("Batch counts received:", response.data.data);
           setBatchCounts(response.data.data);
@@ -102,14 +104,14 @@ const index = () => {
     if (!searchTerm.trim() || !Array.isArray(members)) {
       return members;
     }
-    
+
     const term = searchTerm.toLowerCase();
     return members.filter(member => {
       // Safely check properties (they might be missing in incomplete profiles)
       const nameMatch = member.fullName && member.fullName.toLowerCase().includes(term);
       const bioMatch = member.bio && member.bio.toLowerCase().includes(term);
       const courseMatch = member.course && member.course.toLowerCase().includes(term);
-      
+
       // Check for skills - handle both array of objects and array of strings
       const skillsMatch = Array.isArray(member.skills) && member.skills.some(skill => {
         if (typeof skill === 'string') {
@@ -117,7 +119,7 @@ const index = () => {
         }
         return (skill && skill.name && skill.name.toLowerCase().includes(term));
       });
-      
+
       return nameMatch || bioMatch || courseMatch || skillsMatch;
     });
   }, [members, searchTerm]);
@@ -139,7 +141,7 @@ const index = () => {
 
         if (response.data.success) {
           console.log(`Received ${response.data.data.length} members out of ${response.data.count} total`);
-          
+
           // Process members to ensure no null/undefined values that might break rendering
           const processedMembers = response.data.data.map(member => ({
             ...member,
@@ -151,7 +153,7 @@ const index = () => {
             achievements: Array.isArray(member.achievements) ? member.achievements : [],
             certifications: Array.isArray(member.certifications) ? member.certifications : []
           }));
-          
+
           setMembers(processedMembers);
           setTotalMembers(response.data.count);
           setError(null);
@@ -179,9 +181,9 @@ const index = () => {
   // Achievement Card Component using MUI
   const AchievementCard = ({ title, description, icon, color }) => {
     return (
-      <Card sx={{ 
-        borderRadius: 2, 
-        boxShadow: '0 4px 8px rgba(0,0,0,0.05)', 
+      <Card sx={{
+        borderRadius: 2,
+        boxShadow: '0 4px 8px rgba(0,0,0,0.05)',
         transition: 'transform 0.2s, box-shadow 0.2s',
         '&:hover': {
           transform: 'translateY(-4px)',
@@ -190,10 +192,10 @@ const index = () => {
       }}>
         <CardContent>
           <Box display="flex" alignItems="flex-start" gap={2}>
-            <Box 
-              sx={{ 
-                backgroundColor: color || '#ca0019', 
-                color: 'white', 
+            <Box
+              sx={{
+                backgroundColor: color || '#ca0019',
+                color: 'white',
                 borderRadius: '50%',
                 p: 1,
                 display: 'flex',
@@ -221,44 +223,44 @@ const index = () => {
   useEffect(() => {
     const defaultAchievements = {
       "All": [
-      {
-        id: "community-excellence",
-        title: "Community Excellence",
-        description: "Recognized for outstanding contributions to the tech ecosystem",
-        color: "rgb(59, 130, 246)"
-      }
+        {
+          id: "community-excellence",
+          title: "Community Excellence",
+          description: "Recognized for outstanding contributions to the tech ecosystem",
+          color: "rgb(59, 130, 246)"
+        }
       ],
       "The Uniques 1.0": [
-      {
-        id: "founding-milestone",
-        title: "Founding Milestone",
-        description: "Established the community and set the foundation for future growth",
-        color: "rgb(34, 197, 94)"
-      }
+        {
+          id: "founding-milestone",
+          title: "Founding Milestone",
+          description: "Established the community and set the foundation for future growth",
+          color: "rgb(34, 197, 94)"
+        }
       ],
       "The Uniques 2.0": [
-      {
-        id: "community-growth",
-        title: "Community Growth",
-        description: "Expanded membership by 200% and introduced mentorship programs",
-        color: "rgb(168, 85, 247)"
-      }
+        {
+          id: "community-growth",
+          title: "Community Growth",
+          description: "Expanded membership by 200% and introduced mentorship programs",
+          color: "rgb(168, 85, 247)"
+        }
       ],
       "The Uniques 3.0": [
-      {
-        id: "innovation-hub",
-        title: "Innovation Hub",
-        description: "Launched the innovation lab for members to collaborate on projects",
-        color: "rgb(249, 115, 22)"
-      }
+        {
+          id: "innovation-hub",
+          title: "Innovation Hub",
+          description: "Launched the innovation lab for members to collaborate on projects",
+          color: "rgb(249, 115, 22)"
+        }
       ],
       "The Uniques 4.0": [
-      {
-        id: "collaborative-leadership",
-        title: "Collaborative Leadership",
-        description: "Pioneered new initiatives and fostered cross-batch collaboration in 2024",
-        color: "rgb(239, 68, 68)"
-      }
+        {
+          id: "collaborative-leadership",
+          title: "Collaborative Leadership",
+          description: "Pioneered new initiatives and fostered cross-batch collaboration in 2024",
+          color: "rgb(239, 68, 68)"
+        }
       ]
     };
 
@@ -272,7 +274,7 @@ const index = () => {
     setLoading(true);
     setError(null);
     setCountsLoading(true);
-    
+
     // Fetch both counts and members data
     const fetchAll = async () => {
       try {
@@ -281,14 +283,14 @@ const index = () => {
         if (countsResponse.data.success) {
           setBatchCounts(countsResponse.data.data);
         }
-        
+
         // Then fetch members
         const membersResponse = await axios.get(`${BASE_URL}/api/public/members`, {
           params: {
             batch: selectedBatch !== "All" ? selectedBatch : undefined
           }
         });
-        
+
         if (membersResponse.data.success) {
           const processedMembers = membersResponse.data.data.map(member => ({
             ...member,
@@ -299,7 +301,7 @@ const index = () => {
             achievements: Array.isArray(member.achievements) ? member.achievements : [],
             certifications: Array.isArray(member.certifications) ? member.certifications : []
           }));
-          
+
           setMembers(processedMembers);
           setTotalMembers(membersResponse.data.count);
         } else {
@@ -313,122 +315,155 @@ const index = () => {
         setCountsLoading(false);
       }
     };
-    
+
     fetchAll();
   };
 
   return (
-    <div className="min-h-screen ">
-      <Header />
-      
-      {/* Header */}
-      <motion.div
-        className="bg-white py-12 px-4 sm:px-6 lg:px-8 shadow-sm"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="max-w-7xl mx-auto ">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2 text-center">Our Batches</h1>
-          <p className="text-lg text-gray-600 text-center">Explore the talented members of The Uniques Community.</p>
-        </div>
-      </motion.div>
+    <div className="min-h-screen">
+      <CelebrationComponent title="Our Batches → Celebrating Excellence ✦" />
 
-      {/* Batch Selection with Enhanced Count Display */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-wrap gap-4 mb-8 justify-center">
-          {batchesData.map((batch) => (
-            
-              <motion.button
-                className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all ${
-                  selectedBatch === batch.id
-                    ? "bg-[#ca0019] text-white shadow-lg"
-                    : "bg-white text-gray-700 hover:bg-gray-100 shadow"
-                }`}
-                onClick={() => setSelectedBatch(batch.id)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+      {/* Batch Selection with Premium Dropdown */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-20">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 bg-white p-6 rounded-2xl shadow-xl border border-gray-100">
+
+          <div className="w-full md:w-auto">
+            <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block ml-1">Select Batch</label>
+            <div className="relative group min-w-[280px]">
+              <button
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center justify-between w-full px-5 py-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl transition-all duration-300 group-hover:border-[#ca0019]/30"
               >
-                {batch.icon}
-                <span>{batch.name}</span>
-                
-              </motion.button>
-          ))}
-        </div>
-      </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">{currentBatch?.icon}</span>
+                  <span className="font-semibold text-gray-900">{currentBatch?.name}</span>
+                </div>
+                <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
 
-      {/* Search Bar */}
-      <div className="relative max-w-md mx-auto mb-12">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Search className="h-5 w-5 text-gray-400" />
+              <AnimatePresence>
+                {isDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 5, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-full left-0 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-2xl overflow-hidden z-50"
+                  >
+                    {batchesData.map((batch) => (
+                      <button
+                        key={batch.id}
+                        onClick={() => {
+                          setSelectedBatch(batch.id);
+                          setIsDropdownOpen(false);
+                        }}
+                        className={`flex items-center justify-between w-full px-5 py-4 text-left transition-colors ${selectedBatch === batch.id
+                            ? "bg-red-50 text-[#ca0019]"
+                            : "hover:bg-gray-50 text-gray-700"
+                          }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-xl">{batch.icon}</span>
+                          <span className="font-medium">{batch.name}</span>
+                        </div>
+                        {selectedBatch === batch.id && <Check className="w-5 h-5" />}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          <div className="w-full md:w-1/2">
+            <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block ml-1">Find Members</label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400 group-focus-within:text-[#ca0019] transition-colors" />
+              </div>
+              <input
+                type="text"
+                className="block w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#ca0019]/20 focus:border-[#ca0019] transition-all duration-300 group-hover:border-[#ca0019]/30"
+                placeholder="Search by name, position, or skill..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+
         </div>
-        <input
-          type="text"
-          className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-[#ca0019] focus:border-[#ca0019]"
-          placeholder="Search by name, position, or skill..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
       </div>
 
       {/* Batch Information and Members */}
       {currentBatch && (
         <motion.div
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 mt-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
           key={currentBatch.id}
         >
           {/* Batch Info Card */}
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <div className="flex items-start justify-between">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                  {currentBatch.icon}
-                  {currentBatch.name}
-                  <span className="bg-[#ca0019] text-white px-2 py-0.5 rounded-full text-sm flex items-center gap-1">
-                    <Users size={14} />
-                    {loading ? "Loading..." : `${totalMembers} Members`}
-                  </span>
-                </h2>
-                <p className="mt-2 text-gray-600">{currentBatch.description}</p>
+          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 mb-12 overflow-hidden relative">
+            <div className="absolute top-0 right-0 p-8 opacity-5">
+              <Award size={120} className="text-gray-900" />
+            </div>
+
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+              <div className="flex-1">
+                <div className="flex items-center gap-4 mb-4">
+                  <span className="text-5xl">{currentBatch.icon}</span>
+                  <div>
+                    <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
+                      {currentBatch.name}
+                    </h2>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="bg-red-100 text-[#ca0019] px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                        <Users size={12} />
+                        {loading ? "Loading..." : `${totalMembers} MEMBERS`}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-gray-600 text-lg max-w-3xl leading-relaxed">
+                  {currentBatch.description}
+                </p>
               </div>
-              
-              {/* Add refresh button */}
-              <button 
+
+              <button
                 onClick={refreshData}
-                className="text-gray-500 hover:text-[#ca0019] p-2 rounded-full hover:bg-gray-100 transition-colors"
+                className="self-start md:self-center flex items-center gap-2 px-4 py-2 text-gray-500 hover:text-[#ca0019] hover:bg-red-50 rounded-xl transition-all duration-300 font-medium"
                 title="Refresh data"
                 disabled={loading || countsLoading}
               >
                 <RefreshCw size={18} className={loading || countsLoading ? "animate-spin" : ""} />
+                <span>Refresh Data</span>
               </button>
             </div>
 
             {/* Batch Achievements Section */}
             <motion.div
-              className="mt-6"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              transition={{ duration: 0.3 }}
+              className="mt-10 pt-10 border-t border-gray-100"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
             >
-              <div>
-                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
                   <Award className="w-5 h-5 text-[#ca0019]" />
-                  Batch Achievements
-                </h3>
-                <div className="grid lg:grid-cols-3 grid-cols-1 sm:grid-cols-1 gap-4">
-                  {achievements.map((achievement) => (
-                    <AchievementCard
-                      key={achievement.id}
-                      title={achievement.title}
-                      description={achievement.description}
-                      icon={<EmojiEventsIcon />}
-                      color={achievement.color}
-                    />
-                  ))}
                 </div>
+                Batch Achievements
+              </h3>
+              <div className="grid lg:grid-cols-3 grid-cols-1 gap-6">
+                {achievements.map((achievement) => (
+                  <AchievementCard
+                    key={achievement.id}
+                    title={achievement.title}
+                    description={achievement.description}
+                    icon={<EmojiEventsIcon />}
+                    color={achievement.color}
+                  />
+                ))}
               </div>
             </motion.div>
           </div>
@@ -455,12 +490,12 @@ const index = () => {
                 {filteredMembers.map((member) => (
                   <MemberCard key={member._id} member={member} />
                 ))}
-                
+
                 {/* Show count of members displayed */}
                 <div className="col-span-full text-center py-8">
                   <p className="text-gray-500">
-                    {searchTerm ? 
-                      `Found ${filteredMembers.length} of ${members.length} members matching "${searchTerm}"` : 
+                    {searchTerm ?
+                      `Found ${filteredMembers.length} of ${members.length} members matching "${searchTerm}"` :
                       `Displaying all ${members.length} members`}
                   </p>
                 </div>

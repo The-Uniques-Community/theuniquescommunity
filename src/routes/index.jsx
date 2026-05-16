@@ -32,7 +32,6 @@ const Training = Loader(lazy(() => import("@/views/Landing/Training-model/Traini
 const NotFound = Loader(lazy(() => import("@/views/Landing/NotFound/index")), false);
 const CommunityPage = Loader(lazy(() => import("@/views/Landing/Community/index")), false);
 const SuccessStories = Loader(lazy(() => import("@/views/Landing/SuccessStories/index")), false);
-const Trainers = Loader(lazy(() => import("@/views/Landing/Trainers/index")), false);
 const Timeline = Loader(lazy(() => import('@/utils/Timeline/Timeline')));
 
 const timelineData = [
@@ -78,7 +77,6 @@ const LandingRoutes = {
     { path: "contact", element: <Contact /> },
     { path: "batches", element: <BatchesPage /> },
     { path: "success-stories", element: <SuccessStories /> },
-    { path: "trainers", element: <Trainers /> },
     { path: "notices", element: <Notices /> },
     { path: "test", element: <Timeline events={timelineData} /> },
     { path: "forget-password", element: <ForgetPassword /> },
