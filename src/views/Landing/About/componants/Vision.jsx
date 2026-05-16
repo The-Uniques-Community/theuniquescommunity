@@ -1,86 +1,158 @@
 import React from 'react';
-import visionImage from '/src/assets/img/About/VISION.png'; // Adjust if needed
+import visionImage from '/src/assets/img/About/VISION.png'; 
+import { useThemeContext } from "@/theme/ThemeProvider";
+import { ShieldCheck, Rocket, Zap, Users, Target, Globe, BookOpen, Lightbulb, ArrowRight } from 'lucide-react';
 
 const MissionVission = () => {
+  const { isDarkMode } = useThemeContext();
+
   const MissionData = [
-    { number: '1', title: 'Mastering Technology', description: 'Our mission is to cultivate a deep understanding of cutting-edge technologies, empowering students to innovate beyond traditional academics.' },
-    { number: '2', title: 'Building Future Innovators', description: 'We aim to nurture a community of problem-solvers and tech enthusiasts who challenge norms and drive technological advancements.' },
-    { number: '3', title: 'Entrepreneurial Mindset', description: 'Encouraging students to think beyond jobs and explore the world of startups, turning ideas into real-world solutions.' },
-    { number: '4', title: 'Collaboration & Growth', description: 'Fostering an ecosystem where like-minded individuals connect, collaborate, and grow in their technical journey together.' }
+    { 
+      number: '01', 
+      title: 'Mastering Technology', 
+      description: 'Cultivating a deep understanding of cutting-edge technologies, empowering students to innovate beyond traditional academics.',
+      icon: <Zap size={20} />
+    },
+    { 
+      number: '02', 
+      title: 'Building Future Innovators', 
+      description: 'Nurturing a community of problem-solvers and tech enthusiasts who challenge norms and drive advancements.',
+      icon: <Target size={20} />
+    },
+    { 
+      number: '03', 
+      title: 'Entrepreneurial Mindset', 
+      description: 'Encouraging students to think beyond jobs and explore startups, turning ideas into real-world solutions.',
+      icon: <Rocket size={20} />
+    },
+    { 
+      number: '04', 
+      title: 'Collaboration & Growth', 
+      description: 'Fostering an ecosystem where like-minded individuals connect, collaborate, and grow together.',
+      icon: <Users size={20} />
+    }
   ];
 
   const VisionData = [
-    { number: '1', title: 'Tech-Driven Excellence', description: 'Our vision is to create a community where technical expertise is valued above rote academics, driving innovation and impact.' },
-    { number: '2', title: 'Startup Culture', description: 'We envision a future where our members launch groundbreaking startups, disrupting industries with technological advancements.' },
-    { number: '3', title: 'Global Tech Impact', description: 'Our vision extends beyond boundaries, aiming to make a mark in the global tech ecosystem through collaboration and innovation.' },
-    { number: '4', title: 'Continuous Learning', description: 'We believe in an ever-evolving learning journey, where adapting to new technologies and frameworks is the norm.' }
+    { 
+      number: '01', 
+      title: 'Tech-Driven Excellence', 
+      description: 'Creating a community where technical expertise is valued above rote academics, driving impact.',
+      icon: <ShieldCheck size={20} />
+    },
+    { 
+      number: '02', 
+      title: 'Startup Culture', 
+      description: 'Envisioning a future where members launch groundbreaking startups, disrupting industries.',
+      icon: <Lightbulb size={20} />
+    },
+    { 
+      number: '03', 
+      title: 'Global Tech Impact', 
+      description: 'Extending beyond boundaries to make a mark in the global tech ecosystem through innovation.',
+      icon: <Globe size={20} />
+    },
+    { 
+      number: '04', 
+      title: 'Continuous Learning', 
+      description: 'An ever-evolving learning journey, where adapting to new technologies is the standard.',
+      icon: <BookOpen size={20} />
+    }
   ];
 
+  const listItemStyle = `group relative py-12 border-b ${isDarkMode ? 'border-white/10' : 'border-black/5'} transition-all duration-500 hover:pl-4`;
+
   return (
-    <>
+    <div className={`py-32 ${isDarkMode ? 'bg-[#0a0a0a] text-white' : 'bg-white text-gray-900'}`}>
       {/* PHILOSOPHY SECTION */}
-      <div className="container md:w-4/5 px-5 mx-auto py-12 flex flex-col md:flex-row">
-        <div className="md:w-1/2 flex flex-col justify-center">
-          <div className="flex mb-2 md:mb-5 items-center">
-            <span className="border-l-2 border-[#e03232] h-6 mr-3"></span>
-            <h1 className="text-lg font-bold">OUR PHILOSOPHY</h1>
+      <div className="container max-w-7xl px-6 mx-auto mb-40">
+        <div className="flex flex-col md:flex-row items-start gap-20">
+          <div className="md:w-1/2 space-y-8">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-[1px] bg-[#ca0019]"></div>
+              <span className="text-[#ca0019] text-sm font-bold tracking-[0.2em] uppercase">The Philosophy</span>
+            </div>
+            
+            <h2 className="text-5xl md:text-8xl font-black tracking-tighter leading-[0.9]">
+              Principles <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ca0019] to-[#ff4d4d]">
+                & Beliefs
+              </span>
+            </h2>
+            
+            <p className={`text-xl md:text-2xl leading-relaxed font-light ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+              Batch Uniques is more than a community; it’s a technical movement. 
+              We prioritize growth over grades, innovation over instruction, 
+              and execution over theory.
+            </p>
           </div>
-          <h1 className="text-lg md:text-3xl font-semibold mb-8">
-            Our principles and <span className="text-[#ca2c2c] text-4xl md:text-7xl md:py-3 block">beliefs</span>
-          </h1>
-          <p className="text-justify">
-            Batch Uniques is a special community where technical growth takes priority over traditional academics. We are committed to fostering innovation, pushing boundaries, and creating a future filled with tech-driven startups and groundbreaking solutions.
-          </p>
-        </div>
-        <div className="w-full md:w-1/2 h-96 hidden md:block">
-          <img className="w-[80%] h-[80%] object-contain opacity-5" src={visionImage} alt="Vision" />
+          
+          <div className="md:w-1/2 relative">
+             <div className={`p-10 border-l-2 ${isDarkMode ? 'border-white/5' : 'border-black/5'} space-y-6`}>
+                <p className={`text-lg italic font-serif ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  "We are committed to fostering innovation, pushing boundaries, and creating a future filled with tech-driven startups and groundbreaking solutions."
+                </p>
+                <div className="flex items-center gap-4">
+                   <div className="w-8 h-8 rounded-full bg-[#ca0019]/10 flex items-center justify-center">
+                      <ArrowRight size={16} className="text-[#ca0019]" />
+                   </div>
+                   <span className="font-bold text-sm">THE UNIQUES CORE</span>
+                </div>
+             </div>
+             <img 
+              className={`absolute -top-20 -right-20 w-80 opacity-5 pointer-events-none select-none`} 
+              src={visionImage} 
+              alt="" 
+            />
+          </div>
         </div>
       </div>
 
       {/* MISSION & VISION SECTIONS */}
-      {[{ title: 'MISSION', data: MissionData }, { title: 'VISION', data: VisionData }].map((section, idx) => (
-        <div key={idx} className="container md:w-4/5 px-5 md:px-0 mx-auto pb-24">
-          <div className={`md:flex ${section.title === 'VISION' ? 'flex-col-reverse md:flex-row' : 'items-center'}`}>
-            {section.title === 'MISSION' && (
-              <div className="md:w-1/3 flex justify-center pb-7 md:pb-0">
-                <h1 className="md:text-5xl text-2xl font-semibold">{section.title}</h1>
-              </div>
-            )}
-            <div className="md:w-2/3">
-              <div className="container px-5 mx-auto flex flex-wrap">
-                {section.data.map((item) => (
-                  <div key={item.number} className="flex relative py-3 sm:items-center md:w-2/3 mx-auto">
-                    <div className="h-full w-6 absolute inset-0 flex items-center justify-center">
-                      <div className="h-full w-1 bg-gray-300 pointer-events-none"></div>
-                    </div>
-                    <div className="flex-shrink-0 w-6 h-6 rounded-full mt-10 sm:mt-0 inline-flex items-center justify-center bg-[#ca0019] text-white relative z-10 font-medium text-sm">
-                      {item.number}
-                    </div>
-                    <div className="flex-grow md:pl-8 pl-6 flex sm:items-center items-start flex-col sm:flex-row">
-                      <div className="flex-shrink-0 w-10 h-10 text-[#ca0019] bg-gray-300 rounded-full inline-flex items-center justify-center">
-                        <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-5 h-5" viewBox="0 0 24 24">
-                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                        </svg>
-                      </div>
-                      <div className="flex-grow sm:pl-6 mt-2 sm:mt-0">
-                        <h2 className="font-medium text-gray-900 mb-1 text-md">{item.title}</h2>
-                        <p className="leading-relaxed text-sm">{item.description}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+      {[
+        { title: 'Mission', data: MissionData, tag: 'The Driver' },
+        { title: 'Vision', data: VisionData, tag: 'The Goal' }
+      ].map((section, idx) => (
+        <div key={idx} className="container max-w-7xl px-6 mx-auto mb-40">
+          <div className={`flex flex-col ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-16 md:gap-32`}>
+            <div className={`md:w-1/3 pt-4 ${idx % 2 !== 0 ? 'md:text-right' : ''}`}>
+              <span className="text-[#ca0019] font-mono text-sm mb-4 block tracking-widest">{section.tag}</span>
+              <h3 className="text-4xl md:text-6xl font-bold mb-6 italic">{section.title}</h3>
+              <div className={`w-20 h-1 bg-[#ca0019] ${idx % 2 !== 0 ? 'ml-auto' : ''}`}></div>
             </div>
-            {section.title === 'VISION' && (
-              <div className="md:w-1/3 flex justify-center items-center">
-                <h1 className="md:text-5xl text-2xl font-semibold text-center">{section.title}</h1>
-              </div>
-            )}
+
+            <div className={`md:w-2/3 border-t-2 border-[#ca0019]`}>
+              {section.data.map((item) => (
+                <div key={item.number} className={listItemStyle}>
+                   {/* Background Number */}
+                   <span className={`absolute ${idx % 2 === 0 ? 'left-0' : 'right-0'} top-1/2 -translate-y-1/2 text-8xl md:text-9xl font-black transition-all duration-700 pointer-events-none opacity-[0.03] group-hover:opacity-[0.07] ${idx % 2 === 0 ? 'group-hover:translate-x-4' : 'group-hover:-translate-x-4'}`}>
+                      {item.number}
+                   </span>
+
+                   <div className={`relative z-10 flex flex-col ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} md:items-center gap-6 md:gap-12`}>
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isDarkMode ? 'bg-white/5' : 'bg-black/5'} group-hover:bg-[#ca0019] group-hover:text-white transition-all duration-300`}>
+                        {item.icon}
+                      </div>
+                      
+                      <div className={`flex-1 ${idx % 2 !== 0 ? 'md:text-right' : ''}`}>
+                        <h4 className="text-2xl md:text-3xl font-bold mb-2 group-hover:text-[#ca0019] transition-colors duration-300">
+                          {item.title}
+                        </h4>
+                        <p className={`text-base md:text-lg leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                          {item.description}
+                        </p>
+                      </div>
+                   </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       ))}
-    </>
+
+    </div>
   );
 };
 
 export default MissionVission;
+

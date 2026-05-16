@@ -12,14 +12,16 @@ const CelebrationComponent = ({
 }) => {
     const { isDarkMode } = useThemeContext();
     const currentBgColor = isDarkMode ? "#3a474c" : "#f1f4f9";
-    const currentTextColor = "white";
+    const currentTextColor = isDarkMode ? "white" : "#1a1a1a";
 
     return (
         <Box
             className="MuiBox-root rounded-b-[60px] relative overflow-hidden"
             sx={{
                 backgroundColor: currentBgColor,
-                backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 60"><text x="0" y="25" fill="rgba(255,255,255,0.2)" font-size="60px">.</text></svg>')`,
+                backgroundImage: isDarkMode 
+                    ? `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 60"><text x="0" y="25" fill="rgba(255,255,255,0.1)" font-size="60px">.</text></svg>')`
+                    : `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 60"><text x="0" y="25" fill="rgba(0,0,0,0.05)" font-size="60px">.</text></svg>')`,
                 backgroundSize: "30px 30px",
                 padding: "4rem 0",
                 borderBottom: isDarkMode ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(0,0,0,0.05)',
@@ -36,16 +38,16 @@ const CelebrationComponent = ({
                         <Box sx={{ 
                             padding: '4px',
                             borderRadius: '100px',
-                            border: '1px solid rgba(255,255,255,0.4)',
+                            border: isDarkMode ? '1px solid rgba(255,255,255,0.4)' : '1px solid rgba(0,0,0,0.1)',
                             display: 'flex',
                             alignItems: 'center',
                             gap: 1.5,
-                            backgroundColor: 'rgba(0,0,0,0.1)'
+                            backgroundColor: isDarkMode ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.02)'
                         }}>
                             <Typography variant="caption" sx={{ 
                                 fontSize: "0.75rem", 
                                 fontWeight: 500, 
-                                color: 'white',
+                                color: currentTextColor,
                                 ml: 2
                             }}>
                                 {subtitle}
@@ -85,13 +87,14 @@ const CelebrationComponent = ({
                                 lineHeight: "1.2", 
                                 maxWidth: "950px", 
                                 letterSpacing: "-0.01em",
-                                color: 'white',
+                                color: currentTextColor,
                                 fontFamily: "'Inter', sans-serif"
                             }}
                         >
                             {title}
                         </Typography>
                     </motion.div>
+
 
                     {/* Wave Section */}
                     <motion.div
