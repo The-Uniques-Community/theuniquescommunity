@@ -31,9 +31,13 @@ const MemberCard = ({ member }) => {
     ? `Placed - ${course || ""}`
     : course || "Member";
 
+  const nameParts = fullName.trim().split(' ');
+  const firstName = nameParts[0];
+  const lastName = nameParts.slice(1).join(' ');
+
   // Format profile image - handle both object reference and direct URL
   const profileImg =
-    member.profilePic?.url ||
+    member.profilePic?.fileUrl || member.profilePic?.url ||
     (typeof member.profilePic === "string"
       ? member.profilePic
       : `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}`);
@@ -100,68 +104,65 @@ const MemberCard = ({ member }) => {
       viewport={{ once: true }}
       whileHover={{ y: -5 }}
       transition={{ duration: 0.3 }}
-      className="bg-white group hover:cursor-pointer transition-all duration-300 border border-gray-100 shadow-sm hover:shadow-2xl rounded-2xl relative max-w-[280px] w-full overflow-hidden h-full flex flex-col"
+      className="bg-[#e5e5e5] dark:bg-zinc-800 group hover:cursor-pointer transition-all duration-500 shadow-md hover:shadow-2xl rounded-[1.5rem] relative max-w-[280px] w-full aspect-[2/3] overflow-hidden flex flex-col"
       onClick={handleViewProfile}
     >
-      {/* Profile Image Wrapper */}
-      <div className="relative aspect-[4/5] overflow-hidden">
-        <img
-          src={profilePic ? getProxyImageUrl(profilePic?.fileId) : profileImg}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-          alt={`${fullName}'s Profile`}
-        />
-
-        {/* Overlay Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
-
-        {/* Batch Badge - Premium Style */}
-        <div className="absolute top-4 left-4">
-          <span className="bg-white/90 backdrop-blur-md text-[#ca0019] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
-            {batch}
-          </span>
-        </div>
-
-        {/* Floating Social Media Links - Glassmorphism */}
-        <div className="absolute top-4 right-[-50px] group-hover:right-4 transition-all duration-500 flex flex-col gap-2">
-          {socialLinks.github && (
-            <SocialIcon href={socialLinks.github} icon={<FaGithub size={14} />} />
-          )}
-          {socialLinks.linkedin && (
-            <SocialIcon href={socialLinks.linkedin} icon={<FaLinkedinIn size={14} />} />
-          )}
-          {socialLinks.twitter && (
-            <SocialIcon href={socialLinks.twitter} icon={<FaXTwitter size={14} />} />
-          )}
-        </div>
-
-        {/* Member Name and Position Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-          <h3 className="text-xl font-bold leading-tight mb-1 truncate">
-            {fullName}
-          </h3>
-          <p className="text-gray-300 text-xs font-medium uppercase tracking-wider truncate">
-            {position}
-          </p>
-        </div>
+      {/* Lanyard Hole */}
+      <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30">
+        <div className="w-12 h-2.5 bg-black/15 dark:bg-black/40 rounded-full shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] border border-black/5 dark:border-black/20"></div>
       </div>
 
-      {/* Card Footer Content */}
-      <div className="p-5 bg-white border-t border-gray-50 flex items-center justify-between mt-auto">
-        <div className="flex gap-4">
-          <div className="flex flex-col">
-            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Skills</span>
-            <span className="text-sm font-bold text-gray-900">{formattedSkills.length}</span>
-          </div>
-          {formattedAchievements.length > 0 && (
-            <div className="flex flex-col">
-              <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Awards</span>
-              <span className="text-sm font-bold text-[#ca0019]">{formattedAchievements.length}</span>
-            </div>
-          )}
-        </div>
+      {/* Profile Image */}
+      <img
+        src={profilePic?.fileId ? getProxyImageUrl(profilePic.fileId) : profileImg}
+        className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+        alt={`${fullName}'s Profile`}
+      />
 
-        <div className="w-10 h-10 rounded-full bg-gray-50 text-gray-900 flex items-center justify-center group-hover:bg-[#ca0019] group-hover:text-white transition-all duration-300 shadow-inner">
-          <ArrowUpRight size={16} className="group-hover:rotate-45 transition-transform duration-300" />
+      {/* Optional Batch Badge - top left */}
+      <div className="absolute top-5 left-4 z-20">
+        <span className="bg-black/20 dark:bg-black/40 backdrop-blur-md text-white text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded-md border border-white/10 dark:border-white/5">
+          {batch}
+        </span>
+      </div>
+
+      {/* Floating Social Media Links - Top Right */}
+      <div className="absolute top-5 right-[-50px] group-hover:right-4 transition-all duration-500 flex flex-col gap-2 z-20">
+        {socialLinks.github && (
+          <SocialIcon href={socialLinks.github} icon={<FaGithub size={14} />} />
+        )}
+        {socialLinks.linkedin && (
+          <SocialIcon href={socialLinks.linkedin} icon={<FaLinkedinIn size={14} />} />
+        )}
+        {socialLinks.twitter && (
+          <SocialIcon href={socialLinks.twitter} icon={<FaXTwitter size={14} />} />
+        )}
+      </div>
+
+      {/* White Overlay Base (SVG + Content) */}
+      <div className="absolute bottom-0 left-0 w-full h-[35%] z-10 flex flex-col justify-end">
+        <svg 
+          viewBox="0 0 100 100" 
+          preserveAspectRatio="none" 
+          className="absolute inset-0 w-full h-full text-white dark:text-[#161616]"
+        >
+          <path d="M0,0 L50,0 C65,0 75,40 100,40 L100,100 L0,100 Z" fill="currentColor" />
+        </svg>
+        
+        {/* Card Content inside white area */}
+        <div className="relative z-20 h-full px-6 py-5 flex flex-col">
+          {/* Name */}
+          <div className="mt-1">
+            <h3 className="text-[22px] font-medium text-gray-900 dark:text-white leading-[1.1] tracking-tight">
+              {firstName}
+              {lastName && <><br />{lastName}</>}
+            </h3>
+          </div>
+          
+          {/* Bottom row: Position */}
+          <div className="mt-auto flex pb-1">
+             <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 tracking-wide">{position}</p>
+          </div>
         </div>
       </div>
     </motion.div>
@@ -169,11 +170,11 @@ const MemberCard = ({ member }) => {
 };
 
 const SocialIcon = ({ href, icon }) => (
-  <a
+    <a
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    className="w-8 h-8 bg-white/20 backdrop-blur-xl border border-white/30 rounded-full flex items-center justify-center text-white hover:bg-[#ca0019] hover:border-[#ca0019] transition-all duration-300 shadow-xl"
+    className="w-8 h-8 bg-white/20 dark:bg-black/30 backdrop-blur-xl border border-white/30 dark:border-white/10 rounded-full flex items-center justify-center text-white hover:bg-[#ca0019] dark:hover:bg-[#ca0019] hover:border-[#ca0019] transition-all duration-300 shadow-xl"
     onClick={(e) => e.stopPropagation()}
   >
     {icon}

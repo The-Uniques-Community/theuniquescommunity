@@ -13,7 +13,7 @@ const ChatBot = () => {
       container.style.cssText = `
         position: fixed;
         bottom: 20px;
-        right: 20px;
+        left: 20px;
         z-index: 9999;
         width: 400px;
         height: 600px;
@@ -106,7 +106,7 @@ const ChatBot = () => {
       label.style.cssText = `
         position: fixed;
         bottom: 38px;
-        right: 110px;
+        left: 110px;
         z-index: 9997;
         display: flex;
         align-items: center;
@@ -130,7 +130,7 @@ const ChatBot = () => {
       button.style.cssText = `
         position: fixed;
         bottom: 30px;
-        right: 30px;
+        left: 30px;
         width: 64px;
         height: 64px;
         border-radius: 50%;

@@ -63,9 +63,9 @@ const MissionVission = () => {
   const listItemStyle = `group relative py-12 border-b ${isDarkMode ? 'border-white/10' : 'border-black/5'} transition-all duration-500 hover:pl-4`;
 
   return (
-    <div className={`py-32 ${isDarkMode ? 'bg-[#0a0a0a] text-white' : 'bg-white text-gray-900'}`}>
+    <div className={`py-32 ${isDarkMode ? 'bg-[#161616] text-white' : 'bg-white text-gray-900'}`}>
       {/* PHILOSOPHY SECTION */}
-      <div className="container max-w-7xl px-6 mx-auto mb-40">
+      <div className="container max-w-7xl px-6 mx-auto mb-16">
         <div className="flex flex-col md:flex-row items-start gap-20">
           <div className="md:w-1/2 space-y-8">
             <div className="flex items-center space-x-4">

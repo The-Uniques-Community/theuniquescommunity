@@ -60,3 +60,23 @@
     transform: skew(-35deg);
     box-shadow: -5px -5px 0 2px #e2e8f0;
   }
+
+/* Dark Mode Overrides */
+.dark .card2 .top-sectionn::before {
+    border-right-color: #161616;
+    border-bottom-color: #161616;
+    background: #161616;
+    box-shadow: -5px -5px 0 2px #161616;
+}
+
+.dark .bordern {
+    border-top-color: #161616;
+    border-left-color: #161616;
+    background: #000000;
+    box-shadow: 10px 10px 0 0 #000000;
+}
+
+.dark .bordern::before {
+    background: #000000;
+    box-shadow: -5px 5px 0 2px #000000;
+}

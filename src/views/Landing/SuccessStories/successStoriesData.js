@@ -571,7 +571,919 @@ export const successStories = [
       ]
     }
   },
-  // Keep the other student entries below
-
-  // ... other existing students
-]
+  {
+    id: "PriyaSharma2021005",
+    video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
+    name: "Priya Sharma",
+    image: "https://tse2.mm.bing.net/th/id/OIP.Ghae4OEdb4UmC3hkqpFvLAHaGd?pid=ImgDet&w=200&h=200&c=7",
+    batch: "The Uniques 2.0",
+    company: "TechNova Solutions",
+    role: "Frontend Engineer",
+    summary: "A passionate Frontend Engineer specializing in React and modern UI/UX design. Priya has significantly improved user engagement across multiple products and actively contributes to open-source UI libraries.",
+    timeline: [
+      {
+        year: 2021,
+        achievements: [
+          "Joined B.Tech in Computer Science",
+          "Started exploring UI/UX and Frontend frameworks"
+        ]
+      },
+      {
+        year: 2022,
+        achievements: [
+          "Won Best UI Design at College Hackathon",
+          "Started contributing to open-source React components"
+        ]
+      },
+      {
+        year: 2023,
+        achievements: [
+          "Joined TechNova as an Intern",
+          "Redesigned the core company landing page increasing conversions by 30%"
+        ]
+      },
+      {
+        year: 2024,
+        achievements: [
+          "Promoted to full-time Frontend Engineer",
+          "Led the migration of legacy code to React 18 and Next.js"
+        ]
+      }
+    ],
+    education: {
+      institution: "State University of Technology",
+      degree: "Bachelor of Technology in Computer Science",
+      duration: "2021-2025",
+      location: "New Delhi",
+      details: "CGPA: 8.8/10"
+    },
+    experience: [
+      {
+        company: "TechNova Solutions",
+        role: "Frontend Engineer",
+        duration: "Jan 2024 - Present",
+        location: "Remote",
+        responsibilities: [
+          "Developing responsive, high-performance web applications using React",
+          "Implementing complex state management with Redux Toolkit",
+          "Collaborating with designers to translate Figma designs into pixel-perfect code"
+        ]
+      }
+    ],
+    projects: [
+      {
+        name: "UI Component Library",
+        technologies: "React, Storybook, Tailwind",
+        date: "2023",
+        description: "An open-source library of accessible UI components.",
+        achievements: [
+          "Published to npm with over 1k weekly downloads",
+          "Maintained 100% accessibility score in Lighthouse"
+        ]
+      }
+    ],
+    skills: {
+      languages: ["JavaScript", "TypeScript", "HTML/CSS"],
+      technologies: ["React", "Next.js", "Tailwind CSS", "Framer Motion", "Redux"],
+      tools: ["Git", "Figma", "Storybook", "Vercel"]
+    },
+    leadership: {
+      organization: "Design & Code Club",
+      role: "Design Lead",
+      duration: "2022 - 2024",
+      achievements: [
+        "Organized UI/UX bootcamps for 500+ students",
+        "Mentored junior developers in frontend best practices"
+      ]
+    }
+  },
+  {
+    id: "RahulVerma2021006",
+    video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
+    name: "Rahul Verma",
+    image: "https://tse1.mm.bing.net/th/id/OIP.P3ZJzB82p9_JvS1Q6_fLcwHaHa?pid=ImgDet&w=200&h=200&c=7",
+    batch: "The Uniques 1.0",
+    company: "CloudScale Inc.",
+    role: "Backend Developer",
+    summary: "A backend wizard with a strong focus on scalable architectures using Node.js and Microservices. Rahul has architected systems capable of handling thousands of requests per second.",
+    timeline: [
+      {
+        year: 2022,
+        achievements: [
+          "Developed a passion for backend systems and database optimization",
+          "Built a custom API gateway for university projects"
+        ]
+      },
+      {
+        year: 2023,
+        achievements: [
+          "Secured a backend internship at CloudScale Inc.",
+          "Optimized database queries reducing latency by 40%"
+        ]
+      },
+      {
+        year: 2024,
+        achievements: [
+          "Transitioned to a full-time Backend Developer role",
+          "Architected a microservice handling 5k+ concurrent users"
+        ]
+      }
+    ],
+    education: {
+      institution: "Institute of Engineering",
+      degree: "B.Tech in Information Technology",
+      duration: "2021-2025",
+      location: "Bangalore",
+      details: "Specialized in Distributed Systems"
+    },
+    experience: [
+      {
+        company: "CloudScale Inc.",
+        role: "Backend Developer",
+        duration: "Feb 2024 - Present",
+        location: "Bangalore",
+        responsibilities: [
+          "Designing and maintaining RESTful APIs and GraphQL endpoints",
+          "Scaling Node.js microservices using Docker and Kubernetes",
+          "Implementing caching strategies with Redis"
+        ]
+      }
+    ],
+    projects: [
+      {
+        name: "Distributed Task Queue",
+        technologies: "Node.js, Redis, RabbitMQ",
+        date: "2023",
+        description: "A robust background job processing system.",
+        achievements: [
+          "Handled 1M+ background jobs daily with 99.9% uptime",
+          "Implemented automatic retries and dead-letter queues"
+        ]
+      }
+    ],
+    skills: {
+      languages: ["JavaScript", "TypeScript", "Go"],
+      technologies: ["Node.js", "Express", "GraphQL", "PostgreSQL", "Redis"],
+      tools: ["Docker", "Kubernetes", "AWS", "RabbitMQ"]
+    },
+    leadership: {
+      organization: "Backend Architecture Group",
+      role: "Coordinator",
+      duration: "2023 - Present",
+      achievements: [
+        "Led system design study groups",
+        "Hosted weekly tech talks on cloud architecture"
+      ]
+    }
+  }
+  ,
+  {
+    id: "user_10",
+    video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
+    name: "Aarav Patel",
+    image: "https://i.pravatar.cc/200?img=10",
+    batch: "The Uniques 1.0",
+    company: "Google",
+    role: "Software Engineer",
+    summary: "A highly motivated Software Engineer at Google with a proven track record of delivering scalable solutions.",
+    timeline: [
+      {
+        year: 2021,
+        achievements: ["Started B.Tech journey", "Joined tech communities"]
+      },
+      {
+        year: 2022,
+        achievements: ["Won local hackathons", "Started learning advanced concepts"]
+      },
+      {
+        year: 2023,
+        achievements: ["Secured internship", "Led a major college project"]
+      },
+      {
+        year: 2024,
+        achievements: ["Graduated with honors", "Joined Google as a Software Engineer"]
+      }
+    ],
+    education: {
+      institution: "National Institute of Technology",
+      degree: "B.Tech in Computer Science",
+      duration: "2020-2024",
+      location: "India",
+      details: "CGPA: 9.0/10"
+    },
+    experience: [
+      {
+        company: "Google",
+        role: "Software Engineer",
+        duration: "2024 - Present",
+        location: "Bangalore",
+        responsibilities: [
+          "Building scalable applications",
+          "Collaborating with cross-functional teams",
+          "Mentoring junior developers"
+        ]
+      }
+    ],
+    projects: [
+      {
+        name: "Enterprise Solution X",
+        technologies: "React, Node.js, MongoDB",
+        date: "2023",
+        description: "A comprehensive enterprise management solution.",
+        achievements: [
+          "Reduced processing time by 40%",
+          "Improved user retention by 25%"
+        ]
+      }
+    ],
+    skills: {
+      languages: ["JavaScript", "Python", "Java"],
+      technologies: ["React", "Node.js", "Docker", "AWS"],
+      tools: ["Git", "VS Code", "Jira"]
+    },
+    leadership: {
+      organization: "Tech Club",
+      role: "President",
+      duration: "2022 - 2023",
+      achievements: [
+        "Organized national level tech fest",
+        "Grew club membership by 200%"
+      ]
+    }
+  }
+  ,
+  {
+    id: "user_11",
+    video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
+    name: "Neha Gupta",
+    image: "https://i.pravatar.cc/200?img=11",
+    batch: "The Uniques 2.0",
+    company: "Microsoft",
+    role: "Data Scientist",
+    summary: "A highly motivated Data Scientist at Microsoft with a proven track record of delivering scalable solutions.",
+    timeline: [
+      {
+        year: 2021,
+        achievements: ["Started B.Tech journey", "Joined tech communities"]
+      },
+      {
+        year: 2022,
+        achievements: ["Won local hackathons", "Started learning advanced concepts"]
+      },
+      {
+        year: 2023,
+        achievements: ["Secured internship", "Led a major college project"]
+      },
+      {
+        year: 2024,
+        achievements: ["Graduated with honors", "Joined Microsoft as a Data Scientist"]
+      }
+    ],
+    education: {
+      institution: "National Institute of Technology",
+      degree: "B.Tech in Computer Science",
+      duration: "2020-2024",
+      location: "India",
+      details: "CGPA: 9.0/10"
+    },
+    experience: [
+      {
+        company: "Microsoft",
+        role: "Data Scientist",
+        duration: "2024 - Present",
+        location: "Bangalore",
+        responsibilities: [
+          "Building scalable applications",
+          "Collaborating with cross-functional teams",
+          "Mentoring junior developers"
+        ]
+      }
+    ],
+    projects: [
+      {
+        name: "Enterprise Solution X",
+        technologies: "React, Node.js, MongoDB",
+        date: "2023",
+        description: "A comprehensive enterprise management solution.",
+        achievements: [
+          "Reduced processing time by 40%",
+          "Improved user retention by 25%"
+        ]
+      }
+    ],
+    skills: {
+      languages: ["JavaScript", "Python", "Java"],
+      technologies: ["React", "Node.js", "Docker", "AWS"],
+      tools: ["Git", "VS Code", "Jira"]
+    },
+    leadership: {
+      organization: "Tech Club",
+      role: "President",
+      duration: "2022 - 2023",
+      achievements: [
+        "Organized national level tech fest",
+        "Grew club membership by 200%"
+      ]
+    }
+  }
+  ,
+  {
+    id: "user_12",
+    video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
+    name: "Vikram Singh",
+    image: "https://i.pravatar.cc/200?img=12",
+    batch: "The Uniques 3.0",
+    company: "Amazon",
+    role: "Product Manager",
+    summary: "A highly motivated Product Manager at Amazon with a proven track record of delivering scalable solutions.",
+    timeline: [
+      {
+        year: 2021,
+        achievements: ["Started B.Tech journey", "Joined tech communities"]
+      },
+      {
+        year: 2022,
+        achievements: ["Won local hackathons", "Started learning advanced concepts"]
+      },
+      {
+        year: 2023,
+        achievements: ["Secured internship", "Led a major college project"]
+      },
+      {
+        year: 2024,
+        achievements: ["Graduated with honors", "Joined Amazon as a Product Manager"]
+      }
+    ],
+    education: {
+      institution: "National Institute of Technology",
+      degree: "B.Tech in Computer Science",
+      duration: "2020-2024",
+      location: "India",
+      details: "CGPA: 9.0/10"
+    },
+    experience: [
+      {
+        company: "Amazon",
+        role: "Product Manager",
+        duration: "2024 - Present",
+        location: "Bangalore",
+        responsibilities: [
+          "Building scalable applications",
+          "Collaborating with cross-functional teams",
+          "Mentoring junior developers"
+        ]
+      }
+    ],
+    projects: [
+      {
+        name: "Enterprise Solution X",
+        technologies: "React, Node.js, MongoDB",
+        date: "2023",
+        description: "A comprehensive enterprise management solution.",
+        achievements: [
+          "Reduced processing time by 40%",
+          "Improved user retention by 25%"
+        ]
+      }
+    ],
+    skills: {
+      languages: ["JavaScript", "Python", "Java"],
+      technologies: ["React", "Node.js", "Docker", "AWS"],
+      tools: ["Git", "VS Code", "Jira"]
+    },
+    leadership: {
+      organization: "Tech Club",
+      role: "President",
+      duration: "2022 - 2023",
+      achievements: [
+        "Organized national level tech fest",
+        "Grew club membership by 200%"
+      ]
+    }
+  }
+  ,
+  {
+    id: "user_13",
+    video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
+    name: "Aditi Desai",
+    image: "https://i.pravatar.cc/200?img=13",
+    batch: "The Uniques 1.0",
+    company: "Apple",
+    role: "UX Designer",
+    summary: "A highly motivated UX Designer at Apple with a proven track record of delivering scalable solutions.",
+    timeline: [
+      {
+        year: 2021,
+        achievements: ["Started B.Tech journey", "Joined tech communities"]
+      },
+      {
+        year: 2022,
+        achievements: ["Won local hackathons", "Started learning advanced concepts"]
+      },
+      {
+        year: 2023,
+        achievements: ["Secured internship", "Led a major college project"]
+      },
+      {
+        year: 2024,
+        achievements: ["Graduated with honors", "Joined Apple as a UX Designer"]
+      }
+    ],
+    education: {
+      institution: "National Institute of Technology",
+      degree: "B.Tech in Computer Science",
+      duration: "2020-2024",
+      location: "India",
+      details: "CGPA: 9.0/10"
+    },
+    experience: [
+      {
+        company: "Apple",
+        role: "UX Designer",
+        duration: "2024 - Present",
+        location: "Bangalore",
+        responsibilities: [
+          "Building scalable applications",
+          "Collaborating with cross-functional teams",
+          "Mentoring junior developers"
+        ]
+      }
+    ],
+    projects: [
+      {
+        name: "Enterprise Solution X",
+        technologies: "React, Node.js, MongoDB",
+        date: "2023",
+        description: "A comprehensive enterprise management solution.",
+        achievements: [
+          "Reduced processing time by 40%",
+          "Improved user retention by 25%"
+        ]
+      }
+    ],
+    skills: {
+      languages: ["JavaScript", "Python", "Java"],
+      technologies: ["React", "Node.js", "Docker", "AWS"],
+      tools: ["Git", "VS Code", "Jira"]
+    },
+    leadership: {
+      organization: "Tech Club",
+      role: "President",
+      duration: "2022 - 2023",
+      achievements: [
+        "Organized national level tech fest",
+        "Grew club membership by 200%"
+      ]
+    }
+  }
+  ,
+  {
+    id: "user_14",
+    video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
+    name: "Rohan Mehta",
+    image: "https://i.pravatar.cc/200?img=14",
+    batch: "The Uniques 2.0",
+    company: "Meta",
+    role: "DevOps Engineer",
+    summary: "A highly motivated DevOps Engineer at Meta with a proven track record of delivering scalable solutions.",
+    timeline: [
+      {
+        year: 2021,
+        achievements: ["Started B.Tech journey", "Joined tech communities"]
+      },
+      {
+        year: 2022,
+        achievements: ["Won local hackathons", "Started learning advanced concepts"]
+      },
+      {
+        year: 2023,
+        achievements: ["Secured internship", "Led a major college project"]
+      },
+      {
+        year: 2024,
+        achievements: ["Graduated with honors", "Joined Meta as a DevOps Engineer"]
+      }
+    ],
+    education: {
+      institution: "National Institute of Technology",
+      degree: "B.Tech in Computer Science",
+      duration: "2020-2024",
+      location: "India",
+      details: "CGPA: 9.0/10"
+    },
+    experience: [
+      {
+        company: "Meta",
+        role: "DevOps Engineer",
+        duration: "2024 - Present",
+        location: "Bangalore",
+        responsibilities: [
+          "Building scalable applications",
+          "Collaborating with cross-functional teams",
+          "Mentoring junior developers"
+        ]
+      }
+    ],
+    projects: [
+      {
+        name: "Enterprise Solution X",
+        technologies: "React, Node.js, MongoDB",
+        date: "2023",
+        description: "A comprehensive enterprise management solution.",
+        achievements: [
+          "Reduced processing time by 40%",
+          "Improved user retention by 25%"
+        ]
+      }
+    ],
+    skills: {
+      languages: ["JavaScript", "Python", "Java"],
+      technologies: ["React", "Node.js", "Docker", "AWS"],
+      tools: ["Git", "VS Code", "Jira"]
+    },
+    leadership: {
+      organization: "Tech Club",
+      role: "President",
+      duration: "2022 - 2023",
+      achievements: [
+        "Organized national level tech fest",
+        "Grew club membership by 200%"
+      ]
+    }
+  }
+  ,
+  {
+    id: "user_15",
+    video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
+    name: "Ananya Reddy",
+    image: "https://i.pravatar.cc/200?img=15",
+    batch: "The Uniques 3.0",
+    company: "Netflix",
+    role: "Cloud Architect",
+    summary: "A highly motivated Cloud Architect at Netflix with a proven track record of delivering scalable solutions.",
+    timeline: [
+      {
+        year: 2021,
+        achievements: ["Started B.Tech journey", "Joined tech communities"]
+      },
+      {
+        year: 2022,
+        achievements: ["Won local hackathons", "Started learning advanced concepts"]
+      },
+      {
+        year: 2023,
+        achievements: ["Secured internship", "Led a major college project"]
+      },
+      {
+        year: 2024,
+        achievements: ["Graduated with honors", "Joined Netflix as a Cloud Architect"]
+      }
+    ],
+    education: {
+      institution: "National Institute of Technology",
+      degree: "B.Tech in Computer Science",
+      duration: "2020-2024",
+      location: "India",
+      details: "CGPA: 9.0/10"
+    },
+    experience: [
+      {
+        company: "Netflix",
+        role: "Cloud Architect",
+        duration: "2024 - Present",
+        location: "Bangalore",
+        responsibilities: [
+          "Building scalable applications",
+          "Collaborating with cross-functional teams",
+          "Mentoring junior developers"
+        ]
+      }
+    ],
+    projects: [
+      {
+        name: "Enterprise Solution X",
+        technologies: "React, Node.js, MongoDB",
+        date: "2023",
+        description: "A comprehensive enterprise management solution.",
+        achievements: [
+          "Reduced processing time by 40%",
+          "Improved user retention by 25%"
+        ]
+      }
+    ],
+    skills: {
+      languages: ["JavaScript", "Python", "Java"],
+      technologies: ["React", "Node.js", "Docker", "AWS"],
+      tools: ["Git", "VS Code", "Jira"]
+    },
+    leadership: {
+      organization: "Tech Club",
+      role: "President",
+      duration: "2022 - 2023",
+      achievements: [
+        "Organized national level tech fest",
+        "Grew club membership by 200%"
+      ]
+    }
+  }
+  ,
+  {
+    id: "user_16",
+    video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
+    name: "Karthik Iyer",
+    image: "https://i.pravatar.cc/200?img=16",
+    batch: "The Uniques 1.0",
+    company: "Atlassian",
+    role: "Frontend Developer",
+    summary: "A highly motivated Frontend Developer at Atlassian with a proven track record of delivering scalable solutions.",
+    timeline: [
+      {
+        year: 2021,
+        achievements: ["Started B.Tech journey", "Joined tech communities"]
+      },
+      {
+        year: 2022,
+        achievements: ["Won local hackathons", "Started learning advanced concepts"]
+      },
+      {
+        year: 2023,
+        achievements: ["Secured internship", "Led a major college project"]
+      },
+      {
+        year: 2024,
+        achievements: ["Graduated with honors", "Joined Atlassian as a Frontend Developer"]
+      }
+    ],
+    education: {
+      institution: "National Institute of Technology",
+      degree: "B.Tech in Computer Science",
+      duration: "2020-2024",
+      location: "India",
+      details: "CGPA: 9.0/10"
+    },
+    experience: [
+      {
+        company: "Atlassian",
+        role: "Frontend Developer",
+        duration: "2024 - Present",
+        location: "Bangalore",
+        responsibilities: [
+          "Building scalable applications",
+          "Collaborating with cross-functional teams",
+          "Mentoring junior developers"
+        ]
+      }
+    ],
+    projects: [
+      {
+        name: "Enterprise Solution X",
+        technologies: "React, Node.js, MongoDB",
+        date: "2023",
+        description: "A comprehensive enterprise management solution.",
+        achievements: [
+          "Reduced processing time by 40%",
+          "Improved user retention by 25%"
+        ]
+      }
+    ],
+    skills: {
+      languages: ["JavaScript", "Python", "Java"],
+      technologies: ["React", "Node.js", "Docker", "AWS"],
+      tools: ["Git", "VS Code", "Jira"]
+    },
+    leadership: {
+      organization: "Tech Club",
+      role: "President",
+      duration: "2022 - 2023",
+      achievements: [
+        "Organized national level tech fest",
+        "Grew club membership by 200%"
+      ]
+    }
+  }
+  ,
+  {
+    id: "user_17",
+    video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
+    name: "Sneha Joshi",
+    image: "https://i.pravatar.cc/200?img=17",
+    batch: "The Uniques 2.0",
+    company: "Adobe",
+    role: "Backend Engineer",
+    summary: "A highly motivated Backend Engineer at Adobe with a proven track record of delivering scalable solutions.",
+    timeline: [
+      {
+        year: 2021,
+        achievements: ["Started B.Tech journey", "Joined tech communities"]
+      },
+      {
+        year: 2022,
+        achievements: ["Won local hackathons", "Started learning advanced concepts"]
+      },
+      {
+        year: 2023,
+        achievements: ["Secured internship", "Led a major college project"]
+      },
+      {
+        year: 2024,
+        achievements: ["Graduated with honors", "Joined Adobe as a Backend Engineer"]
+      }
+    ],
+    education: {
+      institution: "National Institute of Technology",
+      degree: "B.Tech in Computer Science",
+      duration: "2020-2024",
+      location: "India",
+      details: "CGPA: 9.0/10"
+    },
+    experience: [
+      {
+        company: "Adobe",
+        role: "Backend Engineer",
+        duration: "2024 - Present",
+        location: "Bangalore",
+        responsibilities: [
+          "Building scalable applications",
+          "Collaborating with cross-functional teams",
+          "Mentoring junior developers"
+        ]
+      }
+    ],
+    projects: [
+      {
+        name: "Enterprise Solution X",
+        technologies: "React, Node.js, MongoDB",
+        date: "2023",
+        description: "A comprehensive enterprise management solution.",
+        achievements: [
+          "Reduced processing time by 40%",
+          "Improved user retention by 25%"
+        ]
+      }
+    ],
+    skills: {
+      languages: ["JavaScript", "Python", "Java"],
+      technologies: ["React", "Node.js", "Docker", "AWS"],
+      tools: ["Git", "VS Code", "Jira"]
+    },
+    leadership: {
+      organization: "Tech Club",
+      role: "President",
+      duration: "2022 - 2023",
+      achievements: [
+        "Organized national level tech fest",
+        "Grew club membership by 200%"
+      ]
+    }
+  }
+  ,
+  {
+    id: "user_18",
+    video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
+    name: "Arjun Nair",
+    image: "https://i.pravatar.cc/200?img=18",
+    batch: "The Uniques 3.0",
+    company: "Uber",
+    role: "Mobile Developer",
+    summary: "A highly motivated Mobile Developer at Uber with a proven track record of delivering scalable solutions.",
+    timeline: [
+      {
+        year: 2021,
+        achievements: ["Started B.Tech journey", "Joined tech communities"]
+      },
+      {
+        year: 2022,
+        achievements: ["Won local hackathons", "Started learning advanced concepts"]
+      },
+      {
+        year: 2023,
+        achievements: ["Secured internship", "Led a major college project"]
+      },
+      {
+        year: 2024,
+        achievements: ["Graduated with honors", "Joined Uber as a Mobile Developer"]
+      }
+    ],
+    education: {
+      institution: "National Institute of Technology",
+      degree: "B.Tech in Computer Science",
+      duration: "2020-2024",
+      location: "India",
+      details: "CGPA: 9.0/10"
+    },
+    experience: [
+      {
+        company: "Uber",
+        role: "Mobile Developer",
+        duration: "2024 - Present",
+        location: "Bangalore",
+        responsibilities: [
+          "Building scalable applications",
+          "Collaborating with cross-functional teams",
+          "Mentoring junior developers"
+        ]
+      }
+    ],
+    projects: [
+      {
+        name: "Enterprise Solution X",
+        technologies: "React, Node.js, MongoDB",
+        date: "2023",
+        description: "A comprehensive enterprise management solution.",
+        achievements: [
+          "Reduced processing time by 40%",
+          "Improved user retention by 25%"
+        ]
+      }
+    ],
+    skills: {
+      languages: ["JavaScript", "Python", "Java"],
+      technologies: ["React", "Node.js", "Docker", "AWS"],
+      tools: ["Git", "VS Code", "Jira"]
+    },
+    leadership: {
+      organization: "Tech Club",
+      role: "President",
+      duration: "2022 - 2023",
+      achievements: [
+        "Organized national level tech fest",
+        "Grew club membership by 200%"
+      ]
+    }
+  }
+  ,
+  {
+    id: "user_19",
+    video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
+    name: "Kavya Menon",
+    image: "https://i.pravatar.cc/200?img=19",
+    batch: "The Uniques 1.0",
+    company: "Airbnb",
+    role: "Security Analyst",
+    summary: "A highly motivated Security Analyst at Airbnb with a proven track record of delivering scalable solutions.",
+    timeline: [
+      {
+        year: 2021,
+        achievements: ["Started B.Tech journey", "Joined tech communities"]
+      },
+      {
+        year: 2022,
+        achievements: ["Won local hackathons", "Started learning advanced concepts"]
+      },
+      {
+        year: 2023,
+        achievements: ["Secured internship", "Led a major college project"]
+      },
+      {
+        year: 2024,
+        achievements: ["Graduated with honors", "Joined Airbnb as a Security Analyst"]
+      }
+    ],
+    education: {
+      institution: "National Institute of Technology",
+      degree: "B.Tech in Computer Science",
+      duration: "2020-2024",
+      location: "India",
+      details: "CGPA: 9.0/10"
+    },
+    experience: [
+      {
+        company: "Airbnb",
+        role: "Security Analyst",
+        duration: "2024 - Present",
+        location: "Bangalore",
+        responsibilities: [
+          "Building scalable applications",
+          "Collaborating with cross-functional teams",
+          "Mentoring junior developers"
+        ]
+      }
+    ],
+    projects: [
+      {
+        name: "Enterprise Solution X",
+        technologies: "React, Node.js, MongoDB",
+        date: "2023",
+        description: "A comprehensive enterprise management solution.",
+        achievements: [
+          "Reduced processing time by 40%",
+          "Improved user retention by 25%"
+        ]
+      }
+    ],
+    skills: {
+      languages: ["JavaScript", "Python", "Java"],
+      technologies: ["React", "Node.js", "Docker", "AWS"],
+      tools: ["Git", "VS Code", "Jira"]
+    },
+    leadership: {
+      organization: "Tech Club",
+      role: "President",
+      duration: "2022 - 2023",
+      achievements: [
+        "Organized national level tech fest",
+        "Grew club membership by 200%"
+      ]
+    }
+  }
+];

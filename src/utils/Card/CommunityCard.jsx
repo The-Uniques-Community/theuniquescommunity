@@ -115,7 +115,7 @@ const CommunityCard = ({ event }) => {
   
   return (
     <div 
-      className="card2 bg-slate-200 cursor-pointer"
+      className="card2 bg-slate-200 dark:bg-[#161616] cursor-pointer border border-transparent dark:border-white/10"
       onClick={handleCardClick}
     >
       <div className="top-sectionn relative">
@@ -126,29 +126,29 @@ const CommunityCard = ({ event }) => {
           loading="lazy"
           allowFullScreen
         ></iframe>
-        <div className="absolute text-xs font-medium text-[#ca0019] top-1 left-1 z-10 bg-white px-2 py-1 rounded">
+        <div className="absolute text-xs font-medium text-[#ca0019] top-1 left-1 z-10 bg-white dark:bg-slate-800 px-2 py-1 rounded">
           {event?.eventType?.[0] || event?.eventType || "Event"}
         </div>
       </div>
       <div>
-        <p className="text-xl pt-3 pb-1 px-3 font-medium">
+        <p className="text-xl pt-3 pb-1 px-3 font-medium text-slate-900 dark:text-white">
           {event?.eventName ? (event.eventName.length > 20 ? event.eventName.slice(0, 20) + "..." : event.eventName) : "Event"}
         </p>
         <div className="flex justify-start items-center gap-x-1 px-2">
-          <LocationOnOutlinedIcon sx={{ fontSize: 16 }} className="text-slate-700" />
-          <p className="text-xs text-slate-700">{event?.eventVenue || "Venue TBA"}</p>
+          <LocationOnOutlinedIcon sx={{ fontSize: 16 }} className="text-slate-700 dark:text-slate-300" />
+          <p className="text-xs text-slate-700 dark:text-slate-300">{event?.eventVenue || "Venue TBA"}</p>
         </div>
-        <div className="h-[1px] w-[280px] mx-auto mt-3 bg-slate-400"></div>
+        <div className="h-[1px] w-[280px] mx-auto mt-3 bg-slate-400 dark:bg-slate-700"></div>
         <div className="flex justify-start gap-x-5 items-center px-3 py-2">
           <div className="flex items-center gap-x-1">
-            <CalendarMonthOutlinedIcon sx={{ fontSize: 14 }} />
-            <p className="text-xs text-slate-700">
+            <CalendarMonthOutlinedIcon sx={{ fontSize: 14 }} className="text-slate-700 dark:text-slate-300" />
+            <p className="text-xs text-slate-700 dark:text-slate-300">
               {event?.eventDate ? new Date(event.eventDate).toDateString() : "Date TBA"}
             </p>
           </div>
           <div className="flex items-center gap-x-1">
-            <ScheduleOutlinedIcon sx={{ fontSize: 14 }} />
-            <p className="text-xs text-slate-700">{event?.eventTime || "Time TBA"}</p>
+            <ScheduleOutlinedIcon sx={{ fontSize: 14 }} className="text-slate-700 dark:text-slate-300" />
+            <p className="text-xs text-slate-700 dark:text-slate-300">{event?.eventTime || "Time TBA"}</p>
           </div>
         </div>
         <div className="mt-3 relative">

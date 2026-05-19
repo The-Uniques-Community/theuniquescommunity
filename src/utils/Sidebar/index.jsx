@@ -24,16 +24,16 @@ import logo from "@/assets/logos/uniqueswhite.png";
 
 const SidebarContainer = styled(Box)(({ theme }) => ({
   width: 280,
-  height: '100vh',
+  height: 'calc(100vh - 84px)',
   position: 'fixed',
   left: 0,
-  top: 0,
+  top: '84px',
   backgroundColor: 'rgba(0, 0, 0, 0.9)',
   color: 'white',
   display: 'flex',
   flexDirection: 'column',
   overflow: 'auto',
-  zIndex: 1200,
+  zIndex: 90,
   
   // Custom scrollbar styling
   '&::-webkit-scrollbar': {

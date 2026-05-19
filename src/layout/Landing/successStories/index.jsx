@@ -18,6 +18,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { successStories } from '@/views/Landing/SuccessStories/successStoriesData';
 import Sidebar from '@/utils/Sidebar/index'
+import Navbar from '@/utils/NavBar/Navbar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 // Custom theme with #ca0019 color
@@ -46,11 +47,12 @@ const theme = createTheme({
 const ContentWrapper = styled(Box)(({ theme }) => ({
   marginLeft: 280,
   width: 'calc(100% - 280px)',
-  minHeight: '100vh',
+  minHeight: 'calc(100vh - 84px)',
   backgroundColor: '#f5f5f5',
   [theme.breakpoints.down('md')]: {
     marginLeft: 0,
     width: '100%',
+    marginTop: '64px', // To account for the fixed StyledAppBar height
   },
 }));
 
@@ -59,6 +61,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
     display: 'flex',
     backgroundColor: theme.palette.matteDark.main,
+    top: '84px',
   },
 }));
 
@@ -73,6 +76,7 @@ const SuccessLayout = () => {
 
   return (
     <ThemeProvider theme={theme}>
+      <Navbar />
       <Box className="success-stories-page" sx={{ display: 'flex' }}>
         {/* Mobile App Bar */}
         <StyledAppBar position="fixed">
