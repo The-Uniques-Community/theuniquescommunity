@@ -1,6 +1,6 @@
 import { Brush, Movie, Campaign, Work } from "@mui/icons-material";
-import inception from "@/assets/img/inception.png";
-import model from "@/assets/img/trainingMethod.png";
+
+const inception = "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5Qhy4o0aUA0Cpb4ysi61TzJLRaW735foPjv8G";
 
 const InceptionTab = () => {
   const features = [
@@ -64,13 +64,6 @@ const InceptionTab = () => {
                 </div>
               </div>
             ))}
-          </div>
-          <div className="mt-10">
-            <img
-              src={model}
-              className="w-full object-contain max-w-3xl mx-auto"
-              alt="Training Model"
-            />
           </div>
         </div>
       </div>

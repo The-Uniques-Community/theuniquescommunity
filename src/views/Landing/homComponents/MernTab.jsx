@@ -1,6 +1,6 @@
 import { Code, Storage, People, GitHub } from "@mui/icons-material";
-import mernImage from "@/assets/img/mern-training.png";
-// import industryModel from "@/assets/img/industryModel.png";
+
+const mernImage = "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5tFVFnkEyKp7vbuh4aZnGcCs8ARDxHFO2LY0S";
 
 const MernTab = () => {
   const features = [
@@ -8,25 +8,25 @@ const MernTab = () => {
       icon: <Code fontSize="large" style={{ color: "white" }} />,
       title: "Full-Stack Development",
       description:
-        "Mastering React, Node.js, Express, and MongoDB with real-world projects and scalable architecture.",
+        "Mastering React, Node.js, Express, and MongoDB to build scalable, production-grade web applications end-to-end.",
     },
     {
       icon: <Storage fontSize="large" style={{ color: "white" }} />,
       title: "Database & API Design",
       description:
-        "Building secure REST APIs, handling authentication, and optimizing MongoDB performance for high-traffic applications.",
+        "Building secure REST APIs, handling authentication with JWT, and optimizing MongoDB for high-traffic applications.",
     },
     {
       icon: <People fontSize="large" style={{ color: "white" }} />,
-      title: "Client-Oriented Approach",
+      title: "Client-Oriented Projects",
       description:
-        "Working with real clients, building custom dashboards, and solving business challenges with MERN stack solutions.",
+        "Working with real clients to build custom dashboards and solve business challenges with modern development stacks.",
     },
     {
       icon: <GitHub fontSize="large" style={{ color: "white" }} />,
-      title: "Industry-Level Methodologies",
+      title: "Industry-Level Workflows",
       description:
-        "Following GitHub best practices, CI/CD pipelines, Agile workflows, and version control for efficient team collaboration.",
+        "Following GitHub best practices, CI/CD pipelines, Agile methodologies, and version control for team collaboration.",
     },
   ];
 
@@ -38,7 +38,7 @@ const MernTab = () => {
           <img
             src={mernImage}
             className="object-center object-contain w-full min-w-80 max-w-xs mx-auto"
-            alt="MERN Stack Training"
+            alt="Development Training"
           />
         </div>
 
@@ -46,7 +46,7 @@ const MernTab = () => {
         <div className="lg:p-4 md:p-4 p-2 self-center lg:col-span-2">
           <div>
             <h4 className="text-3xl lg:text-4xl font-bold mb-10 text-center lg:text-left">
-              Industry-Ready MERN Stack Training
+              Full-Stack Development Training
             </h4>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-6">
@@ -65,13 +65,6 @@ const MernTab = () => {
               </div>
             ))}
           </div>
-          {/* <div className="mt-10">
-            <img
-              src={industryModel}
-              className="w-full object-contain max-w-3xl mx-auto"
-              alt="Industry Methodologies"
-            />
-          </div> */}
         </div>
       </div>
     </div>

@@ -13,7 +13,7 @@ const ChatBot = () => {
       container.style.cssText = `
         position: fixed;
         bottom: 20px;
-        left: 20px;
+        right: 20px;
         z-index: 9999;
         width: 400px;
         height: 600px;
@@ -100,13 +100,13 @@ const ChatBot = () => {
       header.appendChild(closeBtnHeader);
       container.appendChild(header);
 
-      // Create left-side label "I'm here to help"
+      // Create right-side label "I'm here to help"
       const label = document.createElement("div");
       label.id = "bp-chat-label";
       label.style.cssText = `
         position: fixed;
         bottom: 38px;
-        left: 110px;
+        right: 110px;
         z-index: 9997;
         display: flex;
         align-items: center;
@@ -130,7 +130,7 @@ const ChatBot = () => {
       button.style.cssText = `
         position: fixed;
         bottom: 30px;
-        left: 30px;
+        right: 30px;
         width: 64px;
         height: 64px;
         border-radius: 50%;

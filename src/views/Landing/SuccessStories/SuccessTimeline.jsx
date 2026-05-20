@@ -10,7 +10,7 @@ import {
   Button
 } from '@mui/material';
 
-const SuccessTimeline = ({ student, timelineMinWidth, SectionHeading }) => (
+const SuccessTimeline = ({ student, timelineMinWidth, SectionHeading, isDarkMode }) => (
   <Box sx={{ position: 'relative', minHeight: '600px' }}>
     <Paper
       elevation={0}
@@ -20,11 +20,13 @@ const SuccessTimeline = ({ student, timelineMinWidth, SectionHeading }) => (
         position: 'relative',
         overflow: 'hidden',
         borderRadius: 3,
-        background: 'linear-gradient(180deg, #ffffff 0%, #faf7f7 100%)',
-        border: '1px solid #eee',
+        background: isDarkMode 
+          ? 'linear-gradient(180deg, #161616 0%, #1c1c1c 100%)' 
+          : 'linear-gradient(180deg, #ffffff 0%, #faf7f7 100%)',
+        border: isDarkMode ? '1px solid #2d2d2d' : '1px solid #eee',
         transition: 'all 0.3s ease-in-out',
         '&:hover': {
-          boxShadow: '0 20px 40px rgba(0,0,0,0.08)',
+          boxShadow: isDarkMode ? '0 20px 40px rgba(0,0,0,0.4)' : '0 20px 40px rgba(0,0,0,0.08)',
         }
       }}
     >
@@ -32,7 +34,9 @@ const SuccessTimeline = ({ student, timelineMinWidth, SectionHeading }) => (
         sx={{
           position: 'absolute',
           inset: 0,
-          backgroundImage: 'radial-gradient(#f0d2d6 1px, transparent 1px)',
+          backgroundImage: isDarkMode 
+            ? 'radial-gradient(rgba(202, 0, 25, 0.15) 1px, transparent 1px)' 
+            : 'radial-gradient(#f0d2d6 1px, transparent 1px)',
           backgroundSize: '18px 18px',
           opacity: 0.35,
           pointerEvents: 'none'
@@ -57,7 +61,7 @@ const SuccessTimeline = ({ student, timelineMinWidth, SectionHeading }) => (
           <SectionHeading variant="h4" sx={{ fontWeight: 700 }}>
             Success Timeline
           </SectionHeading>
-          <Typography variant="body1" sx={{ maxWidth: '720px', color: '#4a4a4a', mt: 1 }}>
+          <Typography variant="body1" sx={{ maxWidth: '720px', color: isDarkMode ? 'rgba(255,255,255,0.7)' : '#4a4a4a', mt: 1 }}>
             Follow {student.name.split(' ')[0]}'s journey through key milestones, from early learning
             to professional growth, and the achievements that shaped each step.
           </Typography>
@@ -100,7 +104,9 @@ const SuccessTimeline = ({ student, timelineMinWidth, SectionHeading }) => (
                 left: 0,
                 right: 0,
                 height: '3px',
-                background: 'linear-gradient(90deg, #f0d2d6 0%, #ca0019 50%, #f0d2d6 100%)',
+                background: isDarkMode 
+                  ? 'linear-gradient(90deg, #331115 0%, #ca0019 50%, #331115 100%)'
+                  : 'linear-gradient(90deg, #f0d2d6 0%, #ca0019 50%, #f0d2d6 100%)',
                 borderRadius: '2px',
               }}
             />
@@ -136,13 +142,13 @@ const SuccessTimeline = ({ student, timelineMinWidth, SectionHeading }) => (
                         width: 20,
                         height: 20,
                         borderRadius: '50%',
-                        bgcolor: '#fff',
+                        bgcolor: isDarkMode ? '#1e1e1e' : '#fff',
                         border: '3px solid #ca0019',
-                        boxShadow: '0 0 0 4px rgba(202, 0, 25, 0.1)',
+                        boxShadow: isDarkMode ? '0 0 0 4px rgba(202, 0, 25, 0.3)' : '0 0 0 4px rgba(202, 0, 25, 0.1)',
                         transition: 'all 0.2s ease',
                         '&:hover': {
                           transform: 'scale(1.2)',
-                          boxShadow: '0 0 0 6px rgba(202, 0, 25, 0.15)',
+                          boxShadow: '0 0 0 6px rgba(202, 0, 25, 0.25)',
                         }
                       }}
                     />
@@ -154,12 +160,12 @@ const SuccessTimeline = ({ student, timelineMinWidth, SectionHeading }) => (
                         left: '50%',
                         transform: 'translateX(-50%)',
                         fontWeight: 700,
-                        color: '#ca0019',
-                        bgcolor: 'rgba(202, 0, 25, 0.05)',
+                        color: isDarkMode ? '#ff5252' : '#ca0019',
+                        bgcolor: isDarkMode ? 'rgba(255, 82, 82, 0.15)' : 'rgba(202, 0, 25, 0.05)',
                         px: 1.5,
                         py: 0.5,
                         borderRadius: '20px',
-                        border: '1px solid rgba(202, 0, 25, 0.1)',
+                        border: isDarkMode ? '1px solid rgba(255, 82, 82, 0.3)' : '1px solid rgba(202, 0, 25, 0.1)',
                         whiteSpace: 'nowrap',
                       }}
                     >
@@ -176,13 +182,13 @@ const SuccessTimeline = ({ student, timelineMinWidth, SectionHeading }) => (
                       right: 0,
                       p: 2.5,
                       borderRadius: 2,
-                      border: '1px solid #e9e1e2',
-                      backgroundColor: '#fff',
-                      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.04)',
+                      border: isDarkMode ? '1px solid #2d2d2d' : '1px solid #e9e1e2',
+                      backgroundColor: isDarkMode ? '#1e1e1e' : '#fff',
+                      boxShadow: isDarkMode ? '0 10px 30px rgba(0, 0, 0, 0.3)' : '0 10px 30px rgba(0, 0, 0, 0.04)',
                       transition: 'all 0.2s ease',
                       '&:hover': {
                         transform: 'translateY(-4px)',
-                        boxShadow: '0 15px 40px rgba(202, 0, 25, 0.12)',
+                        boxShadow: isDarkMode ? '0 15px 40px rgba(202, 0, 25, 0.25)' : '0 15px 40px rgba(202, 0, 25, 0.12)',
                         borderColor: '#ca0019',
                       }
                     }}
@@ -202,19 +208,19 @@ const SuccessTimeline = ({ student, timelineMinWidth, SectionHeading }) => (
                     <Box
                       sx={{
                         display: 'inline-block',
-                        bgcolor: 'rgba(202, 0, 25, 0.05)',
+                        bgcolor: isDarkMode ? 'rgba(255, 82, 82, 0.15)' : 'rgba(202, 0, 25, 0.05)',
                         borderRadius: '20px',
                         px: 1.5,
                         py: 0.5,
                         mb: 1.5,
                       }}
                     >
-                      <Typography variant="caption" sx={{ color: '#ca0019', fontWeight: 600 }}>
+                      <Typography variant="caption" sx={{ color: isDarkMode ? '#ff5252' : '#ca0019', fontWeight: 600 }}>
                         {item.achievements.length} Milestones
                       </Typography>
                     </Box>
 
-                    <Typography variant="h6" sx={{ mb: 2, color: '#111', fontSize: '1rem' }}>
+                    <Typography variant="h6" sx={{ mb: 2, color: isDarkMode ? '#fff' : '#111', fontSize: '1rem' }}>
                       Key Achievements
                     </Typography>
 
@@ -227,11 +233,11 @@ const SuccessTimeline = ({ student, timelineMinWidth, SectionHeading }) => (
                                 width: 20,
                                 height: 20,
                                 borderRadius: '50%',
-                                bgcolor: 'rgba(202, 0, 25, 0.1)',
+                                bgcolor: isDarkMode ? 'rgba(255, 82, 82, 0.15)' : 'rgba(202, 0, 25, 0.1)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                color: '#ca0019',
+                                color: isDarkMode ? '#ff5252' : '#ca0019',
                                 fontSize: '12px',
                                 fontWeight: 'bold'
                               }}
@@ -243,7 +249,7 @@ const SuccessTimeline = ({ student, timelineMinWidth, SectionHeading }) => (
                             primary={achievement}
                             primaryTypographyProps={{
                               variant: 'body2',
-                              sx: { color: '#222' }
+                              sx: { color: isDarkMode ? 'rgba(255,255,255,0.85)' : '#222' }
                             }}
                           />
                         </ListItem>

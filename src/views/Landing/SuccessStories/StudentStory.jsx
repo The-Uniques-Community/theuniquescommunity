@@ -23,6 +23,7 @@ import { successStories } from './successStoriesData';
 import ProfileInformation from './ProfileInformation';
 import SuccessTimeline from './SuccessTimeline';
 import VideoMessage from './VideoMessage';
+import { useThemeContext } from '@/theme/ThemeProvider';
 
 const HeroSection = styled(Box)(({ theme }) => ({
   position: 'relative',
@@ -33,7 +34,7 @@ const HeroSection = styled(Box)(({ theme }) => ({
   paddingBottom: '5rem',
   backgroundSize: 'cover',
   backgroundPosition: 'center',
-  backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80)',
+  backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.55)), url(https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80)',
   color: 'white',
   [theme.breakpoints.down('md')]: {
     paddingLeft: '1.5rem',
@@ -63,6 +64,12 @@ const ProfileImage = styled('img')(({ theme }) => ({
   border: '4px solid #ca0019',
   boxShadow: '0 8px 16px rgba(0, 0, 0, 0.3)',
   backgroundColor: '#f5f5f5',
+  transition: 'transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease',
+  '&:hover': {
+    transform: 'scale(1.05)',
+    boxShadow: '0 12px 24px rgba(202, 0, 25, 0.5)',
+    borderColor: '#ff334b',
+  },
   [theme.breakpoints.down('md')]: {
     width: '140px',
     height: '140px',
@@ -71,6 +78,7 @@ const ProfileImage = styled('img')(({ theme }) => ({
 
 const ContentWrapper = styled(Box)(({ theme }) => ({
   paddingTop: '100px',
+  transition: 'padding-top 0.3s ease',
   [theme.breakpoints.down('md')]: {
     paddingTop: '85px',
   }
@@ -214,6 +222,7 @@ const TimelineYear = styled(Typography)(({ theme }) => ({
 }));
 
 const StudentStory = () => {
+  const { isDarkMode } = useThemeContext();
   const { studentId } = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -355,6 +364,7 @@ const StudentStory = () => {
                 StyledTab={StyledTab}
                 SectionHeading={SectionHeading}
                 DetailCard={DetailCard}
+                isDarkMode={isDarkMode}
               />
             </TabPanel>
 
@@ -364,12 +374,17 @@ const StudentStory = () => {
                 student={student}
                 timelineMinWidth={timelineMinWidth}
                 SectionHeading={SectionHeading}
+                isDarkMode={isDarkMode}
               />
             </TabPanel>
 
             {/* Video Message Tab */}
             <TabPanel value={mainTabValue} index={2}>
-              <VideoMessage student={student} SectionHeading={SectionHeading} />
+              <VideoMessage 
+                student={student} 
+                SectionHeading={SectionHeading} 
+                isDarkMode={isDarkMode} 
+              />
             </TabPanel>
 
           </motion.div>

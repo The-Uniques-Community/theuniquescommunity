@@ -1,32 +1,32 @@
-import img from '@/assets/img/web-dev-training.png';
-import { Code, Web, Palette, Layers } from "@mui/icons-material";
-import model from "@/assets/img/trainingMethod.png";
+import { Code, Memory, DataObject, Science } from "@mui/icons-material";
+
+const img = "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5t7JDNfEyKp7vbuh4aZnGcCs8ARDxHFO2LY0S";
 
 const WebDevTab = () => {
   const features = [
     {
       icon: <Code fontSize="large" style={{ color: "white" }} />,
-      title: "HTML, CSS, & JavaScript",
+      title: "Advanced Python Concepts",
       description:
-        "Students start by learning HTML, CSS, and JavaScript to build responsive, interactive websites from scratch.",
+        "Deep dive into Python's advanced features — decorators, generators, context managers, metaclasses, and concurrency with asyncio.",
     },
     {
-      icon: <Web fontSize="large" style={{ color: "white" }} />,
-      title: "Responsive Design",
+      icon: <Memory fontSize="large" style={{ color: "white" }} />,
+      title: "Data Structures & File Handling",
       description:
-        "Focused on creating websites that adapt seamlessly to all screen sizes using competitive development techniques.",
+        "Mastering complex data structures, file I/O operations, JSON/CSV processing, and efficient memory management techniques.",
     },
     {
-      icon: <Palette fontSize="large" style={{ color: "white" }} />,
-      title: "Frameworks & Tools",
+      icon: <Science fontSize="large" style={{ color: "white" }} />,
+      title: "Libraries & Frameworks",
       description:
-        "Introduction to frameworks like Bootstrap, Tailwind, and the use of CDNs for faster website development.",
+        "Hands-on with NumPy, Pandas, Matplotlib, and Flask to build data pipelines and lightweight web services.",
     },
     {
-      icon: <Layers fontSize="large" style={{ color: "white" }} />,
-      title: "Client-Ready Projects",
+      icon: <DataObject fontSize="large" style={{ color: "white" }} />,
+      title: "Real-World Python Projects",
       description:
-        "The goal is to prepare students for real-world projects, making them market-ready to offer their services.",
+        "Building automation scripts, REST APIs, and data analysis dashboards to simulate real industry scenarios.",
     },
   ];
 
@@ -38,7 +38,7 @@ const WebDevTab = () => {
           <img
             src={img}
             className="object-center object-contain w-full min-w-80 max-w-xs mx-auto"
-            alt="Web Development Training"
+            alt="Advanced Python Training"
           />
         </div>
 
@@ -46,7 +46,7 @@ const WebDevTab = () => {
         <div className="lg:p-4 md:p-4 p-2 self-center lg:col-span-2">
           <div>
             <h4 className="text-3xl lg:text-4xl font-bold mb-10 text-center lg:text-left">
-              Web Development Training Model
+              Advanced Python Programming
             </h4>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-6">
@@ -64,13 +64,6 @@ const WebDevTab = () => {
                 </div>
               </div>
             ))}
-          </div>
-          <div className="mt-10">
-            <img
-              src={model}
-              className="w-full object-contain max-w-3xl mx-auto"
-              alt="Training Model"
-            />
           </div>
         </div>
       </div>

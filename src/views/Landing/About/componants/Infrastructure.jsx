@@ -40,16 +40,17 @@ const Infrastructure = () => {
   const { isDarkMode } = useThemeContext();
 
   return (
-    <Box sx={{ 
-      py: 12, 
+    <Box sx={{
+      pt: 12,
+      pb: 8,
       backgroundColor: isDarkMode ? "#161616" : "#f8f9fa",
-      overflow: "hidden" 
+      overflow: "hidden"
     }}>
       <Container maxWidth="lg" sx={{ mb: 8 }}>
-        <Typography 
-          variant="h2" 
-          align="center" 
-          sx={{ 
+        <Typography
+          variant="h2"
+          align="center"
+          sx={{
             fontWeight: 800,
             fontSize: { xs: "2.5rem", md: "4rem" },
             color: isDarkMode ? "white" : "#1a1a1a",
@@ -59,10 +60,10 @@ const Infrastructure = () => {
         >
           Corporate <span style={{ color: "#ca0019" }}>in Campus</span>
         </Typography>
-        <Typography 
-          variant="body1" 
-          align="center" 
-          sx={{ 
+        <Typography
+          variant="body1"
+          align="center"
+          sx={{
             color: isDarkMode ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.6)",
             maxWidth: "600px",
             mx: "auto",
@@ -74,10 +75,10 @@ const Infrastructure = () => {
       </Container>
 
       <Box sx={{ width: "100%", position: "relative" }}>
-        <ScrollStack 
-          useWindowScroll={true} 
-          itemDistance={100} 
-          itemScale={0.03} 
+        <ScrollStack
+          useWindowScroll={true}
+          itemDistance={100}
+          itemScale={0.03}
           itemStackDistance={35}
           baseScale={0.92}
           rotationAmount={0.5}
@@ -85,23 +86,23 @@ const Infrastructure = () => {
         >
           {infraImages.map((img, index) => (
             <ScrollStackItem key={index}>
-              <Box sx={{ 
-                width: "100%", 
-                height: { xs: "400px", md: "500px" }, 
+              <Box sx={{
+                width: "100%",
+                height: { xs: "400px", md: "500px" },
                 position: "relative",
                 borderRadius: "40px",
                 overflow: "hidden",
                 boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
               }}>
-                <img 
-                  src={img.url} 
-                  alt={img.title} 
-                  style={{ 
-                    width: "100%", 
-                    height: "100%", 
+                <img
+                  src={img.url}
+                  alt={img.title}
+                  style={{
+                    width: "100%",
+                    height: "100%",
                     objectFit: "cover",
                     filter: "brightness(0.7)"
-                  }} 
+                  }}
                 />
                 <Box sx={{
                   position: "absolute",
@@ -124,9 +125,6 @@ const Infrastructure = () => {
           ))}
         </ScrollStack>
       </Box>
-      
-      {/* Spacer to allow scrollytelling to breathe */}
-      <Box sx={{ height: "40vh" }} />
     </Box>
   );
 };

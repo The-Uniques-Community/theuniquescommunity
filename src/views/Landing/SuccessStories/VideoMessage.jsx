@@ -3,7 +3,7 @@ import { Box, Typography, Paper, Chip, Fade } from '@mui/material';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
 
-const VideoMessage = ({ student, SectionHeading }) => {
+const VideoMessage = ({ student, SectionHeading, isDarkMode }) => {
   const [isPlaying, setIsPlaying] = useState(false);
 
   return (
@@ -12,13 +12,14 @@ const VideoMessage = ({ student, SectionHeading }) => {
     sx={{
       p: { xs: 3, md: 6 },
       borderRadius: 4,
-      background: '#ffffff',
-      boxShadow: '0 20px 40px -10px rgba(0,0,0,0.1)',
+      background: isDarkMode ? '#161616' : '#ffffff',
+      border: isDarkMode ? '1px solid #2d2d2d' : 'none',
+      boxShadow: isDarkMode ? '0 20px 40px -10px rgba(0,0,0,0.5)' : '0 20px 40px -10px rgba(0,0,0,0.1)',
       position: 'relative',
       overflow: 'hidden',
       transition: 'all 0.3s ease-in-out',
       '&:hover': {
-        boxShadow: '0 30px 50px -15px rgba(202, 0, 25, 0.15)',
+        boxShadow: isDarkMode ? '0 30px 50px -15px rgba(202, 0, 25, 0.35)' : '0 30px 50px -15px rgba(202, 0, 25, 0.15)',
       }
     }}
   >
@@ -32,7 +33,9 @@ const VideoMessage = ({ student, SectionHeading }) => {
         right: -20,
         width: 200,
         height: 200,
-        background: 'radial-gradient(circle at 30% 50%, rgba(202, 0, 25, 0.03) 0%, transparent 70%)',
+        background: isDarkMode 
+          ? 'radial-gradient(circle at 30% 50%, rgba(202, 0, 25, 0.08) 0%, transparent 70%)'
+          : 'radial-gradient(circle at 30% 50%, rgba(202, 0, 25, 0.03) 0%, transparent 70%)',
         borderRadius: '50%',
         pointerEvents: 'none',
       }}
@@ -73,7 +76,9 @@ const VideoMessage = ({ student, SectionHeading }) => {
           sx={{
             fontWeight: 700,
             mb: 1,
-            background: 'linear-gradient(135deg, #1a1a1a 0%, #ca0019 100%)',
+            background: isDarkMode 
+              ? 'linear-gradient(135deg, #ffffff 0%, #ca0019 100%)'
+              : 'linear-gradient(135deg, #1a1a1a 0%, #ca0019 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             display: 'inline-block'
@@ -86,7 +91,7 @@ const VideoMessage = ({ student, SectionHeading }) => {
           variant="body1" 
           sx={{ 
             maxWidth: '720px', 
-            color: '#4a4a4a', 
+            color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : '#4a4a4a', 
             fontSize: '1.1rem',
             lineHeight: 1.6
           }}
@@ -107,12 +112,12 @@ const VideoMessage = ({ student, SectionHeading }) => {
                 maxWidth: 720,
                 borderRadius: 3,
                 overflow: 'hidden',
-                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
-                border: '1px solid rgba(202, 0, 25, 0.1)',
+                boxShadow: isDarkMode ? '0 25px 50px -12px rgba(0,0,0,0.5)' : '0 25px 50px -12px rgba(0,0,0,0.25)',
+                border: '1px solid rgba(202, 0, 25, 0.15)',
                 transition: 'all 0.3s ease',
                 '&:hover': {
                   transform: 'scale(1.02)',
-                  boxShadow: '0 30px 60px -12px rgba(202, 0, 25, 0.3)',
+                  boxShadow: '0 30px 60px -12px rgba(202, 0, 25, 0.4)',
                 }
               }}
             >
@@ -176,9 +181,11 @@ const VideoMessage = ({ student, SectionHeading }) => {
                 p: 4,
                 maxWidth: 820,
                 width: '100%',
-                background: 'linear-gradient(135deg, #faf7f7 0%, #ffffff 100%)',
+                background: isDarkMode 
+                  ? 'linear-gradient(135deg, #1e1e1e 0%, #161616 100%)'
+                  : 'linear-gradient(135deg, #faf7f7 0%, #ffffff 100%)',
                 borderRadius: 3,
-                border: '1px solid rgba(202, 0, 25, 0.1)',
+                border: isDarkMode ? '1px solid #2d2d2d' : '1px solid rgba(202, 0, 25, 0.1)',
                 position: 'relative',
                 mt: 2,
               }}
@@ -201,7 +208,7 @@ const VideoMessage = ({ student, SectionHeading }) => {
                   sx={{
                     textAlign: 'center',
                     fontWeight: 500,
-                    color: '#2a2a2a',
+                    color: isDarkMode ? '#fff' : '#2a2a2a',
                     lineHeight: 1.7,
                     fontSize: { xs: '1rem', md: '1.2rem' },
                     fontStyle: 'italic',
@@ -243,7 +250,7 @@ const VideoMessage = ({ student, SectionHeading }) => {
               gap: 3, 
               flexWrap: 'wrap', 
               justifyContent: 'center',
-              color: '#666',
+              color: isDarkMode ? 'rgba(255, 255, 255, 0.5)' : '#666',
               fontSize: '0.875rem'
             }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -267,9 +274,9 @@ const VideoMessage = ({ student, SectionHeading }) => {
           sx={{
             p: 6,
             textAlign: 'center',
-            bgcolor: '#faf7f7',
+            bgcolor: isDarkMode ? '#1e1e1e' : '#faf7f7',
             borderRadius: 3,
-            border: '1px dashed rgba(202, 0, 25, 0.3)',
+            border: isDarkMode ? '1px dashed rgba(202, 0, 25, 0.5)' : '1px dashed rgba(202, 0, 25, 0.3)',
           }}
         >
           <Box
@@ -287,7 +294,7 @@ const VideoMessage = ({ student, SectionHeading }) => {
           >
             <PlayCircleOutlineIcon sx={{ fontSize: 30, color: '#ca0019' }} />
           </Box>
-          <Typography variant="h6" sx={{ color: '#2a2a2a', mb: 1, fontWeight: 600 }}>
+          <Typography variant="h6" sx={{ color: isDarkMode ? '#fff' : '#2a2a2a', mb: 1, fontWeight: 600 }}>
             Video Message Coming Soon
           </Typography>
           <Typography color="text.secondary" sx={{ maxWidth: 400, mx: 'auto' }}>

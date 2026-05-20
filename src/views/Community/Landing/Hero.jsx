@@ -49,13 +49,13 @@ const Hero = () => {
             <div className="svg-shaped-div flex flex-col md:flex-row items-center justify-between p-6">
                 <div className="text-content z-0 p-5">
                     <h1
-                        className="text-black max-w-5xl w-full pb-6 md:text-7xl tracking-wide text-2xl font-semibold"
+                        className="!text-black max-w-5xl w-full pb-6 md:text-7xl tracking-wide text-2xl font-semibold"
                         style={{ lineHeight: "1.2" }}
                     >
                         Discover your <span className="text-[#ca0019]">community, join us</span> and thrive.
                     </h1>
 
-                    <div className="text-black md:pb-5 pb-6 text-lg max-w-lg flex items-center justify-center gap-2">
+                    <div className="!text-black md:pb-5 pb-6 text-lg max-w-lg flex items-center justify-center gap-2">
                         <span className="opacity-25">
                             <img src={DoubleQuotes} alt="icon" />
                         </span>

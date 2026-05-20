@@ -105,35 +105,35 @@ export default function TrainingTabs() {
             sx={{ marginY: isSmallScreen ? 0 : 2, fontWeight: 700 }}
             icon={<SettingsIcon />}
             iconPosition="start"
-            label="Round-I"
+            label="Round-I · Designing"
             {...a11yProps(0)}
           />
           <Tab
             sx={{ marginY: isSmallScreen ? 0 : 2, fontWeight: 700 }}
             icon={<SettingsIcon />}
             iconPosition="start"
-            label="Round-II"
+            label="Round-II · Python"
             {...a11yProps(1)}
           />
           <Tab
             sx={{ marginY: isSmallScreen ? 0 : 2, fontWeight: 700 }}
             icon={<SettingsIcon />}
             iconPosition="start"
-            label="Round-III"
+            label="Round-III · Development"
             {...a11yProps(2)}
           />
           <Tab
             sx={{ marginY: isSmallScreen ? 0 : 2, fontWeight: 700 }}
             icon={<SettingsIcon />}
             iconPosition="start"
-            label="Round-IV"
+            label="Round-IV · DSA"
             {...a11yProps(3)}
           />
           <Tab
             sx={{ marginY: isSmallScreen ? 0 : 2, fontWeight: 700 }}
             icon={<SettingsIcon />}
             iconPosition="start"
-            label="Round-V"
+            label="Round-V · Salesforce"
             {...a11yProps(4)}
           />
         </Tabs>

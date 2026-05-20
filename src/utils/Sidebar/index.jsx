@@ -1,17 +1,17 @@
 import React from 'react';
-import { 
-  Box, 
-  Typography, 
-  List, 
-  ListItem, 
-  ListItemText, 
-  ListItemAvatar, 
-  Avatar, 
-  Divider, 
+import {
+  Box,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  Avatar,
+  Divider,
   IconButton,
   Tooltip
 } from '@mui/material';
-import { 
+import {
   LinkedIn as LinkedInIcon,
   Twitter as TwitterIcon,
   Instagram as InstagramIcon,
@@ -28,65 +28,62 @@ const SidebarContainer = styled(Box)(({ theme }) => ({
   position: 'fixed',
   left: 0,
   top: '84px',
-  backgroundColor: 'rgba(0, 0, 0, 0.9)',
-  color: 'white',
+  backgroundColor: theme.palette.mode === 'dark' ? 'rgba(22, 22, 22, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+  color: theme.palette.text.primary,
+  borderRight: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
   display: 'flex',
   flexDirection: 'column',
-  overflow: 'auto',
+  overflow: 'hidden',
   zIndex: 90,
-  
-  // Custom scrollbar styling
-  '&::-webkit-scrollbar': {
-    width: '2px',
-  },
-  '&::-webkit-scrollbar-track': {
-    background: 'rgba(255, 255, 255, 0.1)',
-  },
-  '&::-webkit-scrollbar-thumb': {
-    background: '#ca0019',
-  },
-  // Firefox scrollbar
-  scrollbarWidth: 'thin',
-  scrollbarColor: '#ca0019 rgba(255, 255, 255, 0.1)',
-  
+  transition: 'background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease',
+
   [theme.breakpoints.down('md')]: {
-    transform: props => props.open ? 'translateX(0)' : 'translateX(-100%)',
-    transition: 'transform 0.3s ease-in-out',
-    boxShadow: props => props.open ? '0 0 15px rgba(0,0,0,0.5)' : 'none',
+    position: 'relative',
+    top: 0,
+    height: '100vh',
+    width: '100%',
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(22, 22, 22, 0.98)' : 'rgba(255, 255, 255, 0.98)',
   }
 }));
 
-const ListContainer = styled(List)({
-  flexGrow: 1, 
-  overflowY: 'auto', 
+const ListContainer = styled(List)(({ theme }) => ({
+  flexGrow: 1,
+  overflowY: 'auto',
   paddingBottom: '16px',
-  
+
   // Custom scrollbar styling for the list specifically
   '&::-webkit-scrollbar': {
-    width: '1px',
+    width: '4px',
   },
   '&::-webkit-scrollbar-track': {
-    background: 'rgba(255, 255, 255, 0.1)',
+    background: 'transparent',
   },
   '&::-webkit-scrollbar-thumb': {
     background: '#ca0019',
+    borderRadius: '4px',
+  },
+  '&::-webkit-scrollbar-button': {
+    display: 'none',
   },
   // Firefox scrollbar
   scrollbarWidth: 'thin',
-  scrollbarColor: '#ca0019 rgba(255, 255, 255, 0.1)',
-});
+  scrollbarColor: '#ca0019 transparent',
+}));
 
-const LogoSection = styled(Box)({
+const LogoSection = styled(Box)(({ theme }) => ({
   padding: '20px',
   textAlign: 'center',
-  borderBottom: '1px solid rgba(255,255,255,0.1)'
-});
+  borderBottom: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+  transition: 'border-color 0.3s ease',
+}));
 
-const Logo = styled('img')({
+const Logo = styled('img')(({ theme }) => ({
   width: '80%',
   maxWidth: 180,
-  margin: '0 auto'
-});
+  margin: '0 auto',
+  filter: theme.palette.mode === 'light' ? 'invert(1) brightness(0.1)' : 'none',
+  transition: 'filter 0.3s ease',
+}));
 
 const HeaderWrapper = styled(Box)({
   display: 'flex',
@@ -95,29 +92,35 @@ const HeaderWrapper = styled(Box)({
   marginTop: '20px'
 });
 
-const StyledListItem = styled(ListItem)(({ active }) => ({
+const StyledListItem = styled(ListItem)(({ theme, active }) => ({
   cursor: 'pointer',
-  backgroundColor: active ? 'rgba(202, 0, 25, 0.15)' : 'transparent',
+  backgroundColor: active 
+    ? (theme.palette.mode === 'dark' ? 'rgba(202, 0, 25, 0.15)' : 'rgba(202, 0, 25, 0.08)')
+    : 'transparent',
   '&:hover': {
-    backgroundColor: 'rgba(202, 0, 25, 0.1)',
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(202, 0, 25, 0.1)' : 'rgba(202, 0, 25, 0.04)',
   },
-  borderLeft: active ? '4px solid #ca0019' : '4px solid transparent'
+  borderLeft: active ? '4px solid #ca0019' : '4px solid transparent',
+  transition: 'background-color 0.2s ease',
 }));
 
-const SocialSection = styled(Box)({
+const SocialSection = styled(Box)(({ theme }) => ({
   marginTop: 'auto',
   padding: '20px',
-  borderTop: '1px solid rgba(255,255,255,0.1)',
-  textAlign: 'center'
-});
+  borderTop: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+  textAlign: 'center',
+  transition: 'border-color 0.3s ease',
+}));
 
-const SocialIcon = styled(IconButton)({
-  color: 'white',
+const SocialIcon = styled(IconButton)(({ theme }) => ({
+  color: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.54)',
   margin: '0 8px',
+  transition: 'all 0.2s ease',
   '&:hover': {
     color: '#ca0019',
+    transform: 'translateY(-2px)',
   }
-});
+}));
 
 const Sidebar = ({ students, onDrawerToggle, isDrawerOpen }) => {
   const location = useLocation();
@@ -141,8 +144,9 @@ const Sidebar = ({ students, onDrawerToggle, isDrawerOpen }) => {
             <IconButton 
               onClick={handleHomeClick}
               sx={{ 
-                color: 'white', 
-                '&:hover': { color: '#ca0019' },
+                color: 'inherit', 
+                opacity: 0.8,
+                '&:hover': { color: '#ca0019', opacity: 1 },
                 padding: '4px'
               }}
             >
@@ -153,13 +157,13 @@ const Sidebar = ({ students, onDrawerToggle, isDrawerOpen }) => {
       </LogoSection>
 
       <Box sx={{ p: 2 }}>
-        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', mb: 2 }}>
+        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
           Explore inspiring journeys of our community members who have achieved remarkable success in their careers.
         </Typography>
       </Box>
 
-      <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />
-      
+      <Divider sx={{ opacity: theme => theme.palette.mode === 'dark' ? 0.1 : 0.08 }} />
+
       <ListContainer>
         {students.map((student) => (
           <StyledListItem
@@ -173,9 +177,21 @@ const Sidebar = ({ students, onDrawerToggle, isDrawerOpen }) => {
               <Avatar src={student.image} alt={student.name} />
             </ListItemAvatar>
             <ListItemText
-              primary={student.name}
+              primary={
+                <Typography 
+                  variant="body1" 
+                  sx={{ 
+                    fontWeight: currentPath === student.id ? 700 : 500,
+                    color: currentPath === student.id ? '#ca0019' : 'text.primary',
+                    transition: 'color 0.2s ease',
+                    fontSize: '0.95rem'
+                  }}
+                >
+                  {student.name}
+                </Typography>
+              }
               secondary={
-                <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8rem', mt: 0.5 }}>
                   {student.batch} • {student.role}
                 </Typography>
               }
@@ -185,7 +201,7 @@ const Sidebar = ({ students, onDrawerToggle, isDrawerOpen }) => {
       </ListContainer>
 
       <SocialSection>
-        <Typography variant="body2" sx={{ mb: 2, color: 'rgba(255,255,255,0.7)' }}>
+        <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
           Connect with The Uniques Community
         </Typography>
         <Box>

@@ -120,14 +120,14 @@ const Counts = () => {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Enhanced heading with decorative elements */}
-        <div className="text-center mb-16 relative">
+        <div className="text-center mb-16 relative flex flex-col items-center">
           <div className="inline-block relative">
             <h2 className="text-sm font-semibold text-[#ca0019] uppercase tracking-wide mb-2 relative z-10">
               Our Achievements
             </h2>
             <div className="absolute h-2 w-full bottom-0 left-0 bg-[#ca0019]/10 -z-0"></div>
-          </div><br/><br/>
-          <p className="text-3xl sm:text-4xl font-bold text-gray-900 relative inline-block">
+          </div>
+          <p className="mt-4 text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white relative inline-block">
             <span className="pb-1">Making an </span>
             <span className="">Impact</span>
             <span className="absolute -right-6 -top-6 text-6xl text-[#ca0019]/5 font-serif">&#8221;</span>

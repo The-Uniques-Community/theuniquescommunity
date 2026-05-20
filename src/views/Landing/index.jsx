@@ -15,6 +15,8 @@ import Startups from "./homComponents/Startups";
 import WhyUs from "./homComponents/WhyUs";
 // import TestimonialSectionCarousel from "./homComponents/TestimonialCard";
 import Batches from "./homComponents/Batches";
+import CommunityPartners from "./homComponents/CommunityPartners";
+
 
 import HomeHero from "./homComponents/HomeHero";
 import BlogSection from "./homComponents/BlogSection";
@@ -30,7 +32,6 @@ const index = () => {
     <div>
       {/* <Navbar /> */}
       <HomeHero />
-      <div className="py-20"> </div>
       <section>
         {/* <LandingStats /> */}
         <Counts />
@@ -48,13 +49,13 @@ const index = () => {
 
       <div className="spacer py-10"></div>
       <section>
-        <TrainingTabs />
+        <CommunityPartners />
       </section>
 
-      <div className="spacer py-10"></div>
-      <section>
-        <Batches />
-      </section>
+
+
+
+
 
       <div className="spacer py-10"></div>
       <section>

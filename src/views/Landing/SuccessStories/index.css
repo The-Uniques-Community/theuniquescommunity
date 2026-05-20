@@ -27,6 +27,10 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #a00014;
   }
+
+  ::-webkit-scrollbar-button {
+    display: none !important;
+  }
   
   /* Hero section animations */
   .hero-content {

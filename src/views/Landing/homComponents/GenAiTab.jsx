@@ -1,31 +1,32 @@
-import { Memory, AutoAwesome, Psychology, Insights } from "@mui/icons-material";
-import androidTraining from "@/assets/img/android-training.png";
+import { Cloud, Business, Sync, TrendingUp } from "@mui/icons-material";
+
+const img = "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5hyCPAUNdx4bWp0UlI1ZKuzEFvVsLw7JfMokX";
 
 const GenAiTab = () => {
   const features = [
     {
-      icon: <Memory fontSize="large" style={{ color: "white" }} />,
-      title: "Artificial Intelligence",
+      icon: <Cloud fontSize="large" style={{ color: "white" }} />,
+      title: "Salesforce Platform Fundamentals",
       description:
-        "Learn the fundamentals of AI, including neural networks, decision trees, and reinforcement learning to build intelligent systems.",
+        "Understanding the Salesforce ecosystem, navigating the platform, managing objects, fields, and using the App Builder.",
     },
     {
-      icon: <AutoAwesome fontSize="large" style={{ color: "white" }} />,
-      title: "Generative AI",
+      icon: <Business fontSize="large" style={{ color: "white" }} />,
+      title: "CRM & Sales Cloud",
       description:
-        "Master the art of creating AI models that generate text, images, and other content using tools like GPT and Stable Diffusion.",
+        "Managing leads, contacts, accounts, and opportunities — automating the entire sales pipeline for business efficiency.",
     },
     {
-      icon: <Psychology fontSize="large" style={{ color: "white" }} />,
-      title: "Machine Learning",
+      icon: <Sync fontSize="large" style={{ color: "white" }} />,
+      title: "Automation with Flows",
       description:
-        "Dive into supervised and unsupervised learning, regression, classification, and clustering with hands-on projects.",
+        "Building powerful no-code automations with Salesforce Flow, Process Builder, and Approval Processes to streamline operations.",
     },
     {
-      icon: <Insights fontSize="large" style={{ color: "white" }} />,
-      title: "Data Analytics & Insights",
+      icon: <TrendingUp fontSize="large" style={{ color: "white" }} />,
+      title: "Reports, Dashboards & Certification",
       description:
-        "Analyze and interpret data to derive actionable insights using advanced tools like Python, TensorFlow, and Pandas.",
+        "Creating insightful reports and dashboards, and preparing for Salesforce Administrator & Platform Developer certifications.",
     },
   ];
 
@@ -35,9 +36,9 @@ const GenAiTab = () => {
         {/* Left Section - Image */}
         <div className="lg:col-span-1">
           <img
-            src={androidTraining}
+            src={img}
             className="object-center object-contain w-full min-w-80 max-w-xs mx-auto"
-            alt="AI Training"
+            alt="Salesforce Training"
           />
         </div>
 
@@ -45,7 +46,7 @@ const GenAiTab = () => {
         <div className="lg:p-4 md:p-4 p-2 self-center lg:col-span-2">
           <div>
             <h4 className="text-3xl lg:text-4xl font-bold mb-10 text-center lg:text-left">
-              Industry-Ready AI, ML, and Generative AI Training
+              Salesforce CRM & Platform Training
             </h4>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-6">

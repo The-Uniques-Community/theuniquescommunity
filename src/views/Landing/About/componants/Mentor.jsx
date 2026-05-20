@@ -33,6 +33,8 @@ export default function MentorSection() {
           <img
             src={ankursir}
             alt="Mentor"
+            loading="lazy"
+            decoding="async"
             className="w-96 h-96 md:w-[450px] md:h-[450px] object-cover rounded-xl shadow-xl"
           />
         </div>

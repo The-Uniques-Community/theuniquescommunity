@@ -11,6 +11,7 @@ import VisionMission from "./componants/Vision";
 import Testimonial from "./componants/Testimonial";
 import Faq from "./componants/Faq";
 import CallToAction from "../homComponents/CallToAction";
+import Placements from "../homComponents/Placements";
 
 
 
@@ -26,6 +27,7 @@ const index = () => {
       <VisionMission />
       <Mentor />
       <Infrastructure />
+      <Placements />
 
       <Testimonial />
       <Faq />

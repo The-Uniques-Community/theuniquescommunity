@@ -22,7 +22,7 @@ const cardData = [
             </div>
         ),
         buttonText: 'Learn More',
-        cardBg: 'bg-white',
+        cardBg: 'bg-white dark:bg-[#111111]',
         iconBg: 'bg-[#9bc8ff]',
         icon: (
             <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 55 52" fill="none">
@@ -52,7 +52,7 @@ const cardData = [
             </div>
         ),
         buttonText: 'View More',
-        cardBg: 'bg-white',
+        cardBg: 'bg-white dark:bg-[#111111]',
         iconBg: 'bg-red-100',
         icon: (
             <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 49 52" fill="none">
@@ -82,7 +82,7 @@ const cardData = [
             </div>
         ),
         buttonText: 'View More',
-        cardBg: 'bg-white',
+        cardBg: 'bg-white dark:bg-[#111111]',
         iconBg: 'bg-green-100',
         icon: (
             <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 52 52" fill="none">
@@ -119,7 +119,7 @@ const cardData = [
             </div>
         ),
         buttonText: 'View More',
-        cardBg: 'bg-white',
+        cardBg: 'bg-white dark:bg-[#111111]',
         iconBg: 'bg-yellow-100',
         icon: (
             <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 54 54" fill="none">
@@ -149,7 +149,7 @@ const cardData = [
             </div>
         ),
         buttonText: 'Discover',
-        cardBg: 'bg-white',
+        cardBg: 'bg-white dark:bg-[#111111]',
         iconBg: 'bg-purple-100',
         icon: (
             <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 64 64" fill="none">
@@ -192,10 +192,10 @@ const DynamicCard = ({ card, onOpenModal }) => {
                 >
                     {card.icon}
                 </div>
-                <div className="text-[24px] text-[#212B36] mt-4 font-[500] transition-all duration-500 delay-150">
+                <div className={`text-[24px] mt-4 font-[500] transition-all duration-500 delay-150 ${active ? 'text-[#212B36]' : 'text-[#212B36] dark:text-white'}`}>
                     {card.title}
                 </div>
-                <p className="text-[16px] text-[#383838] mt-4 font-[400] line-clamp-4 transition-all duration-500 delay-150">
+                <p className={`text-[16px] mt-4 font-[400] line-clamp-4 transition-all duration-500 delay-150 ${active ? 'text-[#383838]' : 'text-[#383838] dark:text-gray-300'}`}>
                     {card.description}
                 </p>
             </div>
@@ -264,10 +264,10 @@ const Guidelines = () => {
             <section className="mx-auto container py-10" id="whyH2s">
                 <div className="pt-[30px] max-sm:mt-6 ">
                     <div className="w-full md:w-4/5 mx-auto">
-                        <h2 className="max-sm:text-[24px] sm:text-[40px] text-[#212B36] text-left sm:mb-4 py-4">
+                        <h2 className="max-sm:text-[24px] sm:text-[40px] text-[#212B36] dark:text-white text-left sm:mb-4 py-4">
                             Community Guidelines
                         </h2>
-                        <p className="text-left mt-2 my-6 py-2 max-sm:text-[14px] md:text-[16px] font-[400] text-[#919EAB]">
+                        <p className="text-left mt-2 my-6 py-2 max-sm:text-[14px] md:text-[16px] font-[400] text-[#919EAB] dark:text-gray-400">
                             Innovate effortlessly. Our leading innovation management platform and a network of 5 million innovators will help you find the perfect solutions and bring them to market faster.
                         </p>
                     </div>

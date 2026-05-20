@@ -10,6 +10,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import WebDevTab from "../../homComponents/WebDevTab";
 import MernTab from "../../homComponents/MernTab";
 import AndroidTab from "../../homComponents/AndroidTab";
+import GenAiTab from "../../homComponents/GenAiTab";
 import { useThemeContext } from "../../../../theme/ThemeProvider";
 
 function TabPanel(props) {
@@ -98,7 +99,7 @@ export default function TrainingTabs() {
             <Tab
               icon={<SettingsIcon sx={{ fontSize: 20 }} />}
               iconPosition="start"
-              label="Round-I"
+              label="Round-I · Designing"
               sx={{ 
                 minWidth: { xs: "120px", md: "160px" }, 
                 color: isDarkMode ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
@@ -118,7 +119,7 @@ export default function TrainingTabs() {
             <Tab
               icon={<SettingsIcon sx={{ fontSize: 20 }} />}
               iconPosition="start"
-              label="Round-II"
+              label="Round-II · Python"
               sx={{ 
                 minWidth: { xs: "120px", md: "160px" }, 
                 color: isDarkMode ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
@@ -138,7 +139,7 @@ export default function TrainingTabs() {
             <Tab
               icon={<SettingsIcon sx={{ fontSize: 20 }} />}
               iconPosition="start"
-              label="Round-III"
+              label="Round-III · Development"
               sx={{ 
                 minWidth: { xs: "120px", md: "160px" }, 
                 color: isDarkMode ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
@@ -158,7 +159,7 @@ export default function TrainingTabs() {
             <Tab
               icon={<SettingsIcon sx={{ fontSize: 20 }} />}
               iconPosition="start"
-              label="Round-IV"
+              label="Round-IV · DSA"
               sx={{ 
                 minWidth: { xs: "120px", md: "160px" }, 
                 color: isDarkMode ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
@@ -174,6 +175,26 @@ export default function TrainingTabs() {
                 }
               }}
               {...a11yProps(3)}
+            />
+            <Tab
+              icon={<SettingsIcon sx={{ fontSize: 20 }} />}
+              iconPosition="start"
+              label="Round-V · Salesforce"
+              sx={{ 
+                minWidth: { xs: "120px", md: "160px" }, 
+                color: isDarkMode ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
+                fontWeight: 700,
+                fontSize: "0.85rem",
+                borderRadius: "12px",
+                transition: "all 0.3s ease",
+                '&.Mui-selected': {
+                  color: "#CA0019",
+                },
+                '&:hover': {
+                  backgroundColor: isDarkMode ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
+                }
+              }}
+              {...a11yProps(4)}
             />
           </Tabs>
         </Box>
@@ -198,6 +219,11 @@ export default function TrainingTabs() {
           <TabPanel value={value} index={3}>
             <div className="transform transition-all duration-500">
               <AndroidTab />
+            </div>
+          </TabPanel>
+          <TabPanel value={value} index={4}>
+            <div className="transform transition-all duration-500">
+              <GenAiTab />
             </div>
           </TabPanel>
         </div>

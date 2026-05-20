@@ -1,32 +1,32 @@
-import { Android, Cloud, Group, Store } from "@mui/icons-material";
-import androidTraining from "@/assets/img/android-training.png";
-// import industryModel from "@/assets/img/industryModel.png";
+import { AccountTree, Sort, Memory, Speed } from "@mui/icons-material";
+
+const img = "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5Y6o9N9kdqrAaPiXWyjJwRgVxh49pENQmO51K";
 
 const AndroidTab = () => {
   const features = [
     {
-      icon: <Android fontSize="large" style={{ color: "white" }} />,
-      title: "React Native & Android Studio",
+      icon: <AccountTree fontSize="large" style={{ color: "white" }} />,
+      title: "Core Data Structures",
       description:
-        "Develop cross-platform mobile apps using React Native and Android Studio with an optimized UI/UX approach.",
+        "Mastering arrays, linked lists, stacks, queues, trees, heaps, and graphs — the building blocks of efficient software.",
     },
     {
-      icon: <Cloud fontSize="large" style={{ color: "white" }} />,
-      title: "Firebase Integration",
+      icon: <Sort fontSize="large" style={{ color: "white" }} />,
+      title: "Sorting & Searching Algorithms",
       description:
-        "Implement real-time databases, authentication, push notifications, and analytics using Firebase.",
+        "Deep understanding of bubble, merge, quick, and heap sort along with binary search and its real-world applications.",
     },
     {
-      icon: <Store fontSize="large" style={{ color: "white" }} />,
-      title: "Google Play Console & Deployment",
+      icon: <Memory fontSize="large" style={{ color: "white" }} />,
+      title: "Dynamic Programming",
       description:
-        "Understand app publishing, Play Store guidelines, monetization strategies, and ASO (App Store Optimization).",
+        "Solving complex optimization problems using memoization and tabulation techniques with pattern-based problem solving.",
     },
     {
-      icon: <Group fontSize="large" style={{ color: "white" }} />,
-      title: "Team & Individual Projects",
+      icon: <Speed fontSize="large" style={{ color: "white" }} />,
+      title: "Time & Space Complexity",
       description:
-        "Gain hands-on experience by building real-world apps, both as an individual developer and in a team environment.",
+        "Analysing algorithm efficiency with Big-O notation, optimizing code performance, and preparing for technical interviews.",
     },
   ];
 
@@ -36,9 +36,9 @@ const AndroidTab = () => {
         {/* Left Section - Image */}
         <div className="lg:col-span-1">
           <img
-            src={androidTraining}
+            src={img}
             className="object-center object-contain w-full min-w-80 max-w-xs mx-auto"
-            alt="Android Training"
+            alt="DSA Training"
           />
         </div>
 
@@ -46,7 +46,7 @@ const AndroidTab = () => {
         <div className="lg:p-4 md:p-4 p-2 self-center lg:col-span-2">
           <div>
             <h4 className="text-3xl lg:text-4xl font-bold mb-10 text-center lg:text-left">
-              Industry-Ready Android Development Training
+              Data Structures & Algorithms
             </h4>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-6">
@@ -65,13 +65,6 @@ const AndroidTab = () => {
               </div>
             ))}
           </div>
-          {/* <div className="mt-10">
-            <img
-              src={industryModel}
-              className="w-full object-contain max-w-3xl mx-auto"
-              alt="Industry Methodologies"
-            />
-          </div> */}
         </div>
       </div>
     </div>

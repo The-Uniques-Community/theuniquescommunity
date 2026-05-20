@@ -254,7 +254,7 @@ const Navbar = () => {
                   <ListItemIcon
                     sx={{
                       minWidth: "36px",
-                      color: activeLink === item.text ? "#CA0019" : "text.secondary",
+                      color: activeLink === item.text ? "#CA0019" : (isDarkMode ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.5)"),
                       transition: "color 0.2s ease",
                       "& .MuiSvgIcon-root": { fontSize: "1.2rem" }
                     }}
@@ -266,7 +266,7 @@ const Navbar = () => {
                     primaryTypographyProps={{
                       fontSize: "0.85rem",
                       fontWeight: activeLink === item.text ? 600 : 500,
-                      color: activeLink === item.text ? "#CA0019" : "text.primary",
+                      color: activeLink === item.text ? "#CA0019" : (isDarkMode ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.8)"),
                       letterSpacing: "0.01em",
                     }}
                   />
