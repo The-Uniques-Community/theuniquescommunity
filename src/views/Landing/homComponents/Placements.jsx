@@ -5,43 +5,35 @@ import { useThemeContext } from "@/theme/ThemeProvider";
 const companies = [
   {
     name: "Google",
-    logo: "https://cdn.jsdelivr.net/npm/simple-icons@11.15.0/icons/google.svg",
+    logo: "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5OrEVK3gzNMYq46FIdR2OJ5Vr1m0WDHthsXwp",
   },
   {
-    name: "Amazon",
-    logo: "https://cdn.jsdelivr.net/npm/simple-icons@11.15.0/icons/amazon.svg",
+    name: "Dentsu",
+    logo: "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5tSfIXhEyKp7vbuh4aZnGcCs8ARDxHFO2LY0S",
   },
   {
-    name: "Microsoft",
-    logo: "https://cdn.jsdelivr.net/npm/simple-icons@11.15.0/icons/microsoft.svg",
+    name: "Grazitti Interactive",
+    logo: "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5yxk5MxYbN5ISOZ3mVoe8PMhvGujQwxq6rJd1",
   },
   {
-    name: "Meta",
-    logo: "https://cdn.jsdelivr.net/npm/simple-icons@11.15.0/icons/meta.svg",
+    name: "Virtuos",
+    logo: "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5LNvENAV4dQjwtUe75ApxbP68hlkFNKnGZIqT",
   },
   {
-    name: "Salesforce",
-    logo: "https://cdn.jsdelivr.net/npm/simple-icons@11.15.0/icons/salesforce.svg",
+    name: "Revocept Solutions",
+    logo: "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5q1pq2P9avH4S0MZTogxLPtUlVr3wpcjD6WEI",
   },
   {
-    name: "IBM",
-    logo: "https://cdn.jsdelivr.net/npm/simple-icons@11.15.0/icons/ibm.svg",
+    name: "NeoSoft",
+    logo: "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5XRXqkTBdwE1zgNU9nBLxO62lZYuAWsqiRGCt",
   },
   {
-    name: "Adobe",
-    logo: "https://cdn.jsdelivr.net/npm/simple-icons@11.15.0/icons/adobe.svg",
+    name: "Sopra Steria",
+    logo: "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5KT5IuzovpGOZJ0MUag4QI3kRmCE7P1nwNtSF",
   },
   {
-    name: "Accenture",
-    logo: "https://cdn.jsdelivr.net/npm/simple-icons@11.15.0/icons/accenture.svg",
-  },
-  {
-    name: "Intel",
-    logo: "https://cdn.jsdelivr.net/npm/simple-icons@11.15.0/icons/intel.svg",
-  },
-  {
-    name: "Apple",
-    logo: "https://cdn.jsdelivr.net/npm/simple-icons@11.15.0/icons/apple.svg",
+    name: "Siemens",
+    logo: "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5W3VJLlrBbR9rw3ciXY8DKdzPWVsp25LaHlth",
   },
 ];
 

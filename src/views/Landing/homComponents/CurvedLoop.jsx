@@ -148,7 +148,7 @@ const CurvedLoop = ({
       {visibleLogos.map(logo => (
         <div
           key={logo.key}
-          className={`absolute flex items-center justify-center p-3 rounded-xl border transition-all duration-300 ${
+          className={`absolute flex items-center justify-center p-3 rounded-xl border transition-colors duration-300 ${
             isDarkMode
               ? "bg-[#1f1f1f]/90 border-white/5 shadow-lg shadow-black/20"
               : "bg-white/90 border-gray-100 shadow-md shadow-gray-200/50"

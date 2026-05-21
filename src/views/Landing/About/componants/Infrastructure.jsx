@@ -5,17 +5,17 @@ import { useThemeContext } from "@/theme/ThemeProvider";
 
 const infraImages = [
   {
-    url: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80",
+    url: "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5D1y1o4fQ57NPj9YlOJCumqw8S4bfTIih3gXv",
     title: "Modern Workspaces",
     desc: "State-of-the-art office environments designed for productivity."
   },
   {
-    url: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80",
+    url: "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5QYO1p4UA0Cpb4ysi61TzJLRaW735foPjv8GS",
     title: "Eco-Friendly Campus",
     desc: "Sustainable architecture meeting modern technology."
   },
   {
-    url: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80",
+    url: "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5XLjoIcBdwE1zgNU9nBLxO62lZYuAWsqiRGCt",
     title: "Innovation Hub",
     desc: "Where ideas transform into reality through advanced R&D."
   },
