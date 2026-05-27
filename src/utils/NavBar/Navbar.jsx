@@ -111,12 +111,6 @@ const Navbar = () => {
         onClick: handleLogout,
         link: "#",
       });
-    } else {
-      authItems.push({
-        text: "Login",
-        icon: <LogIn />,
-        link: "/auth/login",
-      });
     }
 
     return { baseItems, authItems };
@@ -284,7 +278,7 @@ const Navbar = () => {
 
       {/* Auth & Actions Section (Fixed) */}
       <Box sx={{ px: 2, pb: 2 }}>
-        <Divider sx={{ mb: 3, opacity: 0.5 }} />
+        {authNavItems.length > 0 && <Divider sx={{ mb: 3, opacity: 0.5 }} />}
         {authNavItems.map((item) => (
           <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
             <ListItemButton
@@ -331,6 +325,39 @@ const Navbar = () => {
             </ListItemButton>
           </ListItem>
         ))}
+
+        {/* Connect With Us Section */}
+        <Divider sx={{ my: 3, opacity: 0.5 }} />
+        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600, color: 'text.secondary', textAlign: 'center' }}>
+          Connect with us
+        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+          {socialLinks.map((social) => (
+            <motion.a
+              key={social.name}
+              href={social.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.1, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 40,
+                height: 40,
+                borderRadius: '50%',
+                backgroundColor: 'rgba(0,0,0,0.04)',
+                color: social.color,
+                transition: 'background-color 0.3s',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${social.color}15`}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.04)'}
+            >
+              {social.icon}
+            </motion.a>
+          ))}
+        </Box>
       </Box>
 
     </Box>

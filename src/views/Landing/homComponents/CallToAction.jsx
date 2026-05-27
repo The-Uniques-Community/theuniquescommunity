@@ -12,7 +12,7 @@ const CallToAction = () => {
                 </h1>
                 <p className='text-white p-3 text-lg'>Join the community of unique individuals and learn from the best</p>
                 <Button
-                  path="/auth/login"
+                  path="https://tuportal.theuniques.in/auth/login"
                   color={"white"}
                   bgColor={"#ca0019"}
                   border={4}

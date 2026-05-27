@@ -18,54 +18,8 @@ const images = [
 ];
 
 export default function Landing() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const heroRef = useRef(null);
-
-  useEffect(() => {
-    const updateDimensions = () => {
-      if (heroRef.current) {
-        setDimensions({
-          width: heroRef.current.offsetWidth,
-          height: heroRef.current.offsetHeight
-        });
-      }
-    };
-
-    const handleMouseMove = (event) => {
-      if (heroRef.current) {
-        const rect = heroRef.current.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
-        setMousePosition({ x, y });
-      }
-    };
-
-    const heroElement = heroRef.current;
-    if (heroElement) {
-      heroElement.addEventListener('mousemove', handleMouseMove);
-      updateDimensions();
-
-      // Update dimensions on window resize
-      window.addEventListener('resize', updateDimensions);
-    }
-
-    return () => {
-      if (heroElement) {
-        heroElement.removeEventListener('mousemove', handleMouseMove);
-      }
-      window.removeEventListener('resize', updateDimensions);
-    };
-  }, []);
-
-  const cellSize = 50;
-
-  // Calculate number of columns and rows needed to cover the entire container
-  const columns = Math.ceil(dimensions.width / cellSize) + 1;
-  const rows = Math.ceil(dimensions.height / cellSize) + 1;
-
   return (
-    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-transparent relative pt-10" ref={heroRef}>
+    <div className="w-full min-h-screen flex flex-col items-center justify-center bg-transparent relative pt-10">
       {/* Decorative Square Grid (Left Side) - Commented out
       <div className="absolute left-8 md:left-16 top-1/2 -translate-y-1/2 hidden lg:grid grid-cols-4 gap-0 opacity-15 pointer-events-none group">
         {Array.from({ length: 20 }).map((_, i) => (

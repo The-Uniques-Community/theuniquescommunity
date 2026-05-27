@@ -18,7 +18,6 @@ const Button = ({children, path,bgColor,color,iconColor,border,borderColor, onCl
       </div>
       </button>
     </Link>
-
   )
 }
 

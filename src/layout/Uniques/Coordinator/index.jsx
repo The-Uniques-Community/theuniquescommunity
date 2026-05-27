@@ -89,7 +89,7 @@ function DashboardLayoutAppBar() {
   const [isOpen, setIsOpen] = React.useState(false);
   const onClose = () => setIsOpen(false);
   const onConfirm = () => {
-    fetch("http://localhost:5000/auth/logout", {
+    fetch("https://theuniquesportal-server.vercel.app/auth/logout", {
       method: "POST",
       credentials: "include",
     })
@@ -398,7 +398,7 @@ export default DashboardLayoutAppBar;
 //   const [isOpen, setIsOpen] = React.useState(false);
 //   const onClose = () => setIsOpen(false);
 //   const onConfirm = () => {
-//     fetch("http://localhost:5000/auth/logout", {
+//     fetch("https://theuniquesportal-server.vercel.app/auth/logout", {
 //       method: "POST",
 //       credentials: "include",
 //     })

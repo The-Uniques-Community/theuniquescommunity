@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Play, Youtube, ExternalLink } from "lucide-react";
+import { Play, Youtube, ExternalLink, Video, Lightbulb, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 
 const YoutubeSection = () => {
@@ -121,15 +121,17 @@ const YoutubeSection = () => {
 
             {/* Feature Highlights */}
             {[
-              { emoji: "🎥", title: "Event Recaps", desc: "Relive every seminar, hackathon, and workshop." },
-              { emoji: "💡", title: "Tech Talks", desc: "Insights from industry experts and community leaders." },
-              { emoji: "❤️", title: "Community Stories", desc: "Real journeys from real Uniques members." },
+              { icon: <Video className="w-5 h-5 text-[#ca0019]" />, title: "Event Recaps", desc: "Relive every seminar, hackathon, and workshop." },
+              { icon: <Lightbulb className="w-5 h-5 text-[#ca0019]" />, title: "Tech Talks", desc: "Insights from industry experts and community leaders." },
+              { icon: <Heart className="w-5 h-5 text-[#ca0019]" />, title: "Community Stories", desc: "Real journeys from real Uniques members." },
             ].map((item) => (
               <div
                 key={item.title}
                 className="flex items-start gap-4 p-4 rounded-xl bg-white dark:bg-[#424D53] border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow"
               >
-                <span className="text-2xl">{item.emoji}</span>
+                <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg bg-[#ca0019]/10 mt-0.5">
+                  {item.icon}
+                </div>
                 <div>
                   <p className="font-semibold text-gray-900 dark:text-white text-sm">{item.title}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{item.desc}</p>
@@ -142,9 +144,8 @@ const YoutubeSection = () => {
               href={channelUrl}
               target="_blank"
               rel="noopener noreferrer"
-              whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="flex items-center justify-center gap-3 w-full py-3.5 px-6 rounded-xl bg-[#ca0019] hover:bg-[#a80015] text-white font-semibold text-sm shadow-lg shadow-[#ca0019]/30 transition-colors"
+              className="flex items-center justify-center gap-3 w-full py-3.5 px-6 rounded-md bg-[#ca0019] hover:bg-[#a80015] text-white font-semibold text-sm shadow-lg shadow-[#ca0019]/30 transition-colors"
             >
               <Youtube className="w-5 h-5" />
               Visit Our Channel

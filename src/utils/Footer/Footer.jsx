@@ -34,7 +34,7 @@ const Footer = () => {
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/community-main">Community Page</Link></li>
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/batches">Batches</Link></li>
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/howitstarted">How It Started</Link></li>
-            <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/auth/login">Member Login</Link></li>
+            <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="https://tuportal.theuniques.in/auth/login">Member Login</Link></li>
           </ul>
         </div>
 

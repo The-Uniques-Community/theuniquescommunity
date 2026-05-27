@@ -129,7 +129,7 @@ const ForgetPassword = () => {
         setActiveStep(0);
         setEmail("");
         resetFormStates();
-        navigate("/auth/login");
+        navigate("https://tuportal.theuniques.in/auth/login");
       } else {
         setErrors({ submit: response.data.message || "Failed to reset password" });
         toast.error(response.data.message || "Failed to reset password");
@@ -471,7 +471,7 @@ const ForgetPassword = () => {
           
           <Button
             startIcon={<ArrowBack />}
-            onClick={() => navigate("/auth/login")}
+            onClick={() => navigate("https://tuportal.theuniques.in/auth/login")}
             sx={{ mb: 2 }}
           >
             Back to Login
