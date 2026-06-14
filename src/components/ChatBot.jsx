@@ -24,7 +24,8 @@ const ChatBot = () => {
         flexDirection: "column",
         alignItems: "flex-end",
         // Improve dragging on mobile
-        touchAction: "none"
+        touchAction: "none",
+        pointerEvents: "none",
       }}
     >
       <motion.div
@@ -153,6 +154,7 @@ const ChatBot = () => {
             transition: "transform 0.18s ease",
             transform: isHovered && !hasDragged ? "scale(1.06)" : "scale(1)",
             padding: 6,
+            pointerEvents: "auto",
           }}
         >
           {!isOpen ? (
