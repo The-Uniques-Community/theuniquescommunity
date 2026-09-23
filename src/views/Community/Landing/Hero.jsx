@@ -46,47 +46,63 @@ const Hero = () => {
                 </defs>
             </svg>
 
-            <div className="svg-shaped-div flex flex-col md:flex-row items-center justify-between p-6">
-                <div className="text-content z-0 p-5">
+            <div className="svg-shaped-div flex flex-col md:flex-row items-center justify-between px-6 sm:px-8 md:px-10 lg:px-12 xl:px-14 py-8 md:py-10 lg:py-12">
+                <div className="text-content relative z-10 w-full md:w-[54%] lg:w-[52%] xl:w-[50%] md:max-w-2xl lg:max-w-3xl flex flex-col justify-center">
                     <h1
-                        className="!text-black max-w-5xl w-full pb-6 md:text-7xl tracking-wide text-2xl font-semibold"
-                        style={{ lineHeight: "1.2" }}
+                        className="!text-black w-full pb-4 sm:pb-6 text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-[54px] 2xl:text-6xl font-bold tracking-tight"
+                        style={{ lineHeight: "1.18" }}
                     >
-                        Discover your <span className="text-[#ca0019]">community, join us</span> and thrive.
+                        <span className="inline sm:whitespace-nowrap">
+                            Discover your <span className="text-[#ca0019]">community,</span>
+                        </span>
+                        <br className="hidden sm:inline" />{" "}
+                        <span className="inline sm:whitespace-nowrap">
+                            <span className="text-[#ca0019]">join us</span> and thrive.
+                        </span>
                     </h1>
 
-                    <div className="!text-black md:pb-5 pb-6 text-lg max-w-lg flex items-center justify-center gap-2">
-                        <span className="opacity-25">
-                            <img src={DoubleQuotes} alt="icon" />
+                    <div className="text-gray-800 mt-5 sm:mt-7 pb-5 sm:pb-7 flex items-center gap-3.5 max-w-md">
+                        <span className="shrink-0 opacity-75">
+                            <img src={DoubleQuotes} alt="quote icon" className="w-10 h-10 md:w-11 md:h-11 object-contain" />
                         </span>
-                        <span>
+                        <p className="text-sm sm:text-base md:text-[16px] text-gray-700 leading-relaxed font-normal max-w-sm sm:max-w-md">
                             Join the community of unique individuals and learn from the best
-                        </span>
+                        </p>
                     </div>
-                    <Button 
-                        className="pt-10 w-48"
-                       onClick={openModal}
-                        color="white"
-                        bgColor="#ca0019"
-                        border={4}
-                        borderColor="black"
-                        iconColor="black"
-                    >
-                        Register
-                    </Button>
+
+                    <div className="pt-2">
+                        <Button 
+                            onClick={openModal}
+                            color="white"
+                            bgColor="#ca0019"
+                            border={3}
+                            borderColor="black"
+                            iconColor="black"
+                        >
+                            Register
+                        </Button>
+                    </div>
                 </div>
-                <div className="image-container absolute md:left-[40%] left-0 bottom-[0%] z-[999] w-full md:w-8/12 mt-10 md:mt-0">
-                    <img className="w-full h-auto" src={HeroClip} alt="Clipped Image" />
+
+                <div className="image-container absolute md:left-[43%] left-0 bottom-[0%] z-0 w-full md:w-[61%] lg:w-[60%] mt-10 md:mt-0 pointer-events-none select-none flex justify-end items-end">
+                    <img 
+                        className="w-full h-auto object-contain object-bottom" 
+                        src={HeroClip} 
+                        alt="Community Members" 
+                        draggable="false"
+                    />
                 </div>
             </div>
-            <div className="absolute bottom-2 right-16 flex flex-col place-items-end md:block hidden">
-                <h3 className="max-w-xl text-4xl font-semibold text-[#ca0019] text-right pt-3 pb-3">Be the part of it.</h3>
+
+            <div className="absolute bottom-1 md:bottom-1.5 lg:bottom-2 right-2 md:right-4 lg:right-6 w-[29.6%] hidden md:flex flex-col items-center justify-center text-center z-20 px-2">
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#ca0019] text-center tracking-tight leading-tight mb-2">
+                    Be the part of it.
+                </h3>
                 <Button
-                    className="pt-10 w-48"
                     path="https://chat.whatsapp.com/HYOloogGXKcIkR83DnOjFj"
                     color="white"
                     bgColor="black"
-                    border={4}
+                    border={3}
                     borderColor="black"
                     iconColor="black"
                 >

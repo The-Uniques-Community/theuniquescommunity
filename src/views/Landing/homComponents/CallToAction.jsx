@@ -11,17 +11,18 @@ const CallToAction = () => {
                   Join Us <span className='brush-bg text-white [--brush-color:#000]'>Today</span>
                 </h1>
                 <p className='text-white p-3 text-lg'>Join the community of unique individuals and learn from the best</p>
-                <Button
-                  path="https://tuportal.theuniques.in/auth/login"
-                  color={"white"}
-                  bgColor={"#ca0019"}
-                  border={4}
-                  borderColor={"#ca0019"}
-                  iconColor={"black"}
-                >
-                  <span>Login</span>
-                </Button>
-
+                <div className="flex justify-center items-center mt-2">
+                  <Button
+                    path="https://tuportal.theuniques.in/auth/login"
+                    color={"white"}
+                    bgColor={"#ca0019"}
+                    border={4}
+                    borderColor={"#ca0019"}
+                    iconColor={"black"}
+                  >
+                    <span>Login</span>
+                  </Button>
+                </div>
           </div>
         </div>
 
