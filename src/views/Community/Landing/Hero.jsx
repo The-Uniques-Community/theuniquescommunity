@@ -26,6 +26,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
         </div>
     );
 };
+// comment
 
 const Hero = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
