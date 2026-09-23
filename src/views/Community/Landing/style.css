@@ -3,6 +3,8 @@
     width: 100%;
     margin-top: 20px;
     height: 80vh;
+    min-height: 520px;
+    max-height: 680px;
     /* Full viewport height */
     background: #e8e8e2;
     clip-path: url(#heroClip);
@@ -12,10 +14,13 @@
 
 @media screen and (max-width: 768px) {
     .svg-shaped-div {
-        height: 50vh;
+        height: auto;
+        min-height: 580px;
         width: 100%;
+        clip-path: none;
+        -webkit-clip-path: none;
+        border-radius: 1.5rem;
     }
-
 }
 
 g {
