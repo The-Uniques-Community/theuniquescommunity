@@ -9,7 +9,7 @@ const testimonials = [
         id: 1,
         quote:
             "Being an ambassador has been an incredible journey! The opportunity to organize events and lead a community of like-minded individuals has helped me grow both personally and professionally. The mentorship from regional leads has been invaluable in shaping my leadership skills.",
-        name: "Michael Thompson",
+        name: "Vasu Malhotra",
         title: "Lead Ambassador",
         avatar: "/placeholder.svg?height=60&width=60",
     },
