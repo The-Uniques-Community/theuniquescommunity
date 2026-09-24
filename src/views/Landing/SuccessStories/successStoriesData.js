@@ -1,11 +1,17 @@
+import naveenImg from "@/assets/img/Success Stories avatars/naveen-jaiswal.jpg";
+import mantashaImg from "@/assets/img/Success Stories avatars/mantasha-tabassum.jpg";
+import ronitImg from "@/assets/img/Success Stories avatars/ronit-jaiprakash.jpeg";
+import praveenImg from "@/assets/img/Success Stories avatars/praveen-jaiswal.jpeg";
+
+
 export const successStories = [
   // Add this new entry to your successStories array
   {
     id: "RonitJaiPrakash2021003",
     video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
-    
+
     name: "Ronit JaiPrakash",
-    image: "https://tse3.mm.bing.net/th/id/OIP.SoIXzq-q3SWPC1zi1cwe3wHaHa?pid=ImgDet&w=199&h=199&c=7&dpr=1.3&o=7&rm=3",
+    image: ronitImg,
     batch: "The Uniques 1.0",
     company: "Caelius Consultancy",
     role: "Application Developer",
@@ -178,10 +184,10 @@ export const successStories = [
   {
     id: "NaveenJaiswal2021004",
     video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
-    
+
     name: "Naveen Jaiswal",
-    image: "https://tse3.mm.bing.net/th/id/OIP.SoIXzq-q3SWPC1zi1cwe3wHaHa?pid=ImgDet&w=199&h=199&c=7&dpr=1.3&o=7&rm=3",
-    
+    image: naveenImg,
+
     batch: "The Uniques 1.0",
     company: "Thor Solutions",
     role: "Software Developer",
@@ -301,8 +307,8 @@ export const successStories = [
     video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
     name: "Parveen Jaiswal",
     admissionNo: "2021001",
-    image: "https://tse3.mm.bing.net/th/id/OIP.SoIXzq-q3SWPC1zi1cwe3wHaHa?pid=ImgDet&w=199&h=199&c=7&dpr=1.3&o=7&rm=3",
-    
+    image: praveenImg,
+
     batch: "The Uniques 1.0",
     company: "SpacePepper Studios",
     role: "Web Developer",
@@ -419,8 +425,7 @@ export const successStories = [
     id: "MantashaTabassum2021002",
     video: "https://res.cloudinary.com/dua0lj0v5/video/upload/v1771321159/SuccessStory_x5yn1b.mp4",
     name: "Mantasha Tabassum",
-    image: "https://tse3.mm.bing.net/th/id/OIP.SoIXzq-q3SWPC1zi1cwe3wHaHa?pid=ImgDet&w=199&h=199&c=7&dpr=1.3&o=7&rm=3",
-    
+    image: mantashaImg,
     batch: "The Uniques 1.0",
     company: "Caelius Consulting",
     role: "Application Developer",
