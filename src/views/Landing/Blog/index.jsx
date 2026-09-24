@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { 
   Modal, 
+  Dialog,
+  DialogContent,
   Box, 
   IconButton, 
   Chip, 
@@ -34,6 +36,29 @@ const BlogPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { isDarkMode } = useThemeContext();
+
+  // Lock body scroll when blog modal is open
+  useEffect(() => {
+    if (selectedBlog) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [selectedBlog]);
+
+  // Close modal on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setSelectedBlog(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   // Extract unique categories from blogData
   const categories = [...new Set(blogData.map((blog) => blog.category || "Uncategorized"))];
@@ -297,110 +322,103 @@ const BlogPage = () => {
       <CallToAction />
       <div className="py-8"></div>
 
-      {/* Blog Modal */}
-      <Modal
-        open={!!selectedBlog}
-        onClose={() => setSelectedBlog(null)}
-        aria-labelledby="blog-title"
-        aria-describedby="blog-content"
-      >
-        <Box className="fixed inset-0 overflow-auto" 
-          sx={{
-            backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.98)',
-            backdropFilter: 'blur(10px)',
-            transition: 'all 0.3s ease'
+      {/* Blog Detail Overlay */}
+      {selectedBlog && (
+        <div 
+          className="fixed inset-0 z-50 overflow-y-auto"
+          style={{
+            backgroundColor: isDarkMode ? '#121212' : '#ffffff',
+            color: isDarkMode ? '#fff' : '#111827',
           }}
         >
-          {selectedBlog && (
-            <div className="max-w-4xl mx-auto p-8 lg:py-16 bg-transparent">
-              {/* Close Button */}
-              <div className="flex justify-between items-start mb-8">
-                <div className="flex-1 pr-8">
-                  <h2 id="blog-title" className={`text-4xl lg:text-5xl font-black leading-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                    {selectedBlog.title}
-                  </h2>
-                </div>
-                <IconButton 
-                  onClick={() => setSelectedBlog(null)}
-                  sx={{ 
-                    backgroundColor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
-                    '&:hover': { backgroundColor: '#CA0019', color: '#fff' }
-                  }}
-                >
-                  <CloseIcon sx={{ color: isDarkMode ? '#fff' : 'inherit' }} />
-                </IconButton>
+          <div className="max-w-4xl mx-auto p-6 md:p-12 lg:py-16">
+            {/* Close Button */}
+            <div className="flex justify-between items-start mb-8">
+              <div className="flex-1 pr-8">
+                <h2 id="blog-title" className={`text-3xl sm:text-4xl lg:text-5xl font-black leading-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  {selectedBlog.title}
+                </h2>
               </div>
-
-              {/* Blog Meta Info */}
-              <div className="flex items-center gap-4 mb-8">
-                <Chip 
-                  label={selectedBlog.category || "Uncategorized"} 
-                  sx={{ 
-                    backgroundColor: '#CA0019', 
-                    color: '#fff',
-                    fontWeight: 700,
-                    borderRadius: '6px'
-                  }} 
-                />
-                <Typography variant="body1" sx={{ color: isDarkMode ? 'rgba(255,255,255,0.6)' : 'text.secondary' }}>
-                   • {selectedBlog.readTime || "5"} Mins Read
-                </Typography>
-              </div>
-
-              {/* Blog Image */}
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl mb-12">
-                <img
-                  src={selectedBlog.image}
-                  alt={selectedBlog.title}
-                  className="w-full h-[500px] object-cover"
-                />
-              </div>
-
-              {/* Blog Content Sections */}
-              <div
-                id="blog-content"
-                className={`mt-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xl leading-relaxed space-y-10`}
+              <IconButton 
+                onClick={() => setSelectedBlog(null)}
+                sx={{ 
+                  backgroundColor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                  '&:hover': { backgroundColor: '#CA0019', color: '#fff' }
+                }}
               >
-                {selectedBlog.subContents && selectedBlog.subContents.map((section, index) => (
-                  <div key={index} className="space-y-4">
-                    {section.heading && (
-                      <h3 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                        {section.heading}
-                      </h3>
-                    )}
-                    <p>{section.paragraph}</p>
-                  </div>
+                <CloseIcon sx={{ color: isDarkMode ? '#fff' : 'inherit' }} />
+              </IconButton>
+            </div>
+
+            {/* Blog Meta Info */}
+            <div className="flex items-center gap-4 mb-8">
+              <Chip 
+                label={selectedBlog.category || "Uncategorized"} 
+                sx={{ 
+                  backgroundColor: '#CA0019', 
+                  color: '#fff',
+                  fontWeight: 700,
+                  borderRadius: '6px'
+                }} 
+              />
+              <Typography variant="body1" sx={{ color: isDarkMode ? 'rgba(255,255,255,0.6)' : 'text.secondary' }}>
+                 • {selectedBlog.readTime || "5"} Mins Read
+              </Typography>
+            </div>
+
+            {/* Blog Image */}
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl mb-12">
+              <img
+                src={selectedBlog.image}
+                alt={selectedBlog.title}
+                className="w-full max-h-[500px] object-cover"
+              />
+            </div>
+
+            {/* Blog Content Sections */}
+            <div
+              id="blog-content"
+              className={`mt-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-lg sm:text-xl leading-relaxed space-y-10`}
+            >
+              {selectedBlog.subContents && selectedBlog.subContents.map((section, index) => (
+                <div key={index} className="space-y-4">
+                  {section.heading && (
+                    <h3 className={`text-2xl sm:text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                      {section.heading}
+                    </h3>
+                  )}
+                  <p>{section.paragraph}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Tags Section */}
+            <div className="mt-16 pt-8 border-t border-gray-200 dark:border-white/10">
+              <Typography variant="h6" sx={{ mb: 3, color: isDarkMode ? '#fff' : '#333', fontWeight: 700 }}>
+                Tags
+              </Typography>
+              <div className="flex flex-wrap gap-3">
+                {selectedBlog.tags && selectedBlog.tags.map((tag, index) => (
+                  <Chip 
+                    key={index} 
+                    label={tag} 
+                    variant="outlined"
+                    sx={{ 
+                      borderColor: isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)',
+                      color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'text.secondary',
+                      '&:hover': {
+                        backgroundColor: '#CA0019',
+                        color: '#fff',
+                        borderColor: '#CA0019'
+                      }
+                    }} 
+                  />
                 ))}
               </div>
-
-              {/* Tags Section */}
-              <div className="mt-16 pt-8 border-t border-white/10">
-                <Typography variant="h6" sx={{ mb: 3, color: isDarkMode ? '#fff' : '#333', fontWeight: 700 }}>
-                  Tags
-                </Typography>
-                <div className="flex flex-wrap gap-3">
-                  {selectedBlog.tags && selectedBlog.tags.map((tag, index) => (
-                    <Chip 
-                      key={index} 
-                      label={tag} 
-                      variant="outlined"
-                      sx={{ 
-                        borderColor: isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)',
-                        color: isDarkMode ? 'rgba(255,255,255,0.7)' : 'text.secondary',
-                        '&:hover': {
-                          backgroundColor: '#CA0019',
-                          color: '#fff',
-                          borderColor: '#CA0019'
-                        }
-                      }} 
-                    />
-                  ))}
-                </div>
-              </div>
             </div>
-          )}
-        </Box>
-      </Modal>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
