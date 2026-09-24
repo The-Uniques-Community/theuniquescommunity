@@ -1,90 +1,78 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import ScheduleOutlinedIcon from "@mui/icons-material/ScheduleOutlined";
 import "./communitycard.css";
 import logo from "@/assets/logos/theuniquesCommunity.png";
 
-const CommunityCard = ({ event }) => {
+const CommunityCard = ({ event, onClick }) => {
   const navigate = useNavigate();
 
-  // Debug: Log the event data to console
-  // console.log("CommunityCard event data:", event);
-
-  // Function to format the banner URL for Google Drive
-  const getBannerUrl = (bannerData) => {
-    if (!bannerData) return "";
-    
-    // Handle case where bannerData is an object with fileId property
-    if (typeof bannerData === 'object' && bannerData.fileId) {
-      return `https://drive.google.com/file/d/${bannerData.fileId}/preview`;
-    }
-    
-    // Handle case where bannerData is an object with fileUrl property but no fileId
-    if (typeof bannerData === 'object' && bannerData.fileUrl) {
-      const fileUrl = bannerData.fileUrl;
-      if (fileUrl.includes('/file/d/')) {
-        const fileIdMatch = fileUrl.match(/\/file\/d\/([^\/]+)/);
-        if (fileIdMatch && fileIdMatch[1]) {
-          return `https://drive.google.com/file/d/${fileIdMatch[1]}/preview`;
-        }
+  // Extract Google Drive file ID from object, URL, or string
+  const extractFileId = (bannerData) => {
+    if (!bannerData) return null;
+    if (typeof bannerData === "object") {
+      if (bannerData.fileId) return bannerData.fileId;
+      if (bannerData.fileUrl) {
+        const match =
+          bannerData.fileUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/) ||
+          bannerData.fileUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        if (match) return match[1];
       }
-      return bannerData.fileUrl;
+      return null;
     }
-    
-    // Convert to string if it's another type
-    const bannerId = String(bannerData);
-    
-    // Check if it's already a complete URL
-    if (bannerId.startsWith('https://')) {
-      return bannerId;
-    }
-    
-    // Format as Google Drive preview URL for simple ID string
-    return `https://drive.google.com/file/d/${bannerId}/preview`;
+    const str = String(bannerData);
+    const match =
+      str.match(/[?&]id=([a-zA-Z0-9_-]+)/) ||
+      str.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (match) return match[1];
+    if (!str.startsWith("http") && str.length > 15) return str;
+    return null;
   };
 
-  // Get the correct event ID - try multiple possible ID fields
+  // High-resolution direct image URL
+  const getBannerUrl = (bannerData) => {
+    const fileId = extractFileId(bannerData);
+    if (fileId) {
+      return `https://lh3.googleusercontent.com/d/${fileId}=w1000`;
+    }
+    if (typeof bannerData === "object" && bannerData.fileUrl)
+      return bannerData.fileUrl;
+    if (typeof bannerData === "string" && bannerData.startsWith("http"))
+      return bannerData;
+    return "https://placehold.co/600x400?text=Event";
+  };
+
+  // Get the correct event ID
   const getEventId = () => {
     if (!event) return null;
-    
-    // Try different possible ID field names
     const possibleIds = [
       event._id,
       event.id,
       event.eventId,
-      event.objectId
+      event.objectId,
     ];
-    
     for (const id of possibleIds) {
-      if (id) {
-        console.log("Using event ID:", id);
-        return id;
-      }
+      if (id) return id;
     }
-    
-    console.warn("No valid event ID found:", event);
     return null;
   };
 
-  // Handle card click to navigate to event detail page
+  // Handle card click
   const handleCardClick = (e) => {
-    // Prevent navigation if clicking on the "Know More" button
-    if (e.target.closest('.know-more-button')) {
+    if (e.target.closest(".know-more-button")) {
       return;
     }
-    
+
+    if (onClick) {
+      onClick(event);
+      return;
+    }
+
     const eventId = getEventId();
-    console.log("Card clicked, navigating to:", `/events/${eventId}`);
-    
     if (eventId) {
       navigate(`/events/${eventId}`);
-    } else {
-      console.error("Cannot navigate: No event ID found");
-      // Fallback: try to open external link if available
-      if (event?.eventLink) {
-        window.open(event.eventLink, '_blank');
-      }
+    } else if (event?.eventLink) {
+      window.open(event.eventLink, "_blank");
     }
   };
 
@@ -92,80 +80,142 @@ const CommunityCard = ({ event }) => {
   const handleKnowMoreClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
+    if (onClick) {
+      onClick(event);
+      return;
+    }
+
     const eventId = getEventId();
-    console.log("Know More clicked, navigating to:", `/events/${eventId}`);
-    
     if (eventId) {
       navigate(`/events/${eventId}`);
     } else if (event?.eventLink) {
-      // Fallback to external link if no event ID
-      console.log("No event ID, opening external link:", event.eventLink);
-      window.open(event.eventLink, '_blank');
-    } else {
-      console.error("Cannot navigate: No event ID or external link found");
+      window.open(event.eventLink, "_blank");
     }
   };
 
-  // If no event data, return null or empty div
-  if (!event) {
-    console.warn("CommunityCard: No event data provided");
-    return null;
-  }
-  
+  if (!event) return null;
+
+  const eventDateString = event?.eventDate
+    ? new Date(event.eventDate).toDateString()
+    : "Date TBA";
+  const eventStatusText = event?.eventStatus
+    ? event.eventStatus.charAt(0).toUpperCase() + event.eventStatus.slice(1)
+    : "Active";
+
   return (
-    <div 
-      className="card2 bg-slate-200 dark:bg-[#161616] cursor-pointer border border-transparent dark:border-white/10"
-      onClick={handleCardClick}
-    >
-      <div className="top-sectionn relative">
-        <iframe
-          src={getBannerUrl(event?.eventBanner)}
-          className="w-full h-full border-0 pointer-events-none"
-          title={event?.eventName || "Event"}
-          loading="lazy"
-          allowFullScreen
-        ></iframe>
-        <div className="absolute text-xs font-medium text-[#ca0019] top-1 left-1 z-10 bg-white dark:bg-slate-800 px-2 py-1 rounded">
-          {event?.eventType?.[0] || event?.eventType || "Event"}
-        </div>
-      </div>
-      <div>
-        <p className="text-xl pt-3 pb-1 px-3 font-medium text-slate-900 dark:text-white">
-          {event?.eventName ? (event.eventName.length > 20 ? event.eventName.slice(0, 20) + "..." : event.eventName) : "Event"}
-        </p>
-        <div className="flex justify-start items-center gap-x-1 px-2">
-          <LocationOnOutlinedIcon sx={{ fontSize: 16 }} className="text-slate-700 dark:text-slate-300" />
-          <p className="text-xs text-slate-700 dark:text-slate-300">{event?.eventVenue || "Venue TBA"}</p>
-        </div>
-        <div className="h-[1px] w-[280px] mx-auto mt-3 bg-slate-400 dark:bg-slate-700"></div>
-        <div className="flex justify-start gap-x-5 items-center px-3 py-2">
-          <div className="flex items-center gap-x-1">
-            <CalendarMonthOutlinedIcon sx={{ fontSize: 14 }} className="text-slate-700 dark:text-slate-300" />
-            <p className="text-xs text-slate-700 dark:text-slate-300">
-              {event?.eventDate ? new Date(event.eventDate).toDateString() : "Date TBA"}
-            </p>
-          </div>
-          <div className="flex items-center gap-x-1">
-            <ScheduleOutlinedIcon sx={{ fontSize: 14 }} className="text-slate-700 dark:text-slate-300" />
-            <p className="text-xs text-slate-700 dark:text-slate-300">{event?.eventTime || "Time TBA"}</p>
-          </div>
-        </div>
-        <div className="mt-3 relative">
-          <div className="bordern"></div>
+    <div className="card2-custom-container group cursor-pointer" onClick={handleCardClick}>
+      {/* Hidden SVG Definition for Responsive ObjectBoundingBox Clip-Path */}
+      <svg className="absolute w-0 h-0 pointer-events-none" aria-hidden="true">
+        <defs>
+          <clipPath id="card-cutout-clip" clipPathUnits="objectBoundingBox">
+            <path d="M 0,0.06 Q 0,0 0.075,0 L 0.925,0 Q 1,0 1,0.06 L 1,0.83 Q 1,0.86 0.96,0.86 L 0.64,0.86 Q 0.60,0.86 0.60,0.90 L 0.60,0.95 Q 0.60,1 0.56,1 L 0.075,1 Q 0,1 0,0.94 Z" />
+          </clipPath>
+        </defs>
+      </svg>
+
+      {/* Outer Card Body clipped by SVG with Custom Bottom-Right Cutout */}
+      <div className="card2-custom-shape bg-white dark:bg-[#18181b]">
+        {/* Top Inset Image Area with Rounded Corners */}
+        <div className="top-image-container bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
           <img
-            src={logo}
-            className="h-7 w-1/2 pb-2 px-3 object-contain object-left"
-            alt="TU Logo"
+            src={getBannerUrl(event?.eventBanner)}
+            alt={event?.eventName || "Event"}
+            referrerPolicy="no-referrer"
+            className="w-full h-full object-contain object-center p-1.5 transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+            loading="lazy"
+            onError={(e) => {
+              const fileId = extractFileId(event?.eventBanner);
+              if (fileId && !e.target.src.includes("thumbnail")) {
+                e.target.src = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+              }
+            }}
           />
-          <button
-            onClick={handleKnowMoreClick}
-            className="know-more-button absolute hover:bg-black duration-150 -bottom-2 text-sm -right-1 w-24 rounded-full text-white text-center bg-[#ca0019] py-[6px] hover:shadow-md transition-all"
-          >
-            Know More
-          </button>
+        </div>
+
+        {/* Content Body Area containing all existing event data */}
+        <div className="flex-1 flex flex-col justify-between pt-2 px-1">
+          {/* Header Info */}
+          <div>
+            {/* Status & Date */}
+            <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 font-medium">
+              <span>{eventDateString}</span>
+              <span>•</span>
+              <span className="text-[#ca0019] font-semibold">{eventStatusText}</span>
+            </div>
+
+            {/* Title */}
+            <h3 className="text-[17px] font-bold text-slate-900 dark:text-white truncate mt-1">
+              {event?.eventName || "Event"}
+            </h3>
+
+            {/* Subtle Divider Line */}
+            <div className="h-[1px] bg-slate-100 dark:bg-slate-800 my-1.5"></div>
+
+            {/* Collapsible Middle Details */}
+            <div className="collapsible-details">
+              <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300 truncate">
+                <LocationOnOutlinedIcon
+                  sx={{ fontSize: 15 }}
+                  className="text-slate-500 flex-shrink-0"
+                />
+                <span className="truncate">{event?.eventVenue || "Venue TBA"}</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mt-1">
+                <ScheduleOutlinedIcon
+                  sx={{ fontSize: 14 }}
+                  className="text-slate-500 flex-shrink-0"
+                />
+                <span>{event?.eventTime || "Time TBA"}</span>
+              </div>
+
+              <div className="flex gap-2 mt-2">
+                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">
+                  {event?.eventType || "Event"}
+                </span>
+                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">
+                  {eventStatusText}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer Row (Logo on bottom-left tab) */}
+          <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/60 mt-auto pb-1">
+            <img
+              src={logo}
+              className="h-6 w-auto max-w-[120px] object-contain object-left pointer-events-none"
+              alt="TU Logo"
+            />
+          </div>
         </div>
       </div>
+
+      {/* "Know More" Button positioned directly in the bottom-right cutout socket with clean clearance */}
+      <button
+        onClick={handleKnowMoreClick}
+        className="know-more-button absolute bottom-1.5 right-1.5 bg-[#ca0019] hover:bg-black text-white text-xs font-semibold px-4 py-2 rounded-full shadow-[0_6px_16px_rgba(202,0,25,0.4)] hover:shadow-[0_8px_22px_rgba(202,0,25,0.55)] transition-all duration-200 z-30 flex items-center gap-1.5"
+      >
+        <span>Know More</span>
+        <span className="text-sm font-bold leading-none">→</span>
+      </button>
+
+      {/* SVG Outline Stroke following the exact custom clipped silhouette */}
+      <svg
+        className="absolute inset-0 w-full h-full pointer-events-none z-20"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+      >
+        <path
+          d="M 0,6 Q 0,0 7.5,0 L 92.5,0 Q 100,0 100,6 L 100,83 Q 100,86 96,86 L 64,86 Q 60,86 60,90 L 60,95 Q 60,100 56,100 L 7.5,100 Q 0,100 0,94 Z"
+          fill="none"
+          stroke="#ea384c"
+          strokeOpacity="0.7"
+          strokeWidth="1.4"
+          vectorEffect="non-scaling-stroke"
+        />
+      </svg>
     </div>
   );
 };
