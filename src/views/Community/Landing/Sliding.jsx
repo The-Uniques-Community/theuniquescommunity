@@ -32,17 +32,20 @@ const cardData = [
   },
 ]
 
-const WeirdCard = ({ title, description, isDarkMode }) => {
+const WeirdCard = ({ title, description, isDarkMode, height = 260 }) => {
   return (
-    <div className={`card group hover:cursor-pointer duration-100 w-full max-w-xl h-[260px] shadow-xl hover:shadow-2xl flex-shrink-0 ${isDarkMode ? 'dark-mode-cutout bg-[#141414]' : 'bg-white'}`}>
-      <div className={`top-section h-full py-4 rounded-lg relative transition-all duration-500 ${isDarkMode ? 'bg-[#1e1e1e]' : 'bg-slate-100'}`}>
-        <div className="absolute flex justify-center items-center top-0 left-0 w-12 h-12 bg-black/90 rounded-full z-20">
-          <img className="w-7 object-contain h-7" src={tu_red || "/placeholder.svg"} alt="logo" />
+    <div 
+      className={`card group hover:cursor-pointer duration-100 w-full max-w-xl shadow-xl hover:shadow-2xl flex-shrink-0 ${isDarkMode ? 'dark-mode-cutout bg-[#141414]' : 'bg-white'}`}
+      style={{ height: `${height}px` }}
+    >
+      <div className={`top-section h-full py-3 sm:py-4 rounded-lg relative transition-all duration-500 ${isDarkMode ? 'bg-[#1e1e1e]' : 'bg-slate-100'}`}>
+        <div className="absolute flex justify-center items-center top-0 left-0 w-10 h-10 sm:w-12 sm:h-12 bg-black/90 rounded-full z-20">
+          <img className="w-5 h-5 sm:w-7 sm:h-7 object-contain" src={tu_red || "/placeholder.svg"} alt="logo" />
         </div>
         <div className="border2"></div>
-        <h2 className={`text-xl font-bold mt-8 px-6 whitespace-nowrap ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{title}</h2>
-        <div className="bg-[#ca0019] h-[2px] w-0 group-hover:w-1/2 transition-all duration-700 ml-6 mt-1"></div>
-        <p className={`text-base font-normal px-6 mt-3 leading-relaxed text-left ${isDarkMode ? 'text-gray-400' : 'text-gray-700'}`}>{description}</p>
+        <h2 className={`text-base sm:text-lg md:text-xl font-bold mt-6 sm:mt-8 px-4 sm:px-6 whitespace-nowrap overflow-hidden text-ellipsis ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{title}</h2>
+        <div className="bg-[#ca0019] h-[2px] w-0 group-hover:w-1/2 transition-all duration-700 ml-4 sm:ml-6 mt-1"></div>
+        <p className={`text-xs sm:text-sm md:text-base font-normal px-4 sm:px-6 mt-2 sm:mt-3 leading-relaxed text-left line-clamp-3 sm:line-clamp-none ${isDarkMode ? 'text-gray-400' : 'text-gray-700'}`}>{description}</p>
       </div>
       <div className="relative">
         <div className={`px-2 flex justify-center items-center h-6 w-[70px] rounded-xl absolute bottom-0.5 right-1 transition-all duration-300 ${isDarkMode ? 'bg-[#1e1e1e]' : 'bg-slate-200 shadow-sm'} group-hover:bg-[#ca0019]`}>
@@ -57,6 +60,9 @@ export default function SplitLayout() {
   const { isDarkMode } = useThemeContext()
   const containerRef = useRef(null)
   const [scrollProgress, setScrollProgress] = useState(0)
+  const [screenWidth, setScreenWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1200
+  )
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,26 +76,34 @@ export default function SplitLayout() {
       setScrollProgress(progress)
     }
 
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth)
+      handleScroll()
+    }
+
     window.addEventListener("scroll", handleScroll, { passive: true })
-    window.addEventListener("resize", handleScroll)
+    window.addEventListener("resize", handleResize)
     handleScroll()
 
     return () => {
       window.removeEventListener("scroll", handleScroll)
-      window.removeEventListener("resize", handleScroll)
+      window.removeEventListener("resize", handleResize)
     }
   }, [])
+
+  const isMobile = screenWidth < 768
+  const isTablet = screenWidth >= 768 && screenWidth < 1024
 
   const totalCards = cardData.length
   // Step ranges continuously from 0 to totalCards - 1 (0 to 5)
   const step = scrollProgress * (totalCards - 1)
 
-  // Standardized constants to ensure EXACT same gap between all cards
-  const TOP_Y = 65 // Centered position for the active top card
-  const CARD_HEIGHT = 260 // Exact fixed height of every card
-  const GAP = 25 // Exact uniform gap between the top card bottom and peeking card top
-  const PEEK_Y = TOP_Y + CARD_HEIGHT + GAP // Exactly 350px for all cards!
-  const WAIT_Y = PEEK_Y + CARD_HEIGHT + GAP // Exactly 635px for all cards!
+  // Standardized constants tailored for responsive breakpoints
+  const CARD_HEIGHT = isMobile ? 215 : isTablet ? 235 : 260
+  const TOP_Y = isMobile ? 8 : isTablet ? 30 : 65
+  const GAP = isMobile ? 16 : 25
+  const PEEK_Y = TOP_Y + CARD_HEIGHT + GAP
+  const WAIT_Y = PEEK_Y + CARD_HEIGHT + GAP
 
   const getCardTransform = (index) => {
     // If this card is already completely passed (new card has fully landed over it):
@@ -161,43 +175,48 @@ export default function SplitLayout() {
       className={`relative transition-colors duration-700 ${isDarkMode ? 'bg-[#0a0a0a]' : 'bg-white'}`}
       style={{
         // Keeps the page stuck at this section while scrolling through each card
-        height: "calc(100vh + 3000px)"
+        height: isMobile ? "calc(100vh + 2200px)" : "calc(100vh + 3000px)"
       }}
     >
       {/* Sticky Viewport Container: stays pinned while scrolling */}
       <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
-        <div className="container mx-auto flex flex-col md:flex-row gap-12 px-6 lg:px-12 items-center">
+        <div className="container mx-auto flex flex-col md:flex-row gap-4 sm:gap-8 md:gap-12 px-4 sm:px-6 lg:px-12 items-center justify-center">
           
           {/* Left section */}
-          <div className="w-full md:w-1/2 flex flex-col justify-center py-12">
-            <div className="space-y-6">
-              <h1 className="text-5xl lg:text-7xl font-black leading-tight tracking-tighter">
+          <div className="w-full md:w-1/2 flex flex-col justify-center py-2 sm:py-6 md:py-12">
+            <div className="space-y-2 sm:space-y-4 md:space-y-6">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight tracking-tight sm:tracking-tighter">
                 Join <span className="text-[#ca0019]">The Uniques Community</span> Today!
               </h1>
-              <p className={`text-xl max-w-lg font-medium ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              <p className={`text-xs sm:text-base md:text-lg lg:text-xl max-w-lg font-medium leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                 Become an ambassador and lead a thriving community while gaining invaluable experience and networking opportunities.
               </p>
             </div>
 
-            <div className="mt-12 grid grid-cols-3 gap-8">
+            <div className="mt-3 sm:mt-6 md:mt-12 grid grid-cols-3 gap-2 sm:gap-6 md:gap-8">
               <div className="stat-item">
-                <h3 className="text-4xl font-black text-[#ca0019]">500+</h3>
-                <p className={`${isDarkMode ? 'text-gray-500' : 'text-gray-400'} text-xs font-bold uppercase tracking-widest mt-1`}>Ambassadors</p>
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#ca0019]">500+</h3>
+                <p className={`${isDarkMode ? 'text-gray-500' : 'text-gray-400'} text-[9px] sm:text-xs font-bold uppercase tracking-wider md:tracking-widest mt-0.5 sm:mt-1`}>Ambassadors</p>
               </div>
               <div className="stat-item">
-                <h3 className="text-4xl font-black text-[#ca0019]">100+</h3>
-                <p className={`${isDarkMode ? 'text-gray-500' : 'text-gray-400'} text-xs font-bold uppercase tracking-widest mt-1`}>Workshops</p>
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#ca0019]">100+</h3>
+                <p className={`${isDarkMode ? 'text-gray-500' : 'text-gray-400'} text-[9px] sm:text-xs font-bold uppercase tracking-wider md:tracking-widest mt-0.5 sm:mt-1`}>Workshops</p>
               </div>
               <div className="stat-item">
-                <h3 className="text-4xl font-black text-[#ca0019]">4.9</h3>
-                <p className={`${isDarkMode ? 'text-gray-500' : 'text-gray-400'} text-xs font-bold uppercase tracking-widest mt-1`}>Rating</p>
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#ca0019]">4.9</h3>
+                <p className={`${isDarkMode ? 'text-gray-500' : 'text-gray-400'} text-[9px] sm:text-xs font-bold uppercase tracking-wider md:tracking-widest mt-0.5 sm:mt-1`}>Rating</p>
               </div>
             </div>
           </div>
 
           {/* Right section - Overlapping Card Stack */}
           <div className="w-full md:w-1/2 flex justify-center">
-            <div className="relative w-full max-w-[420px] h-[560px] overflow-hidden">
+            <div 
+              className="relative w-full max-w-[340px] sm:max-w-[390px] md:max-w-[420px] overflow-hidden"
+              style={{
+                height: isMobile ? "360px" : isTablet ? "470px" : "560px"
+              }}
+            >
               {cardData.map((card, index) => {
                 const { y, scale, zIndex, opacity } = getCardTransform(index)
                 return (
@@ -215,6 +234,7 @@ export default function SplitLayout() {
                       title={card.title}
                       description={card.description}
                       isDarkMode={isDarkMode}
+                      height={CARD_HEIGHT}
                     />
                   </div>
                 )
