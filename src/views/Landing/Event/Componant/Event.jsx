@@ -102,9 +102,10 @@ export default function Eventmodel({ event, isOpen, onClose }) {
     const [formErrors, setFormErrors] = useState({});
     const [registrationLoading, setRegistrationLoading] = useState(false);
     const [registrationSuccess, setRegistrationSuccess] = useState(false);
+    const [useIframeFallback, setUseIframeFallback] = useState(false);
     // Add these state variables at the beginning of your component
-const [teamMembers, setTeamMembers] = useState([]);
-const [teamsLoading, setTeamsLoading] = useState(false);
+    const [teamMembers, setTeamMembers] = useState([]);
+    const [teamsLoading, setTeamsLoading] = useState(false);
 
 // Define valid team types as a constant
 const VALID_TEAM_TYPES = [
@@ -672,14 +673,34 @@ const fetchTeamMembers = async (eventId) => {
 
     // Helper function to extract Google Drive file ID from event banner
     const extractBannerFileId = (banner) => {
-        if (!banner) return '1OSWCFdMnh8Y1wZoepQuup8HXzmcpxxKu'; // Default fallback
-
-        if (typeof banner === 'string') {
-            return banner;
-        } else {
-            // If banner is an object, try to extract fileId or _id
-            return banner.fileId || banner._id || '1OSWCFdMnh8Y1wZoepQuup8HXzmcpxxKu';
+        if (!banner) return null;
+        if (typeof banner === 'object') {
+            if (banner.fileId) return banner.fileId;
+            if (banner.fileUrl) {
+                const match =
+                    banner.fileUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/) ||
+                    banner.fileUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (match) return match[1];
+            }
+            return banner._id || null;
         }
+        const str = String(banner);
+        const match =
+            str.match(/[?&]id=([a-zA-Z0-9_-]+)/) ||
+            str.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        if (match) return match[1];
+        if (!str.startsWith('http') && str.length > 15) return str;
+        return null;
+    };
+
+    const getBannerUrl = (banner) => {
+        const fileId = extractBannerFileId(banner);
+        if (fileId) {
+            return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`;
+        }
+        if (typeof banner === 'object' && banner.fileUrl) return banner.fileUrl;
+        if (typeof banner === 'string' && banner.startsWith('http')) return banner;
+        return 'https://placehold.co/1200x600?text=Event+Banner';
     };
 
     // If no event is provided, show a loading state
@@ -696,9 +717,6 @@ const fetchTeamMembers = async (eventId) => {
     // Safety check to ensure sponsors is always an array
     const safeEventSponsors = Array.isArray(event.sponsors) ? event.sponsors : [];
 
-    // Extract banner file ID
-    const bannerFileId = extractBannerFileId(event.eventBanner);
-
     return (
         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-[9999999] p-2 sm:p-4 overflow-hidden">
             <div className="bg-white w-full max-w-7xl mx-auto h-[90vh] sm:h-[85vh] md:h-[90vh] overflow-auto rounded-xl shadow-lg relative p-3 sm:p-4 md:p-6">
@@ -709,14 +727,38 @@ const fetchTeamMembers = async (eventId) => {
                 </button>
 
                 {/* Header Banner - Dynamic from backend */}
-                <div className="w-full h-40 sm:h-60 md:h-96 border-b border-gray-300 rounded-xl">
-                    <iframe
-                        src={`https://drive.google.com/file/d/${bannerFileId}/preview`}
-                        className="w-full h-full object-cover rounded-xl"
-                        title="Event banner"
-                        loading="lazy"
-                        allow="autoplay"
-                    ></iframe>
+                <div className="w-full h-48 sm:h-72 md:h-96 rounded-xl overflow-hidden mb-6 shadow-sm bg-slate-100 flex items-center justify-center border border-gray-100 relative">
+                    {!useIframeFallback ? (
+                        <img
+                            src={getBannerUrl(event.eventBanner)}
+                            alt={event.eventName || "Event banner"}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover object-center"
+                            onError={(e) => {
+                                const fileId = extractBannerFileId(event.eventBanner);
+                                if (!fileId) {
+                                    setUseIframeFallback(true);
+                                    return;
+                                }
+                                const currentSrc = e.target.src || "";
+                                if (currentSrc.includes("thumbnail")) {
+                                    e.target.src = `https://lh3.googleusercontent.com/d/${fileId}=w1200`;
+                                } else if (currentSrc.includes("lh3.googleusercontent.com")) {
+                                    e.target.src = `https://drive.google.com/uc?export=view&id=${fileId}`;
+                                } else {
+                                    setUseIframeFallback(true);
+                                }
+                            }}
+                        />
+                    ) : (
+                        <iframe
+                            src={`https://drive.google.com/file/d/${extractBannerFileId(event.eventBanner)}/preview`}
+                            className="w-full h-full border-0"
+                            title="Event banner"
+                            loading="lazy"
+                            allow="autoplay"
+                        />
+                    )}
                 </div>
 
                 {/* Profile Section */}
