@@ -68,6 +68,7 @@ const SuccessTimeline = ({ student, timelineMinWidth, SectionHeading, isDarkMode
         </Box>
 
         <Box
+          data-lenis-prevent
           sx={{
             mt: 6,
             position: 'relative',

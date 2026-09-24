@@ -96,7 +96,7 @@ const Sidebar = ({ students, onDrawerToggle, isDrawerOpen }) => {
 
       <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />
       
-      <List sx={{ flexGrow: 1, overflowY: 'auto', pb: 2 }}>
+      <List sx={{ flexGrow: 1, overflowY: 'auto', pb: 2 }} data-lenis-prevent>
         {students.map((student) => (
           <StyledListItem
             key={student.id}

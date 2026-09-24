@@ -76,7 +76,6 @@ const LandingRoutes = {
     { path: "blogs", element: <BlogPage /> },
     { path: "contact", element: <Contact /> },
     { path: "batches", element: <BatchesPage /> },
-    { path: "success-stories", element: <SuccessStories /> },
     { path: "notices", element: <Notices /> },
     { path: "test", element: <Timeline events={timelineData} /> },
     { path: "forget-password", element: <ForgetPassword /> },
