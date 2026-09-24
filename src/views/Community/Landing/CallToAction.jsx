@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import DoubleQuotes from '@/assets/img/Community/Sample1.png';
 import ApplicationForm from '@/components/ApplicationForm';
+import { useThemeContext } from '@/theme/ThemeProvider';
 
 const Modal = ({ isOpen, onClose, title, children }) => {
     if (!isOpen) return null;
@@ -25,6 +26,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
 };
 
 export default function Example() {
+    const { isDarkMode } = useThemeContext();
     const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
     const [isLearnMoreModalOpen, setIsLearnMoreModalOpen] = useState(false);
 
@@ -48,9 +50,9 @@ export default function Example() {
     );
 
     return (
-        <div className="bg-white">
-            <div className="container mx-auto max-w-7xl py-24 sm:px-6 sm:py-32 lg:px-8 overflow-hidden block sm:hidden md:block">
-                <div className="relative isolate overflow-hidden bg-black px-6 pt-16 shadow-2xl sm:rounded-3xl sm:px-16 md:pt-24 lg:flex lg:gap-x-20 lg:px-24 lg:pt-0">
+        <div className={`transition-colors duration-700 ${isDarkMode ? 'bg-[#0a0a0a]' : 'bg-white'}`}>
+            <div className="container mx-auto max-w-7xl py-12 sm:py-20 lg:py-28 px-4 sm:px-6 lg:px-8">
+                <div className="relative isolate overflow-hidden bg-black px-6 pt-12 pb-0 sm:rounded-3xl rounded-2xl sm:px-10 sm:pt-16 lg:flex lg:items-center lg:gap-x-8 xl:gap-x-12 lg:px-14 lg:pt-0 shadow-2xl">
                     <svg
                         viewBox="0 0 1024 1024"
                         aria-hidden="true"
@@ -64,21 +66,23 @@ export default function Example() {
                             </radialGradient>
                         </defs>
                     </svg>
-                    <div className="mx-auto max-w-md text-left lg:mx-0 lg:flex-auto lg:py-32 lg:text-left">
-                        <h2 className="text-3xl font-semibold tracking-tight text-balance text-white sm:text-4xl">
+
+                    {/* Left text column */}
+                    <div className="mx-auto max-w-md lg:max-w-none lg:w-[45%] xl:w-[42%] text-left lg:py-20 xl:py-24">
+                        <h2 className="text-3xl sm:text-4xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-white leading-tight">
                             Become a Campus Ambassador Today!
                         </h2>
-                        <p className="mt-6 text-lg/8 text-pretty text-gray-300">
+                        <p className="mt-4 sm:mt-6 text-base sm:text-lg text-gray-300 leading-relaxed">
                             Join our exclusive program, represent our brand, and gain incredible experience while building your leadership skills.
                         </p>
-                        <div className="mt-10 flex items-center justify-start gap-x-6 lg:justify-start">
+                        <div className="mt-8 flex flex-wrap items-center justify-start gap-4 sm:gap-x-6">
                             <a
                                 href="#"
                                 onClick={(e) => {
                                     e.preventDefault();
                                     setIsApplyModalOpen(true);
                                 }}
-                                className="rounded-md bg-red-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                                className="rounded-md bg-red-600 px-5 py-2.5 text-sm sm:text-base font-semibold text-white shadow-md hover:bg-red-700 transition"
                             >
                                 Apply Now
                             </a>
@@ -88,19 +92,19 @@ export default function Example() {
                                     e.preventDefault();
                                     setIsLearnMoreModalOpen(true);
                                 }}
-                                className="text-sm/6 font-semibold text-white"
+                                className="text-sm sm:text-base font-semibold text-white hover:text-gray-200 transition"
                             >
                                 Learn more <span aria-hidden="true">→</span>
                             </a>
                         </div>
                     </div>
-                    <div className="relative flex justify-center items-center mt-16 h-80 lg:mt-8">
+
+                    {/* Right illustration column - Large & Prominent */}
+                    <div className="relative w-full lg:w-[55%] xl:w-[58%] flex-1 flex items-end justify-center lg:justify-end mt-10 lg:mt-0 self-end">
                         <img
                             alt="Campus Ambassador Program"
                             src={DoubleQuotes}
-                            width="100%"
-                            height="auto"
-                            className="absolute top-0 left-0 w-[57rem] max-w-none rounded-md bg-white/5 ring-1 ring-white/10"
+                            className="w-full max-w-[480px] sm:max-w-[540px] md:max-w-[600px] lg:max-w-[680px] xl:max-w-[740px] 2xl:max-w-[800px] h-auto object-contain object-bottom drop-shadow-2xl"
                         />
                     </div>
                 </div>
@@ -111,7 +115,9 @@ export default function Example() {
                 onClose={() => setIsApplyModalOpen(false)}
                 title="Campus Ambassador Application"
             >
-                <ApplicationForm onClose={() => setIsApplyModalOpen(false)} />
+                <div className="max-h-[80vh] overflow-y-auto pr-1">
+                    <ApplicationForm onClose={() => setIsApplyModalOpen(false)} />
+                </div>
             </Modal>
 
             <Modal
@@ -119,7 +125,9 @@ export default function Example() {
                 onClose={() => setIsLearnMoreModalOpen(false)}
                 title="Campus Ambassador Program"
             >
-                {benefits}
+                <div className="max-h-[80vh] overflow-y-auto pr-1">
+                    {benefits}
+                </div>
             </Modal>
         </div>
     );
