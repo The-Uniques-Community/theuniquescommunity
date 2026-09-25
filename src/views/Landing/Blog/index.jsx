@@ -96,7 +96,7 @@ const BlogPage = () => {
     setSelectedCategories([]);
   };
 
-  // Filter sidebar content
+  // Filter sidebar content.
   const filterContent = (
     <Box sx={{ 
       width: isMobile ? 280 : 260, 
