@@ -1,6 +1,7 @@
 import React from "react";
 import CurvedLoop from "./CurvedLoop";
 import { useThemeContext } from "@/theme/ThemeProvider";
+import siemensLogo from "../../../assets/logos/siemens.svg";
 
 const companies = [
   {
@@ -33,7 +34,7 @@ const companies = [
   },
   {
     name: "Siemens",
-    logo: "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5W3VJLlrBbR9rw3ciXY8DKdzPWVsp25LaHlth",
+    logo: siemensLogo,
   },
 ];
 
