@@ -33,6 +33,8 @@ const TermsOfService = Loader(lazy(() => import("@/views/Landing/TermsOfService"
 const NotFound = Loader(lazy(() => import("@/views/Landing/NotFound/index")), false);
 const CommunityPage = Loader(lazy(() => import("@/views/Landing/Community/index")), false);
 const SuccessStories = Loader(lazy(() => import("@/views/Landing/SuccessStories/index")), false);
+const PrivacyPolicy = Loader(lazy(() => import("@/views/Landing/PrivacyPolicy/index")), false);
+const Projects = Loader(lazy(() => import("@/views/Landing/Projects/index")), false);
 const Timeline = Loader(lazy(() => import('@/utils/Timeline/Timeline')));
 
 const timelineData = [
@@ -79,6 +81,10 @@ const LandingRoutes = {
     { path: "terms-of-service", element: <TermsOfService /> },
     { path: "blogs", element: <BlogPage /> },
     { path: "contact", element: <Contact /> },
+    { path: "privacy-policy", element: <PrivacyPolicy /> },
+    { path: "privacy", element: <PrivacyPolicy /> },
+    { path: "projects", element: <Projects /> },
+    { path: "project", element: <Projects /> },
     { path: "batches", element: <BatchesPage /> },
     { path: "notices", element: <Notices /> },
     { path: "test", element: <Timeline events={timelineData} /> },

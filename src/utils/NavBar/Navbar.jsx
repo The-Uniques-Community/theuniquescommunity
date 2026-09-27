@@ -94,6 +94,7 @@ const Navbar = () => {
       { text: "Training Model", icon: <ScienceIcon />, link: "/training" },
       { text: "Success Stories", icon: <CheckCircleIcon />, link: "/success-stories" },
       { text: "Community", icon: <GroupsIcon />, link: "/community-main" },
+      { text: "Projects", icon: <WorkIcon />, link: "/projects" },
       { text: "Blogs", icon: <ArticleIcon />, link: "/blogs" },
       { text: "Contact", icon: <ContactMailIcon />, link: "/contact" },
     ];
@@ -368,7 +369,7 @@ const Navbar = () => {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="lg:px-16 py-4 md:px-12 sm:px-8 px-5 grid grid-cols-2 lg:grid-cols-3 sticky top-0 z-[100] bg-white/80 dark:bg-neutral-900/80 border-b border-white/20 dark:border-neutral-800/50 items-center shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] backdrop-blur-xl"
+      className="lg:px-8 xl:px-16 py-4 md:px-8 sm:px-6 px-5 grid grid-cols-2 lg:grid-cols-3 sticky top-0 z-[100] bg-white/80 dark:bg-neutral-900/80 border-b border-white/20 dark:border-neutral-800/50 items-center shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] backdrop-blur-xl"
     >
       <div className="flex items-center justify-start">
         <Link to={"/"} className="group">
@@ -383,17 +384,18 @@ const Navbar = () => {
       </div>
 
       {/* Desktop Links - Centered */}
-      <div className="hidden lg:flex items-center justify-center gap-2">
+      <div className="hidden lg:flex items-center justify-center gap-1 xl:gap-2 whitespace-nowrap">
         {[
           { name: "ABOUT US", path: "/about" },
           { name: "COMMUNITY", path: "/community-main" },
           { name: "EVENTS", path: "/events" },
+          { name: "PROJECTS", path: "/projects" },
         ].map((item) => (
-          <Link key={item.name} to={item.path} className="group px-5 py-2.5">
-            <div className="relative inline-block">
+          <Link key={item.name} to={item.path} className="group px-3.5 xl:px-5 py-2.5 whitespace-nowrap shrink-0">
+            <div className="relative inline-block whitespace-nowrap">
               <motion.span 
                 whileHover={{ scale: 1.02 }}
-                className="relative z-10 text-sm font-bold tracking-wider text-neutral-700 dark:text-neutral-300 group-hover:text-red-600 dark:group-hover:text-red-500 transition-colors duration-300"
+                className="relative z-10 text-sm font-bold tracking-wider text-neutral-700 dark:text-neutral-300 group-hover:text-red-600 dark:group-hover:text-red-500 transition-colors duration-300 whitespace-nowrap"
               >
                 {item.name}
               </motion.span>
