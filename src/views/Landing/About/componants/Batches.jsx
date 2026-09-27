@@ -1,17 +1,20 @@
-import React from "react";
-import { Box, Typography, Grid, Card, Stack, Container, Select, MenuItem, FormControl } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Typography, Grid, Card, Stack, Container, Select, MenuItem, FormControl, Modal, IconButton } from "@mui/material";
+import { X } from "lucide-react";
 import Button from "@/utils/Buttons/Button";
 import { useTheme } from "@mui/material";
 import uniques1 from "../../../../assets/img/About/uniques1.jpg";
 import uniques2 from "../../../../assets/img/About/uniques2.jpg";
 import uniques3 from "../../../../assets/img/About/uniques3.jpg";
+import uniques4 from "../../../../assets/img/About/uniques4.png";
 
 import { useNavigate } from "react-router-dom";
 import { useThemeContext } from "../../../../theme/ThemeProvider";
 
 const BatchProfile = () => {
   const { isDarkMode } = useThemeContext();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
+  const [selectedImageModal, setSelectedImageModal] = useState(null);
   const theme = useTheme();
 
   const handleChange = (event) => {
@@ -46,7 +49,7 @@ const BatchProfile = () => {
       title: "The Uniques Batch 4.0",
       description:
         "The Uniques 4.0 batch is the newest cohort carrying forward the legacy of innovation. They are actively engaged in advanced skills training across Python, Full-Stack Development, DSA, and Salesforce CRM modules.\n\nFocused on real-world implementation, Batch 4.0 is collaborating with community mentors on modern engineering challenges to prepare for elite placements.",
-      image: uniques3, // Reusing uniques3.jpg as uniques4.jpg does not exist
+      image: uniques4,
     },
   ];
 
@@ -134,15 +137,19 @@ const BatchProfile = () => {
 
         {/* Dynamic Content */}
         <Grid container spacing={4} alignItems="center" justifyContent="center" sx={{ marginTop: "1rem" }}>
-          {/* Left Section */}
+          {/* Left Section - Clean picture with no thick frame */}
           <Grid item xs={12} sm={6} sx={{ textAlign: "center" }}>
-            <Card
-              elevation={0}
+            <Box
+              onClick={() => setSelectedImageModal(batchData[value])}
               sx={{
-                height: { xs: "300px", sm: "400px", md: "500px" },
-                borderRadius: "20px",
+                width: "100%",
+                borderRadius: "16px",
                 overflow: "hidden",
-                boxShadow: isDarkMode ? "0 20px 40px rgba(0,0,0,0.4)" : "0 20px 40px rgba(0,0,0,0.1)",
+                cursor: "pointer",
+                transition: "transform 0.3s ease",
+                "&:hover": {
+                  transform: "scale(1.015)",
+                }
               }}
             >
               <img
@@ -152,12 +159,13 @@ const BatchProfile = () => {
                 decoding="async"
                 style={{
                   width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  objectPosition: "center"
+                  height: "auto",
+                  display: "block",
+                  borderRadius: "16px",
+                  objectFit: "contain",
                 }}
               />
-            </Card>
+            </Box>
           </Grid>
 
           {/* Right Section */}
@@ -201,6 +209,83 @@ const BatchProfile = () => {
           </Grid>
         </Grid>
       </Container>
+
+      {/* Fullscreen Lightbox Image Modal */}
+      <Modal
+        open={Boolean(selectedImageModal)}
+        onClose={() => setSelectedImageModal(null)}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backdropFilter: "blur(8px)",
+          backgroundColor: "rgba(0, 0, 0, 0.85)",
+          p: 2,
+        }}
+      >
+        <Box
+          sx={{
+            position: "relative",
+            maxWidth: "92vw",
+            maxHeight: "92vh",
+            outline: "none",
+            borderRadius: "16px",
+            overflow: "hidden",
+            backgroundColor: isDarkMode ? "#121212" : "#ffffff",
+            boxShadow: "0 25px 60px rgba(0,0,0,0.6)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            p: { xs: 1.5, sm: 2.5 }
+          }}
+        >
+          <IconButton
+            onClick={() => setSelectedImageModal(null)}
+            sx={{
+              position: "absolute",
+              top: 12,
+              right: 12,
+              backgroundColor: "rgba(0,0,0,0.6)",
+              color: "#ffffff",
+              zIndex: 10,
+              "&:hover": {
+                backgroundColor: "#CA0019",
+              }
+            }}
+          >
+            <X size={20} />
+          </IconButton>
+
+          {selectedImageModal && (
+            <Box sx={{ width: "100%", height: "100%", textAlign: "center" }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  mb: 1.5,
+                  fontWeight: 700,
+                  color: isDarkMode ? "#ffffff" : "#111111",
+                  fontSize: { xs: "0.95rem", sm: "1.15rem" }
+                }}
+              >
+                {selectedImageModal.title}
+              </Typography>
+              <img
+                src={selectedImageModal.image}
+                alt={selectedImageModal.title}
+                style={{
+                  maxWidth: "88vw",
+                  maxHeight: "80vh",
+                  objectFit: "contain",
+                  borderRadius: "12px",
+                  display: "block",
+                  margin: "0 auto"
+                }}
+              />
+            </Box>
+          )}
+        </Box>
+      </Modal>
     </Box>
   );
 };
