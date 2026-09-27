@@ -51,16 +51,6 @@ import FORTYFIVE from "@/assets/img/HowItStarted/45.jpg";
 import FORTYSIX from "@/assets/img/HowItStarted/46.jpg";
 import FORTYSEVEN from "@/assets/img/HowItStarted/47.jpg";
 import FORTYEIGHT from "@/assets/img/HowItStarted/48.jpg";
-import FORTYNINE from "@/assets/img/HowItStarted/49.jpg";
-import FIFTY from "@/assets/img/HowItStarted/50.jpg";
-import FIFTYONE from "@/assets/img/HowItStarted/51.jpg";
-import FIFTYTWO from "@/assets/img/HowItStarted/52.jpg";
-import FIFTYTHREE from "@/assets/img/HowItStarted/53.jpg";
-import FIFTYFOUR from "@/assets/img/HowItStarted/54.jpg";
-import FIFTYFIVE from "@/assets/img/HowItStarted/55.jpg";
-import FIFTYSIX from "@/assets/img/HowItStarted/56.jpg";
-import FIFTYSEVEN from "@/assets/img/HowItStarted/57.jpg";
-import FIFTYEIGHT from "@/assets/img/HowItStarted/58.jpg";
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
@@ -207,16 +197,16 @@ const timelineData = [
     content: (
       <>
         <p className="mb-4">The Uniques began collaborating with local businesses to solve real-world problems. These projects gave members practical experience and established the community's reputation for delivering high-quality technical solutions.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
             <img src={SEVEN} alt="Industry collaboration" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
           </div>
           <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
             <img src={EIGHT} alt="Project meeting" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
           </div>
-        </div>
-        <div className="mt-4 overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
-          <img src={NINE} alt="Client presentation" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
+          <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
+            <img src={NINE} alt="Client presentation" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
+          </div>
         </div>
       </>
     ),
@@ -278,16 +268,16 @@ const timelineData = [
     content: (
       <>
         <p className="mb-4">The Uniques launched a series of technical workshops open to all students. These sessions covered topics from web development to artificial intelligence, supporting knowledge sharing and skill development across the campus.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
             <img src={SIXTEEN} alt="Workshop instruction" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
           </div>
           <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
             <img src={SEVENTEEN} alt="Workshop participants" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
           </div>
-        </div>
-        <div className="mt-4 overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
-          <img src={EIGHTEEN} alt="Hands-on coding session" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
+          <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
+            <img src={EIGHTEEN} alt="Hands-on coding session" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
+          </div>
         </div>
       </>
     ),
@@ -315,16 +305,16 @@ const timelineData = [
     content: (
       <>
         <p className="mb-4">A team from The Uniques won first place at a prestigious national hackathon. Their project, focusing on sustainable urban development using AI, received recognition from industry experts and demonstrated the technical excellence fostered within the community.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
             <img src={TWENTYONE} alt="Hackathon team" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
           </div>
           <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
             <img src={TWENTYTWO} alt="Winner announcement" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
           </div>
-        </div>
-        <div className="mt-4 overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
-          <img src={TWENTYTHREE} alt="Award ceremony" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
+          <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
+            <img src={TWENTYTHREE} alt="Award ceremony" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
+          </div>
         </div>
       </>
     ),
@@ -525,80 +515,7 @@ const timelineData = [
       </>
     ),
   },
-  {
-    title: "2027 Q1",
-    subtitle: "Educational Technology Initiative",
-    content: (
-      <>
-        <p className="mb-4">The Uniques launched an educational technology initiative to develop digital tools for underserved schools. This project combined technical expertise with social impact, creating accessible learning resources for students without adequate technological access.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
-            <img src={FORTYNINE} alt="EdTech development" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
-          </div>
-          <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
-            <img src={FIFTY} alt="School implementation" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
-          </div>
-        </div>
-      </>
-    ),
-  },
-  {
-    title: "2027 Q2",
-    subtitle: "Regional Tech Hub Status",
-    content: (
-      <>
-        <p className="mb-4">The university recognized The Uniques as an official Regional Technology Hub, providing dedicated funding and resources. This status formalized the community's role in driving technological innovation and education in the region.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
-            <img src={FIFTYONE} alt="Hub designation ceremony" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
-          </div>
-          <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
-            <img src={FIFTYTWO} alt="Regional impact meeting" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
-          </div>
-        </div>
-      </>
-    ),
-  },
-  {
-    title: "2027 Q3",
-    subtitle: "Global Tech Conference Hosting",
-    content: (
-      <>
-        <p className="mb-4">The Uniques successfully hosted an international technology conference, welcoming speakers and attendees from around the world. The event highlighted emerging technologies and provided members with unparalleled networking opportunities.</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
-            <img src={FIFTYTHREE} alt="Conference opening" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
-          </div>
-          <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
-            <img src={FIFTYFOUR} alt="International speakers" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
-          </div>
-          <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
-            <img src={FIFTYFIVE} alt="Panel discussion" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
-          </div>
-        </div>
-      </>
-    ),
-  },
-  {
-    title: "2027 Q4",
-    subtitle: "Looking to the Future",
-    content: (
-      <>
-        <p className="mb-4">As The Uniques approaches its seventh year, the community continues to evolve while staying true to its founding principles of innovation, collaboration, and excellence. With an expanding network of alumni, industry partnerships, and academic achievements, The Uniques is positioned for even greater impact in the years ahead.</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
-            <img src={FIFTYSIX} alt="Strategic planning" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
-          </div>
-          <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
-            <img src={FIFTYSEVEN} alt="Future vision workshop" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
-          </div>
-          <div className="overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all">
-            <img src={FIFTYEIGHT} alt="Community growth" className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300" />
-          </div>
-        </div>
-      </>
-    ),
-  },
+
 ];
 
 export default function TimelineView() {
