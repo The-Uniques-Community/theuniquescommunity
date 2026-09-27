@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import CelebrationComponent from "@/utils/Header";
+import CallToAction from "../homComponents/CallToAction";
 import {
   Shield,
   ShieldCheck,
@@ -68,7 +69,7 @@ const PrivacyPolicy = () => {
   };
 
   return (
-    <div className="bg-slate-50/60 dark:bg-[#0a0a0a] min-h-screen text-slate-800 dark:text-slate-200 transition-colors duration-300 pb-16">
+    <div className="bg-slate-50/60 dark:bg-[#0a0a0a] min-h-screen text-slate-800 dark:text-slate-200 transition-colors duration-300">
       
       {/* Standard Header - Matches Contact Us and other Landing pages */}
       <CelebrationComponent title="Privacy Policy → Trust & Transparency ✦" />
@@ -409,6 +410,9 @@ const PrivacyPolicy = () => {
           </main>
         </div>
       </div>
+
+      {/* Call To Action */}
+      <CallToAction />
     </div>
   );
 };
