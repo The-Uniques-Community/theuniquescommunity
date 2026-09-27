@@ -66,7 +66,7 @@ const Footer = () => {
                 </Link>
             </div>
             <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-transparent">
-                <Link to="https://www.instagram.com/theuniquesofficial?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer">
+                <Link to="https://www.instagram.com/theuniquescommunity/" target="_blank" rel="noopener noreferrer">
                 <div className="w-8 h-8 rounded-full flex justify-center items-center bg-slate-900 dark:bg-slate-700 hover:bg-[#ca0019] dark:hover:bg-[#ca0019] transition-colors">
                     <FaInstagram color="white" className="mx-auto cursor-pointer" size={20} />
                 </div>

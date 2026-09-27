@@ -6,7 +6,7 @@ export const blogData = [
     category: "React",
     readTime: 5,
     image:
-      "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2070&auto=format&fit=crop",
     subContents: [
       {
         heading: "What is React?",
@@ -34,7 +34,7 @@ export const blogData = [
     category: "Event Management",
     readTime: 6,
     image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3Dg",
+      "https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=2070&auto=format&fit=crop",
     subContents: [
       {
         heading: "The Importance of Planning",
@@ -62,7 +62,7 @@ export const blogData = [
     category: "React",
     readTime: 7,
     image:
-      "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop",
     subContents: [
       {
         heading: "Project Structure",
@@ -90,7 +90,7 @@ export const blogData = [
     category: "Event Management",
     readTime: 6,
     image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3Dg",
+      "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=2070&auto=format&fit=crop",
     subContents: [
       {
         heading: "Defining Goals and Objectives",
@@ -118,7 +118,7 @@ export const blogData = [
     category: "Event Management",
     readTime: 5,
     image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3Dg",
+      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop",
     subContents: [
       {
         heading: "Collaboration is Key",
@@ -146,7 +146,7 @@ export const blogData = [
     category: "Backend Development",
     readTime: 7,
     image:
-      "https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=2070&auto=format&fit=crop",
     subContents: [
       {
         heading: "Choosing the Right Tech Stack",
@@ -168,3 +168,4 @@ export const blogData = [
     tags: ["Backend", "Scalability", "Database"],
   },
 ];
+

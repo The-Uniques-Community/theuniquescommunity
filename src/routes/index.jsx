@@ -72,6 +72,8 @@ const LandingRoutes = {
     { path: "events/:id", element: <EventDetailPage /> }, // Add this line for event detail page
     { path: "community-page", element: <CommunityPage /> },
     { path: "community-main", element: <Community /> },
+    { path: "register", element: <Community /> },
+    { path: "campus-ambassador", element: <Community /> },
     { path: "training", element: <Training /> },
     { path: "blogs", element: <BlogPage /> },
     { path: "contact", element: <Contact /> },

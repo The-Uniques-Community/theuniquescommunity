@@ -153,6 +153,7 @@ const EventDetailPage = () => {
   const [formErrors, setFormErrors] = useState({});
   const [registrationLoading, setRegistrationLoading] = useState(false);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [useIframeFallback, setUseIframeFallback] = useState(false);
 
   // Helper functions
   const getNameInitials = (name) => {
@@ -170,12 +171,34 @@ const EventDetailPage = () => {
   };
 
   const extractBannerFileId = (banner) => {
-    if (!banner) return '1OSWCFdMnh8Y1wZoepQuup8HXzmcpxxKu';
-    if (typeof banner === 'string') {
-      return banner;
-    } else {
-      return banner.fileId || banner._id || '1OSWCFdMnh8Y1wZoepQuup8HXzmcpxxKu';
+    if (!banner) return null;
+    if (typeof banner === 'object') {
+      if (banner.fileId) return banner.fileId;
+      if (banner.fileUrl) {
+        const match =
+          banner.fileUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/) ||
+          banner.fileUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        if (match) return match[1];
+      }
+      return banner._id || null;
     }
+    const str = String(banner);
+    const match =
+      str.match(/[?&]id=([a-zA-Z0-9_-]+)/) ||
+      str.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (match) return match[1];
+    if (!str.startsWith('http') && str.length > 15) return str;
+    return null;
+  };
+
+  const getBannerUrl = (banner) => {
+    const fileId = extractBannerFileId(banner);
+    if (fileId) {
+      return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`;
+    }
+    if (typeof banner === 'object' && banner.fileUrl) return banner.fileUrl;
+    if (typeof banner === 'string' && banner.startsWith('http')) return banner;
+    return 'https://placehold.co/1200x600?text=Event+Banner';
   };
 
   // Fetch event data
@@ -624,7 +647,7 @@ const EventDetailPage = () => {
             )}
           </FormControl>
         );
-
+        
       case "radio":
         return (
           <FormControl
@@ -767,14 +790,38 @@ const EventDetailPage = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Banner */}
-        <div className="w-full h-40 sm:h-60 md:h-96 border border-gray-200 rounded-xl overflow-hidden mb-8">
-          <iframe
-            src={`https://drive.google.com/file/d/${bannerFileId}/preview`}
-            className="w-full h-full object-cover"
-            title="Event banner"
-            loading="lazy"
-            allow="autoplay"
-          />
+        <div className="w-full h-48 sm:h-72 md:h-[420px] rounded-2xl overflow-hidden mb-8 shadow-sm bg-slate-100 flex items-center justify-center border border-gray-100 relative">
+          {!useIframeFallback ? (
+            <img
+              src={getBannerUrl(event.eventBanner)}
+              alt={event.eventName || "Event banner"}
+              referrerPolicy="no-referrer"
+              className="w-full h-full object-cover object-center"
+              onError={(e) => {
+                const fileId = extractBannerFileId(event.eventBanner);
+                if (!fileId) {
+                  setUseIframeFallback(true);
+                  return;
+                }
+                const currentSrc = e.target.src || "";
+                if (currentSrc.includes("thumbnail")) {
+                  e.target.src = `https://lh3.googleusercontent.com/d/${fileId}=w1200`;
+                } else if (currentSrc.includes("lh3.googleusercontent.com")) {
+                  e.target.src = `https://drive.google.com/uc?export=view&id=${fileId}`;
+                } else {
+                  setUseIframeFallback(true);
+                }
+              }}
+            />
+          ) : (
+            <iframe
+              src={`https://drive.google.com/file/d/${extractBannerFileId(event.eventBanner)}/preview`}
+              className="w-full h-full border-0"
+              title="Event banner"
+              loading="lazy"
+              allow="autoplay"
+            />
+          )}
         </div>
 
         {/* Profile Section */}
