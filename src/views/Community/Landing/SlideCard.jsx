@@ -1,48 +1,53 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useThemeContext } from "@/theme/ThemeProvider";
+import communityOrganizerImg from "@/assets/img/Community/testimonials/community-organizer.png";
+import technicalLeadImg from "@/assets/img/Community/testimonials/technical-lead.png";
+import graphicsLeadImg from "@/assets/img/Community/testimonials/graphics-lead.png";
+import eventCoordinatorImg from "@/assets/img/Community/testimonials/event-coordinator.png";
+import socialMediaLeadImg from "@/assets/img/Community/testimonials/social-media-lead.png";
 
 // Realistic student & ambassador portrait photos with guaranteed fallbacks
 const testimonials = [
     {
         id: 1,
         quote:
-            "Being an ambassador has been an incredible journey! The opportunity to organize events and lead a community of like-minded individuals has helped me grow both personally and professionally. The mentorship from regional leads has been invaluable in shaping my leadership skills.",
-        name: "Vasu Malhotra",
-        title: "Lead Ambassador",
-        avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=256&h=256&q=80",
+            "Leading this community has been an empowering experience! Driving community culture, bringing passionate minds together, and building an inclusive environment has transformed how I lead teams. Seeing members learn, collaborate, and grow under our collective initiatives is the most rewarding feeling.",
+        name: "Vaishanavi Bajpai",
+        title: "Community Organizer",
+        avatar: communityOrganizerImg,
     },
     {
         id: 2,
         quote:
-            "The Uniques Community has provided me with a platform to connect with developers and industry experts. Hosting events and engaging with my peers has enhanced my communication skills, and I love being part of a network that fosters innovation and collaboration.",
-        name: "Sarah Johnson",
-        title: "Community Organizer",
-        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=256&h=256&q=80",
+            "As Technical Lead, steering hands-on hackathons, coding bootcamps, and real-world tech architectures has taken my engineering mindset to new heights. Mentoring developers and solving complex technical roadblocks with such an innovative peer group has sharpened both my coding and architectural skills.",
+        name: "Kumar Sujal",
+        title: "Technical Lead",
+        avatar: technicalLeadImg,
     },
     {
         id: 3,
         quote:
-            "As an ambassador, I've learned the importance of teamwork and event planning. Organizing workshops and reporting activities have strengthened my ability to lead and manage a core team effectively. The experience has been nothing short of rewarding!",
-        name: "David Williams",
-        title: "Technical Lead",
-        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&h=256&q=80",
+            "Designing the visual identity and creative branding for the community has elevated my design perspective. From crafting striking event visuals and UI assets to ensuring consistent brand storytelling across every touchpoint, this role has helped me push creative boundaries and master digital aesthetics.",
+        name: "Vasu Malhotra",
+        title: "Graphics Lead",
+        avatar: graphicsLeadImg,
     },
     {
         id: 4,
         quote:
-            "One of the best aspects of being an ambassador is the chance to make a real impact. Whether it's mentoring aspiring developers or planning tech events, I've gained valuable experience that will stay with me throughout my career.",
-        name: "Emily Chen",
+            "Orchestrating large-scale tech conferences and seamless workshops taught me the art of precision planning and crisis management. Managing speaker coordination, stage logistics, and audience experiences in real-time has made me a confident leader capable of executing flawless events.",
+        name: "Laxmi Rajput",
         title: "Event Coordinator",
-        avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=256&h=256&q=80",
+        avatar: eventCoordinatorImg,
     },
     {
         id: 5,
         quote:
-            "The Uniques Community has helped me develop leadership skills while allowing me to engage with the local developer community. The experience of participating in campaigns and networking with professionals has been incredibly beneficial for my career.",
-        name: "Robert Miller",
-        title: "Program Ambassador",
-        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=256&h=256&q=80",
+            "Amplifying our community's voice and building viral digital campaigns has been exhilarating! Driving social engagement, spotlighting student achievements, and strategically growing our reach across platforms has unlocked master-level content strategy and community marketing skills for me.",
+        name: "Nishant",
+        title: "Social Media Lead",
+        avatar: socialMediaLeadImg,
     },
 ];
 
@@ -78,7 +83,7 @@ function AvatarImage({ src, name, className = "" }) {
             src={imgSrc}
             alt={name}
             onError={() => setHasError(true)}
-            className={`w-full h-full object-cover ${className}`}
+            className={`w-full h-full object-cover object-top ${className}`}
             loading="lazy"
         />
     );
