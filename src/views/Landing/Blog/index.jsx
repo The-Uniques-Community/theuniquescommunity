@@ -216,6 +216,8 @@ const BlogPage = () => {
         {!isMobile && (
           <Paper 
             elevation={0} 
+            data-lenis-prevent
+            onWheel={(e) => e.stopPropagation()}
             sx={{ 
               display: { xs: 'none', md: 'block' },
               position: 'sticky',
@@ -237,6 +239,7 @@ const BlogPage = () => {
           open={mobileFilterOpen}
           onClose={() => setMobileFilterOpen(false)}
           PaperProps={{
+            'data-lenis-prevent': true,
             sx: { backgroundColor: 'transparent' }
           }}
         >
@@ -322,6 +325,23 @@ const BlogPage = () => {
       <CallToAction />
       <div className="py-8"></div>
 
+<<<<<<< HEAD
+      {/* Blog Modal */}
+      <Modal
+        open={!!selectedBlog}
+        onClose={() => setSelectedBlog(null)}
+        aria-labelledby="blog-title"
+        aria-describedby="blog-content"
+      >
+        <Box 
+          data-lenis-prevent
+          onWheel={(e) => e.stopPropagation()}
+          className="fixed inset-0 overflow-y-auto overscroll-contain" 
+          sx={{
+            backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.98)',
+            backdropFilter: 'blur(10px)',
+            transition: 'all 0.3s ease'
+=======
       {/* Blog Detail Overlay */}
       {selectedBlog && (
         <div 
@@ -329,6 +349,7 @@ const BlogPage = () => {
           style={{
             backgroundColor: isDarkMode ? '#121212' : '#ffffff',
             color: isDarkMode ? '#fff' : '#111827',
+>>>>>>> a9d80b0bd8ac214fca97b0b920c43f70d310a5e6
           }}
         >
           <div className="max-w-4xl mx-auto p-6 md:p-12 lg:py-16">

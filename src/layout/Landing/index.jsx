@@ -1,5 +1,5 @@
 import { Suspense, useEffect, useRef, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navbar from "@/utils/NavBar/Navbar";
 import Footer from "@/utils/Footer/Footer";
@@ -7,8 +7,13 @@ import CustomLoader from "@/utils/Loader/CustomLoader";
 import ChatBot from "@/components/ChatBot";
 
 const LandingLayout = () => {
+  const { pathname } = useLocation();
   const footerRef = useRef(null);
   const [footerHeight, setFooterHeight] = useState(0);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   useEffect(() => {
     const updateHeight = () => {
