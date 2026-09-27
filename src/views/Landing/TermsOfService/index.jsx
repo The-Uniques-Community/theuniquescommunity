@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FileText, Check } from "lucide-react";
 import { useThemeContext } from "@/theme/ThemeProvider";
 
@@ -12,7 +12,6 @@ const TermsOfService = () => {
   }, []);
 
   const [agreeTerms, setAgreeTerms] = useState(false);
-  const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [acceptedMessage, setAcceptedMessage] = useState(false);
 
   const sections = [
@@ -48,22 +47,15 @@ const TermsOfService = () => {
     },
     {
       id: 6,
-      title: "6 - Privacy Policy",
-      content:
-        "We respect your privacy and protect your personal information. We do not sell or monetize your data. Collected information is strictly used for batch allocations, mentorship reviews, issuing certificates, and community notifications.",
-    },
-    {
-      id: 7,
-      title: "7 - Disclaimers & Updates",
+      title: "6 - Disclaimers & Updates",
       content:
         "All services are provided on an 'as is' basis without warranties. We may periodically update these terms to reflect program enhancements. Continued participation indicates acceptance of any revised terms.",
     },
   ];
 
   const handleAccept = () => {
-    if (!agreeTerms || !agreePrivacy) {
+    if (!agreeTerms) {
       setAgreeTerms(true);
-      setAgreePrivacy(true);
     }
     setAcceptedMessage(true);
     setTimeout(() => {
@@ -131,8 +123,8 @@ const TermsOfService = () => {
           ))}
         </div>
 
-        {/* Agreement Checkboxes */}
-        <div className="space-y-2.5 mb-6">
+        {/* Agreement Checkbox */}
+        <div className="mb-6">
           <label className="flex items-center gap-3 cursor-pointer group select-none">
             <div
               onClick={() => setAgreeTerms(!agreeTerms)}
@@ -152,31 +144,7 @@ const TermsOfService = () => {
             >
               I agree with the{" "}
               <strong className="text-slate-900 dark:text-white font-medium">
-                Terms and Conditions
-              </strong>
-            </span>
-          </label>
-
-          <label className="flex items-center gap-3 cursor-pointer group select-none">
-            <div
-              onClick={() => setAgreePrivacy(!agreePrivacy)}
-              className={`w-5 h-5 rounded-md flex items-center justify-center border transition-all ${
-                agreePrivacy
-                  ? "bg-[#ca0019] border-[#ca0019] text-white"
-                  : isDarkMode
-                  ? "border-zinc-700 bg-zinc-800/60 group-hover:border-zinc-500"
-                  : "border-slate-300 bg-white group-hover:border-slate-400"
-              }`}
-            >
-              {agreePrivacy && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-            </div>
-            <span
-              onClick={() => setAgreePrivacy(!agreePrivacy)}
-              className="text-xs text-slate-600 dark:text-zinc-300"
-            >
-              I agree with the{" "}
-              <strong className="text-slate-900 dark:text-white font-medium">
-                Privacy Policy
+                Terms of Service
               </strong>
             </span>
           </label>

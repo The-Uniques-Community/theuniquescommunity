@@ -30,7 +30,6 @@ const BlogPage = Loader(lazy(() => import("@/views/Landing/Blog/index")), false)
 const Contact = Loader(lazy(() => import("@/views/Landing/Contact/index")), false);
 const Training = Loader(lazy(() => import("@/views/Landing/Training-model/Training")), false);
 const TermsOfService = Loader(lazy(() => import("@/views/Landing/TermsOfService")), false);
-const PrivacyPolicy = Loader(lazy(() => import("@/views/Landing/PrivacyPolicy")), false);
 const NotFound = Loader(lazy(() => import("@/views/Landing/NotFound/index")), false);
 const CommunityPage = Loader(lazy(() => import("@/views/Landing/Community/index")), false);
 const SuccessStories = Loader(lazy(() => import("@/views/Landing/SuccessStories/index")), false);
@@ -78,7 +77,6 @@ const LandingRoutes = {
     { path: "campus-ambassador", element: <Community /> },
     { path: "training", element: <Training /> },
     { path: "terms-of-service", element: <TermsOfService /> },
-    { path: "privacy-policy", element: <PrivacyPolicy /> },
     { path: "blogs", element: <BlogPage /> },
     { path: "contact", element: <Contact /> },
     { path: "batches", element: <BatchesPage /> },
