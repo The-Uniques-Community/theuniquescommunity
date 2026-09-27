@@ -10,6 +10,10 @@ import {
   Star
 } from "@mui/icons-material"
 import { Avatar } from "@mui/material";
+import ronitImg from "@/assets/img/Success Stories avatars/ronit-jaiprakash.jpeg";
+import praveenImg from "@/assets/img/Success Stories avatars/praveen-jaiswal.jpeg";
+import mantashaImg from "@/assets/img/Success Stories avatars/mantasha-tabassum.jpg";
+import naveenImg from "@/assets/img/Success Stories avatars/naveen-jaiswal.jpg";
 
 const colors = {
   primary: "#ca0019",     // Red
@@ -25,7 +29,7 @@ const testimonialData = {
     {
       name: "Ronit JaiPrakash",
       role: "Application Developer, Caelius Consultancy",
-      image: "https://media.licdn.com/dms/image/v2/D5603AQFewlI7VW09Fg/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1708280686326?e=1758153600&v=beta&t=hikYCXE00z2JXiIWsLY2ip2_CWJxCXDn5ilAzxPINbw",
+      image: ronitImg,
       testimonial: "The Uniques Community provided me with the skills and connections to launch my career as a Full Stack Developer. The mentorship I received was invaluable in helping me secure my role at Caelius Consultancy.",
       rating: 5,
       highlight: "MERN Stack Expert"
@@ -33,7 +37,7 @@ const testimonialData = {
     {
       name: "Naveen Jaiswal",
       role: "Software Developer, Thor Solutions",
-      image: `${BASE_URL}/api/image-proxy/1b9-mcMtoowSSiKr8wHHxLTnvjNzuhIsR`,
+      image: naveenImg,
       testimonial: "Through the practical projects and industry-focused training at The Uniques, I developed the technical expertise needed to excel in my role developing product customization platforms.",
       rating: 5,
       highlight: "Product Development"
@@ -41,7 +45,7 @@ const testimonialData = {
     {
       name: "Parveen Jaiswal",
       role: "Web Developer, SpacePepper Studios",
-      image: "https://media.licdn.com/dms/image/v2/D5603AQFnP2LqKHK4Tg/profile-displayphoto-shrink_400_400/B56ZXRMoqbGsAk-/0/1742971506111?e=1758153600&v=beta&t=YeEw2VjRzdPeV6BLihJ2kYzZePYtb7lMVS2ElI0YsVo",
+      image: praveenImg,
       testimonial: "As an MCD Level-1 certified developer, I can attribute much of my success to the guidance and opportunities provided by The Uniques Community. They helped transform my passion into expertise.",
       rating: 5,
       highlight: "MCD Certified"
@@ -49,7 +53,7 @@ const testimonialData = {
     {
       name: "Mantasha Tabassum",
       role: "Application Developer, Caelius Consulting",
-      image: `${BASE_URL}/api/image-proxy/1njlZ75EFgYTvki-8NIlgIsWvgwYccAXM`,
+      image: mantashaImg,
       testimonial: "The Uniques Community gave me the confidence and AWS expertise I needed to implement cloud solutions and optimize infrastructure. Their hands-on approach truly made the difference.",
       rating: 5,
       highlight: "AWS Specialist"
@@ -58,7 +62,7 @@ const testimonialData = {
   faculty: [
     {
       name: "Dr. Rajesh Sharma",
-      role: "Professor of Computer Science, IIT Delhi",
+      role: "Professor of Computer Science",
       image: "https://randomuser.me/api/portraits/men/42.jpg",
       testimonial: "The curriculum designed by The Uniques Community bridges the gap between academic learning and industry requirements perfectly. My students who engage with their programs consistently perform better in real-world applications.",
       rating: 5,
@@ -66,7 +70,7 @@ const testimonialData = {
     },
     {
       name: "Prof. Anita Desai",
-      role: "Head of IT Department, Delhi University",
+      role: "Head of IT Department",
       image: "https://randomuser.me/api/portraits/women/45.jpg",
       testimonial: "I've witnessed a remarkable transformation in students who participate in The Uniques programs. Their confidence, technical skills, and problem-solving abilities show significant improvement.",
       rating: 5,
@@ -74,7 +78,7 @@ const testimonialData = {
     },
     {
       name: "Dr. Vikram Mehta",
-      role: "Dean of Engineering, Chandigarh University",
+      role: "Dean of Engineering",
       image: "https://randomuser.me/api/portraits/men/32.jpg",
       testimonial: "The Uniques Community's approach to practical learning complements our academic curriculum perfectly. Their industry connections provide our students with invaluable networking opportunities.",
       rating: 5,
@@ -82,7 +86,7 @@ const testimonialData = {
     },
     {
       name: "Prof. Sunita Patel",
-      role: "Director of Placements, Panjab University",
+      role: "Director of Placements",
       image: "https://randomuser.me/api/portraits/women/68.jpg",
       testimonial: "Companies actively seek out students who have trained with The Uniques Community. Their program significantly enhances our placement statistics and student career outcomes.",
       rating: 5,
@@ -92,7 +96,7 @@ const testimonialData = {
   professionals: [
     {
       name: "Amit Kumar",
-      role: "CTO, TechForward Solutions",
+      role: "CTO, Caelius",
       image: "https://randomuser.me/api/portraits/men/22.jpg",
       testimonial: "The graduates from The Uniques Community join our team with a solid foundation in both technical skills and professional attitude. Their training clearly emphasizes real-world problem solving.",
       rating: 5,
@@ -100,7 +104,7 @@ const testimonialData = {
     },
     {
       name: "Priya Sharma",
-      role: "Engineering Manager, Microsoft India",
+      role: "Engineering Manager, HCL GUVI",
       image: "https://randomuser.me/api/portraits/women/29.jpg",
       testimonial: "We've hired multiple developers trained by The Uniques, and they consistently demonstrate strong coding practices and teamwork. Their preparation for the industry is exceptional.",
       rating: 5,
@@ -108,7 +112,7 @@ const testimonialData = {
     },
     {
       name: "Rahul Verma",
-      role: "Lead Developer, Amazon Web Services",
+      role: "Lead Developer, Grazitti",
       image: "https://randomuser.me/api/portraits/men/36.jpg",
       testimonial: "The Uniques Community produces developers who understand not just coding, but the entire software development lifecycle. This makes them valuable assets to any tech team.",
       rating: 4,
@@ -116,7 +120,7 @@ const testimonialData = {
     },
     {
       name: "Neha Gupta",
-      role: "Hiring Manager, Google",
+      role: "Hiring Manager, SALC",
       image: "https://randomuser.me/api/portraits/women/65.jpg",
       testimonial: "I'm always impressed by candidates from The Uniques Community. They demonstrate both technical excellence and the soft skills essential for success in collaborative environments.",
       rating: 5,
@@ -186,7 +190,7 @@ const TestimonialCard = ({ image, name, role, testimonial, rating = 5, highlight
       //   boxShadow: `0 20px 25px -5px rgba(202, 0, 25, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)`
       // }}
       transition={{ duration: 0.5, delay }}
-      className="bg-white rounded-xl shadow-lg p-8 border border-gray-100 transition-all duration-300 relative"
+      className="bg-[#1e1e1e] dark:bg-[#1e1e1e] rounded-xl shadow-lg p-8 border border-white/10 transition-all duration-300 relative"
     >
       {/* Quote icon decoration */}
       <div className="absolute -top-4 -left-4 w-8 h-8 rounded-full flex items-center justify-center"
@@ -211,9 +215,9 @@ const TestimonialCard = ({ image, name, role, testimonial, rating = 5, highlight
         ))}
       </div>
       
-      <p className="text-gray-700 mb-6 leading-relaxed">"{testimonial}"</p>
+      <p className="text-gray-300 mb-6 leading-relaxed">"{testimonial}"</p>
       
-      <div className="flex items-center pt-4 border-t border-gray-100">
+      <div className="flex items-center pt-4 border-t border-white/10">
         <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
           <img
             src={image || "/placeholder.svg"}
@@ -222,8 +226,8 @@ const TestimonialCard = ({ image, name, role, testimonial, rating = 5, highlight
           />
         </div>
         <div>
-          <h3 className="font-semibold" style={{ color: colors.dark }}>{name}</h3>
-          <p className="text-sm" style={{ color: 'gray' }}>{role}</p>
+          <h3 className="font-semibold text-white" style={{ color: '#ffffff' }}>{name}</h3>
+          <p className="text-sm text-gray-400">{role}</p>
         </div>
       </div>
     </motion.div>
@@ -248,16 +252,7 @@ const Testimonials = () => {
     professionals: "Industry leaders discuss the quality and preparedness of talent from The Uniques Community"
   };
 
-  // Continuous auto-scroll effect
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setIsAnimating(true);
-      setPage(([prevPage, prevDirection]) => [prevPage + 1, 1]);
-      setTimeout(() => setIsAnimating(false), 700);
-    }, 10000); // 10 seconds between auto-scrolls
 
-    return () => clearInterval(timer);
-  }, []);
 
   const sectionRef = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -301,7 +296,7 @@ const Testimonials = () => {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -20, opacity: 0 }}
                 transition={transitionSettings}
-                className="text-3xl font-bold sm:text-4xl mb-4"
+                className="text-3xl font-bold sm:text-4xl mb-4 text-gray-900 dark:text-white"
               >
                 Testimonials from{" "}
                 <span style={{ color: colors.primary }}>
@@ -315,7 +310,7 @@ const Testimonials = () => {
                 animate={{ y: 0, opacity: 1, transition: { delay: 0.1 } }}
                 exit={{ y: -20, opacity: 0 }}
                 transition={transitionSettings}
-                className="max-w-2xl mx-auto text-gray-600"
+                className="max-w-2xl mx-auto text-gray-600 dark:text-gray-400"
               >
                 {sectionDescriptions[activeSection]}
               </motion.p>
