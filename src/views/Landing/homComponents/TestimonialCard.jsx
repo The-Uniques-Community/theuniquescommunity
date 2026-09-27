@@ -6,7 +6,12 @@ import {
   Work, 
   Computer,
   Star
-} from "@mui/icons-material";
+} from "@mui/icons-material"
+import { Avatar } from "@mui/material";
+import ronitImg from "@/assets/img/Success Stories avatars/ronit-jaiprakash.jpeg";
+import praveenImg from "@/assets/img/Success Stories avatars/praveen-jaiswal.jpeg";
+import mantashaImg from "@/assets/img/Success Stories avatars/mantasha-tabassum.jpg";
+import naveenImg from "@/assets/img/Success Stories avatars/naveen-jaiswal.jpg";
 
 const colors = {
   primary: "#ca0019",     // Red
@@ -22,7 +27,7 @@ const testimonialData = {
     {
       name: "Ronit JaiPrakash",
       role: "Application Developer, Caelius Consultancy",
-      image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=256&h=256&q=80",
+      image: ronitImg,
       testimonial: "The Uniques Community provided me with the skills and connections to launch my career as a Full Stack Developer. The mentorship I received was invaluable in helping me secure my role at Caelius Consultancy.",
       rating: 5,
       highlight: "MERN Stack Expert"
@@ -30,7 +35,7 @@ const testimonialData = {
     {
       name: "Naveen Jaiswal",
       role: "Software Developer, Thor Solutions",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&h=256&q=80",
+      image: naveenImg,
       testimonial: "Through the practical projects and industry-focused training at The Uniques, I developed the technical expertise needed to excel in my role developing product customization platforms.",
       rating: 5,
       highlight: "Product Development"
@@ -38,7 +43,7 @@ const testimonialData = {
     {
       name: "Parveen Jaiswal",
       role: "Web Developer, SpacePepper Studios",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=256&h=256&q=80",
+      image: praveenImg,
       testimonial: "As an MCD Level-1 certified developer, I can attribute much of my success to the guidance and opportunities provided by The Uniques Community. They helped transform my passion into expertise.",
       rating: 5,
       highlight: "MCD Certified"
@@ -46,7 +51,7 @@ const testimonialData = {
     {
       name: "Mantasha Tabassum",
       role: "Application Developer, Caelius Consulting",
-      image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&h=256&q=80",
+      image: mantashaImg,
       testimonial: "The Uniques Community gave me the confidence and AWS expertise I needed to implement cloud solutions and optimize infrastructure. Their hands-on approach truly made the difference.",
       rating: 5,
       highlight: "AWS Specialist"
@@ -55,32 +60,32 @@ const testimonialData = {
   faculty: [
     {
       name: "Dr. Rajesh Sharma",
-      role: "Professor of Computer Science, IIT Delhi",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=256&h=256&q=80",
+      role: "Professor of Computer Science",
+      image: "https://randomuser.me/api/portraits/men/42.jpg",
       testimonial: "The curriculum designed by The Uniques Community bridges the gap between academic learning and industry requirements perfectly. My students who engage with their programs consistently perform better in real-world applications.",
       rating: 5,
       highlight: "Industry Alignment"
     },
     {
       name: "Prof. Anita Desai",
-      role: "Head of IT Department, Delhi University",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=256&h=256&q=80",
+      role: "Head of IT Department",
+      image: "https://randomuser.me/api/portraits/women/45.jpg",
       testimonial: "I've witnessed a remarkable transformation in students who participate in The Uniques programs. Their confidence, technical skills, and problem-solving abilities show significant improvement.",
       rating: 5,
       highlight: "Skill Enhancement"
     },
     {
       name: "Dr. Vikram Mehta",
-      role: "Dean of Engineering, Chandigarh University",
-      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=256&h=256&q=80",
+      role: "Dean of Engineering",
+      image: "https://randomuser.me/api/portraits/men/32.jpg",
       testimonial: "The Uniques Community's approach to practical learning complements our academic curriculum perfectly. Their industry connections provide our students with invaluable networking opportunities.",
       rating: 5,
       highlight: "Practical Approach"
     },
     {
       name: "Prof. Sunita Patel",
-      role: "Director of Placements, Panjab University",
-      image: "https://images.unsplash.com/photo-1580894732444-8ecded7900cd?auto=format&fit=crop&w=256&h=256&q=80",
+      role: "Director of Placements",
+      image: "https://randomuser.me/api/portraits/women/68.jpg",
       testimonial: "Companies actively seek out students who have trained with The Uniques Community. Their program significantly enhances our placement statistics and student career outcomes.",
       rating: 5,
       highlight: "Enhanced Placements"
@@ -89,32 +94,32 @@ const testimonialData = {
   professionals: [
     {
       name: "Amit Kumar",
-      role: "CTO, TechForward Solutions",
-      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=256&h=256&q=80",
+      role: "CTO, Caelius",
+      image: "https://randomuser.me/api/portraits/men/22.jpg",
       testimonial: "The graduates from The Uniques Community join our team with a solid foundation in both technical skills and professional attitude. Their training clearly emphasizes real-world problem solving.",
       rating: 5,
       highlight: "Industry Ready"
     },
     {
       name: "Priya Sharma",
-      role: "Engineering Manager, Microsoft India",
-      image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=256&h=256&q=80",
+      role: "Engineering Manager, HCL GUVI",
+      image: "https://randomuser.me/api/portraits/women/29.jpg",
       testimonial: "We've hired multiple developers trained by The Uniques, and they consistently demonstrate strong coding practices and teamwork. Their preparation for the industry is exceptional.",
       rating: 5,
       highlight: "Team Players"
     },
     {
       name: "Rahul Verma",
-      role: "Lead Developer, Amazon Web Services",
-      image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=256&h=256&q=80",
+      role: "Lead Developer, Grazitti",
+      image: "https://randomuser.me/api/portraits/men/36.jpg",
       testimonial: "The Uniques Community produces developers who understand not just coding, but the entire software development lifecycle. This makes them valuable assets to any tech team.",
       rating: 4,
       highlight: "Full Lifecycle Skills"
     },
     {
       name: "Neha Gupta",
-      role: "Hiring Manager, Google",
-      image: "https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?auto=format&fit=crop&w=256&h=256&q=80",
+      role: "Hiring Manager, SALC",
+      image: "https://randomuser.me/api/portraits/women/65.jpg",
       testimonial: "I'm always impressed by candidates from The Uniques Community. They demonstrate both technical excellence and the soft skills essential for success in collaborative environments.",
       rating: 5,
       highlight: "Balanced Skillset"
@@ -217,7 +222,7 @@ const TestimonialCard = ({ image, name, role, testimonial, rating = 5, highlight
         y
       }}
       transition={{ duration: 0.5, delay }}
-      className="bg-white rounded-2xl shadow-md hover:shadow-xl p-6 sm:p-7 border border-gray-100 transition-all duration-300 relative flex flex-col justify-between h-full"
+      className="bg-[#1e1e1e] dark:bg-[#1e1e1e] rounded-xl shadow-lg p-8 border border-white/10 transition-all duration-300 relative"
     >
       {/* Quote icon decoration */}
       <div 
@@ -252,17 +257,19 @@ const TestimonialCard = ({ image, name, role, testimonial, rating = 5, highlight
         </p>
       </div>
       
-      <div className="flex items-center pt-4 border-t border-gray-100 mt-auto">
-        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden mr-3.5 flex-shrink-0 ring-2 ring-red-100/70 shadow-sm bg-gray-100">
-          <AvatarImage src={image} name={name} />
+      <p className="text-gray-300 mb-6 leading-relaxed">"{testimonial}"</p>
+      
+      <div className="flex items-center pt-4 border-t border-white/10">
+        <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
+          <img
+            src={image || "/placeholder.svg"}
+            alt={name}
+            className="w-full h-full object-cover"
+          />
         </div>
-        <div className="min-w-0 flex-1">
-          <h3 className="font-semibold text-sm sm:text-base leading-tight truncate" style={{ color: colors.dark }}>
-            {name}
-          </h3>
-          <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">
-            {role}
-          </p>
+        <div>
+          <h3 className="font-semibold text-white" style={{ color: '#ffffff' }}>{name}</h3>
+          <p className="text-sm text-gray-400">{role}</p>
         </div>
       </div>
     </motion.div>
@@ -287,16 +294,7 @@ const Testimonials = () => {
     professionals: "Industry leaders discuss the quality and preparedness of talent from The Uniques Community"
   };
 
-  // Continuous auto-scroll effect
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setIsAnimating(true);
-      setPage(([prevPage, prevDirection]) => [prevPage + 1, 1]);
-      setTimeout(() => setIsAnimating(false), 700);
-    }, 10000); // 10 seconds between auto-scrolls
 
-    return () => clearInterval(timer);
-  }, []);
 
   const sectionRef = useRef(null);
 
@@ -349,7 +347,7 @@ const Testimonials = () => {
                 animate={{ y: 0, opacity: 1, transition: { delay: 0.1 } }}
                 exit={{ y: -20, opacity: 0 }}
                 transition={transitionSettings}
-                className="max-w-2xl mx-auto text-gray-600 text-sm sm:text-base px-2"
+                className="max-w-2xl mx-auto text-gray-600 dark:text-gray-400"
               >
                 {sectionDescriptions[activeSection]}
               </motion.p>
