@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ShieldCheck, Check } from "lucide-react";
 import { useThemeContext } from "@/theme/ThemeProvider";
@@ -6,6 +6,10 @@ import { useThemeContext } from "@/theme/ThemeProvider";
 const PrivacyPolicy = () => {
   const { isDarkMode } = useThemeContext();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
