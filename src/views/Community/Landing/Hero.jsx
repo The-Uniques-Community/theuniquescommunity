@@ -1,21 +1,20 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import "./style.css";
 import HeroClip from "@/assets/img/Community/Sample1.png";
 import Button from "@/utils/Buttons/Button";
 import DoubleQuotes from "@/assets/img/Community/Double.png";
 import ApplicationForm from '@/components/ApplicationForm';
 
-
-
 const Modal = ({ isOpen, onClose, title, children }) => {
     if (!isOpen) return null;
 
-    return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-lg max-w-2xl w-full p-6">
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-2xl font-semibold">{title}</h2>
-                    <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+    return createPortal(
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[999999] flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-[#18181b] rounded-2xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto shadow-2xl relative z-10">
+                <div className="flex justify-between items-center mb-4 sticky top-0 bg-white dark:bg-[#18181b] z-20 pb-2 border-b border-gray-100 dark:border-gray-800">
+                    <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">{title}</h2>
+                    <button onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -23,7 +22,8 @@ const Modal = ({ isOpen, onClose, title, children }) => {
                 </div>
                 {children}
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 // comment

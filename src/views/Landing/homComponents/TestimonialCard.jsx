@@ -1,8 +1,6 @@
 "use client"
-import React from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
-import { useRef, useState, useEffect } from "react"
-import { BASE_URL } from "@/config";
+import React, { useRef, useState, useEffect } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { 
   School, 
   Work, 
@@ -23,7 +21,7 @@ const colors = {
   primaryLight: "#ffebee" // Light red for backgrounds
 };
 
-// Testimonial data
+// Testimonial data with reliable portrait photos across all categories
 const testimonialData = {
   students: [
     {
@@ -129,7 +127,45 @@ const testimonialData = {
   ]
 };
 
-// Add transition settings
+// Fallback avatar component with initials and brand styling to prevent broken image icons
+const AvatarImage = ({ src, name }) => {
+  const [imgSrc, setImgSrc] = useState(src);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setImgSrc(src);
+    setHasError(false);
+  }, [src]);
+
+  const initials = name
+    ? name
+        .split(" ")
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase()
+    : "TU";
+
+  if (hasError || !imgSrc) {
+    return (
+      <div className="w-full h-full flex items-center justify-center font-bold text-white bg-gradient-to-tr from-[#8B0000] to-[#ca0019] text-xs select-none">
+        {initials}
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={imgSrc}
+      alt={name}
+      onError={() => setHasError(true)}
+      className="w-full h-full object-cover"
+      loading="lazy"
+    />
+  );
+};
+
+// Transition settings
 const transitionSettings = {
   duration: 0.7,
   ease: [0.43, 0.13, 0.23, 0.96]
@@ -185,34 +221,40 @@ const TestimonialCard = ({ image, name, role, testimonial, rating = 5, highlight
         scale,
         y
       }}
-      // whileHover={{ 
-      //   scale: 1.05,
-      //   boxShadow: `0 20px 25px -5px rgba(202, 0, 25, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)`
-      // }}
       transition={{ duration: 0.5, delay }}
       className="bg-[#1e1e1e] dark:bg-[#1e1e1e] rounded-xl shadow-lg p-8 border border-white/10 transition-all duration-300 relative"
     >
       {/* Quote icon decoration */}
-      <div className="absolute -top-4 -left-4 w-8 h-8 rounded-full flex items-center justify-center"
-           style={{ backgroundColor: `${colors.primaryLight}` }}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <div 
+        className="absolute -top-3.5 -left-3.5 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shadow-sm"
+        style={{ backgroundColor: `${colors.primaryLight}` }}
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M10,7L8,11H11V17H5V11L7,7H10M18,7L16,11H19V17H13V11L15,7H18Z" fill={colors.primary}/>
         </svg>
       </div>
       
       {/* Highlight badge */}
       {highlight && (
-        <div className="absolute -top-3 right-8 py-1 px-3 rounded-full text-xs font-medium"
-             style={{ backgroundColor: colors.primary, color: 'white' }}>
+        <div 
+          className="absolute -top-3 right-6 py-0.5 px-3 rounded-full text-[11px] font-semibold tracking-wide uppercase shadow-sm"
+          style={{ backgroundColor: colors.primary, color: 'white' }}
+        >
           {highlight}
         </div>
       )}
       
-      {/* Star rating */}
-      <div className="flex mb-4">
-        {[...Array(rating || 5)].map((_, i) => (
-          <Star key={i} style={{ color: '#FFD700', fontSize: '16px' }} />
-        ))}
+      <div>
+        {/* Star rating */}
+        <div className="flex mb-3 mt-1">
+          {[...Array(rating || 5)].map((_, i) => (
+            <Star key={i} style={{ color: '#FFD700', fontSize: '16px' }} />
+          ))}
+        </div>
+        
+        <p className="text-gray-700 text-sm sm:text-base leading-relaxed mb-6 font-normal">
+          "{testimonial}"
+        </p>
       </div>
       
       <p className="text-gray-300 mb-6 leading-relaxed">"{testimonial}"</p>
@@ -255,37 +297,32 @@ const Testimonials = () => {
 
 
   const sectionRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
-
-  // Background animation
-  const backgroundY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    ["0%", "10%"]
-  );
 
   return (
     <section 
       ref={sectionRef} 
-      className="py-20 px-4 sm:px-6 lg:px-8 overflow-hidden relative bg-gradient-to-b from-white to-gray-100 dark:bg-none dark:bg-transparent"
+      className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden relative bg-gradient-to-b from-white to-gray-50 dark:bg-none dark:bg-transparent"
     >
       {/* Background decorative elements */}
-      <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full opacity-5"
-           style={{ backgroundColor: colors.primary }}></div>
-      <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full opacity-5"
-           style={{ backgroundColor: colors.dark }}></div>
+      <div 
+        className="absolute -top-40 -right-40 w-96 h-96 rounded-full opacity-5 pointer-events-none"
+        style={{ backgroundColor: colors.primary }}
+      />
+      <div 
+        className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full opacity-5 pointer-events-none"
+        style={{ backgroundColor: colors.dark }}
+      />
       
       <div className="max-w-7xl mx-auto relative">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16"
+          className="text-center mb-12 sm:mb-16"
         >
-          <span className="inline-block py-1 px-3 rounded-full text-sm font-medium mb-3" 
-                style={{ backgroundColor: colors.primaryLight, color: colors.primary }}>
+          <span 
+            className="inline-block py-1 px-3 rounded-full text-xs sm:text-sm font-semibold tracking-wide mb-3 shadow-xs" 
+            style={{ backgroundColor: colors.primaryLight, color: colors.primary }}
+          >
             TESTIMONIALS
           </span>
           
@@ -296,7 +333,7 @@ const Testimonials = () => {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -20, opacity: 0 }}
                 transition={transitionSettings}
-                className="text-3xl font-bold sm:text-4xl mb-4 text-gray-900 dark:text-white"
+                className="text-3xl font-bold sm:text-4xl lg:text-5xl mb-3 tracking-tight"
               >
                 Testimonials from{" "}
                 <span style={{ color: colors.primary }}>
@@ -327,7 +364,7 @@ const Testimonials = () => {
             animate="center"
             exit="exit"
             transition={transitionSettings}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch"
           >
             {testimonialData[activeSection].map((item, index) => (
               <TestimonialCard
@@ -345,14 +382,14 @@ const Testimonials = () => {
         </AnimatePresence>
 
         {/* Category selectors */}
-        <div className="flex flex-col items-center mt-16">
-          <div className="flex justify-center space-x-4">
+        <div className="flex flex-col items-center mt-12 sm:mt-16">
+          <div className="flex flex-wrap justify-center gap-3 sm:space-x-4">
             {sections.map((section, index) => {
               const isActive = page % sections.length === index;
               return (
                 <motion.button
                   key={section}
-                  className="px-4 py-2 rounded-full flex items-center justify-center transition-all text-sm font-medium"
+                  className="px-4 py-2 rounded-full flex items-center justify-center transition-all text-xs sm:text-sm font-medium shadow-sm"
                   style={{
                     backgroundColor: isActive ? colors.primary : colors.dark,
                     color: colors.light,
@@ -374,7 +411,7 @@ const Testimonials = () => {
                   
                   {isActive && (
                     <motion.div
-                      className="ml-2 w-1 h-1 bg-white rounded-full"
+                      className="ml-2 w-1.5 h-1.5 bg-white rounded-full"
                       animate={{
                         scale: [1, 1.5, 1],
                         opacity: [1, 0.8, 1]
@@ -398,12 +435,12 @@ const Testimonials = () => {
               return (
                 <motion.div
                   key={`dot-${section}`}
-                  className="w-2 h-2 rounded-full cursor-pointer"
+                  className="w-2.5 h-2.5 rounded-full cursor-pointer transition-all"
                   style={{ 
                     backgroundColor: isActive ? colors.primary : colors.dark,
                     opacity: isActive ? 1 : 0.3
                   }}
-                  whileHover={{ scale: 1.5 }}
+                  whileHover={{ scale: 1.4 }}
                   onClick={() => {
                     if (!isAnimating) {
                       setIsAnimating(true);
