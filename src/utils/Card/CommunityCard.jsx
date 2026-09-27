@@ -4,7 +4,7 @@ import ScheduleOutlinedIcon from "@mui/icons-material/ScheduleOutlined";
 import "./communitycard.css";
 import logo from "@/assets/logos/theuniquesCommunity.png";
 
-const CommunityCard = ({ event, onClick }) => {
+const CommunityCard = ({ event, onCardClick, onKnowMoreClick, onClick }) => {
   const navigate = useNavigate();
 
   // Extract Google Drive file ID from object, URL, or string
@@ -57,22 +57,14 @@ const CommunityCard = ({ event, onClick }) => {
     return null;
   };
 
-  // Handle card click
+  // Handle card click (static by default, only triggers if onCardClick is passed)
   const handleCardClick = (e) => {
     if (e.target.closest(".know-more-button")) {
       return;
     }
 
-    if (onClick) {
-      onClick(event);
-      return;
-    }
-
-    const eventId = getEventId();
-    if (eventId) {
-      navigate(`/events/${eventId}`);
-    } else if (event?.eventLink) {
-      window.open(event.eventLink, "_blank");
+    if (onCardClick) {
+      onCardClick(event);
     }
   };
 
@@ -81,8 +73,8 @@ const CommunityCard = ({ event, onClick }) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (onClick) {
-      onClick(event);
+    if (onKnowMoreClick) {
+      onKnowMoreClick(event);
       return;
     }
 
@@ -104,7 +96,10 @@ const CommunityCard = ({ event, onClick }) => {
     : "Active";
 
   return (
-    <div className="card2-custom-container group cursor-pointer" onClick={handleCardClick}>
+    <div
+      className={`card2-custom-container group ${onCardClick ? "cursor-pointer" : ""}`}
+      onClick={handleCardClick}
+    >
       {/* Hidden SVG Definition for Responsive ObjectBoundingBox Clip-Path */}
       <svg className="absolute w-0 h-0 pointer-events-none" aria-hidden="true">
         <defs>
@@ -203,7 +198,7 @@ const CommunityCard = ({ event, onClick }) => {
 
       {/* SVG Outline Stroke following the exact custom clipped silhouette */}
       <svg
-        className="absolute inset-0 w-full h-full pointer-events-none z-20"
+        className="absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible"
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
       >

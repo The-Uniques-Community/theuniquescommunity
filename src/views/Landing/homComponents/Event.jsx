@@ -4,7 +4,6 @@ import { BASE_URL } from '@/config';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import Eventmodel from '../Event/Componant/Event';
-import { motion, AnimatePresence } from 'framer-motion';
 import useEmblaCarousel from 'embla-carousel-react';
 import CommunityCard from '@/utils/Card/CommunityCard';
 
@@ -13,122 +12,7 @@ const cn = (...classes) => {
   return classes.filter(Boolean).join(' ');
 };
 
-// FollowPointer Components - Fixed implementation for better tracking
-const FollowerPointerCard = ({ children, className, title, colorIndex = 0 }) => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const ref = useRef(null);
-  const [rect, setRect] = useState(null);
-  const [isInside, setIsInside] = useState(false);
 
-  // Update rect dimensions on resize and mount
-  useEffect(() => {
-    if (ref.current) {
-      // Initial measurement
-      setRect(ref.current.getBoundingClientRect());
-
-      // Update on resize
-      const updateRect = () => {
-        if (ref.current) setRect(ref.current.getBoundingClientRect());
-      };
-
-      window.addEventListener('resize', updateRect);
-      return () => window.removeEventListener('resize', updateRect);
-    }
-  }, []);
-
-  const handleMouseMove = (e) => {
-    if (rect) {
-      // Calculate position relative to the container
-      setMousePosition({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      });
-    }
-  };
-
-  const handleMouseLeave = () => {
-    setIsInside(false);
-  };
-
-  const handleMouseEnter = () => {
-    setIsInside(true);
-    // Update rect when mouse enters to ensure accurate positioning
-    if (ref.current) {
-      setRect(ref.current.getBoundingClientRect());
-    }
-  };
-
-  return (
-    <div
-      onMouseLeave={handleMouseLeave}
-      onMouseEnter={handleMouseEnter}
-      onMouseMove={handleMouseMove}
-      style={{ cursor: "none" }}
-      ref={ref}
-      className={cn("relative isolate", className)}
-    >
-      <AnimatePresence>
-        {isInside && (
-          <FollowPointer
-            x={mousePosition.x}
-            y={mousePosition.y}
-            title={title}
-            colorIndex={colorIndex}
-          />
-        )}
-      </AnimatePresence>
-      <div className="relative z-10 pointer-events-auto">
-        {children}
-      </div>
-    </div>
-  );
-};
-
-const FollowPointer = ({ x, y, title, colorIndex }) => {
-  const colors = [
-    "#0ea5e9", "#737373", "#14b8a6", "#22c55e",
-    "#3b82f6", "#ef4444", "#eab308",
-  ];
-
-  // Use a consistent color based on the index
-  const color = colors[colorIndex % colors.length];
-
-  return (
-    <motion.div
-      className="absolute z-[9999] h-4 w-4 rounded-full pointer-events-none"
-      style={{
-        top: y,
-        left: x,
-      }}
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      exit={{ scale: 0, opacity: 0 }}
-      transition={{ duration: 0.1 }}
-    >
-      <svg
-        stroke="currentColor"
-        fill="currentColor"
-        strokeWidth="1"
-        viewBox="0 0 16 16"
-        className="h-6 w-6 -translate-x-[12px] -translate-y-[10px] -rotate-[70deg] transform stroke-sky-600 text-sky-500"
-        height="1em"
-        width="1em"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path d="M14.082 2.182a.5.5 0 0 1 .103.557L8.528 15.467a.5.5 0 0 1-.917-.007L5.57 10.694.803 8.652a.5.5 0 0 1-.006-.916l12.728-5.657a.5.5 0 0 1 .556.103z"></path>
-      </svg>
-      <motion.div
-        style={{ backgroundColor: color }}
-        initial={{ scale: 0.5, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.5, opacity: 0 }}
-        className="absolute top-0 left-0 min-w-max rounded-full px-2 py-2 text-xs whitespace-nowrap text-white transform -translate-x-1/2 translate-y-2 mt-2 shadow-lg"
-      >
-        {title || `Event Details`}
-      </motion.div>
-    </motion.div>
-  );
-};
 
 // Carousel Components - Updated with responsive design
 const Carousel = forwardRef(
@@ -183,8 +67,8 @@ const Carousel = forwardRef(
         className={cn("relative px-2 md:px-0", className)}
         {...props}
       >
-        <div ref={emblaRef} className="overflow-hidden">
-          <div className="flex">{children}</div>
+        <div ref={emblaRef} className="overflow-hidden py-3 -my-3">
+          <div className="flex pt-3 pb-2">{children}</div>
         </div>
 
         {/* Only show buttons on non-touch devices */}
@@ -314,14 +198,7 @@ const Event = () => {
     document.body.style.overflow = 'auto'; // Re-enable scrolling
   };
 
-  const TitleComponent = ({ event }) => (
-    <div className="flex items-center space-x-2">
-      <div className="w-5 h-5 rounded-full bg-red-600 flex items-center justify-center text-white text-xs">
-        {event.eventName?.charAt(0) || 'E'}
-      </div>
-      <p>{event.eventName || "Event"}</p>
-    </div>
-  );
+
 
   if (loading) {
     return (
@@ -372,16 +249,9 @@ const Event = () => {
           {events.map((event, index) => (
             <CarouselItem key={event._id || index}>
               <div className="h-full">
-                <FollowerPointerCard
-                  title={<TitleComponent event={event} />}
-                  className="w-full h-full"
-                  colorIndex={index}
-                >
-                  <CommunityCard
-                    event={event}
-                    onClick={() => openEventModal(event)}
-                  />
-                </FollowerPointerCard>
+                <CommunityCard
+                  event={event}
+                />
               </div>
             </CarouselItem>
           ))}
