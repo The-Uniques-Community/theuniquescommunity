@@ -142,7 +142,7 @@ function Startups() {
               )}
               {activeStep === 2 && (
                 <iframe
-                  src="https://techlearns.in/"
+                  src="https://www.techlearns.in/"
 
                   title="Copy The Snippet"
                   className="w-full h-[315px] rounded-lg shadow-3xl"
