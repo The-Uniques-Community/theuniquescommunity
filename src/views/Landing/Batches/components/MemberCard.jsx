@@ -31,16 +31,18 @@ const MemberCard = ({ member }) => {
     ? `Placed - ${course || ""}`
     : course || "Member";
 
-  const nameParts = fullName.trim().split(' ');
-  const firstName = nameParts[0];
+  // Safely extract name
+  const safeName = (typeof fullName === "string" && fullName.trim()) ? fullName.trim() : (member.email || "Member");
+  const nameParts = safeName.split(' ');
+  const firstName = nameParts[0] || "Member";
   const lastName = nameParts.slice(1).join(' ');
 
   // Format profile image - handle both object reference and direct URL
   const profileImg =
     member.profilePic?.fileUrl || member.profilePic?.url ||
-    (typeof member.profilePic === "string"
+    (typeof member.profilePic === "string" && member.profilePic
       ? member.profilePic
-      : `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}`);
+      : `https://ui-avatars.com/api/?name=${encodeURIComponent(safeName)}`);
 
   // Format social links
   const socialLinks = {
@@ -115,8 +117,12 @@ const MemberCard = ({ member }) => {
       {/* Profile Image */}
       <img
         src={profilePic?.fileId ? getProxyImageUrl(profilePic.fileId) : profileImg}
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(safeName)}`;
+        }}
         className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
-        alt={`${fullName}'s Profile`}
+        alt={`${safeName}'s Profile`}
       />
 
       {/* Optional Batch Badge - top left */}

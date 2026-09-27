@@ -107,9 +107,8 @@ export const getPublicMemberById = async (req, res) => {
     
     const member = await Member.findOne({
       _id: id,
-      profileStatus: "active",
-      isVerified: true,
-      isSuspended: false
+      isSuspended: { $ne: true },
+      profileStatus: { $ne: "blocked" }
     }).populate('profilePic').populate('certifications');
     
     if (!member) {
@@ -122,17 +121,17 @@ export const getPublicMemberById = async (req, res) => {
     // Format member data for public consumption
     const formattedMember = {
       _id: member._id,
-      fullName: member.fullName,
-      batch: member.batch,
-      course: member.course,
-      isPlaced: member.isPlaced,
-      bio: member.bio,
+      fullName: member.fullName || member.email,
+      batch: member.batch || null,
+      course: member.course || null,
+      isPlaced: member.isPlaced || false,
+      bio: member.bio || null,
       profilePic: member.profilePic ? (member.profilePic.url || member.profilePic) : null,
       skills: Array.isArray(member.skills) ? member.skills : [],
-      linkedinProfile: member.linkedinProfile,
-      githubProfile: member.githubProfile,
-      twitterProfile: member.twitterProfile,
-      instagramProfile: member.instagramProfile,
+      linkedinProfile: member.linkedinProfile || null,
+      githubProfile: member.githubProfile || null,
+      twitterProfile: member.twitterProfile || null,
+      instagramProfile: member.instagramProfile || null,
       projects: Array.isArray(member.projects) ? member.projects : [],
       achievements: Array.isArray(member.achievements) ? member.achievements : [],
       certifications: member.certifications || [],
@@ -158,34 +157,18 @@ export const getPublicMemberById = async (req, res) => {
 // Add this method to get member counts by batch
 export const getMemberCounts = async (req, res) => {
     try {
-      // Get count of all active members
-      const totalCount = await Member.countDocuments({
-        profileStatus: "active",
-        isVerified: true,
-        isSuspended: false
-      });
-      
-      // Get count for each batch
-      const batch1Count = await Member.countDocuments({
-        batch: "The Uniques 1.0",
-        profileStatus: "active",
-        isVerified: true,
-        isSuspended: false
-      });
-      
-      const batch2Count = await Member.countDocuments({
-        batch: "The Uniques 2.0",
-        profileStatus: "active",
-        isVerified: true,
-        isSuspended: false
-      });
-      
-      const batch3Count = await Member.countDocuments({
-        batch: "The Uniques 3.0",
-        profileStatus: "active", 
-        isVerified: true,
-        isSuspended: false
-      });
+      const baseFilter = {
+        isSuspended: { $ne: true },
+        profileStatus: { $ne: "blocked" }
+      };
+
+      const [totalCount, batch1Count, batch2Count, batch3Count, batch4Count] = await Promise.all([
+        Member.countDocuments(baseFilter),
+        Member.countDocuments({ ...baseFilter, batch: "The Uniques 1.0" }),
+        Member.countDocuments({ ...baseFilter, batch: "The Uniques 2.0" }),
+        Member.countDocuments({ ...baseFilter, batch: "The Uniques 3.0" }),
+        Member.countDocuments({ ...baseFilter, batch: "The Uniques 4.0" }),
+      ]);
       
       return res.status(200).json({
         success: true,
@@ -194,7 +177,8 @@ export const getMemberCounts = async (req, res) => {
           "All": totalCount,
           "The Uniques 1.0": batch1Count,
           "The Uniques 2.0": batch2Count,
-          "The Uniques 3.0": batch3Count
+          "The Uniques 3.0": batch3Count,
+          "The Uniques 4.0": batch4Count,
         }
       });
       
