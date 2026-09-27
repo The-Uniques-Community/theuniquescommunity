@@ -1,10 +1,9 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { MotionPathPlugin } from "gsap/MotionPathPlugin"
-import { Card, Button } from "@mui/material"
+import { Card } from "@mui/material"
 import { Users, GraduationCap, UserCheck } from "lucide-react"
 import { useThemeContext } from "@/theme/ThemeProvider"
 
@@ -32,26 +31,11 @@ const sections = [
 
 const FlightPathAnimation = () => {
     const containerRef = useRef(null);
-    const planeRef = useRef(null);
 
     useEffect(() => {
         gsap.registerPlugin(ScrollTrigger);
 
         const ctx = gsap.context(() => {
-            // Plane flight animation
-            gsap.to(planeRef.current, {
-                scrollTrigger: {
-                    trigger: containerRef.current,
-                    start: "top center",
-                    end: "bottom center",
-                    scrub: 1.5,
-                },
-                x: "80vw",
-                y: "20vh",
-                rotation: 15,
-                ease: "power1.inOut"
-            });
-
             // Card entrance animations
             gsap.utils.toArray(".flight-card").forEach((card, i) => {
                 gsap.from(card, {
@@ -74,18 +58,6 @@ const FlightPathAnimation = () => {
 
     return (
         <section ref={containerRef} className="relative py-32 px-4 overflow-hidden bg-white dark:bg-[#161616]">
-            {/* Background Path (Dashed Line) */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-10 dark:opacity-5" viewBox="0 0 1000 1000" preserveAspectRatio="none">
-                <path d="M0,500 C200,400 400,600 600,500 S800,400 1000,500" stroke="#ca0019" strokeWidth="4" strokeDasharray="10,10" fill="none" />
-            </svg>
-
-            {/* Animated Plane Icon */}
-            <div ref={planeRef} className="absolute left-0 top-1/2 -translate-y-1/2 z-20 pointer-events-none">
-                <div className="bg-[#ca0019] p-3 rounded-full shadow-[0_0_30px_rgba(202,0,25,0.4)]">
-                    <UserCheck className="w-8 h-8 text-white" />
-                </div>
-            </div>
-
             <div className="max-w-7xl mx-auto relative z-10">
                 <div className="text-center mb-20">
                     <h2 className="text-4xl md:text-6xl font-bold mb-6 dark:text-white">Our Flight to <span className="text-[#ca0019]">Excellence</span></h2>
