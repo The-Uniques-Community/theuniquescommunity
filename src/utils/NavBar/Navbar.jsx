@@ -150,7 +150,7 @@ const Navbar = () => {
     },
     {
       icon: <InstagramIcon />,
-      link: "https://www.instagram.com/theuniquesofficial?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
+      link: "https://www.instagram.com/theuniquescommunity/",
       color: "#E4405F",
       name: "Instagram",
     },
