@@ -7,6 +7,7 @@ import {
   Computer,
   Star
 } from "@mui/icons-material"
+import { useThemeContext } from "@/theme/ThemeProvider";
 import ronitImg from "@/assets/img/Success Stories avatars/ronit-jaiprakash.jpeg";
 import praveenImg from "@/assets/img/Success Stories avatars/praveen-jaiswal.jpeg";
 import mantashaImg from "@/assets/img/Success Stories avatars/mantasha-tabassum.jpg";
@@ -193,12 +194,12 @@ const TestimonialCard = ({ image, name, role, testimonial, rating = 5, highlight
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay }}
-      className="bg-[#1e1e1e] dark:bg-[#1e1e1e] rounded-2xl shadow-xl p-5 sm:p-6 lg:p-5 xl:p-6 border border-white/10 transition-all duration-300 flex flex-col justify-between h-full hover:border-[#ca0019]/40 hover:shadow-2xl"
+      className="bg-white dark:bg-[#1e1e1e] rounded-2xl shadow-md dark:shadow-xl p-5 sm:p-6 lg:p-5 xl:p-6 border border-slate-200 dark:border-white/10 transition-all duration-300 flex flex-col justify-between h-full hover:border-[#ca0019]/50 hover:shadow-xl dark:hover:shadow-2xl"
     >
       {/* Top Header inside card: Quote Icon & Highlight Badge */}
       <div className="flex items-center justify-between gap-2 mb-3">
         <div 
-          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shadow-md shrink-0"
+          className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shadow-xs shrink-0"
           style={{ backgroundColor: `${colors.primaryLight}` }}
         >
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -208,7 +209,7 @@ const TestimonialCard = ({ image, name, role, testimonial, rating = 5, highlight
 
         {highlight && (
           <span 
-            className="py-0.5 px-2.5 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase shadow-sm shrink-0"
+            className="py-0.5 px-2.5 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase shadow-xs shrink-0"
             style={{ backgroundColor: colors.primary, color: 'white' }}
           >
             {highlight}
@@ -228,14 +229,14 @@ const TestimonialCard = ({ image, name, role, testimonial, rating = 5, highlight
           
           {/* Testimonial text with standardized container height */}
           <div className="min-h-[105px] sm:min-h-[115px] lg:min-h-[110px] xl:min-h-[105px] flex items-start mb-4">
-            <p className="text-white text-xs sm:text-sm lg:text-[13px] xl:text-sm leading-relaxed font-normal">
+            <p className="text-slate-800 dark:text-white text-xs sm:text-sm lg:text-[13px] xl:text-sm leading-relaxed font-normal">
               &ldquo;{testimonial}&rdquo;
             </p>
           </div>
         </div>
 
         {/* Author Details */}
-        <div className="flex items-center pt-3.5 border-t border-white/10 mt-auto">
+        <div className="flex items-center pt-3.5 border-t border-slate-100 dark:border-white/10 mt-auto">
           <div className="w-10 h-10 rounded-full overflow-hidden mr-3 shrink-0 ring-2 ring-[#ca0019]/30">
             <AvatarImage
               src={image}
@@ -243,10 +244,10 @@ const TestimonialCard = ({ image, name, role, testimonial, rating = 5, highlight
             />
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-white text-xs sm:text-sm truncate" style={{ color: '#ffffff' }}>
+            <h3 className="font-semibold text-slate-900 dark:text-white text-xs sm:text-sm truncate">
               {name}
             </h3>
-            <p className="text-[11px] sm:text-xs text-gray-400 truncate">
+            <p className="text-[11px] sm:text-xs text-slate-500 dark:text-gray-400 truncate">
               {role}
             </p>
           </div>
@@ -378,13 +379,12 @@ const Testimonials = () => {
               return (
                 <motion.button
                   key={section}
-                  className="px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full flex items-center justify-center transition-all text-xs sm:text-sm font-medium shadow-sm border border-transparent"
-                  style={{
-                    backgroundColor: isActive ? colors.primary : '#1e1e1e',
-                    color: colors.light,
-                    opacity: isActive ? 1 : 0.8,
-                  }}
-                  whileHover={{ scale: 1.04, opacity: 1 }}
+                  className={`px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full flex items-center justify-center transition-all text-xs sm:text-sm font-medium shadow-sm border ${
+                    isActive 
+                      ? 'bg-[#ca0019] text-white border-[#ca0019]' 
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200 dark:bg-[#1e1e1e] dark:text-white dark:border-transparent dark:hover:bg-zinc-800'
+                  }`}
+                  whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleSectionChange(index)}
                 >
@@ -422,11 +422,11 @@ const Testimonials = () => {
                 <motion.button
                   key={`dot-${section}`}
                   aria-label={`Go to ${section} testimonials`}
-                  className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full cursor-pointer transition-all border-none focus:outline-none"
-                  style={{ 
-                    backgroundColor: isActive ? colors.primary : '#888888',
-                    opacity: isActive ? 1 : 0.4
-                  }}
+                  className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full cursor-pointer transition-all border-none focus:outline-none ${
+                    isActive 
+                      ? 'bg-[#ca0019] scale-110' 
+                      : 'bg-slate-300 dark:bg-zinc-600 opacity-60 hover:opacity-100'
+                  }`}
                   whileHover={{ scale: 1.3 }}
                   onClick={() => handleSectionChange(index)}
                 />
