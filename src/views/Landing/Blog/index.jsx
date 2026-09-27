@@ -191,6 +191,8 @@ const BlogPage = () => {
         {!isMobile && (
           <Paper 
             elevation={0} 
+            data-lenis-prevent
+            onWheel={(e) => e.stopPropagation()}
             sx={{ 
               display: { xs: 'none', md: 'block' },
               position: 'sticky',
@@ -212,6 +214,7 @@ const BlogPage = () => {
           open={mobileFilterOpen}
           onClose={() => setMobileFilterOpen(false)}
           PaperProps={{
+            'data-lenis-prevent': true,
             sx: { backgroundColor: 'transparent' }
           }}
         >
@@ -304,7 +307,10 @@ const BlogPage = () => {
         aria-labelledby="blog-title"
         aria-describedby="blog-content"
       >
-        <Box className="fixed inset-0 overflow-auto" 
+        <Box 
+          data-lenis-prevent
+          onWheel={(e) => e.stopPropagation()}
+          className="fixed inset-0 overflow-y-auto overscroll-contain" 
           sx={{
             backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.98)',
             backdropFilter: 'blur(10px)',
