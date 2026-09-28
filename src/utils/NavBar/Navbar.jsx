@@ -139,6 +139,7 @@ const Navbar = () => {
 
   const handleLinkClick = (linkText) => {
     setActiveLink(linkText);
+    setDrawerOpen(false);
   };
 
   // Social media links - update these URLs with actual links
@@ -170,6 +171,7 @@ const Navbar = () => {
         height: "100%",
         display: "flex",
         flexDirection: "column",
+        minHeight: 0,
         background: isDarkMode ? "rgba(30, 30, 30, 0.98)" : "rgba(255, 248, 248, 0.98)", // Dynamic tint based on mode
         backdropFilter: "blur(25px)",
       }}
@@ -177,7 +179,7 @@ const Navbar = () => {
 
     >
       {/* Drawer Header */}
-      <Box sx={{ pt: 2, px: 2, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+      <Box sx={{ pt: 2, px: 2, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flexShrink: 0 }}>
         <motion.div
           whileHover={{ rotate: 90, scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
@@ -192,14 +194,28 @@ const Navbar = () => {
       <List
         sx={{ 
           flexGrow: 1, 
+          minHeight: 0,
           px: 2, 
           pt: 1, 
           pb: 2,
           overflowY: "auto",
-          scrollbarWidth: "none",
-          "&::-webkit-scrollbar": { display: "none" },
+          overscrollBehavior: "contain",
+          scrollbarWidth: "thin",
+          scrollbarColor: isDarkMode ? "rgba(255, 255, 255, 0.2) transparent" : "rgba(0, 0, 0, 0.2) transparent",
+          "&::-webkit-scrollbar": {
+            width: "5px",
+          },
+          "&::-webkit-scrollbar-track": {
+            background: "transparent",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: isDarkMode ? "rgba(255, 255, 255, 0.2)" : "rgba(0, 0, 0, 0.15)",
+            borderRadius: "10px",
+          },
+          "&::-webkit-scrollbar-thumb:hover": {
+            background: "#CA0019",
+          },
         }}
-        onClick={toggleDrawer(false)}
         onKeyDown={toggleDrawer(false)}
       >
         <AnimatePresence>
@@ -284,7 +300,7 @@ const Navbar = () => {
       </List>
 
       {/* Auth & Actions Section (Fixed) */}
-      <Box sx={{ px: 2, pb: 2 }}>
+      <Box sx={{ px: 2, pb: 2, flexShrink: 0 }}>
         {authNavItems.length > 0 && <Divider sx={{ mb: 3, opacity: 0.5 }} />}
         {authNavItems.map((item) => (
           <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
@@ -293,6 +309,7 @@ const Navbar = () => {
               to={!item.onClick ? item.link : undefined}
               onClick={() => {
                 if (item.onClick) item.onClick();
+                setDrawerOpen(false);
               }}
               sx={{
                 borderRadius: "8px",
