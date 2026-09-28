@@ -1,11 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Users, Lightbulb, BarChart, Calendar } from 'lucide-react';
+import { getStoredStats } from '@/utils/stats/statsData';
 
 const Counts = () => {
   const sectionRef = useRef(null);
   const [statsVisible, setStatsVisible] = useState(false);
+  const [targetValues, setTargetValues] = useState(() => getStoredStats());
   const [counters, setCounters] = useState({ Earnings: 0, Clients: 0, Projects: 0, Events: 0 });
   const [animationComplete, setAnimationComplete] = useState(false);
+
+  useEffect(() => {
+    const handleStatsUpdated = (e) => {
+      const updated = e.detail || getStoredStats();
+      setTargetValues(updated);
+      setCounters(updated);
+    };
+    window.addEventListener("stats-updated", handleStatsUpdated);
+    return () => window.removeEventListener("stats-updated", handleStatsUpdated);
+  }, []);
 
   // Use Intersection Observer to detect when stats are visible
   useEffect(() => {
@@ -37,12 +49,7 @@ const Counts = () => {
       const frameDuration = 1000 / 60;
       const totalFrames = Math.round(duration / frameDuration);
 
-      const finalValues = {
-        Earnings: 860000,
-        Clients: 100,
-        Projects: 150,
-        Events: 40
-      };
+      const finalValues = targetValues;
 
       let frame = 0;
       const counter = setInterval(() => {
