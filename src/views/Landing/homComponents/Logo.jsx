@@ -4,20 +4,20 @@ import styled, { keyframes, css } from "styled-components";
 
 function Logo() {
   const row1 = [
-    "https://utfs.io/f/08e113ca-9cd3-4f3c-a891-75e0fdaea010-nlisdm.jpeg",
-    "https://utfs.io/f/cb253631-d4f2-4c3e-81e3-202fdb7387a5-cnlz8q.png",
-    "https://utfs.io/f/a97ac1eb-0e9f-4937-a79d-3c478cca09d2-nlisfc.png",
+    "https://utfs.io/f/08e113ca-9cd3-4f3c-a891-75e0fdaea010-nlisdm.webp",
+    "https://utfs.io/f/cb253631-d4f2-4c3e-81e3-202fdb7387a5-cnlz8q.webp",
+    "https://utfs.io/f/a97ac1eb-0e9f-4937-a79d-3c478cca09d2-nlisfc.webp",
     "https://utfs.io/f/7e1b15d5-916a-4234-bf40-24276213ea46-wrdm82.logowik.com.webp",
-    "https://utfs.io/f/6e71cab4-ef0d-4220-b681-2f8262fe9a8e-nm33wo.png",
-    "https://utfs.io/f/3c7777f2-98a1-42c4-856b-621c447d4e6d-nlisdm.png",
+    "https://utfs.io/f/6e71cab4-ef0d-4220-b681-2f8262fe9a8e-nm33wo.webp",
+    "https://utfs.io/f/3c7777f2-98a1-42c4-856b-621c447d4e6d-nlisdm.webp",
   ];
 
   const row2 = [
-    "https://utfs.io/f/afc3ff57-8fb0-4ca6-8dbd-b12ccb4f468d-1krgma.jpg",
-    "https://utfs.io/f/fdb39688-3cb6-48c2-8581-e1cad1c33835-saazj8.svg.png",
-    "https://utfs.io/f/5ad495c7-de1c-408e-9975-77d9bc54e9fe-hmaenf.svg.png",
-    "https://utfs.io/f/7c92b6fc-b63c-4586-a008-22a7465853cc-vv2d4f.png",
-    "https://utfs.io/f/2fa214b4-d711-41e4-84bd-590eca2f0fd9-hvaotc.png",
+    "https://utfs.io/f/afc3ff57-8fb0-4ca6-8dbd-b12ccb4f468d-1krgma.webp",
+    "https://utfs.io/f/fdb39688-3cb6-48c2-8581-e1cad1c33835-saazj8.svg.webp",
+    "https://utfs.io/f/5ad495c7-de1c-408e-9975-77d9bc54e9fe-hmaenf.svg.webp",
+    "https://utfs.io/f/7c92b6fc-b63c-4586-a008-22a7465853cc-vv2d4f.webp",
+    "https://utfs.io/f/2fa214b4-d711-41e4-84bd-590eca2f0fd9-hvaotc.webp",
     "https://utfs.io/f/4bb4e92b-63f4-4693-af59-bbb9d4fca08c-8kjywp.webp",
   ];
 

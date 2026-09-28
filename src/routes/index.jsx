@@ -49,7 +49,7 @@ const timelineData = [
   },
   {
     year: "1920",
-    image: "/images/klee.jpg",
+    image: "/images/klee.webp",
     heading: "Paul Klee",
     subheading: "Color Theory Pioneer",
     brief: "Joins and brings his expertise in color theory and form.",
@@ -57,7 +57,7 @@ const timelineData = [
   },
   {
     year: "1923",
-    image: "/images/moholy-nagy.jpg",
+    image: "/images/moholy-nagy.webp",
     heading: "László Moholy-Nagy",
     subheading: "New Vision",
     brief: "Introduced new approaches to photography and typography, promoting the integration of technology and art."
