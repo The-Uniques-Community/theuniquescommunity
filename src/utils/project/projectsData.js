@@ -5,7 +5,7 @@ export const INITIAL_PROJECTS = [
     batch: "Uniques 4.0",
     description:
       "A student-support system that identifies potential problem areas and flags them for timely attention and appropriate support.",
-    image: "/projects/unicare.png",
+    image: "/projects/unicare.webp",
     technologies: ["REACT", "NODE.JS", "MONGODB", "AI"],
     category: "Support & Mentorship",
     link: "https://uniques-care.vercel.app/",
@@ -18,7 +18,7 @@ export const INITIAL_PROJECTS = [
     batch: "Uniques 1.0",
     description:
       "A digital library platform that helps students discover, access, organize, and manage academic books and learning resources.",
-    image: "/projects/libraria.png",
+    image: "/projects/libraria.webp",
     technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
     category: "Digital Library",
     link: "https://libraria-tu.vercel.app/",
@@ -31,7 +31,7 @@ export const INITIAL_PROJECTS = [
     batch: "Uniques 1.0",
     description:
       "A centralized student data portal containing profiles, academic information, records, and essential data of all Uniques students.",
-    image: "/projects/tuportal.png",
+    image: "/projects/tuportal.webp",
     technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
     category: "Student Records & LMS",
     link: "https://theuniquesportal.vercel.app/",
@@ -44,7 +44,7 @@ export const INITIAL_PROJECTS = [
     batch: "Uniques 5.0",
     description:
       "A 7-day intensive workshop designed to develop industry-grade coding skills and evaluate students' knowledge through practical tests.",
-    image: "/projects/codecrusade.png",
+    image: "/projects/codecrusade.webp",
     technologies: ["WORKSHOP", "CODING", "ASSESSMENT", "PYTHON"],
     category: "Workshop & Testing",
     link: "https://codecrusade2026.vercel.app/",
@@ -57,7 +57,7 @@ export const INITIAL_PROJECTS = [
     batch: "Uniques 4.0",
     description:
       "An internal hackathon portal enabling student teams to pitch innovative ideas and selecting top teams to participate in the Smart India Hackathon (SIH).",
-    image: "/projects/ideajam2026.png",
+    image: "/projects/ideajam2026.webp",
     technologies: ["REACT", "NODE.JS", "TAILWIND", "SIH"],
     category: "Hackathon & SIH",
     link: "https://ideajam2026.vercel.app/",
@@ -70,7 +70,7 @@ export const INITIAL_PROJECTS = [
     batch: "Uniques 4.0",
     description:
       "A national-level ideathon platform organized across diverse universities for student innovators to pitch disruptive solutions and compete.",
-    image: "/projects/eureka.png",
+    image: "/projects/eureka.webp",
     technologies: ["REACT", "NODE.JS", "MONGODB", "INNOVATION"],
     category: "National Ideathon",
     link: "https://eureka-cyan-six.vercel.app/",
@@ -83,7 +83,7 @@ export const INITIAL_PROJECTS = [
     batch: "Uniques 4.0",
     description:
       "An official induction and orientation web portal organized for first-year students to inspire, connect, and onboard them into the community.",
-    image: "/projects/elevate.png",
+    image: "/projects/elevate.webp",
     technologies: ["REACT", "TAILWIND", "FRAMER", "INDUCTION"],
     category: "Induction & Orientation",
     link: "https://elevate-sviet.vercel.app/",

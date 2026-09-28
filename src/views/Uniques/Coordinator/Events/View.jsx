@@ -2784,7 +2784,7 @@ const EventView = () => {
               value={newGuest.guestImage}
               onChange={handleNewGuestInputChange}
               fullWidth
-              placeholder="https://example.com/image.jpg"
+              placeholder="https://example.com/image.webp"
             />
           </Box>
         </DialogContent>

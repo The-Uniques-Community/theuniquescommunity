@@ -40,7 +40,7 @@ export const members = [
         },
   
       ], // MongoDB ObjectIds
-      profilePic: "https://randomuser.me/api/portraits/men/1.jpg",
+      profilePic: "https://randomuser.me/api/portraits/men/1.webp",
       skills: ["React", "Node.js", "MongoDB", "Tailwind CSS"],
       projects: [ {
         id: "proj1",
@@ -136,7 +136,7 @@ export const members = [
           imageUrl: "/placeholder.svg?height=200&width=300",
         },
       ],
-      profilePic: "https://randomuser.me/api/portraits/women/2.jpg",
+      profilePic: "https://randomuser.me/api/portraits/women/2.webp",
       skills: ["Python", "Machine Learning", "Data Science", "React", "Node.js", "MongoDB", "Tailwind CSS"],
       projects: [
         {

@@ -268,7 +268,7 @@ const sampleUserData = {
   course: "B.Tech CSE",
   batch: "The Uniques 2.0",
   profileStatus: "active",
-  profilePic: "https://example.com/profile.jpg",
+  profilePic: "https://example.com/profile.webp",
   linkedinProfile: "https://linkedin.com/in/johndoe",
   githubProfile: "https://github.com/johndoe",
   bio: "Software developer with passion for AI",

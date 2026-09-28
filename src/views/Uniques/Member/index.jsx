@@ -7954,7 +7954,7 @@ const Index = () => {
               <input
                 type="file"
                 id="certification-file"
-                accept=".pdf,.jpg,.jpeg,.png"
+                accept=".pdf,.jpg,.jpeg,.webp"
                 onChange={handleCertificationFileChange}
                 style={{ display: "none" }}
               />
