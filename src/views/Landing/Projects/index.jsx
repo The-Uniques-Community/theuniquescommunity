@@ -10,118 +10,131 @@ export const BATCHES = [
   { id: "Uniques 2.0", name: "The Uniques 2.0", icon: "🥈" },
   { id: "Uniques 3.0", name: "The Uniques 3.0", icon: "🥉" },
   { id: "Uniques 4.0", name: "The Uniques 4.0", icon: "🏅" },
+  { id: "Uniques 5.0", name: "The Uniques 5.0", icon: "🎖️" },
 ];
 
 export const PROJECTS_DATA = [
-  // ── Uniques 1.0 Projects ──
   {
     id: 1,
-    title: "UniPortal - Student Community LMS",
-    batch: "Uniques 1.0",
+    title: "Uniques E-Gyan",
+    batch: "Uniques 4.0",
     description:
-      "A centralized platform for The Uniques Community managing enrollments, training roadmaps, batch assignments, and real-time attendance.",
+      "A centralized academic platform providing students with PYQs, notes, study materials, and exam-focused resources.",
     image:
-      "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1200&q=80",
     technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
-    category: "Web & Full Stack",
+    category: "Academic & Learning",
     link: "https://github.com/theuniquesofflicial",
     buttonColor: "#ea384c",
   },
   {
     id: 2,
-    title: "CampusConnect - Hackathon & Team Finder",
-    batch: "Uniques 1.0",
+    title: "Uniques Assess",
+    batch: "Uniques 4.0",
     description:
-      "Mobile-first community platform enabling students to discover hackathon teams, showcase member portfolios, and organize meetups.",
+      "An online assessment platform for conducting college examinations, managing tests, evaluating students, and tracking performance.",
     image:
-      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["REACT NATIVE", "FIREBASE", "REDUX", "UI/UX"],
-    category: "Mobile & Apps",
+      "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80",
+    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
+    category: "Assessment & Exams",
     link: "https://github.com/theuniquesofflicial",
     buttonColor: "#ea384c",
   },
-
-  // ── Uniques 2.0 Projects ──
   {
     id: 3,
-    title: "AI Resume & Skill Gap Analyzer",
-    batch: "Uniques 2.0",
+    title: "UNI CARE",
+    batch: "Uniques 4.0",
     description:
-      "Smart NLP pipeline that parses resumes, assesses skill gaps against live tech job postings, and recommends curated learning roadmaps.",
-    image:
-      "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["PYTHON", "FASTAPI", "PYTORCH", "NLP"],
-    category: "AI / ML & Data",
-    link: "https://github.com/theuniquesofflicial",
+      "A student-support system that identifies potential problem areas and flags them for timely attention and appropriate support.",
+    image: "/projects/unicare.png",
+    technologies: ["REACT", "NODE.JS", "MONGODB", "AI"],
+    category: "Support & Mentorship",
+    link: "https://uniques-care.vercel.app/",
     buttonColor: "#ea384c",
   },
   {
     id: 4,
-    title: "CodeSync - Realtime Pair Programming IDE",
-    batch: "Uniques 2.0",
+    title: "Uniques 360",
+    batch: "Uniques 1.0",
     description:
-      "Browser-based code workspace with multi-cursor collaboration, live syntax linting, integrated video call, and terminal execution.",
+      "An all-in-one student platform providing a complete view of academics, activities, performance, and community engagement.",
     image:
-      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["NEXT.JS", "WEBSOCKETS", "MONACO", "DOCKER"],
-    category: "Web & Full Stack",
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
+    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
+    category: "Analytics & Activities",
     link: "https://github.com/theuniquesofflicial",
     buttonColor: "#ea384c",
   },
-
-  // ── Uniques 3.0 Projects ──
   {
     id: 5,
-    title: "PlacementPulse - Hiring & Contest Tracker",
-    batch: "Uniques 3.0",
+    title: "Libraria",
+    batch: "Uniques 1.0",
     description:
-      "Analytical dashboard tracking competitive coding milestones, LeetCode ratings, and recruitment rounds for graduating batches.",
-    image:
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["TYPESCRIPT", "CHART.JS", "POSTGRESQL", "EXPRESS"],
-    category: "Web & Full Stack",
-    link: "https://github.com/theuniquesofflicial",
+      "A digital library platform that helps students discover, access, organize, and manage academic books and learning resources.",
+    image: "/projects/libraria.png",
+    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
+    category: "Digital Library",
+    link: "https://libraria-tu.vercel.app/",
     buttonColor: "#ea384c",
   },
   {
     id: 6,
-    title: "SmartLab - IoT Lab Energy & Access Guard",
-    batch: "Uniques 3.0",
+    title: "TU Portal",
+    batch: "Uniques 1.0",
     description:
-      "Telemetry and automation hardware setup for university computer labs, optimizing power consumption and monitoring lab access via RFID cards.",
-    image:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["C++", "ESP32", "MQTT", "NODE.JS"],
-    category: "Cloud & IoT",
-    link: "https://github.com/theuniquesofflicial",
+      "A centralized student data portal containing profiles, academic information, records, and essential data of all Uniques students.",
+    image: "/projects/tuportal.png",
+    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
+    category: "Student Records & LMS",
+    link: "https://theuniquesportal.vercel.app/",
     buttonColor: "#ea384c",
   },
-
-  // ── Uniques 4.0 Projects ──
   {
     id: 7,
-    title: "CloudOps - Automated DevOps Pipeline",
-    batch: "Uniques 4.0",
+    title: "Code crusade 0.5",
+    batch: "Uniques 5.0",
     description:
-      "Zero-config CI/CD build runner and deployment orchestrator developed for student open-source repositories.",
-    image:
-      "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["DOCKER", "KUBERNETES", "GO", "GITHUB ACTIONS"],
-    category: "Cloud & DevOps",
-    link: "https://github.com/theuniquesofflicial",
+      "A 7-day intensive workshop designed to develop industry-grade coding skills and evaluate students' knowledge through practical tests.",
+    image: "/projects/codecrusade.png",
+    technologies: ["WORKSHOP", "CODING", "ASSESSMENT", "PYTHON"],
+    category: "Workshop & Testing",
+    link: "https://codecrusade2026.vercel.app/",
     buttonColor: "#ea384c",
   },
   {
     id: 8,
-    title: "NeuroCraft - Realtime Focus & EEG Tracker",
+    title: "Ideajam 2026",
     batch: "Uniques 4.0",
     description:
-      "Real-time EEG signal processing neural net detecting cognitive focus and mental fatigue in computer science labs.",
-    image:
-      "https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["PYTHON", "TENSORFLOW", "NUMPY", "FLASK"],
-    category: "AI & NeuroTech",
-    link: "https://github.com/theuniquesofflicial",
+      "An internal hackathon portal enabling student teams to pitch innovative ideas and selecting top teams to participate in the Smart India Hackathon (SIH).",
+    image: "/projects/ideajam2026.png",
+    technologies: ["REACT", "NODE.JS", "TAILWIND", "SIH"],
+    category: "Hackathon & SIH",
+    link: "https://ideajam2026.vercel.app/",
+    buttonColor: "#ea384c",
+  },
+  {
+    id: 9,
+    title: "Eureka - National Ideathon",
+    batch: "Uniques 4.0",
+    description:
+      "A national-level ideathon platform organized across diverse universities for student innovators to pitch disruptive solutions and compete.",
+    image: "/projects/eureka.png",
+    technologies: ["REACT", "NODE.JS", "MONGODB", "INNOVATION"],
+    category: "National Ideathon",
+    link: "https://eureka-cyan-six.vercel.app/",
+    buttonColor: "#ea384c",
+  },
+  {
+    id: 10,
+    title: "Elevate 3.0",
+    batch: "Uniques 4.0",
+    description:
+      "An official induction and orientation web portal organized for first-year students to inspire, connect, and onboard them into the community.",
+    image: "/projects/elevate.png",
+    technologies: ["REACT", "TAILWIND", "FRAMER", "INDUCTION"],
+    category: "Induction & Orientation",
+    link: "https://elevate-sviet.vercel.app/",
     buttonColor: "#ea384c",
   },
 ];
