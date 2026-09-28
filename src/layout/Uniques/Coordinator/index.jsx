@@ -37,6 +37,7 @@ import { UserIcon } from "lucide-react";
 import SchoolIcon from "@mui/icons-material/School";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import ClassIcon from "@mui/icons-material/Class";
+import Diversity3Icon from "@mui/icons-material/Diversity3";
 
 // Navigation items with full paths
 const STUDENT_NAVIGATION = [
@@ -50,6 +51,7 @@ const STUDENT_NAVIGATION = [
   { segment: "trainers", title: "Trainers", icon: <SchoolIcon /> },
   { segment: "stats", title: "Stats", icon: <BarChartIcon /> },
   { segment: "batches", title: "Batches", icon: <ClassIcon /> },
+  { segment: "community", title: "Community", icon: <Diversity3Icon /> },
 ];
 
 function Branding() {

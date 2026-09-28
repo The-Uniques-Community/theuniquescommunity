@@ -1,55 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useThemeContext } from "@/theme/ThemeProvider";
-import communityOrganizerImg from "@/assets/img/Community/testimonials/community-organizer.png";
-import technicalLeadImg from "@/assets/img/Community/testimonials/technical-lead.png";
-import graphicsLeadImg from "@/assets/img/Community/testimonials/graphics-lead.png";
-import eventCoordinatorImg from "@/assets/img/Community/testimonials/event-coordinator.png";
-import socialMediaLeadImg from "@/assets/img/Community/testimonials/social-media-lead.png";
-
-// Realistic student & ambassador portrait photos with guaranteed fallbacks
-const testimonials = [
-    {
-        id: 1,
-        quote:
-            "Leading this community has been an empowering experience! Driving community culture, bringing passionate minds together, and building an inclusive environment has transformed how I lead teams. Seeing members learn, collaborate, and grow under our collective initiatives is the most rewarding feeling.",
-        name: "Vaishanavi Bajpai",
-        title: "Community Organizer",
-        avatar: communityOrganizerImg,
-    },
-    {
-        id: 2,
-        quote:
-            "As Technical Lead, steering hands-on hackathons, coding bootcamps, and real-world tech architectures has taken my engineering mindset to new heights. Mentoring developers and solving complex technical roadblocks with such an innovative peer group has sharpened both my coding and architectural skills.",
-        name: "Kumar Sujal",
-        title: "Technical Lead",
-        avatar: technicalLeadImg,
-    },
-    {
-        id: 3,
-        quote:
-            "Designing the visual identity and creative branding for the community has elevated my design perspective. From crafting striking event visuals and UI assets to ensuring consistent brand storytelling across every touchpoint, this role has helped me push creative boundaries and master digital aesthetics.",
-        name: "Vasu Malhotra",
-        title: "Graphics Lead",
-        avatar: graphicsLeadImg,
-    },
-    {
-        id: 4,
-        quote:
-            "Orchestrating large-scale tech conferences and seamless workshops taught me the art of precision planning and crisis management. Managing speaker coordination, stage logistics, and audience experiences in real-time has made me a confident leader capable of executing flawless events.",
-        name: "Laxmi Rajput",
-        title: "Event Coordinator",
-        avatar: eventCoordinatorImg,
-    },
-    {
-        id: 5,
-        quote:
-            "Amplifying our community's voice and building viral digital campaigns has been exhilarating! Driving social engagement, spotlighting student achievements, and strategically growing our reach across platforms has unlocked master-level content strategy and community marketing skills for me.",
-        name: "Nishant",
-        title: "Social Media Lead",
-        avatar: socialMediaLeadImg,
-    },
-];
+import { getStoredBenefitsCards } from "@/utils/community/communityBenefitsData";
 
 // Fallback avatar component with initials and brand styling to prevent broken image icons
 function AvatarImage({ src, name, className = "" }) {
@@ -91,9 +43,18 @@ function AvatarImage({ src, name, className = "" }) {
 
 export default function TestimonialCarousel() {
     const { isDarkMode } = useThemeContext();
+    const [testimonials, setTestimonials] = useState(() => getStoredBenefitsCards());
     const [activeIndex, setActiveIndex] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
     const touchStartX = useRef(null);
+
+    useEffect(() => {
+        const handleUpdate = () => {
+            setTestimonials(getStoredBenefitsCards());
+        };
+        window.addEventListener("community-benefits-updated", handleUpdate);
+        return () => window.removeEventListener("community-benefits-updated", handleUpdate);
+    }, []);
 
     const nextSlide = () => {
         if (isAnimating) return;

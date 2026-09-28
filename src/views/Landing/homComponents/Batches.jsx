@@ -7,10 +7,13 @@ import MemberCard from "../Batches/components/MemberCard";
 import AchievementCard from "../Batches/components/AchievementCard";
 import { achievementsData } from "../Batches/data/achievementsData";
 import { Link } from "react-router-dom";
+import { getStoredBatches } from "@/utils/batch/batchesData";
+import { getStoredBatchProfiles } from "@/utils/batch/batchProfilesData";
 
 const Batches = () => {
   // State management
   const [members, setMembers] = useState([]);
+  const [storedBatches, setStoredBatches] = useState(() => getStoredBatches());
   const [selectedBatch, setSelectedBatch] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
@@ -18,45 +21,83 @@ const Batches = () => {
   const [batchCounts, setBatchCounts] = useState({});
   const [countsLoading, setCountsLoading] = useState(true);
 
-  // Define batches data with count information from API
-  const batchesData = useMemo(() => [
-    {
-      id: "All",
-      name: "All Batches",
-      icon: "👥",
-      description: "All members from The Uniques Community.",
-      memberCount: batchCounts["All"] || 0
-    },
-    {
-      id: "The Uniques 1.0",
-      name: "The Uniques 1.0",
-      icon: "🥇",
-      description: "The founding batch of The Uniques Community, established in 2021 with a vision to create a supportive learning environment for tech enthusiasts.",
-      memberCount: batchCounts["The Uniques 1.0"] || 0
-    },
-    {
-      id: "The Uniques 2.0",
-      name: "The Uniques 2.0",
-      icon: "🥈",
-      description: "The second generation of The Uniques Community that continued the legacy with new innovations and community initiatives.",
-      memberCount: batchCounts["The Uniques 2.0"] || 0
-    },
-    {
-      id: "The Uniques 3.0",
-      name: "The Uniques 3.0",
-      icon: "🥉",
-      description: "The newest members of The Uniques Community, bringing fresh perspectives and energy to our growing tech community.",
-      memberCount: batchCounts["The Uniques 3.0"] || 0
-    },
-        {
-          id: "The Uniques 4.0",
-          name: "The Uniques 4.0",
-          icon: "🏅",
-          description: "The latest batch of The Uniques Community, driving innovation and collaboration in the tech space.",
-          memberCount: batchCounts["The Uniques 4.0"] || 0,
-          
-        }
-  ], [batchCounts]);
+  // Sync stored batches dynamically when coordinator adds a new batch
+  useEffect(() => {
+    const handleBatchesUpdate = () => {
+      setStoredBatches(getStoredBatches());
+    };
+    window.addEventListener("batches-updated", handleBatchesUpdate);
+    window.addEventListener("batch-profiles-updated", handleBatchesUpdate);
+    return () => {
+      window.removeEventListener("batches-updated", handleBatchesUpdate);
+      window.removeEventListener("batch-profiles-updated", handleBatchesUpdate);
+    };
+  }, []);
+
+  // Define batches data with count information from API and dynamic stored batches
+  const batchesData = useMemo(() => {
+    const defaultMeta = {
+      "The Uniques 1.0": {
+        icon: "🥇",
+        description: "The founding batch of The Uniques Community, established in 2021 with a vision to create a supportive learning environment for tech enthusiasts.",
+      },
+      "The Uniques 2.0": {
+        icon: "🥈",
+        description: "The second generation of The Uniques Community that continued the legacy with new innovations and community initiatives.",
+      },
+      "The Uniques 3.0": {
+        icon: "🥉",
+        description: "The newest members of The Uniques Community, bringing fresh perspectives and energy to our growing tech community.",
+      },
+      "The Uniques 4.0": {
+        icon: "🏅",
+        description: "The latest batch of The Uniques Community, driving innovation and collaboration in the tech space.",
+      },
+    };
+
+    let profiles = [];
+    try {
+      profiles = getStoredBatchProfiles();
+    } catch (e) {
+      profiles = [];
+    }
+
+    const icons = ["🥇", "🥈", "🥉", "🏅", "🚀", "🌟", "✨", "🎯", "🏆"];
+
+    const items = storedBatches.map((batchName, idx) => {
+      const label = batchName.replace(/^The\s+/i, "");
+      const profile = profiles.find(
+        (p) =>
+          p.title?.toLowerCase() === batchName.toLowerCase() ||
+          p.label?.toLowerCase() === label.toLowerCase()
+      );
+
+      const icon = defaultMeta[batchName]?.icon || icons[idx] || "🎖️";
+      const desc =
+        profile?.description ||
+        defaultMeta[batchName]?.description ||
+        `${batchName} of The Uniques Community, driving innovation and collaboration.`;
+
+      return {
+        id: batchName,
+        name: batchName,
+        icon: icon,
+        description: desc,
+        memberCount: batchCounts[batchName] || 0,
+      };
+    });
+
+    return [
+      {
+        id: "All",
+        name: "All Batches",
+        icon: "👥",
+        description: "All members from The Uniques Community.",
+        memberCount: batchCounts["All"] || 0,
+      },
+      ...items,
+    ];
+  }, [storedBatches, batchCounts]);
 
   // Fetch batch counts
   useEffect(() => {
