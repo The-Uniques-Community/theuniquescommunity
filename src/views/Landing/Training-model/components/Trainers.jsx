@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Linkedin, Github, Code, ChevronDown, Monitor, Terminal } from 'lucide-react';
 import { useThemeContext } from '@/theme/ThemeProvider';
 import { BASE_URL } from '@/config';
-import ronitImg from "@/assets/img/Success Stories avatars/ronit-jaiprakash.jpeg";
-import mantashaImg from "@/assets/img/Success Stories avatars/mantasha-tabassum.jpg";
-import taniyaImg from "@/assets/img/Success Stories avatars/Taniya_singh.png";
+import ronitImg from "@/assets/img/Success Stories avatars/ronit-jaiprakash.webp";
+import mantashaImg from "@/assets/img/Success Stories avatars/mantasha-tabassum.webp";
+import taniyaImg from "@/assets/img/Success Stories avatars/Taniya_singh.webp";
 
 const batches = [
   "All Batches",

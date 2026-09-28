@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import bg from "@/assets/img/404bg.jpg";
+import bg from "@/assets/img/404bg.webp";
 import { useEffect, useState } from "react";
 
 const NotFound = () => {

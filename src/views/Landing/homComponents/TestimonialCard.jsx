@@ -8,10 +8,10 @@ import {
   Star
 } from "@mui/icons-material"
 import { useThemeContext } from "@/theme/ThemeProvider";
-import ronitImg from "@/assets/img/Success Stories avatars/ronit-jaiprakash.jpeg";
-import praveenImg from "@/assets/img/Success Stories avatars/praveen-jaiswal.jpeg";
-import mantashaImg from "@/assets/img/Success Stories avatars/mantasha-tabassum.jpg";
-import naveenImg from "@/assets/img/Success Stories avatars/naveen-jaiswal.jpg";
+import ronitImg from "@/assets/img/Success Stories avatars/ronit-jaiprakash.webp";
+import praveenImg from "@/assets/img/Success Stories avatars/praveen-jaiswal.webp";
+import mantashaImg from "@/assets/img/Success Stories avatars/mantasha-tabassum.webp";
+import naveenImg from "@/assets/img/Success Stories avatars/naveen-jaiswal.webp";
 
 const colors = {
   primary: "#ca0019",     // Red

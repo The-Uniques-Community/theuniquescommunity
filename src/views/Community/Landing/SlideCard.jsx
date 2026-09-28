@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useThemeContext } from "@/theme/ThemeProvider";
-import communityOrganizerImg from "@/assets/img/Community/testimonials/community-organizer.png";
-import technicalLeadImg from "@/assets/img/Community/testimonials/technical-lead.png";
-import graphicsLeadImg from "@/assets/img/Community/testimonials/graphics-lead.png";
-import eventCoordinatorImg from "@/assets/img/Community/testimonials/event-coordinator.png";
-import socialMediaLeadImg from "@/assets/img/Community/testimonials/social-media-lead.png";
+import communityOrganizerImg from "@/assets/img/Community/testimonials/community-organizer.webp";
+import technicalLeadImg from "@/assets/img/Community/testimonials/technical-lead.webp";
+import graphicsLeadImg from "@/assets/img/Community/testimonials/graphics-lead.webp";
+import eventCoordinatorImg from "@/assets/img/Community/testimonials/event-coordinator.webp";
+import socialMediaLeadImg from "@/assets/img/Community/testimonials/social-media-lead.webp";
 
 // Realistic student & ambassador portrait photos with guaranteed fallbacks
 const testimonials = [

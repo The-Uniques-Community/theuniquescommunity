@@ -30,7 +30,7 @@ import VerifiedIcon from "@mui/icons-material/Verified";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import tu from "@/assets/logos/tu.png";
 import { Link } from "react-router";
-import userIcon from "@/assets/img/user-icon.png";
+import userIcon from "@/assets/img/user-icon.webp";
 import "tailwindcss/tailwind.css";
 
 const TrainerProfileDialog = ({ open, handleClose, user }) => {
