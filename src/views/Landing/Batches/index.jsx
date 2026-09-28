@@ -15,7 +15,7 @@ const index = () => {
   // State management
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [members, setMembers] = useState([]);
-  const [selectedBatch, setSelectedBatch] = useState("All");
+  const [selectedBatch, setSelectedBatch] = useState("The Uniques 1.0");
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,14 +26,6 @@ const index = () => {
 
   // Define batches data with count information from API
   const batchesData = useMemo(() => [
-    {
-      id: "All",
-      name: "All Batches",
-      icon: "👥",
-      description: "All members from The Uniques Community.",
-      memberCount: batchCounts["All"] || 0,
-      iconComponent: <GroupsIcon />
-    },
     {
       id: "The Uniques 1.0",
       name: "The Uniques 1.0",
@@ -175,7 +167,7 @@ const index = () => {
 
 
   const currentBatch = useMemo(() => {
-    return batchesData.find((batch) => batch.id === selectedBatch);
+    return batchesData.find((batch) => batch.id === selectedBatch) || batchesData[0];
   }, [selectedBatch, batchesData]);
 
   // Achievement Card Component using MUI
