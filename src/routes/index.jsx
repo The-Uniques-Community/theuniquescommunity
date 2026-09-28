@@ -23,7 +23,7 @@ import { element } from "prop-types";
 import MemberProfile from "@/views/Landing/Profile/MemberProfile";
 import ForgetPassword from "@/views/Authentication/login/ForgetPassword";
 
-
+const Login = Loader(lazy(() => import("@/views/Authentication/login")), false);
 const Landing = Loader(lazy(() => import("@/views/Landing/index")), false);
 
 const BlogPage = Loader(lazy(() => import("@/views/Landing/Blog/index")), false);
@@ -88,6 +88,7 @@ const LandingRoutes = {
     { path: "batches", element: <BatchesPage /> },
     { path: "notices", element: <Notices /> },
     { path: "test", element: <Timeline events={timelineData} /> },
+    { path: "login", element: <Login /> },
     { path: "forget-password", element: <ForgetPassword /> },
     // Member profile route - this should come BEFORE the wildcard route
     { path: "profile/:id", element: <MemberProfile /> },

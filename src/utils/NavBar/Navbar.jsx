@@ -104,13 +104,19 @@ const Navbar = () => {
       authItems.push({
         text: "Dashboard",
         icon: <DashboardIcon />,
-        link: `/${user?.role}`,
+        link: `/${user?.role || "member"}`,
       });
       authItems.push({
         text: "Logout",
         icon: <LogOut />,
         onClick: handleLogout,
         link: "#",
+      });
+    } else {
+      authItems.push({
+        text: "Login",
+        icon: <LogIn size={20} />,
+        link: "/auth/login",
       });
     }
 
@@ -133,6 +139,7 @@ const Navbar = () => {
 
   const handleLinkClick = (linkText) => {
     setActiveLink(linkText);
+    setDrawerOpen(false);
   };
 
   // Social media links - update these URLs with actual links
@@ -159,11 +166,14 @@ const Navbar = () => {
 
   const drawerContent = (
     <Box
+      data-lenis-prevent
       sx={{
         width: { xs: 'calc(100vw - 32px)', sm: 280 },
         height: "100%",
         display: "flex",
         flexDirection: "column",
+        minHeight: 0,
+        overflow: "hidden",
         background: isDarkMode ? "rgba(30, 30, 30, 0.98)" : "rgba(255, 248, 248, 0.98)", // Dynamic tint based on mode
         backdropFilter: "blur(25px)",
       }}
@@ -171,7 +181,7 @@ const Navbar = () => {
 
     >
       {/* Drawer Header */}
-      <Box sx={{ pt: 2, px: 2, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+      <Box sx={{ pt: 2, px: 2, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flexShrink: 0 }}>
         <motion.div
           whileHover={{ rotate: 90, scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
@@ -184,16 +194,22 @@ const Navbar = () => {
       </Box>
 
       <List
+        data-lenis-prevent
         sx={{ 
           flexGrow: 1, 
+          minHeight: 0,
           px: 2, 
           pt: 1, 
           pb: 2,
           overflowY: "auto",
+          overscrollBehavior: "contain",
+          touchAction: "pan-y",
+          WebkitOverflowScrolling: "touch",
           scrollbarWidth: "none",
-          "&::-webkit-scrollbar": { display: "none" },
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
         }}
-        onClick={toggleDrawer(false)}
         onKeyDown={toggleDrawer(false)}
       >
         <AnimatePresence>
@@ -278,7 +294,7 @@ const Navbar = () => {
       </List>
 
       {/* Auth & Actions Section (Fixed) */}
-      <Box sx={{ px: 2, pb: 2 }}>
+      <Box sx={{ px: 2, pb: 2, flexShrink: 0 }}>
         {authNavItems.length > 0 && <Divider sx={{ mb: 3, opacity: 0.5 }} />}
         {authNavItems.map((item) => (
           <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
@@ -287,6 +303,7 @@ const Navbar = () => {
               to={!item.onClick ? item.link : undefined}
               onClick={() => {
                 if (item.onClick) item.onClick();
+                setDrawerOpen(false);
               }}
               sx={{
                 borderRadius: "8px",
@@ -446,21 +463,25 @@ const Navbar = () => {
             boxShadow: '0 25px 50px -12px rgba(202, 0, 25, 0.1)',
             border: '1px solid rgba(202, 0, 25, 0.05)',
             background: isDarkMode ? 'linear-gradient(135deg, rgba(30, 30, 30, 0.98), rgba(20, 20, 20, 0.95))' : 'linear-gradient(135deg, rgba(255, 252, 252, 0.98), rgba(255, 245, 245, 0.95))',
+            overflow: "hidden",
+            scrollbarWidth: "none",
+            "&::-webkit-scrollbar": { display: "none" },
           },
-
 
           "& .MuiBackdrop-root": {
             backdropFilter: 'blur(4px)',
             backgroundColor: 'rgba(0,0,0,0.2)',
           },
-          overflow: "hidden",
+        }}
+        PaperProps={{
+          "data-lenis-prevent": true,
         }}
       >
         <motion.div
           initial={{ x: 300, opacity: 0, rotate: 5, scale: 0.9 }}
           animate={isDrawerOpen ? { x: 0, opacity: 1, rotate: 0, scale: 1 } : {}}
           transition={{ type: "spring", stiffness: 200, damping: 25 }}
-          style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+          style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
         >
           {drawerContent}
         </motion.div>

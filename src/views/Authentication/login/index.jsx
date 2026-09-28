@@ -159,13 +159,17 @@ const Login = () => {
                 method: "POST",
                 credentials: "include", // include cookie with the request
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(values),
+                body: JSON.stringify({
+                  email: values.email.trim(),
+                  password: values.password,
+                }),
               });
               const data = await res.json();
               if (res.ok) {
                 toast.success("Logged in successfully");
                 // Use the role from the response to navigate accordingly
-                switch (data.role) {
+                const userRole = (data.role || data.member?.role || "").toLowerCase();
+                switch (userRole) {
                   case "member":
                     navigate("/member");
                     break;
@@ -182,11 +186,14 @@ const Login = () => {
                     navigate("/");
                 }
               } else {
-                setErrors({ submit: data.message || "Login failed" });
+                const errMsg = data.message || "Login failed";
+                setErrors({ submit: errMsg });
+                toast.error(errMsg);
               }
             } catch (error) {
-              toast.error("An error occurred during login");
-              setErrors({ submit: "An error occurred" });
+              console.error("Login request error:", error);
+              toast.error("An error occurred during login. Please check your connection.");
+              setErrors({ submit: "An error occurred during login" });
             }
             setSubmitting(false);
           }}
