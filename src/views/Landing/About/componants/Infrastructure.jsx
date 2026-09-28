@@ -1,6 +1,4 @@
-import React, { useState, useMemo, useRef, useLayoutEffect, useEffect } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import {
   Building2,
   Cpu,
@@ -11,8 +9,9 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useThemeContext } from "../../../../theme/ThemeProvider";
-
-gsap.registerPlugin(ScrollTrigger);
+import lab4Img from "../../../../assets/img/About/lab4.jpg";
+import lab5Img from "../../../../assets/img/About/lab5.jpg";
+import lab6Img from "../../../../assets/img/About/lab6.jpg";
 
 const infraData = [
   {
@@ -25,13 +24,6 @@ const infraData = [
     tag: "Corporate Bay 01",
     badge: "100+ Workstations",
     icon: Building2,
-    svgArt: (
-      <svg className="w-48 h-48 opacity-30 text-emerald-300 stroke-current" fill="none" strokeWidth="1" viewBox="0 0 100 100">
-        <rect x="20" y="20" width="60" height="60" rx="8" />
-        <path d="M30 40h40M30 55h40M30 70h25" />
-        <circle cx="70" cy="70" r="6" />
-      </svg>
-    ),
   },
   {
     id: 2,
@@ -43,16 +35,6 @@ const infraData = [
     tag: "Green Zone",
     badge: "100% Solar Powered",
     icon: Leaf,
-    svgArt: (
-      <svg className="w-48 h-48 opacity-30 text-rose-300 stroke-current" fill="none" strokeWidth="1" viewBox="0 0 100 100">
-        <rect x="40" y="20" width="20" height="15" rx="2" />
-        <rect x="30" y="40" width="18" height="15" rx="2" />
-        <rect x="52" y="40" width="18" height="15" rx="2" />
-        <rect x="20" y="60" width="16" height="15" rx="2" />
-        <rect x="42" y="60" width="16" height="15" rx="2" />
-        <rect x="64" y="60" width="16" height="15" rx="2" />
-      </svg>
-    ),
   },
   {
     id: 3,
@@ -64,67 +46,39 @@ const infraData = [
     tag: "Lab Alpha",
     badge: "24/7 AI Hardware Access",
     icon: Cpu,
-    svgArt: (
-      <svg className="w-48 h-48 opacity-30 text-sky-300 stroke-current" fill="none" strokeWidth="1" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="30" />
-        <path d="M50 20v60M20 50h60" />
-        <circle cx="50" cy="50" r="10" />
-      </svg>
-    ),
   },
   {
     id: 4,
     number: "04.",
-    url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80",
+    url: lab4Img,
     title: "Collaborative Synergy",
     desc: "Open, flexible spaces that foster spontaneous brainstorming, code reviews, and team synergy.",
     category: "Collaborative",
     tag: "Synergy Pod",
     badge: "Interactive Touch Boards",
     icon: UsersRound,
-    svgArt: (
-      <svg className="w-48 h-48 opacity-30 text-amber-300 stroke-current" fill="none" strokeWidth="1" viewBox="0 0 100 100">
-        <circle cx="35" cy="40" r="22" />
-        <circle cx="65" cy="40" r="22" />
-        <circle cx="50" cy="68" r="22" />
-      </svg>
-    ),
   },
   {
     id: 5,
     number: "05.",
-    url: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80",
+    url: lab5Img,
     title: "Architectural Excellence",
     desc: "A sprawling campus designed to inspire through thoughtful structural beauty and spatial flow.",
     category: "Workspaces",
     tag: "Main Atrium",
     badge: "50,000+ Sq Ft",
     icon: Building2,
-    svgArt: (
-      <svg className="w-48 h-48 opacity-30 text-purple-300 stroke-current" fill="none" strokeWidth="1" viewBox="0 0 100 100">
-        <path d="M20 80 L50 20 L80 80 Z" />
-        <path d="M32 80 L50 44 L68 80" />
-        <path d="M42 80 L50 64 L58 80" />
-      </svg>
-    ),
   },
   {
     id: 6,
     number: "06.",
-    url: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80",
+    url: lab6Img,
     title: "Premium Tech Lounges",
     desc: "Elegance meets high functionality in every corner, providing relaxing spaces between intense coding sprints.",
     category: "Tech Lounges",
     tag: "Lounge 304",
     badge: "Artisanal Coffee & Chill",
     icon: Building2,
-    svgArt: (
-      <svg className="w-48 h-48 opacity-30 text-rose-300 stroke-current" fill="none" strokeWidth="1" viewBox="0 0 100 100">
-        <path d="M20 50 Q 35 20, 50 50 T 80 50" />
-        <path d="M20 65 Q 35 35, 50 65 T 80 65" />
-        <path d="M20 80 Q 35 50, 50 80 T 80 80" />
-      </svg>
-    ),
   },
 ];
 
@@ -142,70 +96,6 @@ const Infrastructure = () => {
     if (selectedCategory === "All") return infraData;
     return infraData.filter((item) => item.category === selectedCategory);
   }, [selectedCategory]);
-
-  // GSAP ScrollTrigger Pinned Section setup for smooth page scroll integration
-  useLayoutEffect(() => {
-    let ctx = gsap.context(() => {
-      const section = sectionRef.current;
-      if (!section) return;
-
-      ScrollTrigger.create({
-        trigger: section,
-        start: "top top",
-        end: "bottom bottom",
-        pin: true,
-        scrub: 1,
-        onUpdate: (self) => {
-          const total = filteredItems.length;
-          const idx = Math.min(total - 1, Math.floor(self.progress * total));
-          setActiveIndex(idx);
-        },
-      });
-    }, sectionRef);
-
-    const timer = setTimeout(() => {
-      ScrollTrigger.refresh();
-    }, 150);
-
-    return () => {
-      clearTimeout(timer);
-      ctx.revert();
-    };
-  }, [filteredItems]);
-
-  // Mouse Wheel Scroll Interceptor:
-  // Scroll Down -> Cards move one by one from right to left
-  // Scroll Up -> Cards move one by one from left to right
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-
-    let isCooldown = false;
-
-    const handleWheel = (e) => {
-      if (isCooldown) return;
-      if (Math.abs(e.deltaY) < 15) return;
-
-      if (e.deltaY > 0 && activeIndex < filteredItems.length - 1) {
-        e.preventDefault();
-        isCooldown = true;
-        setActiveIndex((prev) => Math.min(prev + 1, filteredItems.length - 1));
-        setTimeout(() => {
-          isCooldown = false;
-        }, 350);
-      } else if (e.deltaY < 0 && activeIndex > 0) {
-        e.preventDefault();
-        isCooldown = true;
-        setActiveIndex((prev) => Math.max(prev - 1, 0));
-        setTimeout(() => {
-          isCooldown = false;
-        }, 350);
-      }
-    };
-
-    el.addEventListener("wheel", handleWheel, { passive: false });
-    return () => el.removeEventListener("wheel", handleWheel);
-  }, [activeIndex, filteredItems.length]);
 
   // Touch swipe support for mobile/tablets
   const handleTouchStart = (e) => {
@@ -226,17 +116,6 @@ const Infrastructure = () => {
   const scrollToCard = (index) => {
     const targetIdx = Math.max(0, Math.min(index, filteredItems.length - 1));
     setActiveIndex(targetIdx);
-
-    const triggers = ScrollTrigger.getAll();
-    const currentTrigger = triggers.find((t) => t.trigger === sectionRef.current);
-    if (currentTrigger && filteredItems.length > 1) {
-      const progress = targetIdx / (filteredItems.length - 1);
-      const targetScroll = currentTrigger.start + progress * (currentTrigger.end - currentTrigger.start);
-      window.scrollTo({
-        top: targetScroll,
-        behavior: "smooth",
-      });
-    }
   };
 
   const handleNextCard = () => {
@@ -246,6 +125,47 @@ const Infrastructure = () => {
   const handlePrevCard = () => {
     scrollToCard((activeIndex - 1 + filteredItems.length) % filteredItems.length);
   };
+
+  // Mouse Wheel Card Transition:
+  // - Scroll Down -> Cards advance one by one (01 -> 02 -> ... -> 06).
+  // - At last card (06), scrolling down releases page scroll naturally to next section.
+  // - Scroll Up -> Cards retract backward one by one (06 -> 05 -> ... -> 01).
+  // - At first card (01), scrolling up releases page scroll naturally to previous section.
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    let isCooldown = false;
+
+    const handleWheel = (e) => {
+      if (Math.abs(e.deltaY) < 15) return;
+
+      if (e.deltaY > 0) {
+        if (activeIndex < filteredItems.length - 1) {
+          e.preventDefault();
+          if (isCooldown) return;
+          isCooldown = true;
+          setActiveIndex((prev) => Math.min(prev + 1, filteredItems.length - 1));
+          setTimeout(() => {
+            isCooldown = false;
+          }, 350);
+        }
+      } else if (e.deltaY < 0) {
+        if (activeIndex > 0) {
+          e.preventDefault();
+          if (isCooldown) return;
+          isCooldown = true;
+          setActiveIndex((prev) => Math.max(prev - 1, 0));
+          setTimeout(() => {
+            isCooldown = false;
+          }, 350);
+        }
+      }
+    };
+
+    el.addEventListener("wheel", handleWheel, { passive: false });
+    return () => el.removeEventListener("wheel", handleWheel);
+  }, [activeIndex, filteredItems.length]);
 
   // Keyboard arrow key controls
   useEffect(() => {
@@ -271,12 +191,12 @@ const Infrastructure = () => {
       ref={sectionRef}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      className={`relative w-full h-[350vh] transition-colors duration-300 ${
+      className={`py-16 md:py-24 relative w-full overflow-hidden transition-colors duration-300 ${
         isDarkMode ? "bg-[#0b0c10] text-white" : "bg-[#faf9f6] text-gray-900"
       }`}
     >
-      {/* Pinned Sticky Viewport Container (100vh) */}
-      <div className="sticky top-0 h-screen w-full flex items-center overflow-hidden z-10 py-6">
+      {/* Viewport Container */}
+      <div className="w-full flex items-center overflow-hidden z-10">
         
         {/* Subtle Background Glow Orbs */}
         <div className="absolute top-1/3 -left-40 w-96 h-96 bg-[#ca0019]/10 rounded-full blur-[140px] pointer-events-none" />
@@ -416,11 +336,6 @@ const Infrastructure = () => {
                       <span className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-black/60 text-white backdrop-blur-md border border-white/20">
                         {item.tag}
                       </span>
-                    </div>
-
-                    {/* Center Line Art Graphic */}
-                    <div className="relative z-10 my-auto flex items-center justify-center pointer-events-none">
-                      {item.svgArt}
                     </div>
 
                     {/* Bottom Text Content */}
