@@ -13,7 +13,7 @@ const CallToAction = () => {
                 <p className='text-white p-3 text-lg'>Join the community of unique individuals and learn from the best</p>
                 <div className="flex justify-center items-center mt-2">
                   <Button
-                    path="https://tuportal.theuniques.in/auth/login"
+                    path="/auth/login"
                     color={"white"}
                     bgColor={"#ca0019"}
                     border={4}
