@@ -104,13 +104,19 @@ const Navbar = () => {
       authItems.push({
         text: "Dashboard",
         icon: <DashboardIcon />,
-        link: `/${user?.role}`,
+        link: `/${user?.role || "member"}`,
       });
       authItems.push({
         text: "Logout",
         icon: <LogOut />,
         onClick: handleLogout,
         link: "#",
+      });
+    } else {
+      authItems.push({
+        text: "Login",
+        icon: <LogIn size={20} />,
+        link: "/auth/login",
       });
     }
 
