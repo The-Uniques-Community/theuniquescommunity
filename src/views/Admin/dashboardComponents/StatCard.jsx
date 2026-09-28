@@ -1,5 +1,5 @@
 import tu from "@/assets/logos/tu.png";
-import stat from "@/assets/img/stat-bg.png";
+import stat from "@/assets/img/stat-bg.webp";
 import { Link } from "react-router";
 
 const StatCard = (props) => {

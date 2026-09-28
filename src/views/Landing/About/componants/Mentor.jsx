@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
-import ankursir from "../../../../assets/img/About/ankursir.jpg";
+import ankursir from "../../../../assets/img/About/ankursir.webp";
 import Button from "../../../../utils/Buttons/HoverButton";
 import ProfileCard from "./Ankur1";
 import { useThemeContext } from "../../../../theme/ThemeProvider";

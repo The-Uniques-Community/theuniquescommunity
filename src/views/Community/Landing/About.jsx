@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useThemeContext } from "@/theme/ThemeProvider";
-import ambassadorCriteriaImg from "@/assets/img/Community/ambassador-criteria.jpg";
+import ambassadorCriteriaImg from "@/assets/img/Community/ambassador-criteria.webp";
 
 const About = (props) => {
     const { isDarkMode } = useThemeContext();
