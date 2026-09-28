@@ -42,6 +42,7 @@ import { FaLinkedinIn, FaWhatsapp, FaTwitter, FaFacebookF } from "react-icons/fa
 import { toast } from 'react-toastify';
 import { BASE_URL } from "@/config";
 import Button from "@/utils/Buttons/Button";
+import CallToAction from "@/views/Landing/homComponents/CallToAction";
 
 // Static data for community partners (only for Bharat TechXperience Hackathon 2.0)
 const COMMUNITY_PARTNERS = [
@@ -1300,6 +1301,9 @@ const EventDetailPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Call to action section */}
+      <CallToAction />
 
       {/* Share Modal */}
       <Dialog

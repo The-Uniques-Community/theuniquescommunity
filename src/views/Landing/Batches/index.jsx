@@ -10,6 +10,7 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import SchoolIcon from '@mui/icons-material/School';
 import GroupsIcon from '@mui/icons-material/Groups';
 import { AnimatePresence } from "framer-motion";
+import CallToAction from "@/views/Landing/homComponents/CallToAction";
 
 const index = () => {
   // State management
@@ -506,6 +507,9 @@ const index = () => {
           </div>
         </motion.div>
       )}
+
+      {/* Call To Action */}
+      <CallToAction />
     </div>
   );
 };

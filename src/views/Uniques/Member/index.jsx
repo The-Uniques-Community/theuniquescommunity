@@ -5495,9 +5495,11 @@ const Index = () => {
                 src={
                   user?.profilePic?.fileId
                     ? getProxyImageUrl(user.profilePic.fileId)
+                    : typeof user?.profilePic === "string" && user.profilePic
+                    ? (user.profilePic.startsWith("http") || user.profilePic.startsWith("/") ? user.profilePic : getProxyImageUrl(user.profilePic))
                     : "/placeholder.svg"
                 }
-                alt={user.fullName}
+                alt={user?.fullName || "User"}
                 sx={{
                   width: 120,
                   height: 120,
@@ -7669,8 +7671,14 @@ const Index = () => {
               >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                   <Avatar
-                    src={`https://drive.google.com/uc?id=${user?.profilePic?.fileId}`}
-                    alt={user.fullName}
+                    src={
+                      user?.profilePic?.fileId
+                        ? getProxyImageUrl(user.profilePic.fileId)
+                        : typeof user?.profilePic === "string" && user.profilePic
+                        ? (user.profilePic.startsWith("http") || user.profilePic.startsWith("/") ? user.profilePic : getProxyImageUrl(user.profilePic))
+                        : "/placeholder.svg"
+                    }
+                    alt={user?.fullName || "User"}
                     sx={{ width: 40, height: 40 }}
                   />
                   <Box>
@@ -7767,9 +7775,13 @@ const Index = () => {
               src={
                 profilePicture
                   ? URL.createObjectURL(profilePicture)
-                  : getProxyImageUrl(user.profilePic.fileId)
+                  : user?.profilePic?.fileId
+                  ? getProxyImageUrl(user.profilePic.fileId)
+                  : typeof user?.profilePic === "string" && user.profilePic
+                  ? (user.profilePic.startsWith("http") || user.profilePic.startsWith("/") ? user.profilePic : getProxyImageUrl(user.profilePic))
+                  : "/placeholder.svg"
               }
-              alt={user.fullName}
+              alt={user?.fullName || "User"}
               sx={{
                 width: 150,
                 height: 150,
