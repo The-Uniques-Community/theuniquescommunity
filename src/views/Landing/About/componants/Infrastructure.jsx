@@ -9,9 +9,9 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useThemeContext } from "../../../../theme/ThemeProvider";
-import lab4Img from "../../../../assets/img/About/lab4.jpg";
-import lab5Img from "../../../../assets/img/About/lab5.jpg";
-import lab6Img from "../../../../assets/img/About/lab6.jpg";
+import lab4Img from "../../../../assets/img/About/lab4.webp";
+import lab5Img from "../../../../assets/img/About/lab5.webp";
+import lab6Img from "../../../../assets/img/About/lab6.webp";
 
 const infraData = [
   {
