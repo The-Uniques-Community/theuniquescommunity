@@ -16,6 +16,90 @@ export const BATCHES = [
 export const PROJECTS_DATA = [
   {
     id: 1,
+    title: "UNI CARE",
+    batch: "Uniques 4.0",
+    description:
+      "A student-support system that identifies potential problem areas and flags them for timely attention and appropriate support.",
+    image: "/projects/unicare.png",
+    technologies: ["REACT", "NODE.JS", "MONGODB", "AI"],
+    category: "Support & Mentorship",
+    link: "https://uniques-care.vercel.app/",
+    buttonColor: "#ea384c",
+  },
+  {
+    id: 2,
+    title: "Libraria",
+    batch: "Uniques 1.0",
+    description:
+      "A digital library platform that helps students discover, access, organize, and manage academic books and learning resources.",
+    image: "/projects/libraria.png",
+    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
+    category: "Digital Library",
+    link: "https://libraria-tu.vercel.app/",
+    buttonColor: "#ea384c",
+  },
+  {
+    id: 3,
+    title: "TU Portal",
+    batch: "Uniques 1.0",
+    description:
+      "A centralized student data portal containing profiles, academic information, records, and essential data of all Uniques students.",
+    image: "/projects/tuportal.png",
+    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
+    category: "Student Records & LMS",
+    link: "https://theuniquesportal.vercel.app/",
+    buttonColor: "#ea384c",
+  },
+  {
+    id: 4,
+    title: "Code crusade 0.5",
+    batch: "Uniques 5.0",
+    description:
+      "A 7-day intensive workshop designed to develop industry-grade coding skills and evaluate students' knowledge through practical tests.",
+    image: "/projects/codecrusade.png",
+    technologies: ["WORKSHOP", "CODING", "ASSESSMENT", "PYTHON"],
+    category: "Workshop & Testing",
+    link: "https://codecrusade2026.vercel.app/",
+    buttonColor: "#ea384c",
+  },
+  {
+    id: 5,
+    title: "Ideajam 2026",
+    batch: "Uniques 4.0",
+    description:
+      "An internal hackathon portal enabling student teams to pitch innovative ideas and selecting top teams to participate in the Smart India Hackathon (SIH).",
+    image: "/projects/ideajam2026.png",
+    technologies: ["REACT", "NODE.JS", "TAILWIND", "SIH"],
+    category: "Hackathon & SIH",
+    link: "https://ideajam2026.vercel.app/",
+    buttonColor: "#ea384c",
+  },
+  {
+    id: 6,
+    title: "Eureka - National Ideathon",
+    batch: "Uniques 4.0",
+    description:
+      "A national-level ideathon platform organized across diverse universities for student innovators to pitch disruptive solutions and compete.",
+    image: "/projects/eureka.png",
+    technologies: ["REACT", "NODE.JS", "MONGODB", "INNOVATION"],
+    category: "National Ideathon",
+    link: "https://eureka-cyan-six.vercel.app/",
+    buttonColor: "#ea384c",
+  },
+  {
+    id: 7,
+    title: "Elevate 3.0",
+    batch: "Uniques 4.0",
+    description:
+      "An official induction and orientation web portal organized for first-year students to inspire, connect, and onboard them into the community.",
+    image: "/projects/elevate.png",
+    technologies: ["REACT", "TAILWIND", "FRAMER", "INDUCTION"],
+    category: "Induction & Orientation",
+    link: "https://elevate-sviet.vercel.app/",
+    buttonColor: "#ea384c",
+  },
+  {
+    id: 8,
     title: "Uniques E-Gyan",
     batch: "Uniques 4.0",
     description:
@@ -28,7 +112,7 @@ export const PROJECTS_DATA = [
     buttonColor: "#ea384c",
   },
   {
-    id: 2,
+    id: 9,
     title: "Uniques Assess",
     batch: "Uniques 4.0",
     description:
@@ -41,19 +125,7 @@ export const PROJECTS_DATA = [
     buttonColor: "#ea384c",
   },
   {
-    id: 3,
-    title: "UNI CARE",
-    batch: "Uniques 4.0",
-    description:
-      "A student-support system that identifies potential problem areas and flags them for timely attention and appropriate support.",
-    image: "/projects/unicare.png",
-    technologies: ["REACT", "NODE.JS", "MONGODB", "AI"],
-    category: "Support & Mentorship",
-    link: "https://uniques-care.vercel.app/",
-    buttonColor: "#ea384c",
-  },
-  {
-    id: 4,
+    id: 10,
     title: "Uniques 360",
     batch: "Uniques 1.0",
     description:
@@ -63,78 +135,6 @@ export const PROJECTS_DATA = [
     technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
     category: "Analytics & Activities",
     link: "https://github.com/theuniquesofflicial",
-    buttonColor: "#ea384c",
-  },
-  {
-    id: 5,
-    title: "Libraria",
-    batch: "Uniques 1.0",
-    description:
-      "A digital library platform that helps students discover, access, organize, and manage academic books and learning resources.",
-    image: "/projects/libraria.png",
-    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
-    category: "Digital Library",
-    link: "https://libraria-tu.vercel.app/",
-    buttonColor: "#ea384c",
-  },
-  {
-    id: 6,
-    title: "TU Portal",
-    batch: "Uniques 1.0",
-    description:
-      "A centralized student data portal containing profiles, academic information, records, and essential data of all Uniques students.",
-    image: "/projects/tuportal.png",
-    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
-    category: "Student Records & LMS",
-    link: "https://theuniquesportal.vercel.app/",
-    buttonColor: "#ea384c",
-  },
-  {
-    id: 7,
-    title: "Code crusade 0.5",
-    batch: "Uniques 5.0",
-    description:
-      "A 7-day intensive workshop designed to develop industry-grade coding skills and evaluate students' knowledge through practical tests.",
-    image: "/projects/codecrusade.png",
-    technologies: ["WORKSHOP", "CODING", "ASSESSMENT", "PYTHON"],
-    category: "Workshop & Testing",
-    link: "https://codecrusade2026.vercel.app/",
-    buttonColor: "#ea384c",
-  },
-  {
-    id: 8,
-    title: "Ideajam 2026",
-    batch: "Uniques 4.0",
-    description:
-      "An internal hackathon portal enabling student teams to pitch innovative ideas and selecting top teams to participate in the Smart India Hackathon (SIH).",
-    image: "/projects/ideajam2026.png",
-    technologies: ["REACT", "NODE.JS", "TAILWIND", "SIH"],
-    category: "Hackathon & SIH",
-    link: "https://ideajam2026.vercel.app/",
-    buttonColor: "#ea384c",
-  },
-  {
-    id: 9,
-    title: "Eureka - National Ideathon",
-    batch: "Uniques 4.0",
-    description:
-      "A national-level ideathon platform organized across diverse universities for student innovators to pitch disruptive solutions and compete.",
-    image: "/projects/eureka.png",
-    technologies: ["REACT", "NODE.JS", "MONGODB", "INNOVATION"],
-    category: "National Ideathon",
-    link: "https://eureka-cyan-six.vercel.app/",
-    buttonColor: "#ea384c",
-  },
-  {
-    id: 10,
-    title: "Elevate 3.0",
-    batch: "Uniques 4.0",
-    description:
-      "An official induction and orientation web portal organized for first-year students to inspire, connect, and onboard them into the community.",
-    image: "/projects/elevate.png",
-    technologies: ["REACT", "TAILWIND", "FRAMER", "INDUCTION"],
-    category: "Induction & Orientation",
-    link: "https://elevate-sviet.vercel.app/",
     buttonColor: "#ea384c",
   },
 ];
