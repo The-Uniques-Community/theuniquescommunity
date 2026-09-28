@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Card,
@@ -37,8 +37,42 @@ import {
 } from "@/utils/batch/batchProfilesData";
 import { addStoredBatch } from "@/utils/batch/batchesData";
 
+// Fast client-side image optimizer to prevent localStorage quota issues and speed up rendering
+const optimizeImageForStorage = (file, maxWidth = 1200, quality = 0.85) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL("image/jpeg", quality);
+        resolve(dataUrl);
+      };
+      img.onerror = () => resolve(e.target.result);
+      img.src = e.target.result;
+    };
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
+};
+
 const CoordinatorBatches = () => {
   const { isDarkMode } = useThemeContext();
+  const fileInputRef = useRef(null);
   const [profiles, setProfiles] = useState(() => getStoredBatchProfiles());
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -75,18 +109,41 @@ const CoordinatorBatches = () => {
     }
   }, [selectedIndex, profiles]);
 
-  // Handle image upload from computer
-  const handleImageUpload = (event) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
+  const [isDragging, setIsDragging] = useState(false);
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const [imageUrlValue, setImageUrlValue] = useState("");
+
+  // Process and optimize any selected image file (from input, drag-and-drop, or paste)
+  const processSelectedFile = async (file) => {
+    if (!file) return;
+
+    // Check if file is an image
+    const isImage =
+      (file.type && file.type.startsWith("image/")) ||
+      /\.(jpg|jpeg|png|webp|svg|gif|bmp|ico)$/i.test(file.name || "");
+
+    if (!isImage) {
+      setSnackbar({
+        open: true,
+        message: "Please choose an image file (JPG, PNG, WEBP, SVG, etc.).",
+        severity: "warning",
+      });
+      return;
+    }
+
+    try {
+      const optimizedUrl = await optimizeImageForStorage(file);
+      if (optimizedUrl) {
+        setImage(optimizedUrl);
         setSnackbar({
           open: true,
-          message: "Please choose an image smaller than 5MB.",
-          severity: "warning",
+          message: "Photo loaded successfully! Click 'Save Changes' to update the batch.",
+          severity: "success",
         });
-        return;
       }
+    } catch (err) {
+      console.error("Error reading photo:", err);
+      // Fallback: direct FileReader
       const reader = new FileReader();
       reader.onload = (e) => {
         setImage(e.target.result);
@@ -98,6 +155,72 @@ const CoordinatorBatches = () => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  // Handle file picker selection (no accept attribute on input prevents Windows/Brave explorer hanging)
+  const handleImageUpload = (event) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      processSelectedFile(file);
+    }
+    if (event.target) {
+      event.target.value = "";
+    }
+  };
+
+  // Drag and Drop handlers
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      processSelectedFile(file);
+    }
+  };
+
+  // Clipboard paste handler
+  useEffect(() => {
+    const handleGlobalPaste = (e) => {
+      const items = e.clipboardData?.items;
+      if (items) {
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf("image") !== -1) {
+            const file = items[i].getAsFile();
+            if (file) {
+              processSelectedFile(file);
+              break;
+            }
+          }
+        }
+      }
+    };
+    window.addEventListener("paste", handleGlobalPaste);
+    return () => window.removeEventListener("paste", handleGlobalPaste);
+  }, []);
+
+  const handleApplyUrl = () => {
+    if (!imageUrlValue.trim()) return;
+    setImage(imageUrlValue.trim());
+    setImageUrlValue("");
+    setShowUrlInput(false);
+    setSnackbar({
+      open: true,
+      message: "Image URL applied! Click 'Save Changes' to update the batch.",
+      severity: "info",
+    });
   };
 
   // Save changes to the selected batch profile
@@ -332,59 +455,134 @@ const CoordinatorBatches = () => {
                   Batch Photo
                 </Typography>
                 <Box
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
                   sx={{
                     display: "flex",
-                    alignItems: "center",
-                    gap: 2,
+                    flexDirection: "column",
+                    gap: 1.5,
                     p: 2,
                     borderRadius: "12px",
-                    border: isDarkMode ? "1px dashed rgba(255,255,255,0.2)" : "1px dashed rgba(0,0,0,0.15)",
-                    backgroundColor: isDarkMode ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)",
+                    border: isDragging
+                      ? "2px dashed #CA0019"
+                      : isDarkMode
+                      ? "1px dashed rgba(255,255,255,0.2)"
+                      : "1px dashed rgba(0,0,0,0.15)",
+                    backgroundColor: isDragging
+                      ? "rgba(202, 0, 25, 0.08)"
+                      : isDarkMode
+                      ? "rgba(255,255,255,0.02)"
+                      : "rgba(0,0,0,0.02)",
+                    transition: "all 0.2s ease",
                   }}
                 >
-                  <Box
-                    sx={{
-                      width: 90,
-                      height: 70,
-                      borderRadius: "8px",
-                      overflow: "hidden",
-                      backgroundColor: "rgba(0,0,0,0.1)",
-                      flexShrink: 0,
-                    }}
-                  >
-                    <img
-                      src={image}
-                      alt={title}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
+                  {/* File input WITHOUT accept attribute - prevents Windows/Brave File Explorer freeze on Downloads */}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    style={{ display: "none" }}
+                    onChange={handleImageUpload}
+                  />
+
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <Box
+                      onClick={() => fileInputRef.current?.click()}
+                      sx={{
+                        width: 90,
+                        height: 70,
+                        borderRadius: "8px",
+                        overflow: "hidden",
+                        backgroundColor: "rgba(0,0,0,0.1)",
+                        flexShrink: 0,
+                        cursor: "pointer",
+                        border: "2px solid transparent",
+                        transition: "border-color 0.2s, transform 0.2s",
+                        "&:hover": {
+                          borderColor: "#CA0019",
+                          transform: "scale(1.04)",
+                        },
+                      }}
+                      title="Click to browse photo"
+                    >
+                      <img
+                        src={image}
+                        alt={title}
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      />
+                    </Box>
+
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+                        <Button
+                          variant="contained"
+                          onClick={() => fileInputRef.current?.click()}
+                          startIcon={<CloudUploadIcon />}
+                          size="small"
+                          sx={{
+                            backgroundColor: "#CA0019",
+                            textTransform: "none",
+                            fontWeight: 600,
+                            borderRadius: "8px",
+                            "&:hover": { backgroundColor: "#a60014" },
+                          }}
+                        >
+                          Upload New Photo
+                        </Button>
+
+                        <Button
+                          variant="text"
+                          size="small"
+                          onClick={() => setShowUrlInput((prev) => !prev)}
+                          sx={{
+                            color: "#CA0019",
+                            textTransform: "none",
+                            fontSize: "0.8rem",
+                            fontWeight: 500,
+                          }}
+                        >
+                          {showUrlInput ? "Hide URL" : "Enter Image URL"}
+                        </Button>
+                      </Stack>
+
+                      <Typography variant="caption" display="block" color="text.secondary">
+                        Drag & drop picture here, paste (Ctrl+V), or click to upload
+                      </Typography>
+                    </Box>
                   </Box>
 
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Button
-                      variant="contained"
-                      component="label"
-                      startIcon={<CloudUploadIcon />}
-                      size="small"
-                      sx={{
-                        backgroundColor: "#CA0019",
-                        textTransform: "none",
-                        fontWeight: 600,
-                        borderRadius: "8px",
-                        "&:hover": { backgroundColor: "#a60014" },
-                      }}
-                    >
-                      Upload New Photo
-                      <input
-                        type="file"
-                        hidden
-                        accept="image/*"
-                        onChange={handleImageUpload}
+                  {/* Optional Image URL Input */}
+                  {showUrlInput && (
+                    <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        placeholder="https://example.com/batch-photo.jpg"
+                        value={imageUrlValue}
+                        onChange={(e) => setImageUrlValue(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            handleApplyUrl();
+                          }
+                        }}
                       />
-                    </Button>
-                    <Typography variant="caption" display="block" color="text.secondary" sx={{ mt: 0.5 }}>
-                      Supports JPG, PNG, WEBP (Max 5MB)
-                    </Typography>
-                  </Box>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={handleApplyUrl}
+                        disabled={!imageUrlValue.trim()}
+                        sx={{
+                          borderColor: "#CA0019",
+                          color: "#CA0019",
+                          textTransform: "none",
+                          fontWeight: 600,
+                        }}
+                      >
+                        Apply
+                      </Button>
+                    </Stack>
+                  )}
                 </Box>
               </Box>
 

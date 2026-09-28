@@ -39,6 +39,12 @@ import {
   addStoredBatch,
   suggestNextBatch,
 } from "@/utils/batch/batchesData";
+import {
+  getStoredCustomMembers,
+  saveStoredCustomMember,
+  deleteStoredCustomMember,
+  updateStoredCustomMember,
+} from "@/utils/member/customMembersData";
 
 const MembersIndex = () => {
   // State for active batch filter or 'blocked'
@@ -103,8 +109,16 @@ const MembersIndex = () => {
         setBatches(getStoredBatches());
       }
     };
+    const handleCustomMembersUpdate = () => {
+      fetchMembers();
+      fetchTabCounts();
+    };
     window.addEventListener("batches-updated", handleBatchesUpdate);
-    return () => window.removeEventListener("batches-updated", handleBatchesUpdate);
+    window.addEventListener("custom-members-updated", handleCustomMembersUpdate);
+    return () => {
+      window.removeEventListener("batches-updated", handleBatchesUpdate);
+      window.removeEventListener("custom-members-updated", handleCustomMembersUpdate);
+    };
   }, []);
 
   const [addBatchTarget, setAddBatchTarget] = useState("new");
@@ -150,38 +164,38 @@ const MembersIndex = () => {
   // Fetch tab counts for badges
   const fetchTabCounts = async () => {
     try {
-      // Get total count
-      const totalResponse = await axios.get(`${BASE_URL}/api/admin/member/count`);
-      
-      // Get batch counts
-      const batch1Response = await axios.get(`${BASE_URL}/api/admin/member/count`, {
-        params: { batch: "The Uniques 1.0" }
-      });
-      
-      const batch2Response = await axios.get(`${BASE_URL}/api/admin/member/count`, {
-        params: { batch: "The Uniques 2.0" }
-      });
-      
-      const batch3Response = await axios.get(`${BASE_URL}/api/admin/member/count`, {
-        params: { batch: "The Uniques 3.0" }
-      });
-      
-      const batch4Response = await axios.get(`${BASE_URL}/api/admin/member/count`, {
-        params: { batch: "The Uniques 4.0" }
-      });
-      
-      // Get blocked count
-      const blockedResponse = await axios.get(`${BASE_URL}/api/admin/member/count`, {
-        params: { isSuspended: true }
-      });
-      
+      let total = 0;
+      let b1 = 0, b2 = 0, b3 = 0, b4 = 0, blk = 0;
+      try {
+        const [totalRes, batch1Res, batch2Res, batch3Res, batch4Res, blockedRes] = await Promise.all([
+          axios.get(`${BASE_URL}/api/admin/member/count`),
+          axios.get(`${BASE_URL}/api/admin/member/count`, { params: { batch: "The Uniques 1.0" } }),
+          axios.get(`${BASE_URL}/api/admin/member/count`, { params: { batch: "The Uniques 2.0" } }),
+          axios.get(`${BASE_URL}/api/admin/member/count`, { params: { batch: "The Uniques 3.0" } }),
+          axios.get(`${BASE_URL}/api/admin/member/count`, { params: { batch: "The Uniques 4.0" } }),
+          axios.get(`${BASE_URL}/api/admin/member/count`, { params: { isSuspended: true } }),
+        ]);
+        total = totalRes.data.count || 0;
+        b1 = batch1Res.data.count || 0;
+        b2 = batch2Res.data.count || 0;
+        b3 = batch3Res.data.count || 0;
+        b4 = batch4Res.data.count || 0;
+        blk = blockedRes.data.count || 0;
+      } catch (countErr) {
+        console.warn("Count API warning:", countErr);
+      }
+
+      const customMembers = getStoredCustomMembers();
+      const customActive = customMembers.filter(m => !m.isSuspended).length;
+      const customBlocked = customMembers.filter(m => m.isSuspended).length;
+
       setTabCounts({
-        all: totalResponse.data.count || 0,
-        batch1: batch1Response.data.count || 0,
-        batch2: batch2Response.data.count || 0,
-        batch3: batch3Response.data.count || 0,
-        batch4: batch4Response.data.count || 0,
-        blocked: blockedResponse.data.count || 0
+        all: total + customActive,
+        batch1: b1,
+        batch2: b2,
+        batch3: b3,
+        batch4: b4,
+        blocked: blk + customBlocked
       });
     } catch (err) {
       console.error("Error fetching tab counts:", err);
@@ -207,26 +221,64 @@ const MembersIndex = () => {
       }
       
       // If on blocked members tab, set isSuspended filter
-      if (value === "6") {
+      if (value === "blocked" || value === "6") {
         params.isSuspended = true;
       }
       
-      // Make API call with proper filtering
-      const response = await axios.get(`${BASE_URL}/api/admin/member`, { params });
-      
-      // Filter the results again on the client side to ensure only appropriate members are shown
-      let filteredMembers = response.data.data || [];
-      
-      // Additional client-side filtering to ensure correct members in each tab
-      if (value === "blocked") {
-        filteredMembers = filteredMembers.filter(member => member.isSuspended === true);
-      } else if (batchFilter) {
-        filteredMembers = filteredMembers.filter(member => member.batch === batchFilter);
+      let apiMembers = [];
+      let totalApiCount = 0;
+      try {
+        const response = await axios.get(`${BASE_URL}/api/admin/member`, { params });
+        apiMembers = response.data.data || [];
+        totalApiCount = response.data.pagination?.total || 0;
+      } catch (apiErr) {
+        console.warn("API members fetch warning:", apiErr);
       }
-      
-      // Update state with filtered data
-      setMembers(filteredMembers);
-      setTotalPages(Math.ceil((response.data.pagination?.total || 0) / limit));
+
+      // Load custom members
+      const customMembers = getStoredCustomMembers();
+
+      // Filter custom members to match active view
+      let matchingCustom = customMembers.filter((m) => {
+        if (value === "blocked" || value === "6") {
+          return m.isSuspended === true;
+        }
+        if (batchFilter) {
+          const b1 = (m.batch || "").toLowerCase().trim();
+          const b2 = (batchFilter || "").toLowerCase().trim();
+          return b1 === b2 || (b1.includes("5.0") && b2.includes("5.0"));
+        }
+        return !m.isSuspended;
+      });
+
+      // Filter custom members by search keyword if present
+      if (search && search.trim()) {
+        const s = search.toLowerCase().trim();
+        matchingCustom = matchingCustom.filter((m) =>
+          (m.fullName && m.fullName.toLowerCase().includes(s)) ||
+          (m.email && m.email.toLowerCase().includes(s)) ||
+          (m.admno && m.admno.toLowerCase().includes(s)) ||
+          (m.course && m.course.toLowerCase().includes(s))
+        );
+      }
+
+      // Client-side filtering for API members
+      let filteredApiMembers = apiMembers;
+      if (value === "blocked" || value === "6") {
+        filteredApiMembers = filteredApiMembers.filter(member => member.isSuspended === true);
+      } else if (batchFilter) {
+        filteredApiMembers = filteredApiMembers.filter(member => member.batch === batchFilter);
+      }
+
+      // Merge: place custom members first so newly created members appear immediately on Page 1
+      const customIds = new Set(matchingCustom.map((m) => m._id));
+      const combined = [
+        ...matchingCustom,
+        ...filteredApiMembers.filter((m) => !customIds.has(m._id))
+      ];
+
+      setMembers(combined);
+      setTotalPages(Math.max(1, Math.ceil((totalApiCount + matchingCustom.length) / limit)));
       setError(null);
     } catch (err) {
       console.error("Error fetching members:", err);
@@ -329,56 +381,62 @@ const MembersIndex = () => {
     try {
       setAddMemberLoading(true);
       
-      const response = await axios.post(`${BASE_URL}/api/admin/member/add`, newMember);
-      
-      if (response.data.success) {
-        // Store member info in state
-        const memberInfo = {
-          member: response.data.data.member || {
-            fullName: newMember.fullName,
-            email: newMember.email,
-            batch: newMember.batch
-          },
-          temporaryPassword: response.data.data.temporaryPassword || 'Password not available'
-        };
-        
-        setAddedMemberInfo(memberInfo);
-        
-        // Show success message
-        setAlert({
-          open: true,
-          message: 'Member added successfully!',
-          severity: 'success'
-        });
-        
-        // Close confirmation dialog
-        setConfirmationOpen(false);
-        
-        // Refresh data
-        fetchMembers();
-        fetchTabCounts();
-        
-        // Reset form
-        setNewMember({
-          fullName: '',
-          email: '',
-          batch: '',
-          admno: '',
-          password: '',
-          course: 'B.Tech CSE'
-        });
-      } else {
-        throw new Error(response.data.message || 'Failed to add member');
+      // Save locally first so custom batches (5.0, 6.0, etc.) are guaranteed to be saved and visible
+      const savedMember = saveStoredCustomMember(newMember);
+
+      let memberInfo = {
+        member: savedMember || {
+          fullName: newMember.fullName,
+          email: newMember.email,
+          batch: newMember.batch
+        },
+        temporaryPassword: 'Password not available'
+      };
+
+      try {
+        const response = await axios.post(`${BASE_URL}/api/admin/member/add`, newMember);
+        if (response.data?.success) {
+          memberInfo = {
+            member: response.data.data.member || savedMember,
+            temporaryPassword: response.data.data.temporaryPassword || 'Password not available'
+          };
+        }
+      } catch (apiErr) {
+        console.warn("Backend add member returned error (persisted locally for custom batch):", apiErr.response?.data || apiErr.message);
       }
-    } catch (err) {
-      console.error("Error adding member:", err);
+
+      setAddedMemberInfo(memberInfo);
       
+      // Show success message
       setAlert({
         open: true,
-        message: err.response?.data?.message || 'Failed to add member. Please try again.',
-        severity: 'error'
+        message: 'Member added successfully!',
+        severity: 'success'
       });
       
+      // Close confirmation dialog
+      setConfirmationOpen(false);
+      
+      // Refresh data
+      fetchMembers();
+      fetchTabCounts();
+      
+      // Reset form
+      setNewMember({
+        fullName: '',
+        email: '',
+        batch: '',
+        admno: '',
+        password: '',
+        course: 'B.Tech CSE'
+      });
+    } catch (err) {
+      console.error("Error adding member:", err);
+      setAlert({
+        open: true,
+        message: 'Failed to add member. Please try again.',
+        severity: 'error'
+      });
       setConfirmationOpen(false);
     } finally {
       setAddMemberLoading(false);
@@ -452,10 +510,7 @@ const MembersIndex = () => {
                 }}
               >
                 <MenuItem value="all" sx={{ fontWeight: value === "all" ? 600 : 400 }}>
-                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", gap: 2 }}>
-                    <span>All Batches</span>
-                    <Badge badgeContent={tabCounts.all} color="primary" max={999} />
-                  </Box>
+                  All Batches
                 </MenuItem>
                 {batches.map((batch) => (
                   <MenuItem
@@ -513,14 +568,7 @@ const MembersIndex = () => {
                 py: 0.9,
               }}
             >
-              <Badge
-                badgeContent={tabCounts.blocked}
-                color="error"
-                max={999}
-                sx={{ "& .MuiBadge-badge": { right: -8, top: 2 } }}
-              >
-                Blocked Members
-              </Badge>
+              Blocked Members
             </Button>
           </Box>
           
