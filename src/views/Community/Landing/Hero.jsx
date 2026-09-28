@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import "./style.css";
-import HeroClip from "@/assets/img/Community/Sample1.png";
+import HeroClip from "@/assets/img/Community/Sample1.webp";
 import Button from "@/utils/Buttons/Button";
-import DoubleQuotes from "@/assets/img/Community/Double.png";
+import DoubleQuotes from "@/assets/img/Community/Double.webp";
 import ApplicationForm from '@/components/ApplicationForm';
 
 const Modal = ({ isOpen, onClose, title, children }) => {

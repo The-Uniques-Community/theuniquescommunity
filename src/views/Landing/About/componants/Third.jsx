@@ -88,7 +88,7 @@ const CultureOfInnovation = () => {
           <Box
             className="w-full h-64 rounded-2xl bg-cover bg-center"
             style={{
-              backgroundImage: "url('/assets/images/graphics/default/feature23-light.png')",
+              backgroundImage: "url('/assets/images/graphics/default/feature23-light.webp')",
             }}
           />
         </Grid>

@@ -1,8 +1,8 @@
-import communityOrganizerImg from "@/assets/img/Community/testimonials/community-organizer.png";
-import technicalLeadImg from "@/assets/img/Community/testimonials/technical-lead.png";
-import graphicsLeadImg from "@/assets/img/Community/testimonials/graphics-lead.png";
-import eventCoordinatorImg from "@/assets/img/Community/testimonials/event-coordinator.png";
-import socialMediaLeadImg from "@/assets/img/Community/testimonials/social-media-lead.png";
+import communityOrganizerImg from "@/assets/img/Community/testimonials/community-organizer.webp";
+import technicalLeadImg from "@/assets/img/Community/testimonials/technical-lead.webp";
+import graphicsLeadImg from "@/assets/img/Community/testimonials/graphics-lead.webp";
+import eventCoordinatorImg from "@/assets/img/Community/testimonials/event-coordinator.webp";
+import socialMediaLeadImg from "@/assets/img/Community/testimonials/social-media-lead.webp";
 
 export const DEFAULT_BENEFITS_CARDS = [
   {

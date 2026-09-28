@@ -342,7 +342,7 @@ const ProjectForm = ({ onSuccess }) => {
                   fullWidth
                   label="Or Image URL (Optional)"
                   name="image"
-                  placeholder="https://... or /projects/name.png"
+                  placeholder="https://... or /projects/name.webp"
                   value={formData.image.startsWith("data:") ? "" : formData.image}
                   onChange={(e) => {
                     const val = e.target.value;

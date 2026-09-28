@@ -3,6 +3,11 @@ import { Box, Typography, Grid, Card, Stack, Container, Select, MenuItem, FormCo
 import { X } from "lucide-react";
 import Button from "@/utils/Buttons/Button";
 import { useTheme } from "@mui/material";
+import uniques1 from "../../../../assets/img/About/uniques1.webp";
+import uniques2 from "../../../../assets/img/About/uniques2.webp";
+import uniques3 from "../../../../assets/img/About/uniques3.webp";
+import uniques4 from "../../../../assets/img/About/uniques4.webp";
+
 import { useNavigate } from "react-router-dom";
 import { useThemeContext } from "../../../../theme/ThemeProvider";
 import { getStoredBatchProfiles } from "@/utils/batch/batchProfilesData";

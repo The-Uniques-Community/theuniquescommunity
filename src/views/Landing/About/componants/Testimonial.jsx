@@ -4,8 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLinkedin, faFacebook } from "@fortawesome/free-brands-svg-icons";
 import { useThemeContext } from "../../../../theme/ThemeProvider";
 
-import sahilGargImg from "../../../../assets/img/About/sahil_garg.png";
-import shubhamGargImg from "../../../../assets/img/About/shubham_garg.png";
+import sahilGargImg from "../../../../assets/img/About/sahil_garg.webp";
+import shubhamGargImg from "../../../../assets/img/About/shubham_garg.webp";
 
 const desk = [
   {

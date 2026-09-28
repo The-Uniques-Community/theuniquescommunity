@@ -34,22 +34,22 @@ const FeatureCard = ({ image, title, description }) => {
 const FeaturesSection = () => {
   const features = [
     {
-      image: "https://cdn-icons-png.flaticon.com/512/4341/4341139.png",
+      image: "https://cdn-icons-png.flaticon.com/512/4341/4341139.webp",
       title: "First feature",
       description: "Neque Dolor, fugiat non cum doloribus aperiam voluptates nostrum.",
     },
     {
-      image: "https://cdn-icons-png.flaticon.com/512/4341/4341134.png",
+      image: "https://cdn-icons-png.flaticon.com/512/4341/4341134.webp",
       title: "Second feature",
       description: "Neque Dolor, fugiat non cum doloribus aperiam voluptates nostrum.",
     },
     {
-      image: "https://cdn-icons-png.flaticon.com/512/4341/4341160.png",
+      image: "https://cdn-icons-png.flaticon.com/512/4341/4341160.webp",
       title: "Third feature",
       description: "Neque Dolor, fugiat non cum doloribus aperiam voluptates nostrum.",
     },
     {
-        image: "https://cdn-icons-png.flaticon.com/512/4341/4341160.png",
+        image: "https://cdn-icons-png.flaticon.com/512/4341/4341160.webp",
         title: "Third feature",
         description: "Neque Dolor, fugiat non cum doloribus aperiam voluptates nostrum.",
       },

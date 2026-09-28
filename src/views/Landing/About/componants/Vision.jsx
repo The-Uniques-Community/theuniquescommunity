@@ -1,5 +1,5 @@
 import React from 'react';
-import visionImage from '/src/assets/img/About/VISION.png'; 
+import visionImage from '/src/assets/img/About/VISION.webp'; 
 import { useThemeContext } from "@/theme/ThemeProvider";
 import { ShieldCheck, Rocket, Zap, Users, Target, Globe, BookOpen, Lightbulb, ArrowRight } from 'lucide-react';
 
