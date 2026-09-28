@@ -6,10 +6,12 @@ import ProtectedRoute from "@/routes/ProtectedRoute";
 
 
 const EventForm = Loader(lazy(() => import("@/utils/event/EventForm")));
+const ProjectForm = Loader(lazy(() => import("@/utils/project/ProjectForm")));
 const AdminLayout = Loader(lazy(() => import("@/layout/Admin")));
 const AdminDashboard = Loader(lazy(() => import("@/views/Admin")));
 const Member = Loader(lazy(() => import("@/views/Admin/Members")));
 const Event = Loader(lazy(() => import("@/views/Admin/Events")));
+const Projects = Loader(lazy(() => import("@/views/Admin/Projects")));
 const Account = Loader(lazy(() => import("@/views/Admin/Accounts/index")));
 const Profile = Loader(lazy(() => import("@/views/Admin/Profile")));
 const EventBudget = Loader(lazy(() => import("@/views/Admin/Events/Budget")));
@@ -43,6 +45,14 @@ const AdminRoutes = {
     {
       path: "/admin/events-overview/:id/budget",
       element: <EventBudget />,
+    },
+    {
+      path: "/admin/projects-overview",
+      element: <Projects />,
+    },
+    {
+      path: "/admin/projects-overview/create",
+      element: <ProjectForm />,
     },
     {
       path: "/admin/accounts",

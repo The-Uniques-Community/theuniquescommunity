@@ -16,7 +16,7 @@ import GroupIcon from "@mui/icons-material/Group";
 
 import LogoutIcon from "@mui/icons-material/Logout";
 import { toast } from "react-toastify";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useThemeContext } from "@/theme/ThemeProvider";
@@ -28,11 +28,13 @@ import Brightness4Icon from "@mui/icons-material/Brightness4"; // Dark Mode Icon
 import Brightness7Icon from "@mui/icons-material/Brightness7"; // Light Mode Icon
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
 // Navigation items with full paths
 const ADMIN_NAVIGATION = [
   { segment: "", title: "Dashboard", icon: <DashboardIcon /> },
   { segment: "members-overview", title: "Members", icon: <GroupIcon /> },
   { segment: "events-overview", title: "Events", icon: <EventIcon /> },
+  { segment: "projects-overview", title: "Projects", icon: <AccountTreeIcon /> },
   { segment: "accounts", title: "Accounts", icon: <AccountBalance/> },
   { segment: "enquiry", title: "Enquiry", icon: <AnnouncementIcon/> },
 ];
@@ -53,12 +55,22 @@ function DashboardLayoutAppBar() {
   const { isDarkMode, toggleTheme } = useThemeContext(); // Access dark mode state and toggle function
   const theme = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Retrieve the saved active item from localStorage on mount
-  const savedActiveItem = localStorage.getItem("activeItem") || "";
+  const getActiveItemFromPath = () => {
+    const pathSegments = location.pathname.split("/");
+    const currentSegment = pathSegments[2] || ""; 
+    const activeNav = ADMIN_NAVIGATION.find(item => item.segment === currentSegment);
+    return activeNav ? activeNav.title : "";
+  };
+
   const [drawerOpen, setDrawerOpen] = React.useState(false);
-  const [activeItem, setActiveItem] = React.useState(savedActiveItem);
+  const [activeItem, setActiveItem] = React.useState(getActiveItemFromPath());
+
+  React.useEffect(() => {
+    setActiveItem(getActiveItemFromPath());
+  }, [location.pathname]);
 
   const [isOpen, setIsOpen] = React.useState(false);
   const onClose = () => setIsOpen(false);

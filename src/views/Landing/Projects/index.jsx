@@ -3,6 +3,7 @@ import CelebrationComponent from "@/utils/Header";
 import { ArrowUpRight, Search, Code2, ChevronDown, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CallToAction from "../homComponents/CallToAction";
+import { getStoredProjects } from "@/utils/project/projectsData";
 
 export const BATCHES = [
   { id: "all", name: "All Batches", icon: "👥" },
@@ -140,10 +141,19 @@ export const PROJECTS_DATA = [
 ];
 
 const Projects = () => {
+  const [projectsList, setProjectsList] = useState(() => getStoredProjects());
   const [selectedBatch, setSelectedBatch] = useState("all");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleProjectsUpdate = () => {
+      setProjectsList(getStoredProjects());
+    };
+    window.addEventListener("projects-updated", handleProjectsUpdate);
+    return () => window.removeEventListener("projects-updated", handleProjectsUpdate);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -162,7 +172,7 @@ const Projects = () => {
 
   const filteredProjects = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
-    return PROJECTS_DATA.filter((project) => {
+    return projectsList.filter((project) => {
       const matchesBatch =
         selectedBatch === "all" ||
         project.batch === selectedBatch ||
@@ -174,7 +184,7 @@ const Projects = () => {
         project.technologies.some((tag) => tag.toLowerCase().includes(q));
       return matchesBatch && matchesSearch;
     });
-  }, [selectedBatch, searchQuery]);
+  }, [projectsList, selectedBatch, searchQuery]);
 
   return (
     <div className="bg-[#f8f9fa] dark:bg-[#0a0a0a] min-h-screen text-slate-800 dark:text-slate-200 transition-colors duration-300">

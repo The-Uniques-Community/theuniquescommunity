@@ -33,10 +33,16 @@ import SearchIcon from "@mui/icons-material/Search";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import {
+  getStoredBatches,
+  addStoredBatch,
+  suggestNextBatch,
+} from "@/utils/batch/batchesData";
 
 const MembersIndex = () => {
-  // State for active tab
-  const [value, setValue] = useState("1");
+  // State for active batch filter or 'blocked'
+  const [value, setValue] = useState("all");
 
   // State for members data
   const [members, setMembers] = useState([]);
@@ -84,6 +90,51 @@ const MembersIndex = () => {
   const [formErrors, setFormErrors] = useState({});
   const [addedMemberInfo, setAddedMemberInfo] = useState(null);
 
+  // Dynamic batches state
+  const [batches, setBatches] = useState(() => getStoredBatches());
+  const [addBatchDialogOpen, setAddBatchDialogOpen] = useState(false);
+  const [newBatchInput, setNewBatchInput] = useState("");
+  const [addBatchTarget, setAddBatchTarget] = useState("new");
+
+  useEffect(() => {
+    const handleBatchesUpdate = (e) => {
+      if (e.detail) {
+        setBatches(e.detail);
+      } else {
+        setBatches(getStoredBatches());
+      }
+    };
+    window.addEventListener("batches-updated", handleBatchesUpdate);
+    return () => window.removeEventListener("batches-updated", handleBatchesUpdate);
+  }, []);
+
+  const handleOpenAddBatchDialog = (target = "new") => {
+    setNewBatchInput(suggestNextBatch(batches));
+    setAddBatchTarget(target);
+    setAddBatchDialogOpen(true);
+  };
+
+  const handleAddNewBatchConfirm = () => {
+    if (!newBatchInput.trim()) return;
+    const added = addStoredBatch(newBatchInput.trim());
+    const updated = getStoredBatches();
+    setBatches(updated);
+    if (addBatchTarget === "edit") {
+      setEditingMember((prev) => ({ ...prev, batch: added }));
+    } else if (addBatchTarget === "filter") {
+      setValue(added);
+      setPage(1);
+      setSearch("");
+    } else {
+      setNewMember((prev) => ({ ...prev, batch: added }));
+      if (formErrors.batch) {
+        setFormErrors((prev) => ({ ...prev, batch: "" }));
+      }
+    }
+    setNewBatchInput("");
+    setAddBatchDialogOpen(false);
+  };
+
   // Handle tab change
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -91,16 +142,10 @@ const MembersIndex = () => {
     setSearch(""); // Clear search when changing tabs
   };
 
-  // Get batch filter based on current tab
+  // Get batch filter based on current tab/selection
   const getBatchFilter = () => {
-    switch (value) {
-      case "2": return "The Uniques 1.0";
-      case "3": return "The Uniques 2.0";
-      case "4": return "The Uniques 3.0";
-      case "5": return "The Uniques 4.0";
-      case "6": return null; // Blocked members tab
-      default: return null; // All members tab
-    }
+    if (value === "all" || value === "blocked") return null;
+    return value;
   };
 
   // Fetch tab counts for badges
@@ -172,19 +217,12 @@ const MembersIndex = () => {
 
       // Filter the results again on the client side to ensure only appropriate members are shown
       let filteredMembers = response.data.data || [];
-      console.log(filteredMembers);
 
       // Additional client-side filtering to ensure correct members in each tab
-      if (value === "2") {
-        filteredMembers = filteredMembers.filter(member => member.batch === "The Uniques 1.0");
-      } else if (value === "3") {
-        filteredMembers = filteredMembers.filter(member => member.batch === "The Uniques 2.0");
-      } else if (value === "4") {
-        filteredMembers = filteredMembers.filter(member => member.batch === "The Uniques 3.0");
-      } else if (value === "5") {
-        filteredMembers = filteredMembers.filter(member => member.batch === "The Uniques 4.0");
-      } else if (value === "6") {
+      if (value === "blocked") {
         filteredMembers = filteredMembers.filter(member => member.isSuspended === true);
+      } else if (batchFilter) {
+        filteredMembers = filteredMembers.filter(member => member.batch === batchFilter);
       }
 
       // Update state with filtered data
@@ -270,8 +308,8 @@ const MembersIndex = () => {
 
     if (!newMember.admno.trim()) {
       errors.admno = 'Admission number is required';
-    } else if (!/^[0-9]{4}(BTCS|BTCED)[0-9]{3}$/.test(newMember.admno)) {
-      errors.admno = 'Invalid format. Expected: ####BTCS### or ####BTCED###';
+    } else if (!/^[0-9]{4}(BTCS|BTCED|BCA|AI|BTAI)[0-9]{2,4}$/i.test(newMember.admno.trim()) && !/^[0-9]{4}[A-Za-z]{2,5}[0-9]{2,4}$/.test(newMember.admno.trim())) {
+      errors.admno = 'Invalid format. Expected: ####BTCS###, ####BTCED###, ####BCA### or ####AI###';
     }
 
     // Password is optional
@@ -472,75 +510,111 @@ const MembersIndex = () => {
           borderColor: "divider",
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center"
+          alignItems: "center",
+          p: 2,
+          flexWrap: "wrap",
+          gap: 2,
         }}>
-          <TabList
-            onChange={handleChange}
-            aria-label="members tabs"
-            variant="scrollable"
-            scrollButtons="auto"
-            sx={{
-              '& .MuiTab-root': {
-                fontWeight: 500,
-                transition: '0.3s',
-                '&.Mui-selected': {
-                  color: '#ca0019',
-                }
-              },
-              '& .MuiTabs-indicator': {
-                backgroundColor: '#ca0019',
-              }
-            }}
-          >
-            <Tab
-              label={
-                <Badge badgeContent={tabCounts.all} color="primary" max={999}>
-                  All Members
-                </Badge>
-              }
-              value="1"
-            />
-            <Tab
-              label={
-                <Badge badgeContent={tabCounts.batch1} color="primary" max={999}>
-                  The Uniques 1.0
-                </Badge>
-              }
-              value="2"
-            />
-            <Tab
-              label={
-                <Badge badgeContent={tabCounts.batch2} color="primary" max={999}>
-                  The Uniques 2.0
-                </Badge>
-              }
-              value="3"
-            />
-            <Tab
-              label={
-                <Badge badgeContent={tabCounts.batch3} color="primary" max={999}>
-                  The Uniques 3.0
-                </Badge>
-              }
-              value="4"
-            />
-            <Tab
-              label={
-                <Badge badgeContent={tabCounts.batch4} color="primary" max={999}>
-                  The Uniques 4.0
-                </Badge>
-              }
-              value="5"
-            />
-            <Tab
-              label={
-                <Badge badgeContent={tabCounts.blocked} color="error" max={999}>
-                  Blocked Members
-                </Badge>
-              }
-              value="6"
-            />
-          </TabList>
+          {/* Batches Dropdown + Blocked Members button beside it */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, flexWrap: "wrap" }}>
+            <FormControl size="small" sx={{ minWidth: 200 }}>
+              <Select
+                value={value === "blocked" ? "all" : value}
+                displayEmpty
+                onChange={(e) => {
+                  if (e.target.value === "__add_new_batch__") {
+                    handleOpenAddBatchDialog("filter");
+                  } else {
+                    setValue(e.target.value);
+                    setPage(1);
+                    setSearch("");
+                  }
+                }}
+                sx={{
+                  borderRadius: 2,
+                  fontWeight: 600,
+                  bgcolor: value !== "blocked" ? "rgba(202, 0, 25, 0.04)" : "background.paper",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: value !== "blocked" ? "#ca0019" : "divider",
+                    borderWidth: value !== "blocked" ? "1.5px" : "1px",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#ca0019",
+                  },
+                }}
+              >
+                <MenuItem value="all" sx={{ fontWeight: value === "all" ? 600 : 400 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", gap: 2 }}>
+                    <span>All Batches</span>
+                    <Badge badgeContent={tabCounts.all} color="primary" max={999} />
+                  </Box>
+                </MenuItem>
+                {batches.map((batch) => (
+                  <MenuItem
+                    key={batch}
+                    value={batch}
+                    sx={{ fontWeight: value === batch ? 600 : 400 }}
+                  >
+                    {batch}
+                  </MenuItem>
+                ))}
+                <MenuItem
+                  value="__add_new_batch__"
+                  sx={{
+                    color: "#ca0019",
+                    fontWeight: 600,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    borderTop: "1px dashed",
+                    borderColor: "divider",
+                    mt: 0.5,
+                    pt: 1,
+                    "&:hover": {
+                      bgcolor: "rgba(202, 0, 25, 0.08)",
+                    },
+                  }}
+                >
+                  <AddCircleOutlineIcon fontSize="small" sx={{ color: "#ca0019" }} />
+                  + Add New Batch
+                </MenuItem>
+              </Select>
+            </FormControl>
+
+            {/* Blocked Members side button */}
+            <Button
+              variant={value === "blocked" ? "contained" : "outlined"}
+              onClick={() => {
+                setValue("blocked");
+                setPage(1);
+                setSearch("");
+              }}
+              sx={{
+                borderRadius: 2,
+                fontWeight: 600,
+                textTransform: "none",
+                borderColor: value === "blocked" ? "#ca0019" : "divider",
+                bgcolor: value === "blocked" ? "#ca0019" : "transparent",
+                color: value === "blocked" ? "#fff" : "text.secondary",
+                "&:hover": {
+                  borderColor: "#ca0019",
+                  bgcolor: value === "blocked" ? "#a30014" : "rgba(202, 0, 25, 0.04)",
+                  color: value === "blocked" ? "#fff" : "#ca0019",
+                },
+                px: 2,
+                py: 0.9,
+              }}
+            >
+              <Badge
+                badgeContent={tabCounts.blocked}
+                color="error"
+                max={999}
+                sx={{ "& .MuiBadge-badge": { right: -8, top: 2 } }}
+              >
+                Blocked Members
+              </Badge>
+            </Button>
+          </Box>
 
           {/* Add Member Button */}
           <Button
@@ -550,7 +624,8 @@ const MembersIndex = () => {
             sx={{
               bgcolor: "#ca0019",
               "&:hover": { bgcolor: "#a30014" },
-              mr: 2
+              fontWeight: 600,
+              borderRadius: 2,
             }}
           >
             Add Member
@@ -601,83 +676,81 @@ const MembersIndex = () => {
           </div>
         </Box>
 
-        {/* Tab panels for different batches */}
-        {["1", "2", "3", "4", "5", "6"].map((tabValue) => (
-          <TabPanel value={tabValue} key={tabValue} sx={{ px: 0 }}>
-            {/* Loading indicator */}
-            {loading && (
-              <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-                <CircularProgress sx={{ color: '#ca0019' }} />
-              </Box>
-            )}
+        {/* Tab panel for members */}
+        <TabPanel value={value} sx={{ px: 0 }}>
+          {/* Loading indicator */}
+          {loading && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+              <CircularProgress sx={{ color: '#ca0019' }} />
+            </Box>
+          )}
 
-            {/* Error message */}
-            {error && !loading && (
-              <Alert severity="error" sx={{ mb: 2, mx: 2 }}>
-                {error}
-              </Alert>
-            )}
+          {/* Error message */}
+          {error && !loading && (
+            <Alert severity="error" sx={{ mb: 2, mx: 2 }}>
+              {error}
+            </Alert>
+          )}
 
-            {/* No results message */}
-            {!loading && !error && members.length === 0 && (
-              <Box sx={{ textAlign: 'center', my: 4 }}>
-                <Typography variant="h6" color="text.secondary" gutterBottom>
-                  No members found
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {search
-                    ? `No results matching "${search}". Try a different search term.`
-                    : tabValue === "6"
-                      ? "There are no blocked members."
-                      : "No members in this batch yet."}
-                </Typography>
-              </Box>
-            )}
+          {/* No results message */}
+          {!loading && !error && members.length === 0 && (
+            <Box sx={{ textAlign: 'center', my: 4 }}>
+              <Typography variant="h6" color="text.secondary" gutterBottom>
+                No members found
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {search
+                  ? `No results matching "${search}". Try a different search term.`
+                  : value === "blocked"
+                    ? "There are no blocked members."
+                    : "No members in this batch yet."}
+              </Typography>
+            </Box>
+          )}
 
-            {/* Member cards */}
-            {!loading && !error && members.length > 0 && (
-              <div className="px-4">
-                <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 500 }}>
-                  Showing {members.length} {members.length === 1 ? 'member' : 'members'}
-                  {search && ` matching "${search}"`}
-                </Typography>
+          {/* Member cards */}
+          {!loading && !error && members.length > 0 && (
+            <div className="px-4">
+              <Typography variant="subtitle1" sx={{ mb: 2, fontWeight: 500 }}>
+                Showing {members.length} {members.length === 1 ? 'member' : 'members'}
+                {search && ` matching "${search}"`}
+              </Typography>
 
-                <div className="grid xl:grid-cols-4 md:grid-cols-3 grid-cols-1 sm:grid-cols-1  gap-4">
-                  {members.map((member, index) => (
-                    <MemberCardDashboard
-                      user={member}
-                      key={member._id || index}
-                      refreshData={() => {
-                        fetchMembers();
-                        fetchTabCounts();
-                      }}
-                      onEdit={handleEditClick}
-                      onDelete={handleDeleteClick}
-                    />
-                  ))}
-                </div>
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 2 }}>
-                    <Pagination
-                      count={totalPages}
-                      page={page}
-                      onChange={handlePageChange}
-                      color="primary"
-                      sx={{
-                        "& .Mui-selected": {
-                          backgroundColor: "#ca0019 !important",
-                          color: "white",
-                        },
-                      }}
-                    />
-                  </Box>
-                )}
+              <div className="grid xl:grid-cols-4 md:grid-cols-3 grid-cols-1 sm:grid-cols-1  gap-4">
+                {members.map((member, index) => (
+                  <MemberCardDashboard
+                    user={member}
+                    key={member._id || index}
+                    refreshData={() => {
+                      fetchMembers();
+                      fetchTabCounts();
+                    }}
+                    onEdit={handleEditClick}
+                    onDelete={handleDeleteClick}
+                  />
+                ))}
               </div>
-            )}
-          </TabPanel>
-        ))}
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 2 }}>
+                  <Pagination
+                    count={totalPages}
+                    page={page}
+                    onChange={handlePageChange}
+                    color="primary"
+                    sx={{
+                      "& .Mui-selected": {
+                        backgroundColor: "#ca0019 !important",
+                        color: "white",
+                      },
+                    }}
+                  />
+                </Box>
+              )}
+            </div>
+          )}
+        </TabPanel>
       </TabContext>
 
       {/* Add Member Modal */}
@@ -729,12 +802,39 @@ const MembersIndex = () => {
                 name="batch"
                 value={newMember.batch}
                 label="Batch"
-                onChange={handleInputChange}
+                onChange={(e) => {
+                  if (e.target.value === "__add_new_batch__") {
+                    handleOpenAddBatchDialog("new");
+                  } else {
+                    handleInputChange(e);
+                  }
+                }}
               >
-                <MenuItem value="The Uniques 1.0">The Uniques 1.0</MenuItem>
-                <MenuItem value="The Uniques 2.0">The Uniques 2.0</MenuItem>
-                <MenuItem value="The Uniques 3.0">The Uniques 3.0</MenuItem>
-                <MenuItem value="The Uniques 4.0">The Uniques 4.0</MenuItem>
+                {batches.map((b) => (
+                  <MenuItem key={b} value={b}>
+                    {b}
+                  </MenuItem>
+                ))}
+                <MenuItem
+                  value="__add_new_batch__"
+                  sx={{
+                    color: "#ca0019",
+                    fontWeight: 600,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    borderTop: "1px dashed",
+                    borderColor: "divider",
+                    mt: 0.5,
+                    pt: 1,
+                    "&:hover": {
+                      bgcolor: "rgba(202, 0, 25, 0.08)",
+                    },
+                  }}
+                >
+                  <AddCircleOutlineIcon fontSize="small" sx={{ color: "#ca0019" }} />
+                  + Add New Batch
+                </MenuItem>
               </Select>
               {formErrors.batch && <FormHelperText>{formErrors.batch}</FormHelperText>}
             </FormControl>
@@ -750,7 +850,7 @@ const MembersIndex = () => {
               value={newMember.admno}
               onChange={handleInputChange}
               error={!!formErrors.admno}
-              helperText={formErrors.admno || "Format: ####BTCS### or ####BTCED###"}
+              helperText={formErrors.admno || "Format: ####BTCS###, ####BTCED###, ####BCA### or ####AI###"}
               inputProps={{ style: { textTransform: 'uppercase' } }}
             />
 
@@ -764,6 +864,8 @@ const MembersIndex = () => {
               >
                 <MenuItem value="B.Tech CSE">B.Tech CSE</MenuItem>
                 <MenuItem value="CSD">CSD</MenuItem>
+                <MenuItem value="BCA">BCA</MenuItem>
+                <MenuItem value="AI">AI</MenuItem>
               </Select>
             </FormControl>
 
@@ -788,6 +890,45 @@ const MembersIndex = () => {
             sx={{ bgcolor: "#ca0019", "&:hover": { bgcolor: "#a30014" } }}
           >
             Add Member
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Add New Batch Dialog */}
+      <Dialog
+        open={addBatchDialogOpen}
+        onClose={() => setAddBatchDialogOpen(false)}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle sx={{ fontWeight: 600 }}>Add New Batch</DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ mb: 2 }}>
+            Enter batch name or version (e.g. 5.0, 6.0, The Uniques 5.0):
+          </DialogContentText>
+          <TextField
+            autoFocus
+            fullWidth
+            label="Batch Name"
+            placeholder="e.g. The Uniques 5.0"
+            value={newBatchInput}
+            onChange={(e) => setNewBatchInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleAddNewBatchConfirm();
+              }
+            }}
+          />
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setAddBatchDialogOpen(false)}>Cancel</Button>
+          <Button
+            variant="contained"
+            onClick={handleAddNewBatchConfirm}
+            sx={{ bgcolor: "#ca0019", "&:hover": { bgcolor: "#a30014" } }}
+          >
+            Add Batch
           </Button>
         </DialogActions>
       </Dialog>
@@ -913,12 +1054,39 @@ const MembersIndex = () => {
                 name="batch"
                 value={editingMember?.batch || ''}
                 label="Batch"
-                onChange={handleEditInputChange}
+                onChange={(e) => {
+                  if (e.target.value === "__add_new_batch__") {
+                    handleOpenAddBatchDialog("edit");
+                  } else {
+                    handleEditInputChange(e);
+                  }
+                }}
               >
-                <MenuItem value="The Uniques 1.0">The Uniques 1.0</MenuItem>
-                <MenuItem value="The Uniques 2.0">The Uniques 2.0</MenuItem>
-                <MenuItem value="The Uniques 3.0">The Uniques 3.0</MenuItem>
-                <MenuItem value="The Uniques 4.0">The Uniques 4.0</MenuItem>
+                {batches.map((b) => (
+                  <MenuItem key={b} value={b}>
+                    {b}
+                  </MenuItem>
+                ))}
+                <MenuItem
+                  value="__add_new_batch__"
+                  sx={{
+                    color: "#ca0019",
+                    fontWeight: 600,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    borderTop: "1px dashed",
+                    borderColor: "divider",
+                    mt: 0.5,
+                    pt: 1,
+                    "&:hover": {
+                      bgcolor: "rgba(202, 0, 25, 0.08)",
+                    },
+                  }}
+                >
+                  <AddCircleOutlineIcon fontSize="small" sx={{ color: "#ca0019" }} />
+                  + Add New Batch
+                </MenuItem>
               </Select>
             </FormControl>
 
@@ -944,6 +1112,8 @@ const MembersIndex = () => {
               >
                 <MenuItem value="B.Tech CSE">B.Tech CSE</MenuItem>
                 <MenuItem value="CSD">CSD</MenuItem>
+                <MenuItem value="BCA">BCA</MenuItem>
+                <MenuItem value="AI">AI</MenuItem>
               </Select>
             </FormControl>
           </Box>
