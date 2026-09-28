@@ -44,7 +44,7 @@ const Footer = () => {
           <ul className="text-sm space-y-2 text-slate-600 dark:text-gray-400">
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/training">Training Model</Link></li>
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/contact">Contact Us</Link></li>
-            <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/training">Privacy Policy</Link></li>
+            <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/privacy-policy">Privacy Policy</Link></li>
 
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/terms-of-service">Terms of Service</Link></li>
           </ul>

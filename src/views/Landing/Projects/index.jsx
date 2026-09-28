@@ -1,12 +1,15 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import CelebrationComponent from "@/utils/Header";
-import { ArrowUpRight, Search, Code2, ChevronDown } from "lucide-react";
+import { ArrowUpRight, Search, Code2, ChevronDown, Check } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import CallToAction from "../homComponents/CallToAction";
 
 export const BATCHES = [
-  "Uniques 1.0",
-  "Uniques 2.0",
-  "Uniques 3.0",
-  "Uniques 4.0",
+  { id: "all", name: "All Batches", icon: "👥" },
+  { id: "Uniques 1.0", name: "The Uniques 1.0", icon: "🥇" },
+  { id: "Uniques 2.0", name: "The Uniques 2.0", icon: "🥈" },
+  { id: "Uniques 3.0", name: "The Uniques 3.0", icon: "🥉" },
+  { id: "Uniques 4.0", name: "The Uniques 4.0", icon: "🏅" },
 ];
 
 export const PROJECTS_DATA = [
@@ -124,13 +127,33 @@ export const PROJECTS_DATA = [
 ];
 
 const Projects = () => {
-  const [selectedBatch, setSelectedBatch] = useState("Uniques 1.0");
+  const [selectedBatch, setSelectedBatch] = useState("all");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const currentBatch = useMemo(
+    () => BATCHES.find((b) => b.id === selectedBatch) || BATCHES[0],
+    [selectedBatch]
+  );
 
   const filteredProjects = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
     return PROJECTS_DATA.filter((project) => {
-      const matchesBatch = project.batch === selectedBatch;
+      const matchesBatch =
+        selectedBatch === "all" ||
+        project.batch === selectedBatch ||
+        project.batch.replace("The ", "") === selectedBatch.replace("The ", "");
       const matchesSearch =
         !q ||
         project.title.toLowerCase().includes(q) ||
@@ -141,53 +164,102 @@ const Projects = () => {
   }, [selectedBatch, searchQuery]);
 
   return (
-    <div className="bg-[#f8f9fa] dark:bg-[#0a0a0a] min-h-screen text-slate-800 dark:text-slate-200 transition-colors duration-300 pb-24">
+    <div className="bg-[#f8f9fa] dark:bg-[#0a0a0a] min-h-screen text-slate-800 dark:text-slate-200 transition-colors duration-300">
       {/* Header with standard celebration component */}
       <CelebrationComponent title="Projects → Innovation & Impact ✦" />
 
       {/* Main Container - Centered and proportional */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12">
         {/* Top Bar: Batch Dropdown on Left & Search Input on Right */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-end justify-between gap-4 mb-8">
           {/* Left Side: Batch Selector Dropdown */}
-          <div className="flex items-center gap-2.5">
-            <label
-              htmlFor="batch-select"
-              className="text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap"
-            >
-              Batch:
+          <div className="w-full sm:w-auto" ref={dropdownRef}>
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 block ml-1">
+              Select Batch
             </label>
-            <div className="relative min-w-[190px] sm:w-56">
-              <select
-                id="batch-select"
-                value={selectedBatch}
-                onChange={(e) => setSelectedBatch(e.target.value)}
-                className="w-full appearance-none pl-4 pr-10 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-white dark:bg-[#161618] border border-slate-200/80 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#ea384c]/30 focus:border-[#ea384c] shadow-sm cursor-pointer"
+            <div className="relative min-w-[260px] sm:min-w-[280px]">
+              <button
+                type="button"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className={`flex items-center justify-between w-full px-5 py-3.5 bg-white dark:bg-[#161618] hover:bg-slate-50 dark:hover:bg-[#1c1c20] border rounded-2xl shadow-sm transition-all duration-300 ${
+                  isDropdownOpen
+                    ? "border-[#ea384c] ring-2 ring-[#ea384c]/10"
+                    : "border-slate-200/90 dark:border-slate-800 hover:border-[#ea384c]/40"
+                }`}
               >
-                {BATCHES.map((batch) => (
-                  <option
-                    key={batch}
-                    value={batch}
-                    className="bg-white dark:bg-[#161618] text-slate-900 dark:text-white py-1.5"
+                <div className="flex items-center gap-3">
+                  <span className="text-xl leading-none">{currentBatch.icon}</span>
+                  <span className="font-semibold text-sm sm:text-base text-slate-900 dark:text-white">
+                    {currentBatch.name}
+                  </span>
+                </div>
+                <ChevronDown
+                  className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${
+                    isDropdownOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              <AnimatePresence>
+                {isDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 4, scale: 1 }}
+                    exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                    transition={{ duration: 0.18 }}
+                    className="absolute top-full left-0 w-full mt-2 bg-white dark:bg-[#161618] border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden z-50 p-1.5"
                   >
-                    {batch}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    {BATCHES.map((batch) => {
+                      const isSelected = selectedBatch === batch.id;
+                      return (
+                        <button
+                          key={batch.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedBatch(batch.id);
+                            setIsDropdownOpen(false);
+                          }}
+                          className={`flex items-center justify-between w-full px-4 py-3 text-left rounded-xl transition-colors ${
+                            isSelected
+                              ? "bg-red-50 text-[#ca0019] dark:bg-red-950/40 dark:text-red-400 font-medium"
+                              : "hover:bg-slate-50 dark:hover:bg-slate-800/60 text-slate-700 dark:text-slate-200"
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="text-lg leading-none">{batch.icon}</span>
+                            <span className="font-medium text-sm sm:text-[15px]">
+                              {batch.name}
+                            </span>
+                          </div>
+                          {isSelected && (
+                            <Check className="w-4 h-4 text-[#ca0019] dark:text-red-400 shrink-0" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
           {/* Right Side: Search Bar */}
-          <div className="relative min-w-[240px] sm:w-72">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search projects or tech..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm rounded-xl bg-white dark:bg-[#161618] border border-slate-200/80 dark:border-slate-800 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#ea384c]/30 focus:border-[#ea384c]"
-            />
+          <div className="w-full sm:w-72">
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 block ml-1">
+              Search Projects
+            </label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-slate-400 group-focus-within:text-[#ca0019] transition-colors" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search projects or tech..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="block w-full pl-11 pr-4 py-3.5 bg-white dark:bg-[#161618] border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-sm text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#ca0019]/20 focus:border-[#ca0019] transition-all duration-300"
+              />
+            </div>
           </div>
         </div>
 
@@ -196,7 +268,7 @@ const Projects = () => {
           <div className="bg-white dark:bg-[#161618] rounded-3xl p-12 text-center border border-slate-200/80 dark:border-slate-800 my-8">
             <Code2 className="w-12 h-12 text-slate-400 mx-auto mb-3 opacity-60" />
             <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-1">
-              No projects found for {selectedBatch}
+              No projects found for {currentBatch.name}
             </h3>
             <p className="text-sm text-slate-500 dark:text-slate-400">
               Try searching with another keyword or select another batch.
@@ -287,6 +359,9 @@ const Projects = () => {
           </div>
         )}
       </div>
+
+      {/* Call To Action */}
+      <CallToAction />
     </div>
   );
 };

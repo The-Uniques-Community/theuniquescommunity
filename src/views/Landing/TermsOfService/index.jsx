@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileText, Check } from "lucide-react";
 import { useThemeContext } from "@/theme/ThemeProvider";
+import CallToAction from "../homComponents/CallToAction";
 
 const TermsOfService = () => {
   const { isDarkMode } = useThemeContext();
@@ -70,11 +71,12 @@ const TermsOfService = () => {
 
   return (
     <div
-      className={`min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 transition-colors duration-300 ${
+      className={`transition-colors duration-300 ${
         isDarkMode ? "bg-[#121212]" : "bg-slate-100"
       }`}
     >
-      {/* Simple Card Modal Container */}
+      <div className="flex items-center justify-center py-12 px-4 sm:px-6">
+        {/* Simple Card Modal Container */}
       <div
         className={`w-full max-w-lg rounded-3xl p-6 sm:p-8 shadow-2xl border transition-all ${
           isDarkMode
@@ -173,6 +175,10 @@ const TermsOfService = () => {
           </button>
         </div>
       </div>
+      </div>
+
+      {/* Call To Action */}
+      <CallToAction />
     </div>
   );
 };
