@@ -104,7 +104,7 @@ const FinePaymentModal = ({ open, onClose, memberId, fine, onPaymentComplete }) 
     }
   };
   
-  // Remove selected file
+  // Remove the selected file
   const handleRemoveFile = () => {
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl);
