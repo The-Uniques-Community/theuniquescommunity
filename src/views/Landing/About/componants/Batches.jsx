@@ -1,54 +1,39 @@
-import React from "react";
-import { Box, Typography, Grid, Card, Stack, Container, Select, MenuItem, FormControl } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Grid, Card, Stack, Container, Select, MenuItem, FormControl, Modal, IconButton } from "@mui/material";
+import { X } from "lucide-react";
 import Button from "@/utils/Buttons/Button";
 import { useTheme } from "@mui/material";
-import uniques1 from "../../../../assets/img/About/uniques1.jpg";
-import uniques2 from "../../../../assets/img/About/uniques2.jpg";
-import uniques3 from "../../../../assets/img/About/uniques3.jpg";
+import uniques1 from "../../../../assets/img/About/uniques1.webp";
+import uniques2 from "../../../../assets/img/About/uniques2.webp";
+import uniques3 from "../../../../assets/img/About/uniques3.webp";
+import uniques4 from "../../../../assets/img/About/uniques4.webp";
 
 import { useNavigate } from "react-router-dom";
 import { useThemeContext } from "../../../../theme/ThemeProvider";
+import { getStoredBatchProfiles } from "@/utils/batch/batchProfilesData";
 
 const BatchProfile = () => {
   const { isDarkMode } = useThemeContext();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
+  const [selectedImageModal, setSelectedImageModal] = useState(null);
   const theme = useTheme();
+  const navigate = useNavigate();
+
+  const [batchData, setBatchData] = useState(() => getStoredBatchProfiles());
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setBatchData(getStoredBatchProfiles());
+    };
+    window.addEventListener("batch-profiles-updated", handleUpdate);
+    return () => window.removeEventListener("batch-profiles-updated", handleUpdate);
+  }, []);
 
   const handleChange = (event) => {
     setValue(event.target.value);
   };
-  const navigate = useNavigate();
 
-  const batchData = [
-    {
-      label: "Uniques 1.0",
-      title: "The Uniques Batch 1.0",
-      description:
-        "The Uniques 1.0 batch is the pioneering group within The Uniques Community. These senior members have successfully completed their journey and are now placed in various esteemed organizations.\n\nThey have contributed immensely to the growth of the community and continue to mentor and inspire the upcoming batches.\n\nWith a strong foundation of innovation and leadership, Batch 1.0 has set high standards for excellence, paving the way for future cohorts to follow in their footsteps.",
-      image: uniques1,
-    },
-    {
-      label: "Uniques 2.0",
-      title: "The Uniques Batch 2.0",
-      description:
-        "The Uniques 2.0 batch consists of highly driven junior members who are actively enhancing their skills in modern technologies.\n\nWith a focus on collaboration and hands-on learning, they engage in real-world projects and hackathons, ensuring they are industry-ready.\n\nBatch 2.0 members benefit from mentorship programs, networking opportunities, and workshops to sharpen their expertise. They are on the path to becoming future innovators, following the footsteps of their predecessors while bringing fresh perspectives to the community.",
-      image: uniques2,
-    },
-    {
-      label: "Uniques 3.0",
-      title: "The Uniques Batch 3.0",
-      description:
-        "The latest addition to The Uniques Community, Batch 3.0, is a dynamic and ambitious group of individuals passionate about pushing boundaries.\n\nAs they embark on their journey, they are exposed to cutting-edge technologies, problem-solving challenges, and research-driven initiatives.\n\nWith an eagerness to learn and innovate, Batch 3.0 aims to make a lasting impact, bringing new ideas and energy to the community. They are being nurtured to be future leaders and trailblazers in their respective fields.",
-      image: uniques3,
-    },
-    {
-      label: "Uniques 4.0",
-      title: "The Uniques Batch 4.0",
-      description:
-        "The Uniques 4.0 batch is the newest cohort carrying forward the legacy of innovation. They are actively engaged in advanced skills training across Python, Full-Stack Development, DSA, and Salesforce CRM modules.\n\nFocused on real-world implementation, Batch 4.0 is collaborating with community mentors on modern engineering challenges to prepare for elite placements.",
-      image: uniques3, // Reusing uniques3.jpg as uniques4.jpg does not exist
-    },
-  ];
+  const currentBatch = batchData[value] || batchData[0] || {};
 
   return (
     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%", padding: "2rem 0" }}>
@@ -134,30 +119,35 @@ const BatchProfile = () => {
 
         {/* Dynamic Content */}
         <Grid container spacing={4} alignItems="center" justifyContent="center" sx={{ marginTop: "1rem" }}>
-          {/* Left Section */}
+          {/* Left Section - Clean picture with no thick frame */}
           <Grid item xs={12} sm={6} sx={{ textAlign: "center" }}>
-            <Card
-              elevation={0}
+            <Box
+              onClick={() => setSelectedImageModal(currentBatch)}
               sx={{
-                height: { xs: "300px", sm: "400px", md: "500px" },
-                borderRadius: "20px",
+                width: "100%",
+                borderRadius: "16px",
                 overflow: "hidden",
-                boxShadow: isDarkMode ? "0 20px 40px rgba(0,0,0,0.4)" : "0 20px 40px rgba(0,0,0,0.1)",
+                cursor: "pointer",
+                transition: "transform 0.3s ease",
+                "&:hover": {
+                  transform: "scale(1.015)",
+                }
               }}
             >
               <img
-                src={batchData[value].image}
-                alt={batchData[value].title}
+                src={currentBatch.image}
+                alt={currentBatch.title}
                 loading="lazy"
                 decoding="async"
                 style={{
                   width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  objectPosition: "center"
+                  height: "auto",
+                  display: "block",
+                  borderRadius: "16px",
+                  objectFit: "contain",
                 }}
               />
-            </Card>
+            </Box>
           </Grid>
 
           {/* Right Section */}
@@ -171,7 +161,7 @@ const BatchProfile = () => {
                 fontSize: { xs: "1.2rem", sm: "1.5rem" }
               }}
             >
-              {batchData[value].title}
+              {currentBatch.title}
             </Typography>
             <Typography
               variant="body1"
@@ -182,7 +172,7 @@ const BatchProfile = () => {
                 whiteSpace: "pre-line"
               }}
             >
-              {batchData[value].description}
+              {currentBatch.description}
             </Typography>
 
             {/* Know More Button */}
@@ -201,6 +191,83 @@ const BatchProfile = () => {
           </Grid>
         </Grid>
       </Container>
+
+      {/* Fullscreen Lightbox Image Modal */}
+      <Modal
+        open={Boolean(selectedImageModal)}
+        onClose={() => setSelectedImageModal(null)}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backdropFilter: "blur(8px)",
+          backgroundColor: "rgba(0, 0, 0, 0.85)",
+          p: 2,
+        }}
+      >
+        <Box
+          sx={{
+            position: "relative",
+            maxWidth: "92vw",
+            maxHeight: "92vh",
+            outline: "none",
+            borderRadius: "16px",
+            overflow: "hidden",
+            backgroundColor: isDarkMode ? "#121212" : "#ffffff",
+            boxShadow: "0 25px 60px rgba(0,0,0,0.6)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            p: { xs: 1.5, sm: 2.5 }
+          }}
+        >
+          <IconButton
+            onClick={() => setSelectedImageModal(null)}
+            sx={{
+              position: "absolute",
+              top: 12,
+              right: 12,
+              backgroundColor: "rgba(0,0,0,0.6)",
+              color: "#ffffff",
+              zIndex: 10,
+              "&:hover": {
+                backgroundColor: "#CA0019",
+              }
+            }}
+          >
+            <X size={20} />
+          </IconButton>
+
+          {selectedImageModal && (
+            <Box sx={{ width: "100%", height: "100%", textAlign: "center" }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  mb: 1.5,
+                  fontWeight: 700,
+                  color: isDarkMode ? "#ffffff" : "#111111",
+                  fontSize: { xs: "0.95rem", sm: "1.15rem" }
+                }}
+              >
+                {selectedImageModal.title}
+              </Typography>
+              <img
+                src={selectedImageModal.image}
+                alt={selectedImageModal.title}
+                style={{
+                  maxWidth: "88vw",
+                  maxHeight: "80vh",
+                  objectFit: "contain",
+                  borderRadius: "12px",
+                  display: "block",
+                  margin: "0 auto"
+                }}
+              />
+            </Box>
+          )}
+        </Box>
+      </Modal>
     </Box>
   );
 };

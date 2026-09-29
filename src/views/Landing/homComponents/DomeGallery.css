@@ -1,52 +1,147 @@
-.plane-root {
+/* Two Row Marquee Gallery Root Container */
+.two-row-gallery-root {
   position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;
   border-radius: 24px;
-  background-color: var(--canvas-bg, #0b090e);
-  border: 1px solid var(--canvas-border, rgba(255, 255, 255, 0.06));
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 0;
   user-select: none;
-  touch-action: none;
-  cursor: grab;
-  /* Glowing Dot Grid Background Pattern */
-  background-image: radial-gradient(var(--grid-dot-color, rgba(255, 255, 255, 0.05)) 1.5px, transparent 1.5px);
-  background-size: 32px 32px;
-  box-shadow: inset 0 20px 40px rgba(0, 0, 0, 0.3);
+  /* Smooth Transparent Edge Fade (Left & Right) - No hard cut-offs */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(0, 0, 0, 1) 70px,
+    rgba(0, 0, 0, 1) calc(100% - 70px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(0, 0, 0, 1) 70px,
+    rgba(0, 0, 0, 1) calc(100% - 70px),
+    transparent 100%
+  );
 }
 
-.plane-root:active {
-  cursor: grabbing;
+/* Row Containers - with top/bottom breathing room so hover scaling never gets clipped */
+.marquee-row-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
 }
 
-.plane-container {
-  position: absolute;
-  width: 1800px;
-  height: 1100px;
+/* Infinite Moving Tracks */
+.marquee-track {
+  display: flex;
+  gap: 22px;
+  width: max-content;
   will-change: transform;
+  padding: 2px 0;
 }
 
-.plane-item {
-  position: absolute;
+/* Row 1: Smooth Continuous Scroll to Left */
+.marquee-track-left {
+  animation: scrollInfiniteLeft 75s linear infinite;
+}
+
+/* Row 2: Smooth Continuous Scroll to Right */
+.marquee-track-right {
+  animation: scrollInfiniteRight 75s linear infinite;
+}
+
+/* Pause animation on hover so user can easily view or click */
+.marquee-row-container:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes scrollInfiniteLeft {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes scrollInfiniteRight {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Marquee Photo Cards */
+.marquee-card {
+  position: relative;
+  flex-shrink: 0;
+  width: 360px;
+  height: 245px;
   border-radius: 20px;
   overflow: hidden;
-  background: var(--card-bg, #16121f);
-  border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-  transition: transform 400ms cubic-bezier(0.25, 1, 0.5, 1), 
-              box-shadow 400ms cubic-bezier(0.25, 1, 0.5, 1), 
-              border-color 400ms ease;
+  background: #16121f;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 10px 28px -6px rgba(0, 0, 0, 0.6);
   cursor: pointer;
+  transition: transform 380ms cubic-bezier(0.25, 1, 0.5, 1),
+    box-shadow 380ms cubic-bezier(0.25, 1, 0.5, 1),
+    border-color 380ms ease;
 }
 
-.plane-item:hover {
-  transform: scale(1.04) translateY(-4px);
-  box-shadow: 0 20px 40px rgba(202, 0, 25, 0.25), 0 0 0 1px rgba(202, 0, 25, 0.4);
-  border-color: rgba(202, 0, 25, 0.4);
+@media (min-width: 1536px) {
+  .marquee-card {
+    width: 390px;
+    height: 265px;
+  }
+}
+
+@media (max-width: 768px) {
+  .marquee-card {
+    width: 290px;
+    height: 195px;
+    border-radius: 16px;
+  }
+
+  .two-row-gallery-root {
+    gap: 10px;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(0, 0, 0, 1) 35px,
+      rgba(0, 0, 0, 1) calc(100% - 35px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(0, 0, 0, 1) 35px,
+      rgba(0, 0, 0, 1) calc(100% - 35px),
+      transparent 100%
+    );
+  }
+}
+
+/* Card Hover Elevation & Glow - smoothly framed within padding */
+.marquee-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 18px 40px -6px rgba(0, 0, 0, 0.85), 0 0 24px rgba(202, 0, 25, 0.35);
+  border-color: rgba(202, 0, 25, 0.55);
   z-index: 10;
 }
 
-.plane-item img {
+.marquee-card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -54,146 +149,106 @@
   transition: transform 600ms cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.plane-item:hover img {
-  transform: scale(1.05);
+.marquee-card:hover img {
+  transform: scale(1.07);
 }
 
-/* Card details overlay */
-.plane-item-overlay {
+/* Card Overlay Details */
+.marquee-card-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(10, 8, 14, 0.9) 0%,
-    rgba(10, 8, 14, 0.55) 45%,
-    rgba(10, 8, 14, 0.15) 75%,
-    transparent 100%
-  );
-  padding: 20px;
+  background: linear-gradient(to top,
+      rgba(10, 8, 14, 0.96) 0%,
+      rgba(10, 8, 14, 0.72) 40%,
+      rgba(10, 8, 14, 0.2) 70%,
+      transparent 100%);
+  padding: 16px 18px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  opacity: 0.88;
+  opacity: 0.92;
   transition: opacity 300ms ease, background 300ms ease;
 }
 
-.plane-item:hover .plane-item-overlay {
+.marquee-card:hover .marquee-card-overlay {
   opacity: 1;
-  background: linear-gradient(
-    to top,
-    rgba(10, 8, 14, 0.95) 0%,
-    rgba(10, 8, 14, 0.65) 50%,
-    rgba(10, 8, 14, 0.2) 80%,
-    transparent 100%
-  );
+  background: linear-gradient(to top,
+      rgba(10, 8, 14, 0.98) 0%,
+      rgba(10, 8, 14, 0.82) 45%,
+      rgba(10, 8, 14, 0.3) 75%,
+      transparent 100%);
 }
 
-.plane-item-category {
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 1.8px;
-  font-weight: 700;
-  color: #ca0019;
-  margin-bottom: 6px;
-}
-
-.plane-item-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: #ffffff;
-  line-height: 1.4;
-  margin: 0;
-  letter-spacing: 0.2px;
-}
-
-/* Floating helper indicator */
-.plane-instructor {
-  position: absolute;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(22, 18, 31, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  color: #ffffff;
-  font-size: 11px;
-  font-weight: 500;
-  padding: 8px 18px;
-  border-radius: 30px;
+.marquee-card-badge-wrap {
   display: flex;
   align-items: center;
-  gap: 8px;
-  pointer-events: none;
-  z-index: 8;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  letter-spacing: 0.5px;
-  animation: floatBounce 2.5s ease-in-out infinite;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 7px;
 }
 
-@keyframes floatBounce {
-  0%, 100% {
-    transform: translate(-50%, 0);
-  }
-  50% {
-    transform: translate(-50%, -6px);
-  }
+.marquee-card-category {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(135deg, #ca0019 0%, #ff2a44 100%);
+  padding: 3px 10px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(202, 0, 25, 0.4);
 }
 
-/* Fade boundaries around viewport */
-.plane-fade {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 5;
-}
-
-.plane-fade-top {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 80px;
-  background: linear-gradient(to bottom, var(--fade-color, #0b090e), transparent);
-}
-
-.plane-fade-bottom {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 80px;
-  background: linear-gradient(to top, var(--fade-color, #0b090e), transparent);
-}
-
-.plane-fade-left {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 80px;
-  background: linear-gradient(to right, var(--fade-color, #0b090e), transparent);
-}
-
-.plane-fade-right {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  width: 80px;
-  background: linear-gradient(to left, var(--fade-color, #0b090e), transparent);
-}
-
-/* Lightbox overlay */
-.plane-lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
+.marquee-card-zoom-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #ffffff;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.marquee-card:hover .marquee-card-zoom-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.marquee-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.35;
+  margin: 0;
+  letter-spacing: 0.1px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+  white-space: normal;
+}
+
+/* Lightbox Modal - Portaled Directly to Body (Always Dead-Center in Viewport) */
+.plane-lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 300ms ease;
+  transition: opacity 250ms ease;
 }
 
 .plane-lightbox.active {
@@ -204,44 +259,65 @@
 .plane-lightbox-scrim {
   position: absolute;
   inset: 0;
-  background: rgba(10, 10, 12, 0.88);
-  backdrop-filter: blur(15px);
+  background: rgba(8, 6, 12, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .plane-lightbox-content {
   position: relative;
-  z-index: 1010;
-  max-width: 90%;
-  max-height: 85%;
-  border-radius: 24px;
+  z-index: 10000000;
+  max-width: min(90vw, 850px);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9);
-  transform: scale(0.92);
-  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(202, 0, 25, 0.2);
+  transform: scale(0.95);
+  transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #14111c;
 }
 
 .plane-lightbox.active .plane-lightbox-content {
   transform: scale(1);
 }
 
+.plane-lightbox-image-wrap {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0b090f;
+  overflow: hidden;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
 .plane-lightbox-content img {
+  width: auto;
+  height: auto;
   max-width: 100%;
-  max-height: 75vh;
+  max-height: min(62vh, 520px);
   object-fit: contain;
   display: block;
+  user-select: none;
 }
 
 .plane-lightbox-details {
   background: #14111c;
-  padding: 20px 24px;
+  padding: 14px 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex-shrink: 0;
 }
 
 .plane-lightbox-category {
+  display: inline-block;
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 1.5px;
@@ -251,31 +327,34 @@
 
 .plane-lightbox-title {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   color: #ffffff;
   margin: 0;
+  line-height: 1.35;
 }
 
 .plane-lightbox-close {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  top: 14px;
+  right: 14px;
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
   color: white;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  transition: background 200ms, transform 200ms;
-  z-index: 1020;
+  font-size: 15px;
+  transition: all 200ms ease;
+  z-index: 10000010;
 }
 
 .plane-lightbox-close:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.05);
+  background: rgba(202, 0, 25, 0.95);
+  border-color: rgba(202, 0, 25, 1);
+  transform: scale(1.08);
 }

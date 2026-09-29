@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Effect from "@/assets/img/Community/effect.png";
+import Effect from "@/assets/img/Community/effect.webp";
 // import Modal from "@/utils/Modal/Community"
 
 const cardData = [

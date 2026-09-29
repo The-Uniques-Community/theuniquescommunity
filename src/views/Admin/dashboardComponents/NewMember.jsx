@@ -43,7 +43,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import axios from "axios";
-import userIcon from "@/assets/img/user-icon.png";
+import userIcon from "@/assets/img/user-icon.webp";
 import tu from "@/assets/logos/tu.png";
 
 export const NewMember = ({ user, refreshData }) => {

@@ -3389,7 +3389,7 @@ VALID_TEAM_TYPES.map((type) => {
               value={newGuest.guestImage}
               onChange={handleNewGuestInputChange}
               fullWidth
-              placeholder="https://example.com/image.jpg"
+              placeholder="https://example.com/image.webp"
             />
           </Box>
         </DialogContent>

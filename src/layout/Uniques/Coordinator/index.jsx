@@ -35,16 +35,23 @@ import Brightness4Icon from "@mui/icons-material/Brightness4"; // Dark Mode Icon
 import Brightness7Icon from "@mui/icons-material/Brightness7"; // Light Mode Icon
 import { UserIcon } from "lucide-react";
 import SchoolIcon from "@mui/icons-material/School";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import ClassIcon from "@mui/icons-material/Class";
+import Diversity3Icon from "@mui/icons-material/Diversity3";
 
 // Navigation items with full paths
 const STUDENT_NAVIGATION = [
   { segment: "", title: "Dashboard", icon: <DashboardIcon /> },
   { segment: "members-overview", title: "Members", icon: <GroupIcon /> },
   { segment: "events-overview", title: "Events", icon: <EventIcon /> },
+  { segment: "projects-overview", title: "Projects", icon: <AccountTreeIcon /> },
   { segment: "accounts", title: "Accounts", icon: <AccountBalance/> },
   { segment: "enquiry", title: "Enquiry", icon: <AnnouncementIcon/> },
   { segment: "profile", title: "Profile", icon: <UserIcon/> },
   { segment: "trainers", title: "Trainers", icon: <SchoolIcon /> },
+  { segment: "stats", title: "Stats", icon: <BarChartIcon /> },
+  { segment: "batches", title: "Batches", icon: <ClassIcon /> },
+  { segment: "community", title: "Community", icon: <Diversity3Icon /> },
 ];
 
 function Branding() {
@@ -128,6 +135,7 @@ function DashboardLayoutAppBar() {
         variant={isMobile ? "temporary" : "permanent"}
         open={drawerOpen}
         onClose={toggleDrawer}
+        data-lenis-prevent
         sx={{
           width: isMobile ? "auto" : drawerOpen ? 240 : 75,
           flexShrink: 0,
@@ -141,8 +149,15 @@ function DashboardLayoutAppBar() {
             backgroundColor: theme.palette.background.drawer,
             borderRadius: "8px",
             overflowX: "hidden",
+            display: "flex",
+            flexDirection: "column",
             transition: "width 0.3s",
             boxSizing: "border-box",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            "&::-webkit-scrollbar": {
+              display: "none",
+            },
           },
         }}
       >
@@ -151,6 +166,7 @@ function DashboardLayoutAppBar() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            flexShrink: 0,
           }}
         >
           {drawerOpen && !isMobile && (
@@ -171,7 +187,24 @@ function DashboardLayoutAppBar() {
           </Box>
         </Box>
 
-        <List sx={{ padding: 2 }}>
+        <List
+          data-lenis-prevent
+          sx={{
+            padding: 2,
+            flexGrow: 1,
+            minHeight: 0,
+            overflowY: "auto",
+            overflowX: "hidden",
+            overscrollBehavior: "contain",
+            touchAction: "pan-y",
+            WebkitOverflowScrolling: "touch",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            "&::-webkit-scrollbar": {
+              display: "none",
+            },
+          }}
+        >
           {STUDENT_NAVIGATION.map((item) => {
             const isActive = activeItem === item.title;
 
@@ -216,7 +249,7 @@ function DashboardLayoutAppBar() {
             );
           })}
         </List>
-        <List sx={{ padding: 2, marginTop: "auto" }}>
+        <List sx={{ padding: 2, marginTop: "auto", flexShrink: 0 }}>
           <ListItem
             button
             onClick={toggleTheme} // Toggles between light and dark mode

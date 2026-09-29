@@ -25,6 +25,7 @@ import CelebrationComponent from "@/utils/Header";
 import CallToAction from "../homComponents/CallToAction";
 import { blogData } from "@/assets/dummyData/blogData";
 import { useThemeContext } from "@/theme/ThemeProvider";
+import { BookOpen } from "lucide-react";
 
 const BlogPage = () => {
   const [selectedBlog, setSelectedBlog] = useState(null);
@@ -35,16 +36,37 @@ const BlogPage = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { isDarkMode } = useThemeContext();
 
+  // Lock body scroll when blog modal is open
+  useEffect(() => {
+    if (selectedBlog) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [selectedBlog]);
+
+  // Close modal on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setSelectedBlog(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   // Extract unique categories from blogData
   const categories = [...new Set(blogData.map((blog) => blog.category || "Uncategorized"))];
 
   // Filtering logic with null checks
   const filteredBlogs = blogData.filter((blog) => {
-    // Category filter (if no categories selected, show all)
     const categoryMatch = selectedCategories.length === 0 || 
       selectedCategories.includes(blog.category);
     
-    // Search filter with null checks
     const searchMatch = searchQuery === "" || (
       (blog.title && blog.title.toLowerCase().includes(searchQuery.toLowerCase())) || 
       (blog.content && blog.content.toLowerCase().includes(searchQuery.toLowerCase())) ||
@@ -191,6 +213,8 @@ const BlogPage = () => {
         {!isMobile && (
           <Paper 
             elevation={0} 
+            data-lenis-prevent
+            onWheel={(e) => e.stopPropagation()}
             sx={{ 
               display: { xs: 'none', md: 'block' },
               position: 'sticky',
@@ -212,6 +236,7 @@ const BlogPage = () => {
           open={mobileFilterOpen}
           onClose={() => setMobileFilterOpen(false)}
           PaperProps={{
+            'data-lenis-prevent': true,
             sx: { backgroundColor: 'transparent' }
           }}
         >
@@ -297,14 +322,17 @@ const BlogPage = () => {
       <CallToAction />
       <div className="py-8"></div>
 
-      {/* Blog Modal */}
+      {/* Blog Modal Overlay */}
       <Modal
         open={!!selectedBlog}
         onClose={() => setSelectedBlog(null)}
         aria-labelledby="blog-title"
         aria-describedby="blog-content"
       >
-        <Box className="fixed inset-0 overflow-auto" 
+        <Box 
+          data-lenis-prevent
+          onWheel={(e) => e.stopPropagation()}
+          className="fixed inset-0 overflow-y-auto overscroll-contain" 
           sx={{
             backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.98)',
             backdropFilter: 'blur(10px)',
@@ -312,11 +340,11 @@ const BlogPage = () => {
           }}
         >
           {selectedBlog && (
-            <div className="max-w-4xl mx-auto p-8 lg:py-16 bg-transparent">
+            <div className="max-w-4xl mx-auto p-6 md:p-12 lg:py-16 bg-transparent">
               {/* Close Button */}
               <div className="flex justify-between items-start mb-8">
                 <div className="flex-1 pr-8">
-                  <h2 id="blog-title" className={`text-4xl lg:text-5xl font-black leading-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                  <h2 id="blog-title" className={`text-3xl sm:text-4xl lg:text-5xl font-black leading-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                     {selectedBlog.title}
                   </h2>
                 </div>
@@ -348,23 +376,42 @@ const BlogPage = () => {
               </div>
 
               {/* Blog Image */}
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl mb-12">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl mb-12 bg-slate-100 dark:bg-zinc-800">
                 <img
                   src={selectedBlog.image}
                   alt={selectedBlog.title}
-                  className="w-full h-[500px] object-cover"
+                  referrerPolicy="no-referrer"
+                  className="w-full max-h-[500px] object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    if (e.currentTarget.nextElementSibling) {
+                      e.currentTarget.nextElementSibling.style.display = 'flex';
+                    }
+                  }}
                 />
+                <div 
+                  style={{ display: 'none' }}
+                  className="w-full h-64 sm:h-80 md:h-96 flex flex-col items-center justify-center p-8 bg-gradient-to-br from-zinc-900 to-[#1e1e24] text-center select-none relative overflow-hidden"
+                >
+                  <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#CA0019_1px,transparent_1px)] [background-size:20px_20px]" />
+                  <div className="w-20 h-20 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-3 z-10 shadow-xl">
+                    <BookOpen className="w-10 h-10 text-[#CA0019]" />
+                  </div>
+                  <span className="text-sm font-bold text-white tracking-widest uppercase z-10">
+                    The Uniques Community • {selectedBlog.category || "Blog"}
+                  </span>
+                </div>
               </div>
 
               {/* Blog Content Sections */}
               <div
                 id="blog-content"
-                className={`mt-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-xl leading-relaxed space-y-10`}
+                className={`mt-6 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} text-lg sm:text-xl leading-relaxed space-y-10`}
               >
                 {selectedBlog.subContents && selectedBlog.subContents.map((section, index) => (
                   <div key={index} className="space-y-4">
                     {section.heading && (
-                      <h3 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                      <h3 className={`text-2xl sm:text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                         {section.heading}
                       </h3>
                     )}
@@ -374,7 +421,7 @@ const BlogPage = () => {
               </div>
 
               {/* Tags Section */}
-              <div className="mt-16 pt-8 border-t border-white/10">
+              <div className="mt-16 pt-8 border-t border-gray-200 dark:border-white/10">
                 <Typography variant="h6" sx={{ mb: 3, color: isDarkMode ? '#fff' : '#333', fontWeight: 700 }}>
                   Tags
                 </Typography>

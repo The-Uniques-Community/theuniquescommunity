@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useThemeContext } from "@/theme/ThemeProvider";
+import ambassadorCriteriaImg from "@/assets/img/Community/ambassador-criteria.webp";
 
 const About = (props) => {
     const { isDarkMode } = useThemeContext();
@@ -24,7 +25,7 @@ const About = (props) => {
                                 </clipPath>
                             </defs>
                             <image
-                                href="https://studymelbourne.vic.gov.au/__data/assets/image/0009/2336490/Ambassadors-3.jpg"
+                                href={ambassadorCriteriaImg}
                                 width="342"
                                 height="265"
                                 preserveAspectRatio="xMidYMid slice"

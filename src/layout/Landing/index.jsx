@@ -1,5 +1,5 @@
 import { Suspense, useEffect, useRef, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navbar from "@/utils/NavBar/Navbar";
 import Footer from "@/utils/Footer/Footer";
@@ -7,8 +7,13 @@ import CustomLoader from "@/utils/Loader/CustomLoader";
 import ChatBot from "@/components/ChatBot";
 
 const LandingLayout = () => {
+  const { pathname } = useLocation();
   const footerRef = useRef(null);
   const [footerHeight, setFooterHeight] = useState(0);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   useEffect(() => {
     const updateHeight = () => {
@@ -29,7 +34,7 @@ const LandingLayout = () => {
 
         {/* Main Content: Slides over the footer */}
         <div
-          className="relative z-10 bg-white dark:bg-[#0a0a0a] layout-bottom-clip overflow-hidden min-h-screen"
+          className="relative z-10 bg-white dark:bg-[#0a0a0a] layout-bottom-clip overflow-x-clip min-h-screen"
           style={{
             marginBottom: `${footerHeight}px`,
             filter: 'drop-shadow(0 20px 50px rgba(0,0,0,0.1))'

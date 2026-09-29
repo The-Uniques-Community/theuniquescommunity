@@ -23,15 +23,18 @@ import { element } from "prop-types";
 import MemberProfile from "@/views/Landing/Profile/MemberProfile";
 import ForgetPassword from "@/views/Authentication/login/ForgetPassword";
 
-
+const Login = Loader(lazy(() => import("@/views/Authentication/login")), false);
 const Landing = Loader(lazy(() => import("@/views/Landing/index")), false);
 
 const BlogPage = Loader(lazy(() => import("@/views/Landing/Blog/index")), false);
 const Contact = Loader(lazy(() => import("@/views/Landing/Contact/index")), false);
 const Training = Loader(lazy(() => import("@/views/Landing/Training-model/Training")), false);
+const TermsOfService = Loader(lazy(() => import("@/views/Landing/TermsOfService")), false);
 const NotFound = Loader(lazy(() => import("@/views/Landing/NotFound/index")), false);
 const CommunityPage = Loader(lazy(() => import("@/views/Landing/Community/index")), false);
 const SuccessStories = Loader(lazy(() => import("@/views/Landing/SuccessStories/index")), false);
+const PrivacyPolicy = Loader(lazy(() => import("@/views/Landing/PrivacyPolicy/index")), false);
+const Projects = Loader(lazy(() => import("@/views/Landing/Projects/index")), false);
 const Timeline = Loader(lazy(() => import('@/utils/Timeline/Timeline')));
 
 const timelineData = [
@@ -46,7 +49,7 @@ const timelineData = [
   },
   {
     year: "1920",
-    image: "/images/klee.jpg",
+    image: "/images/klee.webp",
     heading: "Paul Klee",
     subheading: "Color Theory Pioneer",
     brief: "Joins and brings his expertise in color theory and form.",
@@ -54,7 +57,7 @@ const timelineData = [
   },
   {
     year: "1923",
-    image: "/images/moholy-nagy.jpg",
+    image: "/images/moholy-nagy.webp",
     heading: "László Moholy-Nagy",
     subheading: "New Vision",
     brief: "Introduced new approaches to photography and typography, promoting the integration of technology and art."
@@ -72,13 +75,20 @@ const LandingRoutes = {
     { path: "events/:id", element: <EventDetailPage /> }, // Add this line for event detail page
     { path: "community-page", element: <CommunityPage /> },
     { path: "community-main", element: <Community /> },
+    { path: "register", element: <Community /> },
+    { path: "campus-ambassador", element: <Community /> },
     { path: "training", element: <Training /> },
+    { path: "terms-of-service", element: <TermsOfService /> },
     { path: "blogs", element: <BlogPage /> },
     { path: "contact", element: <Contact /> },
+    { path: "privacy-policy", element: <PrivacyPolicy /> },
+    { path: "privacy", element: <PrivacyPolicy /> },
+    { path: "projects", element: <Projects /> },
+    { path: "project", element: <Projects /> },
     { path: "batches", element: <BatchesPage /> },
-    { path: "success-stories", element: <SuccessStories /> },
     { path: "notices", element: <Notices /> },
     { path: "test", element: <Timeline events={timelineData} /> },
+    { path: "login", element: <Login /> },
     { path: "forget-password", element: <ForgetPassword /> },
     // Member profile route - this should come BEFORE the wildcard route
     { path: "profile/:id", element: <MemberProfile /> },

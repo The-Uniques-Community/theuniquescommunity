@@ -9,14 +9,15 @@ export function cn(...inputs) {
 
 const logos = [
   "https://tailoredpaw.com/cdn/shop/files/Tailored_1_60x@2x.svg?v=1692629825",
-  "https://greycat.digital/assets/images/logo/logo-black.png",
-  "https://goalphakids.com/wp-content/themes/go_alpha/assets/images/site-logo.png",
-  "https://sgp1.digitaloceanspaces.com/gulftimemedia/gulftimemedia.com/static/assets/images/logo/header.webp?AWSAccessKeyId=DO00PZLRB67E3A847CRP&Signature=oEgVlGerpXLfs4tQ264dxYNS3Kc%3D&Expires=1745389192",
+  "https://goalphakids.com/wp-content/themes/go_alpha/assets/images/site-logo.webp",
   "https://05h0tt171l.ufs.sh/f/9WspmJu6ypQvEqokRGgtO8RGNpF6JBKc4CzbyiAsfLIqYvMQ",
-  "https://abroadeducares.com/_next/static/media/blackLogo.667801bb.png",
-  "https://ais.ac.in/Assets/Images/ais_logo1-1%201%20copy.png",
-  "https://www.sviet.ac.in/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FLogo.8bdb37ea.webp&w=1200&q=75",
+  "https://abroadeducares.com/_next/static/media/blackLogo.667801bb.webp",
   "https://05h0tt171l.ufs.sh/f/9WspmJu6ypQvzpLCCVlWnGpTC98Himu2RrqelvP14tsOXLEj",
+  // Repeat working logos to replace missing/broken ones
+  "https://tailoredpaw.com/cdn/shop/files/Tailored_1_60x@2x.svg?v=1692629825",
+  "https://goalphakids.com/wp-content/themes/go_alpha/assets/images/site-logo.webp",
+  "https://05h0tt171l.ufs.sh/f/9WspmJu6ypQvEqokRGgtO8RGNpF6JBKc4CzbyiAsfLIqYvMQ",
+  "https://abroadeducares.com/_next/static/media/blackLogo.667801bb.webp",
 ];
 
 // Function to get 4 random logos
@@ -29,7 +30,9 @@ export const Timeline = ({ data }) => {
   const ref = useRef(null);
   const containerRef = useRef(null);
   const [height, setHeight] = useState(0);
-  const [randomLogosPerYear, setRandomLogosPerYear] = useState([]);
+  const [randomLogosPerYear, setRandomLogosPerYear] = useState(() =>
+    data.map(() => getRandomLogos())
+  );
 
   useEffect(() => {
     if (ref.current) {
@@ -37,7 +40,7 @@ export const Timeline = ({ data }) => {
       setHeight(rect.height);
     }
     
-    // Generate random logos for each year only once
+    // Generate random logos for each year
     const logosForYears = data.map(() => getRandomLogos());
     setRandomLogosPerYear(logosForYears);
   }, [ref, data.length]);
@@ -80,6 +83,11 @@ export const Timeline = ({ data }) => {
                     <img
                       src={src}
                       alt={`Logo ${i + 1}`}
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "https://tailoredpaw.com/cdn/shop/files/Tailored_1_60x@2x.svg?v=1692629825";
+                      }}
                       className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 object-contain bg-white p-1 rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-all"
                     />
                   </div>

@@ -164,7 +164,7 @@ const Sidebar = ({ students, onDrawerToggle, isDrawerOpen }) => {
 
       <Divider sx={{ opacity: theme => theme.palette.mode === 'dark' ? 0.1 : 0.08 }} />
 
-      <ListContainer>
+      <ListContainer data-lenis-prevent>
         {students.map((student) => (
           <StyledListItem
             key={student.id}

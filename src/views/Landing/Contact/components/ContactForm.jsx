@@ -151,7 +151,7 @@ const ContactForm = () => {
                 </div>
                 <div>
                   <p className={`text-sm font-bold uppercase tracking-widest ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>Email Us</p>
-                  <p className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>hello@theuniques.in</p>
+                  <p className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>team.theuniques@sviet.ac.in</p>
                 </div>
               </div>
 
@@ -161,7 +161,7 @@ const ContactForm = () => {
                 </div>
                 <div>
                   <p className={`text-sm font-bold uppercase tracking-widest ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>Call Us</p>
-                  <p className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>+91 98765 43210</p>
+                  <p className={`text-lg font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>+91 73180 04841</p>
                 </div>
               </div>
 
@@ -178,7 +178,7 @@ const ContactForm = () => {
 
             <div className="pt-8 flex gap-4">
               {[
-                { icon: <InstagramIcon />, link: "https://instagram.com/theuniquesofficial" },
+                { icon: <InstagramIcon />, link: "https://www.instagram.com/theuniquescommunity/" },
                 { icon: <LinkedInIcon />, link: "https://linkedin.com/company/theuniquesofflicial" },
                 { icon: <WhatsAppIcon />, link: "https://chat.whatsapp.com/HYOloogGXKcIkR83DnOjFj" }
               ].map((social, i) => (
@@ -297,7 +297,7 @@ const ContactForm = () => {
           className="mt-24 rounded-[3rem] overflow-hidden border-8 border-white/5 shadow-2xl h-[450px] relative group"
         >
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3690.82409273242!2d76.70145491128464!3d30.55434119412627!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390fc3b350bbf2e7%3A0xece92a925f664640!2sThe%20uniques!5e1!3m2!1sen!2sin!4v1740583636506!5m2!1sen!2sin"
+            src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d896.082796596709!2d76.6705462696032!3d30.530592153589225!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMzDCsDMxJzUwLjEiTiA3NsKwNDAnMTYuMyJF!5e1!3m2!1sen!2sin!4v1790510941664!5m2!1sen!2sin"
             style={{ border: 0, filter: isDarkMode ? 'invert(90%) hue-rotate(180deg) brightness(0.9) contrast(0.9)' : 'none' }}
             width="100%"
             height="100%"

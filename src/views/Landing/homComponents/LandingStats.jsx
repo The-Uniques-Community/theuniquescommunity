@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import { ViewList, Language, Group, Email } from "@mui/icons-material";
-import project from "@/assets/img/project.jpg";
+import project from "@/assets/img/project.webp";
 import { useTheme } from "@mui/material/styles";
 import Button from "@/utils/Buttons/Button";
 const stats = [

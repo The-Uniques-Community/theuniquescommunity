@@ -28,11 +28,11 @@ const partners = [
   },
   {
     name: "Notion",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.webp",
   },
   {
     name: "Postman",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/c/c2/Postman_%28software%29.png",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/c/c2/Postman_%28software%29.webp",
   },
   {
     name: "MongoDB",
@@ -44,11 +44,11 @@ const partners = [
   },
   {
     name: "LinkedIn",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.webp",
   },
   {
     name: "Canva",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/b/bb/Canva_Logo.svg",
+    logo: "https://www.vectorlogo.zone/logos/canva/canva-ar21.svg",
   },
 ];
 
@@ -57,6 +57,11 @@ const PartnerLogo = ({ partner, isDarkMode }) => (
     <img
       src={partner.logo}
       alt={partner.name}
+      onError={(e) => {
+        if (partner.name === "Canva") {
+          e.currentTarget.src = "https://upload.wikimedia.org/wikipedia/commons/0/08/Canva_icon_2021.svg";
+        }
+      }}
       className={`h-8 md:h-10 w-auto object-contain transition-all duration-300 ${isDarkMode ? "brightness-0 invert opacity-40 group-hover:opacity-80" : "opacity-40 grayscale group-hover:grayscale-0 group-hover:opacity-100"
         }`}
     />

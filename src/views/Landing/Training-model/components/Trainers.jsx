@@ -1,8 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Linkedin, Github, Code, Star, ChevronDown, Monitor, Terminal } from 'lucide-react';
+import { Linkedin, Github, Code, ChevronDown, Monitor, Terminal } from 'lucide-react';
 import { useThemeContext } from '@/theme/ThemeProvider';
 import { BASE_URL } from '@/config';
+import ronitImg from "@/assets/img/Success Stories avatars/ronit-jaiprakash.webp";
+import mantashaImg from "@/assets/img/Success Stories avatars/mantasha-tabassum.webp";
+import taniyaImg from "@/assets/img/Success Stories avatars/Taniya_singh.webp";
 
 const batches = [
   "All Batches",
@@ -48,11 +51,6 @@ const TrainerCard = ({ trainer, isDarkMode }) => {
                 className="w-full h-full object-cover rounded-2xl"
               />
             </motion.div>
-            {trainer.isIndustryPro && (
-              <div className="absolute -top-2 -right-2 bg-[#ca0019] text-white p-1.5 rounded-xl shadow-lg rotate-12">
-                <Star size={14} fill="currentColor" />
-              </div>
-            )}
           </div>
 
           <div className="flex flex-col items-end gap-2">
@@ -123,24 +121,24 @@ const Trainers = () => {
   const trainers = [
     {
       id: 1,
-      name: "Viswanadh Rayavarapu",
-      position: "Founder, Autobot Energy | Ex-meta",
+      name: "Ronit Jaiprakash",
+      position: "Solution Consultant @ Caelius Consulting",
       program: "Uniques 1.0",
-      image: "https://media.licdn.com/dms/image/v2/C5603AQFdDBAD3h7VWQ/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1598468860624?e=1756339200&v=beta&t=_f2-EvKBeiQbz-6y2-NkAJa2UyCf5cqSsAjay0E4gP0",
-      bio: "Viswanadh brings extensive expertise in Full stack development with experience at industry giants like Meta and Google.",
-      expertise: ["Full Stack", "Web Development", "MERN"],
-      social: { linkedin: "https://www.linkedin.com/in/viswanadh-rayavarapu/" },
+      image: ronitImg,
+      bio: "Solution Consultant & Technical Associate at Caelius Consulting, Full Stack Developer at Godigitify, and Instructor at Techlearns.",
+      expertise: ["Solution Consultant", "Full Stack Developer", "Technical Associate"],
+      social: { linkedin: "https://www.linkedin.com/in/ronit-jaiprakash/" },
       isIndustryPro: true
     },
     {
       id: 2,
-      name: "Kapil Partap",
-      position: "Business Head, MindCodeLab",
-      program: "Uniques 1.0 & 2.0",
-      image: "https://media.licdn.com/dms/image/v2/D5603AQFNTzTH8mq59w/profile-displayphoto-shrink_800_800/B56ZRLIxkMG8Ag-/0/1736427379944?e=1756339200&v=beta&t=BjOb7ejzjeE1HjemF5YGaOIu3XGQeb_V_nq1aYFaUq0",
-      bio: "Kapil specializes in ML, PowerBI and Full Stack Development, bringing business insights to technical training.",
-      expertise: ["ML", "PowerBI", "Full Stack"],
-      social: { linkedin: "https://www.linkedin.com/in/kapilpartap/" },
+      name: "Mantasha Tabassum",
+      position: "Solution Consultant @ Caelius Consulting",
+      program: "Uniques 1.0",
+      image: mantashaImg,
+      bio: "Solution Consultant @ Caelius Consulting, connecting MuleSoft, AI and end systems for seamless workflows, technical trainer, application developer.",
+      expertise: ["MuleSoft & AI", "Technical Trainer", "App Developer"],
+      social: { linkedin: "https://www.linkedin.com/in/mantasha-tabassum/" },
       isIndustryPro: true
     },
     {
@@ -156,14 +154,14 @@ const Trainers = () => {
     },
     {
       id: 4,
-      name: "Mukul Tiwari",
-      position: "UI/UX Ambassador",
-      program: "Uniques 3.0",
-      image: "https://media.licdn.com/dms/image/v2/D4E03AQFWOrm_F9Szrw/profile-displayphoto-shrink_800_800/B4EZZrad.nH0Ac-/0/1745558823405?e=1756339200&v=beta&t=B2-0DZI2kvC78ckfCaAu7_YND9U0DqVxx2PX-lj0Bvs",
-      bio: "Emerging UI/UX talent focused on teaching Figma design principles and empowering fellow students with digital design skills.",
-      expertise: ["Figma", "UI Design", "UX Research"],
-      social: { linkedin: "https://www.linkedin.com/in/mukul-tiwari-4b07b829a/" },
-      isIndustryPro: false
+      name: "Taniya Singh",
+      position: "Technical Associate @ Caelius Consulting",
+      program: "Uniques 2.0",
+      image: taniyaImg,
+      bio: "Technical Associate @ Caelius Consulting, web developer, graphic designer.",
+      expertise: ["Web Development", "Graphic Design", "UI/UX"],
+      social: { linkedin: "https://www.linkedin.com/in/taniya-singh/" },
+      isIndustryPro: true
     },
     {
       id: 5,

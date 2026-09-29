@@ -34,7 +34,7 @@ const Footer = () => {
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/community-main">Community Page</Link></li>
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/batches">Batches</Link></li>
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/howitstarted">How It Started</Link></li>
-            <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="https://tuportal.theuniques.in/auth/login">Member Login</Link></li>
+            <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/auth/login">Member Login</Link></li>
           </ul>
         </div>
 
@@ -45,6 +45,7 @@ const Footer = () => {
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/training">Training Model</Link></li>
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/contact">Contact Us</Link></li>
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/privacy-policy">Privacy Policy</Link></li>
+
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/terms-of-service">Terms of Service</Link></li>
           </ul>
         </div>
@@ -66,7 +67,7 @@ const Footer = () => {
                 </Link>
             </div>
             <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-transparent">
-                <Link to="https://www.instagram.com/theuniquesofficial?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer">
+                <Link to="https://www.instagram.com/theuniquescommunity/" target="_blank" rel="noopener noreferrer">
                 <div className="w-8 h-8 rounded-full flex justify-center items-center bg-slate-900 dark:bg-slate-700 hover:bg-[#ca0019] dark:hover:bg-[#ca0019] transition-colors">
                     <FaInstagram color="white" className="mx-auto cursor-pointer" size={20} />
                 </div>

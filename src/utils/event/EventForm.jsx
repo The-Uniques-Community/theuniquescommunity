@@ -1796,7 +1796,7 @@ const EventForm = ({ event, onSuccess }) => {
                 id="guestImage"
                 name="guestImage"
                 label="Image URL"
-                placeholder="https://example.com/image.jpg"
+                placeholder="https://example.com/image.webp"
                 value={guestFormik.values.guestImage}
                 onChange={guestFormik.handleChange}
               />

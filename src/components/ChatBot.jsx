@@ -1,182 +1,216 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [hasDragged, setHasDragged] = useState(false);
+
+  const toggleChat = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setIsOpen((prev) => !prev);
+  };
 
   return (
-    <motion.div
-      drag
-      dragMomentum={false}
-      onDragStart={() => setHasDragged(true)}
-      onDragEnd={() => {
-        // Small delay to prevent click event right after drag ends
-        setTimeout(() => setHasDragged(false), 50);
-      }}
+    <div
       style={{
         position: "fixed",
-        bottom: 30,
-        right: 30,
+        bottom: 20,
+        right: 20,
         zIndex: 9999,
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-end",
-        // Improve dragging on mobile
-        touchAction: "none",
         pointerEvents: "none",
       }}
     >
-      <motion.div
-        initial={false}
-        animate={{
-          opacity: isOpen ? 1 : 0,
-          y: isOpen ? 0 : 20,
-          scale: isOpen ? 1 : 0.95,
-          pointerEvents: isOpen ? "auto" : "none",
-        }}
-        transition={{ duration: 0.2 }}
-        style={{
-          width: 400,
-          height: 600,
-          borderRadius: 12,
-          boxShadow: "0 5px 40px rgba(0, 0, 0, 0.16)",
-          overflow: "hidden",
-          marginBottom: 20,
-          backgroundColor: "white",
-          position: "relative",
-          display: "block",
-          // Prevent interactions when closed
-          visibility: isOpen ? "visible" : "hidden",
-        }}
-      >
-        {/* Header */}
-        <div
-          style={{
-            height: 56,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0 12px",
-            background: "linear-gradient(90deg,#ca0019,#e63946)",
-            color: "#ffffff",
-            borderRadius: "12px 12px 0 0",
-            boxShadow: "0 6px 18px rgba(0,0,0,0.12)",
-            cursor: "grab",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div>
-              <div style={{ fontWeight: 700 }}>The Uniques</div>
-              <div style={{ fontSize: 12, opacity: 0.9 }}>Chat Support</div>
-            </div>
-          </div>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsOpen(false);
-            }}
+      {/* Chat Window - Sits directly at bottom right when open */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 30, scale: 0.95 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
             style={{
-              width: 40,
-              height: 40,
-              borderRadius: "50%",
-              border: "none",
-              background: "#ffffff",
+              width: "min(390px, calc(100vw - 32px))",
+              height: "min(580px, calc(100dvh - 36px))",
+              borderRadius: 16,
+              boxShadow: "0 20px 60px -10px rgba(0, 0, 0, 0.3), 0 8px 24px -4px rgba(0, 0, 0, 0.15)",
+              overflow: "hidden",
+              backgroundColor: "#ffffff",
               display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 18,
-              cursor: "pointer",
-              boxShadow: "0 6px 18px rgba(0,0,0,0.12)",
-              color: "#000000",
+              flexDirection: "column",
+              pointerEvents: "auto",
+              border: "1px solid rgba(0,0,0,0.1)",
             }}
           >
-            ✕
-          </button>
-        </div>
-
-        {/* Iframe */}
-        <iframe
-          src="https://cdn.botpress.cloud/webchat/v3.6/shareable.html?configUrl=https://files.bpcontent.cloud/2026/05/11/13/20260511131329-JHRNIFEP.json"
-          title="The Uniques Community Chatbot"
-          style={{
-            width: "100%",
-            height: "calc(100% - 56px)",
-            border: "none",
-            borderRadius: "0 0 12px 12px",
-            // Need pointer events on iframe for chat interactions
-            pointerEvents: "auto",
-          }}
-        />
-      </motion.div>
-
-      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-        <motion.div
-          animate={{ opacity: isOpen ? 0 : 1, scale: isOpen ? 0.9 : 1 }}
-          style={{
-            padding: "10px 14px",
-            background: "#ffffff",
-            color: "#111827",
-            borderRadius: 20,
-            fontWeight: 600,
-            boxShadow: "0 4px 18px rgba(0,0,0,0.12)",
-            cursor: "grab",
-            userSelect: "none",
-            whiteSpace: "nowrap",
-            pointerEvents: isOpen ? "none" : "auto",
-          }}
-        >
-          I'm here to help
-        </motion.div>
-
-        <div
-          role="button"
-          onClick={(e) => {
-            if (!hasDragged) {
-              setIsOpen(!isOpen);
-            }
-          }}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          style={{
-            width: 64,
-            height: 64,
-            borderRadius: "50%",
-            backgroundColor: "#dc143c",
-            color: "white",
-            border: "none",
-            cursor: "grab",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-            transition: "transform 0.18s ease",
-            transform: isHovered && !hasDragged ? "scale(1.06)" : "scale(1)",
-            padding: 6,
-            pointerEvents: "auto",
-          }}
-        >
-          {!isOpen ? (
-            <img
-              src="https://www.jalaitech.com/floating/Aibot.png"
-              alt="Chatbot"
-              draggable="false"
+            {/* Header */}
+            <div
               style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                borderRadius: "50%",
-                display: "block",
-                pointerEvents: "none",
+                height: 52,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "0 14px",
+                background: "linear-gradient(135deg, #ca0019 0%, #980013 100%)",
+                color: "#ffffff",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                flexShrink: 0,
               }}
-            />
-          ) : (
-            <span style={{ fontSize: 28, pointerEvents: "none" }}>✕</span>
-          )}
-        </div>
-      </div>
-    </motion.div>
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div
+                  style={{
+                    width: 30,
+                    height: 30,
+                    borderRadius: "50%",
+                    backgroundColor: "rgba(255,255,255,0.2)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "hidden",
+                  }}
+                >
+                  <img
+                    src="https://www.jalaitech.com/floating/Aibot.webp"
+                    alt="Bot Avatar"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                </div>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 13.5, lineHeight: 1.2 }}>The Uniques</div>
+                  <div style={{ fontSize: 11, opacity: 0.9, display: "flex", alignItems: "center", gap: 5 }}>
+                    <span
+                      style={{
+                        width: 7,
+                        height: 7,
+                        borderRadius: "50%",
+                        backgroundColor: "#10b981",
+                        display: "inline-block",
+                      }}
+                    />
+                    Online Support
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={toggleChat}
+                style={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: "50%",
+                  border: "none",
+                  background: "rgba(255,255,255,0.2)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 13,
+                  cursor: "pointer",
+                  color: "#ffffff",
+                  transition: "background 0.2s",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.35)")}
+                onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.2)")}
+                aria-label="Close Chat"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Iframe */}
+            <div style={{ flex: 1, position: "relative", width: "100%", height: "calc(100% - 52px)" }}>
+              <iframe
+                src="https://cdn.botpress.cloud/webchat/v3.6/shareable.html?configUrl=https://files.bpcontent.cloud/2026/05/11/13/20260511131329-JHRNIFEP.json"
+                title="The Uniques Community Chatbot"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  border: "none",
+                  display: "block",
+                  pointerEvents: "auto",
+                }}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Floating Trigger Button & Tooltip (Shown ONLY when closed) */}
+      <AnimatePresence>
+        {!isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 15, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 15, scale: 0.9 }}
+            transition={{ duration: 0.2 }}
+            style={{ display: "flex", alignItems: "center", gap: 12, pointerEvents: "auto" }}
+          >
+            <div
+              style={{
+                padding: "8px 14px",
+                background: "#ffffff",
+                color: "#1f2937",
+                borderRadius: 20,
+                fontSize: 13,
+                fontWeight: 600,
+                boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
+                userSelect: "none",
+                whiteSpace: "nowrap",
+                border: "1px solid rgba(0,0,0,0.06)",
+                cursor: "pointer",
+              }}
+              onClick={toggleChat}
+            >
+              👋 Need help? Chat with us!
+            </div>
+
+            <motion.button
+              type="button"
+              onClick={toggleChat}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.94 }}
+              style={{
+                width: 58,
+                height: 58,
+                borderRadius: "50%",
+                backgroundColor: "#ca0019",
+                color: "#ffffff",
+                border: "none",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 6px 20px rgba(202, 0, 25, 0.35)",
+                padding: 0,
+                outline: "none",
+                position: "relative",
+              }}
+              aria-label="Open chatbot"
+            >
+              <img
+                src="https://www.jalaitech.com/floating/Aibot.webp"
+                alt="Chatbot"
+                draggable="false"
+                style={{
+                  width: 44,
+                  height: 44,
+                  objectFit: "cover",
+                  borderRadius: "50%",
+                  display: "block",
+                  pointerEvents: "none",
+                }}
+              />
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 

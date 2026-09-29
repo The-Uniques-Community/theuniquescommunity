@@ -21,7 +21,7 @@ import {
 } from "@mui/icons-material";
 import "tailwindcss/tailwind.css";
 import ProfileModal from "../Modal/ProfileModal";
-import userIcon from "@/assets/img/user-icon.png";
+import userIcon from "@/assets/img/user-icon.webp";
 const UserProfileModal = ({ open, handleClose, userData }) => {
   const [activeTab, setActiveTab] = useState(0);
 
@@ -268,7 +268,7 @@ const sampleUserData = {
   course: "B.Tech CSE",
   batch: "The Uniques 2.0",
   profileStatus: "active",
-  profilePic: "https://example.com/profile.jpg",
+  profilePic: "https://example.com/profile.webp",
   linkedinProfile: "https://linkedin.com/in/johndoe",
   githubProfile: "https://github.com/johndoe",
   bio: "Software developer with passion for AI",
