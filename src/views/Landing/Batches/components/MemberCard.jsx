@@ -31,16 +31,18 @@ const MemberCard = ({ member }) => {
     ? `Placed - ${course || ""}`
     : course || "Member";
 
-  const nameParts = fullName.trim().split(' ');
-  const firstName = nameParts[0];
+  // Safe name handling
+  const safeFullName = (fullName && typeof fullName === "string" ? fullName : "Member").trim();
+  const nameParts = safeFullName ? safeFullName.split(/\s+/) : ["Member"];
+  const firstName = nameParts[0] || "Member";
   const lastName = nameParts.slice(1).join(' ');
 
   // Format profile image - handle both object reference and direct URL
   const profileImg =
     member.profilePic?.fileUrl || member.profilePic?.url ||
-    (typeof member.profilePic === "string"
+    (typeof member.profilePic === "string" && member.profilePic
       ? member.profilePic
-      : `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}`);
+      : `https://ui-avatars.com/api/?name=${encodeURIComponent(safeFullName)}&background=ca0019&color=fff`);
 
   // Format social links
   const socialLinks = {

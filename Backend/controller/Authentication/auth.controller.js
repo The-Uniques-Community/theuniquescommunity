@@ -28,12 +28,11 @@ export const googleCallback = (req, res, next) => {
   // Set an HTTP‑only cookie for the token on the backend domain.
   res.cookie("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // set to true in production
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",// adjust as needed
-    // domain: '.example.com',  // if you want to share across subdomains
+    secure: true,
+    sameSite: "none",
   });
 
-  // Return HTML that sends the role (if needed for client-side routing) and closes the popup.
+  // Return HTML that sends the role and token and closes the popup.
   const htmlResponse = `
     <!DOCTYPE html>
     <html>
@@ -43,8 +42,7 @@ export const googleCallback = (req, res, next) => {
       <body>
         <script>
           (function() {
-            // Send only the role since the token is stored in the cookie
-            window.opener.postMessage({ role: '${userRole}' }, '*');
+            window.opener.postMessage({ role: '${userRole}', token: '${token}' }, '*');
             window.close();
           })();
         </script>
@@ -140,12 +138,13 @@ export const emailLogin = async (req, res) => {
     const token = generateToken(member);
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: true,
+      sameSite: "none",
     });
 
     return res.json({
       message: "Logged in successfully.",
+      token,
       role: member.role,
       member,
     });
@@ -166,8 +165,8 @@ export const getCurrentUser = (req, res) => {
 export const logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // Set true in production
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Adjust as needed
+    secure: true,
+    sameSite: "none",
   });
   return res.status(200).json({ message: "Logged out successfully" });
 };
