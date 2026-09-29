@@ -49,29 +49,22 @@ const Navbar = () => {
 
   // Function to check if user is logged in
   const checkAuthStatus = async () => {
-    // Check for token in localStorage or sessionStorage
     try {
-      // Call the backend endpoint that verifies the role using the verifyRole middleware
       const response = await axios.get(`${BASE_URL}/auth/verify_user`, {
         withCredentials: true,
       });
-      setUser(response?.data.user); // Set user data from response
-      console.log(response?.data.user);
+      setUser(response?.data.user);
       setIsLoggedIn(true);
     } catch (error) {
-      // If the error is due to token expiry or invalid token, automatically log out
-      setUser({}); // Clear user data
-      await handleLogout();
-
+      setUser({});
       setIsLoggedIn(false);
-    } finally {
-      // setLoading(false);
     }
   };
 
   // Handle logout
   const handleLogout = async () => {
     try {
+      localStorage.removeItem("token");
       await axios.post(
         `${BASE_URL}/auth/logout`,
         {},
@@ -81,6 +74,9 @@ const Navbar = () => {
       setIsLoggedIn(false);
     } catch (error) {
       console.error("Logout failed:", error);
+      localStorage.removeItem("token");
+      setUser({});
+      setIsLoggedIn(false);
     }
   };
 

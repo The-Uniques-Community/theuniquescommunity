@@ -31,10 +31,16 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: true,
+    origin: (origin, callback) => {
+      // Allow all origins (reflection) to support any vercel preview deployment or localhost
+      callback(null, true);
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "token", "X-Requested-With", "Accept"],
   })
 );
+app.options("*", cors());
 app.use(passport.initialize());
 
 app.get("/", (req, res) => {

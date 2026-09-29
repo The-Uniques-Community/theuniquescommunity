@@ -158,44 +158,32 @@ export const getPublicMemberById = async (req, res) => {
 // Add this method to get member counts by batch
 export const getMemberCounts = async (req, res) => {
     try {
-      // Get count of all active members
-      const totalCount = await Member.countDocuments({
-        profileStatus: "active",
-        isVerified: true,
-        isSuspended: false
-      });
+      const counts = await Member.aggregate([
+        { $match: { isSuspended: { $ne: true } } },
+        { $group: { _id: "$batch", count: { $sum: 1 } } }
+      ]);
       
-      // Get count for each batch
-      const batch1Count = await Member.countDocuments({
-        batch: "The Uniques 1.0",
-        profileStatus: "active",
-        isVerified: true,
-        isSuspended: false
-      });
+      const data = {
+        "All": 0,
+        "The Uniques 1.0": 0,
+        "The Uniques 2.0": 0,
+        "The Uniques 3.0": 0,
+        "The Uniques 4.0": 0
+      };
       
-      const batch2Count = await Member.countDocuments({
-        batch: "The Uniques 2.0",
-        profileStatus: "active",
-        isVerified: true,
-        isSuspended: false
+      let total = 0;
+      counts.forEach(item => {
+        if (item._id) {
+          data[item._id] = item.count;
+          total += item.count;
+        }
       });
-      
-      const batch3Count = await Member.countDocuments({
-        batch: "The Uniques 3.0",
-        profileStatus: "active", 
-        isVerified: true,
-        isSuspended: false
-      });
+      data["All"] = total;
       
       return res.status(200).json({
         success: true,
         message: "Batch counts retrieved successfully",
-        data: {
-          "All": totalCount,
-          "The Uniques 1.0": batch1Count,
-          "The Uniques 2.0": batch2Count,
-          "The Uniques 3.0": batch3Count
-        }
+        data
       });
       
     } catch (error) {

@@ -33,11 +33,14 @@ const Login = () => {
   const handleClickShowPassword = () => setShowPassword((prev) => !prev);
   const handleMouseDownPassword = (event) => event.preventDefault();
 
-  // Listen for the message from the popup. The backend sends only the role.
+  // Listen for the message from the popup.
   useEffect(() => {
     const receiveMessage = (event) => {
       // Optionally verify event.origin for security
       if (event.data && event.data.role) {
+        if (event.data.token) {
+          localStorage.setItem("token", event.data.token);
+        }
         toast.success("Logged in successfully");
         switch (event.data.role) {
           case "member":
@@ -166,6 +169,9 @@ const Login = () => {
               });
               const data = await res.json();
               if (res.ok) {
+                if (data.token) {
+                  localStorage.setItem("token", data.token);
+                }
                 toast.success("Logged in successfully");
                 // Use the role from the response to navigate accordingly
                 const userRole = (data.role || data.member?.role || "").toLowerCase();
