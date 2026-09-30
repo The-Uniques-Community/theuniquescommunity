@@ -23,6 +23,7 @@ import logo from "@/assets/logos/theuniquesCommunity.png";
 import loginImage from "@/assets/img/login/login.svg";
 import { useNavigate } from "react-router-dom";
 import bg from "@/assets/img/login/bg.png";
+import axios from "axios";
 import { BASE_URL } from "@/config";
 
 const Login = () => {
@@ -158,50 +159,52 @@ const Login = () => {
           })}
           onSubmit={async (values, { setErrors, setSubmitting }) => {
             try {
-              const res = await fetch(`${BASE_URL}/auth/emaillogin`, {
-                method: "POST",
-                credentials: "include", // include cookie with the request
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
+              const res = await axios.post(
+                `${BASE_URL}/auth/emaillogin`,
+                {
                   email: values.email.trim(),
                   password: values.password,
-                }),
-              });
-              const data = await res.json();
-              if (res.ok) {
-                if (data.token) {
-                  localStorage.setItem("token", data.token);
+                },
+                {
+                  withCredentials: true,
+                  headers: { "Content-Type": "application/json" },
                 }
-                toast.success("Logged in successfully");
-                // Use the role from the response to navigate accordingly
-                const userRole = (data.role || data.member?.role || "").toLowerCase();
-                switch (userRole) {
-                  case "member":
-                    navigate("/member");
-                    break;
-                  case "coordinator":
-                    navigate("/coordinator");
-                    break;
-                  case "communityadmin":
-                    navigate("/community");
-                    break;
-                  case "admin":
-                    navigate("/admin");
-                    break;
-                  default:
-                    navigate("/");
-                }
-              } else {
-                const errMsg = data.message || "Login failed";
-                setErrors({ submit: errMsg });
-                toast.error(errMsg);
+              );
+
+              const data = res.data;
+              if (data.token) {
+                localStorage.setItem("token", data.token);
+              }
+              toast.success(data.message || "Logged in successfully");
+              // Use the role from the response to navigate accordingly
+              const userRole = (data.role || data.member?.role || "").toLowerCase();
+              switch (userRole) {
+                case "member":
+                  navigate("/member");
+                  break;
+                case "coordinator":
+                  navigate("/coordinator");
+                  break;
+                case "communityadmin":
+                  navigate("/community");
+                  break;
+                case "admin":
+                  navigate("/admin");
+                  break;
+                default:
+                  navigate("/");
               }
             } catch (error) {
               console.error("Login request error:", error);
-              toast.error("An error occurred during login. Please check your connection.");
-              setErrors({ submit: "An error occurred during login" });
+              const errMsg =
+                error.response?.data?.message ||
+                error.message ||
+                "An error occurred during login. Please check your credentials.";
+              setErrors({ submit: errMsg });
+              toast.error(errMsg);
+            } finally {
+              setSubmitting(false);
             }
-            setSubmitting(false);
           }}
         >
           {({

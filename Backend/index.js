@@ -29,18 +29,39 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+// Robust CORS middleware handling all origins and preflight requests
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  } else {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+  }
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, token, X-Requested-With, Accept, Origin"
+  );
+  res.setHeader("Access-Control-Expose-Headers", "Content-Type, Authorization, token");
+
+  if (req.method === "OPTIONS") {
+    return res.status(204).end();
+  }
+  next();
+});
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow all origins (reflection) to support any vercel preview deployment or localhost
       callback(null, true);
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "token", "X-Requested-With", "Accept"],
+    allowedHeaders: ["Content-Type", "Authorization", "token", "X-Requested-With", "Accept", "Origin"],
   })
 );
-app.options("*", cors());
+app.options("*", (req, res) => res.status(204).end());
 app.use(passport.initialize());
 
 app.get("/", (req, res) => {
@@ -65,6 +86,7 @@ app.use('/api/admin/enquiry', enquiryRoute);
 app.use('/api', campusAmbassadorRouter);
 app.use('/api/admin/migration', migrationRouter);
 app.use("/api/admin/trainers", trainerRoute);
+
 
 app.use('/api/image-proxy/:fileId', async (req, res) => {
   try {
