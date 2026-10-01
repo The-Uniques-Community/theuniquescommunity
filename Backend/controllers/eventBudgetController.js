@@ -57,7 +57,7 @@
 //       timestamp: new Date()
 //     };
     
-//     // Add history record
+//      //Add history record
 //     event.budgetHistory.push({
 //       action: "updated",
 //       amount: totalAllocated,
@@ -277,7 +277,7 @@
 //   getEventBudget,
 //   updateBudget,
 //   addSponsor,
-//   addExpense,
+//   addExpense,    
 //   addAllocation,
 //   deleteExpense
 // };

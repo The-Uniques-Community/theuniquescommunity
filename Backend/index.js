@@ -61,7 +61,16 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization", "token", "X-Requested-With", "Accept", "Origin"],
   })
 );
-app.options("*", (req, res) => res.status(204).end());
+// Ensure database is connected on serverless requests
+app.use(async (req, res, next) => {
+  try {
+    await dbconnect();
+  } catch (err) {
+    console.error("DB connection error in middleware:", err);
+  }
+  next();
+});
+
 app.use(passport.initialize());
 
 app.get("/", (req, res) => {
@@ -120,11 +129,11 @@ app.use('/api/image-proxy/:fileId', async (req, res) => {
   }
 });
 
-
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
 
-
-dbconnect();
+export default app;
