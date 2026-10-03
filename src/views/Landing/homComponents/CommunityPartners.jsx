@@ -28,11 +28,11 @@ const partners = [
   },
   {
     name: "Notion",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.webp",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png",
   },
   {
     name: "Postman",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/c/c2/Postman_%28software%29.webp",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/c/c2/Postman_%28software%29.png",
   },
   {
     name: "MongoDB",
@@ -44,7 +44,7 @@ const partners = [
   },
   {
     name: "LinkedIn",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.webp",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png",
   },
   {
     name: "Canva",
