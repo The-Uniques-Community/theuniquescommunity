@@ -61,7 +61,7 @@ const testimonialData = {
     {
       name: "Dr. Rajesh Sharma",
       role: "Professor of Computer Science",
-      image: "https://randomuser.me/api/portraits/men/42.webp",
+      image: "https://randomuser.me/api/portraits/men/42.jpg",
       testimonial: "The curriculum at The Uniques Community bridges academic theory with industry practice seamlessly. Our students who engage with their cohorts consistently excel in technical problem-solving.",
       rating: 5,
       highlight: "Curriculum"
@@ -69,7 +69,7 @@ const testimonialData = {
     {
       name: "Prof. Anita Desai",
       role: "Head of IT Department",
-      image: "https://randomuser.me/api/portraits/women/45.webp",
+      image: "https://randomuser.me/api/portraits/women/45.jpg",
       testimonial: "I have witnessed an inspiring transformation in students participating in The Uniques programs. Their technical confidence, code quality, and collaboration skills show immense growth.",
       rating: 5,
       highlight: "Skill Growth"
@@ -77,7 +77,7 @@ const testimonialData = {
     {
       name: "Dr. Vikram Mehta",
       role: "Dean of Engineering",
-      image: "https://randomuser.me/api/portraits/men/32.webp",
+      image: "https://randomuser.me/api/portraits/men/32.jpg",
       testimonial: "The Uniques Community's focus on project-driven learning complements our degree programs brilliantly. Their industry mentors provide students with priceless hands-on tech exposure.",
       rating: 5,
       highlight: "Industry Link"
@@ -85,7 +85,7 @@ const testimonialData = {
     {
       name: "Prof. Sunita Patel",
       role: "Director of Placements",
-      image: "https://randomuser.me/api/portraits/women/68.webp",
+      image: "https://randomuser.me/api/portraits/women/68.jpg",
       testimonial: "Leading tech companies actively seek students trained by The Uniques Community. Their structured training significantly elevates campus placement records and career opportunities.",
       rating: 5,
       highlight: "Placements"
@@ -95,7 +95,7 @@ const testimonialData = {
     {
       name: "Amit Kumar",
       role: "CTO, Caelius",
-      image: "https://randomuser.me/api/portraits/men/22.webp",
+      image: "https://randomuser.me/api/portraits/men/22.jpg",
       testimonial: "Graduates from The Uniques Community join our teams with strong foundations in modern stacks and professional ethics. Their preparation clearly emphasizes solving real-world challenges.",
       rating: 5,
       highlight: "Team Ready"
@@ -103,7 +103,7 @@ const testimonialData = {
     {
       name: "Priya Sharma",
       role: "Engineering Manager, HCL GUVI",
-      image: "https://randomuser.me/api/portraits/women/29.webp",
+      image: "https://randomuser.me/api/portraits/women/29.jpg",
       testimonial: "We have hired multiple engineers trained by The Uniques, and they consistently demonstrate strong coding standards, agile adaptability, and remarkable team-first problem solving.",
       rating: 5,
       highlight: "Top Talent"
@@ -111,7 +111,7 @@ const testimonialData = {
     {
       name: "Rahul Verma",
       role: "Lead Developer, Grazitti",
-      image: "https://randomuser.me/api/portraits/men/36.webp",
+      image: "https://randomuser.me/api/portraits/men/36.jpg",
       testimonial: "The Uniques Community produces engineers who understand not just coding, but the entire software development lifecycle. That makes them immediate high-value contributors to our team.",
       rating: 5,
       highlight: "SDLC Experts"
@@ -119,7 +119,7 @@ const testimonialData = {
     {
       name: "Neha Gupta",
       role: "Hiring Manager, SALC",
-      image: "https://randomuser.me/api/portraits/women/65.webp",
+      image: "https://randomuser.me/api/portraits/women/65.jpg",
       testimonial: "I am consistently impressed by candidates from The Uniques Community. They possess both deep technical excellence and the collaborative communication essential for modern engineering.",
       rating: 5,
       highlight: "All-Rounders"
