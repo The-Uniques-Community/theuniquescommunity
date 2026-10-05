@@ -3,7 +3,7 @@ import CelebrationComponent from "@/utils/Header";
 import { ArrowUpRight, Search, Code2, ChevronDown, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CallToAction from "../homComponents/CallToAction";
-import { getStoredProjects } from "@/utils/project/projectsData";
+import { getStoredProjects, fetchProjects } from "@/utils/project/projectsData";
 
 export const BATCHES = [
   { id: "all", name: "All Batches", icon: "👥" },
@@ -148,6 +148,13 @@ const Projects = () => {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
+    // Initial fetch from backend API
+    fetchProjects().then((data) => {
+      if (data && Array.isArray(data)) {
+        setProjectsList(data);
+      }
+    });
+
     const handleProjectsUpdate = () => {
       setProjectsList(getStoredProjects());
     };

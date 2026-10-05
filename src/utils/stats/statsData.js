@@ -1,3 +1,6 @@
+import axios from "axios";
+import { BASE_URL } from "@/config";
+
 export const DEFAULT_STATS = {
   Earnings: 860000,
   Clients: 100,
@@ -27,22 +30,44 @@ export const getStoredStats = () => {
   }
 };
 
-export const saveStoredStats = (newStats) => {
+export const fetchStats = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/api/stats`);
+    if (response.data && response.data.success && response.data.data) {
+      const stats = {
+        Earnings: Number(response.data.data.Earnings) || DEFAULT_STATS.Earnings,
+        Clients: Number(response.data.data.Clients) || DEFAULT_STATS.Clients,
+        Projects: Number(response.data.data.Projects) || DEFAULT_STATS.Projects,
+        Events: Number(response.data.data.Events) || DEFAULT_STATS.Events,
+      };
+      localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
+      window.dispatchEvent(new CustomEvent("stats-updated", { detail: stats }));
+      return stats;
+    }
+  } catch (err) {
+    console.warn("Could not fetch stats from backend API, using cached:", err?.message || err);
+  }
+  return getStoredStats();
+};
+
+export const saveStoredStats = async (newStats) => {
   const updated = {
     Earnings: Number(newStats.Earnings) || 0,
     Clients: Number(newStats.Clients) || 0,
     Projects: Number(newStats.Projects) || 0,
     Events: Number(newStats.Events) || 0,
   };
+
   try {
     localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(updated));
     window.dispatchEvent(new CustomEvent("stats-updated", { detail: updated }));
+    await axios.post(`${BASE_URL}/api/stats/update`, updated);
   } catch (err) {
-    console.error("Error saving stats:", err);
+    console.error("Error saving stats to server:", err);
   }
   return updated;
 };
 
-export const resetStoredStats = () => {
-  return saveStoredStats(DEFAULT_STATS);
+export const resetStoredStats = async () => {
+  return await saveStoredStats(DEFAULT_STATS);
 };
