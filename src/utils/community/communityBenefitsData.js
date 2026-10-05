@@ -1,3 +1,5 @@
+import axios from "axios";
+import { BASE_URL } from "@/config";
 import communityOrganizerImg from "@/assets/img/Community/testimonials/community-organizer.webp";
 import technicalLeadImg from "@/assets/img/Community/testimonials/technical-lead.webp";
 import graphicsLeadImg from "@/assets/img/Community/testimonials/graphics-lead.webp";
@@ -57,7 +59,6 @@ export const getStoredBenefitsCards = () => {
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      // Ensure exactly 5 cards are matched with defaults for fallback images
       return DEFAULT_BENEFITS_CARDS.map((defaultCard, index) => {
         const stored = parsed[index];
         if (!stored) return defaultCard;
@@ -78,9 +79,33 @@ export const getStoredBenefitsCards = () => {
   }
 };
 
-export const saveStoredBenefitsCards = (cards) => {
+export const fetchBenefitsCards = async () => {
   try {
-    // Only save up to 5 cards
+    const response = await axios.get(`${BASE_URL}/api/community-benefits`);
+    if (response.data && response.data.success && Array.isArray(response.data.data)) {
+      const cards = response.data.data.map((stored, idx) => {
+        const defaultCard = DEFAULT_BENEFITS_CARDS[idx] || {};
+        return {
+          id: stored.cardId || defaultCard.id || idx + 1,
+          name: stored.name || defaultCard.name,
+          title: stored.title || defaultCard.title,
+          quote: stored.quote || defaultCard.quote,
+          avatar: stored.customAvatar ? stored.avatar : (stored.avatar || defaultCard.avatar),
+          customAvatar: Boolean(stored.customAvatar),
+        };
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
+      window.dispatchEvent(new CustomEvent("community-benefits-updated", { detail: cards }));
+      return cards;
+    }
+  } catch (err) {
+    console.warn("Could not fetch community benefits cards from server, using cached:", err?.message || err);
+  }
+  return getStoredBenefitsCards();
+};
+
+export const saveStoredBenefitsCards = async (cards) => {
+  try {
     const toSave = cards.slice(0, 5).map((card, idx) => {
       const defaultCard = DEFAULT_BENEFITS_CARDS[idx] || {};
       const isCustom = Boolean(
@@ -94,6 +119,7 @@ export const saveStoredBenefitsCards = (cards) => {
 
       return {
         id: card.id || defaultCard.id || idx + 1,
+        cardId: card.id || defaultCard.id || idx + 1,
         name: card.name || defaultCard.name,
         title: card.title || defaultCard.title,
         quote: card.quote || defaultCard.quote,
@@ -106,6 +132,7 @@ export const saveStoredBenefitsCards = (cards) => {
     window.dispatchEvent(
       new CustomEvent("community-benefits-updated", { detail: getStoredBenefitsCards() })
     );
+    await axios.post(`${BASE_URL}/api/community-benefits/update`, { cards: toSave });
     return true;
   } catch (err) {
     console.error("Error saving community benefits cards:", err);

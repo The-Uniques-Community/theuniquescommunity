@@ -1,3 +1,6 @@
+import axios from "axios";
+import { BASE_URL } from "@/config";
+
 export const DEFAULT_BATCHES = [
   "The Uniques 1.0",
   "The Uniques 2.0",
@@ -31,6 +34,21 @@ export const getStoredBatches = () => {
   }
 };
 
+export const fetchBatches = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/api/batches/all`);
+    if (response.data && response.data.success && Array.isArray(response.data.data)) {
+      const batches = response.data.data;
+      localStorage.setItem(BATCH_STORAGE_KEY, JSON.stringify(batches));
+      window.dispatchEvent(new CustomEvent("batches-updated", { detail: batches }));
+      return batches;
+    }
+  } catch (err) {
+    console.warn("Could not fetch batches from backend API, using cached:", err?.message || err);
+  }
+  return getStoredBatches();
+};
+
 export const suggestNextBatch = (existingBatches = getStoredBatches()) => {
   let maxNum = 4.0;
   existingBatches.forEach((b) => {
@@ -46,7 +64,7 @@ export const suggestNextBatch = (existingBatches = getStoredBatches()) => {
   return `The Uniques ${nextNum}`;
 };
 
-export const addStoredBatch = (batchName) => {
+export const addStoredBatch = async (batchName) => {
   if (!batchName || !batchName.trim()) return null;
   let formatted = batchName.trim();
   if (
@@ -66,8 +84,9 @@ export const addStoredBatch = (batchName) => {
       window.dispatchEvent(
         new CustomEvent("batches-updated", { detail: updated })
       );
+      await axios.post(`${BASE_URL}/api/batches/add`, { name: formatted });
     } catch (err) {
-      console.error("Error saving batch:", err);
+      console.error("Error saving batch to server:", err);
     }
     return formatted;
   }

@@ -1,19 +1,10 @@
+import axios from "axios";
+import { BASE_URL } from "@/config";
+
 const STORAGE_KEY = "tu_community_custom_members";
 
 export const DEFAULT_CUSTOM_MEMBERS = [
-  {
-    _id: "custom-member-deo",
-    fullName: "Deo",
-    email: "deo@theuniques.org",
-    admno: "2024BTCS501",
-    batch: "The Uniques 5.0",
-    course: "B.Tech CSE",
-    profileStatus: "active",
-    isSuspended: false,
-    bio: "Passionate developer and innovator in The Uniques 5.0 batch.",
-    skills: ["JavaScript", "Python", "Web Development", "DSA"],
-    createdAt: new Date().toISOString(),
-  },
+ 
 ];
 
 export const getStoredCustomMembers = () => {
@@ -25,7 +16,6 @@ export const getStoredCustomMembers = () => {
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed)) {
-      // Ensure Deo is present if user added deo
       const hasDeo = parsed.some(
         (m) =>
           m.fullName?.toLowerCase().includes("deo") ||
@@ -45,7 +35,22 @@ export const getStoredCustomMembers = () => {
   }
 };
 
-export const saveStoredCustomMember = (memberData) => {
+export const fetchCustomMembers = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/api/custom-members`);
+    if (response.data && response.data.success && Array.isArray(response.data.data)) {
+      const members = response.data.data;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(members));
+      window.dispatchEvent(new CustomEvent("custom-members-updated", { detail: members }));
+      return members;
+    }
+  } catch (err) {
+    console.warn("Could not fetch custom members from backend:", err?.message || err);
+  }
+  return getStoredCustomMembers();
+};
+
+export const saveStoredCustomMember = async (memberData) => {
   try {
     const current = getStoredCustomMembers();
     const newMember = {
@@ -65,10 +70,15 @@ export const saveStoredCustomMember = (memberData) => {
       createdAt: new Date().toISOString(),
     };
 
-    // Prepend so newly added members appear first
     const updated = [newMember, ...current.filter((m) => m._id !== newMember._id && m.admno !== newMember.admno)];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     window.dispatchEvent(new CustomEvent("custom-members-updated", { detail: updated }));
+
+    try {
+      await axios.post(`${BASE_URL}/api/custom-members/add`, newMember);
+    } catch (apiErr) {
+      console.error("API error adding custom member:", apiErr);
+    }
     return newMember;
   } catch (err) {
     console.error("Error saving custom member:", err);
@@ -76,12 +86,17 @@ export const saveStoredCustomMember = (memberData) => {
   }
 };
 
-export const deleteStoredCustomMember = (id) => {
+export const deleteStoredCustomMember = async (id) => {
   try {
     const current = getStoredCustomMembers();
     const updated = current.filter((m) => m._id !== id);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     window.dispatchEvent(new CustomEvent("custom-members-updated", { detail: updated }));
+    try {
+      await axios.delete(`${BASE_URL}/api/custom-members/${id}`);
+    } catch (apiErr) {
+      console.error("API error deleting custom member:", apiErr);
+    }
     return true;
   } catch (err) {
     console.error("Error deleting custom member:", err);
@@ -89,12 +104,17 @@ export const deleteStoredCustomMember = (id) => {
   }
 };
 
-export const updateStoredCustomMember = (id, fields) => {
+export const updateStoredCustomMember = async (id, fields) => {
   try {
     const current = getStoredCustomMembers();
     const updated = current.map((m) => (m._id === id ? { ...m, ...fields } : m));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     window.dispatchEvent(new CustomEvent("custom-members-updated", { detail: updated }));
+    try {
+      await axios.put(`${BASE_URL}/api/custom-members/${id}`, fields);
+    } catch (apiErr) {
+      console.error("API error updating custom member:", apiErr);
+    }
     return true;
   } catch (err) {
     console.error("Error updating custom member:", err);

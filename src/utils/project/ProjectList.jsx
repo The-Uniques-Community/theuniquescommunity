@@ -40,7 +40,7 @@ import {
   Launch,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { getStoredProjects, deleteProject } from "./projectsData";
+import { getStoredProjects, fetchProjects, deleteProject } from "./projectsData";
 
 const ProjectList = ({ createRoutePrefix = "/coordinator/projects-overview" }) => {
   const [projects, setProjects] = useState([]);
@@ -60,11 +60,17 @@ const ProjectList = ({ createRoutePrefix = "/coordinator/projects-overview" }) =
   const navigate = useNavigate();
   const theme = useTheme();
 
-  const loadProjects = () => {
+  const loadProjects = async () => {
     try {
       setLoading(true);
-      const data = getStoredProjects();
-      setProjects(data);
+      const cached = getStoredProjects();
+      if (cached && cached.length > 0) {
+        setProjects(cached);
+      }
+      const data = await fetchProjects();
+      if (data && Array.isArray(data)) {
+        setProjects(data);
+      }
     } catch (err) {
       console.error("Error loading projects:", err);
     } finally {
@@ -76,7 +82,10 @@ const ProjectList = ({ createRoutePrefix = "/coordinator/projects-overview" }) =
     loadProjects();
 
     const handleUpdate = () => {
-      loadProjects();
+      const current = getStoredProjects();
+      if (current && current.length > 0) {
+        setProjects(current);
+      }
     };
 
     window.addEventListener("projects-updated", handleUpdate);
@@ -108,13 +117,13 @@ const ProjectList = ({ createRoutePrefix = "/coordinator/projects-overview" }) =
     if (!projectToDelete) return;
     try {
       setDeleteLoading(true);
-      deleteProject(projectToDelete.id);
+      await deleteProject(projectToDelete._id || projectToDelete.id);
       setSnackbar({
         open: true,
         message: "Project deleted successfully",
         severity: "success",
       });
-      loadProjects();
+      await loadProjects();
     } catch (error) {
       console.error("Error deleting project:", error);
       setSnackbar({

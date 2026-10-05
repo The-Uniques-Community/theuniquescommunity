@@ -1,3 +1,6 @@
+import axios from "axios";
+import { BASE_URL } from "@/config";
+
 export const INITIAL_PROJECTS = [
   {
     id: 1,
@@ -161,55 +164,128 @@ export const PROJECT_CATEGORIES = [
 
 const STORAGE_KEY = "tu_community_projects";
 
+// Normalizes project objects so both id and _id work seamlessly
+const normalizeProject = (p) => ({
+  ...p,
+  id: p._id || p.id,
+  _id: p._id || p.id,
+});
+
 export const getStoredProjects = () => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PROJECTS));
-      return INITIAL_PROJECTS;
+      return INITIAL_PROJECTS.map(normalizeProject);
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
+      return parsed.map(normalizeProject);
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PROJECTS));
-    return INITIAL_PROJECTS;
+    return INITIAL_PROJECTS.map(normalizeProject);
   } catch (err) {
     console.error("Error reading stored projects:", err);
-    return INITIAL_PROJECTS;
+    return INITIAL_PROJECTS.map(normalizeProject);
   }
 };
 
-export const addProject = (projectData) => {
+// Fetch latest projects from MongoDB backend API and sync with localStorage cache
+export const fetchProjects = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/api/projects`);
+    if (response.data && response.data.success && Array.isArray(response.data.data)) {
+      const normalized = response.data.data.map(normalizeProject);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+      window.dispatchEvent(new CustomEvent("projects-updated", { detail: normalized }));
+      return normalized;
+    }
+  } catch (err) {
+    console.warn("Backend /api/projects request failed, using cached projects:", err?.message || err);
+  }
+  return getStoredProjects();
+};
+
+// Add new project - calls MongoDB Backend API + falls back to cache
+export const addProject = async (projectData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/api/projects`, projectData);
+    if (response.data && response.data.success && response.data.data) {
+      const saved = normalizeProject(response.data.data);
+      const current = getStoredProjects();
+      const updated = [saved, ...current.filter((p) => String(p._id) !== String(saved._id))];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent("projects-updated", { detail: updated }));
+      return saved;
+    }
+  } catch (err) {
+    console.error("Backend add project error, falling back locally:", err);
+  }
+
+  // Fallback if backend was unreachable
   const existing = getStoredProjects();
-  const newProject = {
+  const newProject = normalizeProject({
     ...projectData,
-    id: Date.now(),
-    createdAt: new Date().toISOString().split("T")[0],
-  };
+    id: `proj-${Date.now()}`,
+    createdAt: new Date().toISOString(),
+  });
   const updated = [newProject, ...existing];
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     window.dispatchEvent(new CustomEvent("projects-updated", { detail: updated }));
   } catch (err) {
-    console.error("Error saving new project:", err);
+    console.error("Error saving project locally:", err);
   }
   return newProject;
 };
 
-export const deleteProject = (id) => {
+// Update existing project in MongoDB Backend API
+export const updateProject = async (id, projectData) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/api/projects/${id}`, projectData);
+    if (response.data && response.data.success && response.data.data) {
+      const updatedItem = normalizeProject(response.data.data);
+      const current = getStoredProjects();
+      const updated = current.map((p) => (String(p._id) === String(id) || String(p.id) === String(id) ? updatedItem : p));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent("projects-updated", { detail: updated }));
+      return updatedItem;
+    }
+  } catch (err) {
+    console.error("Backend update project error:", err);
+  }
+
   const existing = getStoredProjects();
-  const updated = existing.filter((p) => String(p.id) !== String(id));
+  const updated = existing.map((p) =>
+    String(p.id) === String(id) || String(p._id) === String(id)
+      ? { ...p, ...projectData }
+      : p
+  );
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  window.dispatchEvent(new CustomEvent("projects-updated", { detail: updated }));
+  return updated.find((p) => String(p.id) === String(id));
+};
+
+// Delete project in MongoDB Backend API
+export const deleteProject = async (id) => {
+  try {
+    await axios.delete(`${BASE_URL}/api/projects/${id}`);
+  } catch (err) {
+    console.error("Backend delete project error:", err);
+  }
+
+  const existing = getStoredProjects();
+  const updated = existing.filter((p) => String(p.id) !== String(id) && String(p._id) !== String(id));
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     window.dispatchEvent(new CustomEvent("projects-updated", { detail: updated }));
   } catch (err) {
-    console.error("Error deleting project:", err);
+    console.error("Error deleting project from storage:", err);
   }
   return updated;
 };
 
 export const getProjectById = (id) => {
   const existing = getStoredProjects();
-  return existing.find((p) => String(p.id) === String(id));
+  return existing.find((p) => String(p.id) === String(id) || String(p._id) === String(id));
 };
