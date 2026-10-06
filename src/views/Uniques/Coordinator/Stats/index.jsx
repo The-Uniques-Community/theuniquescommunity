@@ -13,6 +13,7 @@ import {
   Divider,
   useTheme,
   InputAdornment,
+  CircularProgress,
 } from "@mui/material";
 import {
   BarChart,
@@ -21,9 +22,11 @@ import {
   EventNote,
   Save,
   RestartAlt,
+  Refresh as RefreshIcon,
 } from "@mui/icons-material";
 import {
   getStoredStats,
+  fetchStats,
   saveStoredStats,
   resetStoredStats,
   DEFAULT_STATS,
@@ -37,6 +40,8 @@ const StatsManagement = () => {
     Projects: 150,
     Events: 40,
   });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -44,9 +49,22 @@ const StatsManagement = () => {
     severity: "success",
   });
 
+  const loadLatestStats = async () => {
+    setLoading(true);
+    try {
+      const cached = getStoredStats();
+      if (cached) setStats(cached);
+      const fresh = await fetchStats();
+      if (fresh) setStats(fresh);
+    } catch (err) {
+      console.error("Error loading stats:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loaded = getStoredStats();
-    setStats(loaded);
+    loadLatestStats();
 
     const handleUpdate = (e) => {
       if (e.detail) setStats(e.detail);
@@ -64,42 +82,72 @@ const StatsManagement = () => {
     }));
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    const updated = saveStoredStats({
-      Earnings: Number(stats.Earnings) || 0,
-      Clients: Number(stats.Clients) || 0,
-      Projects: Number(stats.Projects) || 0,
-      Events: Number(stats.Events) || 0,
-    });
-    setStats(updated);
-    setSnackbar({
-      open: true,
-      message: "Achievement stats updated successfully! Landing page reflects changes immediately.",
-      severity: "success",
-    });
+    setSaving(true);
+    try {
+      const updated = await saveStoredStats({
+        Earnings: Number(stats.Earnings) || 0,
+        Clients: Number(stats.Clients) || 0,
+        Projects: Number(stats.Projects) || 0,
+        Events: Number(stats.Events) || 0,
+      });
+      setStats(updated);
+      setSnackbar({
+        open: true,
+        message: "Metrics updated successfully! Landing page reflects changes immediately.",
+        severity: "success",
+      });
+    } catch (err) {
+      console.error("Error saving stats:", err);
+      setSnackbar({
+        open: true,
+        message: "Failed to save stats to server.",
+        severity: "error",
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleReset = () => {
-    const def = resetStoredStats();
-    setStats(def);
-    setSnackbar({
-      open: true,
-      message: "Stats reset to default values.",
-      severity: "info",
-    });
+  const handleReset = async () => {
+    setSaving(true);
+    try {
+      const def = await resetStoredStats();
+      setStats(def);
+      setSnackbar({
+        open: true,
+        message: "Stats reset to default values and synced with landing page.",
+        severity: "info",
+      });
+    } catch (err) {
+      console.error("Error resetting stats:", err);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1200, mx: "auto" }}>
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1 }}>
-          Stats Management
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Update the community metrics displayed under the "Making an Impact" section on the public landing page.
-        </Typography>
+      <Box sx={{ mb: 4, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 2 }}>
+        <Box>
+          <Typography variant="h4" sx={{ fontWeight: "bold", mb: 1, color: "#ca0019" }}>
+            Stats & Impact Management
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Coordinator login karke jo bhi metrics update karega wo direct landing page ke "Our Achievements - Making an Impact" section par reflect hoga.
+          </Typography>
+        </Box>
+        <Button
+          variant="outlined"
+          startIcon={loading ? <CircularProgress size={16} /> : <RefreshIcon />}
+          onClick={loadLatestStats}
+          disabled={loading}
+          sx={{ color: "#ca0019", borderColor: "#ca0019", "&:hover": { bgcolor: "#ffebee", borderColor: "#ca0019" } }}
+        >
+          Refresh Stats
+        </Button>
       </Box>
 
       {/* Live Preview Cards Section */}
@@ -356,6 +404,7 @@ const StatsManagement = () => {
             color="inherit"
             startIcon={<RestartAlt />}
             onClick={handleReset}
+            disabled={saving || loading}
             sx={{ borderRadius: 2 }}
           >
             Reset to Default
@@ -364,7 +413,8 @@ const StatsManagement = () => {
           <Button
             type="submit"
             variant="contained"
-            startIcon={<Save />}
+            disabled={saving || loading}
+            startIcon={saving ? <CircularProgress size={18} color="inherit" /> : <Save />}
             sx={{
               bgcolor: "#ca0019",
               "&:hover": { bgcolor: "#a30014" },
@@ -374,7 +424,7 @@ const StatsManagement = () => {
               borderRadius: 2,
             }}
           >
-            Save Changes
+            {saving ? "Saving Changes..." : "Save Changes"}
           </Button>
         </Box>
       </Paper>
