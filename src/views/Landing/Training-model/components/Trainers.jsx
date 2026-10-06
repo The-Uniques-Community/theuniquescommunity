@@ -1,18 +1,81 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Linkedin, Github, Code, ChevronDown, Monitor, Terminal } from 'lucide-react';
 import { useThemeContext } from '@/theme/ThemeProvider';
+import axios from 'axios';
 import { BASE_URL } from '@/config';
+import { getStoredBatches, fetchBatches } from '@/utils/batch/batchesData';
 import ronitImg from "@/assets/img/Success Stories avatars/ronit-jaiprakash.webp";
 import mantashaImg from "@/assets/img/Success Stories avatars/mantasha-tabassum.webp";
 import taniyaImg from "@/assets/img/Success Stories avatars/Taniya_singh.webp";
 
-const batches = [
-  "All Batches",
-  "Uniques 1.0",
-  "Uniques 2.0",
-  "Uniques 3.0",
-  "Uniques 4.0"
+const DEFAULT_TRAINERS = [
+  {
+    id: 1,
+    name: "Ronit Jaiprakash",
+    position: "Solution Consultant @ Caelius Consulting",
+    program: "Uniques 1.0",
+    image: ronitImg,
+    bio: "Solution Consultant & Technical Associate at Caelius Consulting, Full Stack Developer at Godigitify, and Instructor at Techlearns.",
+    expertise: ["Solution Consultant", "Full Stack Developer", "Technical Associate"],
+    social: { linkedin: "https://www.linkedin.com/in/ronit-jaiprakash/" },
+    isIndustryPro: true
+  },
+  {
+    id: 2,
+    name: "Mantasha Tabassum",
+    position: "Solution Consultant @ Caelius Consulting",
+    program: "Uniques 1.0",
+    image: mantashaImg,
+    bio: "Solution Consultant @ Caelius Consulting, connecting MuleSoft, AI and end systems for seamless workflows, technical trainer, application developer.",
+    expertise: ["MuleSoft & AI", "Technical Trainer", "App Developer"],
+    social: { linkedin: "https://www.linkedin.com/in/mantasha-tabassum/" },
+    isIndustryPro: true
+  },
+  {
+    id: 3,
+    name: "Nishant Singh",
+    position: "Campus Tech Lead",
+    program: "Uniques 3.0",
+    image: `${BASE_URL}/api/image-proxy/1SH3BoI8y1FcIPnOq4--cwjLxAx_MxcWB`,
+    bio: "Talented student mentor specializing in Adobe video editing suite, helping peers create professional-grade video content.",
+    expertise: ["Adobe Premiere", "After Effects", "Video Editing"],
+    social: { linkedin: "https://www.linkedin.com/in/nishant-singh-14769a208/" },
+    isIndustryPro: false
+  },
+  {
+    id: 4,
+    name: "Taniya Singh",
+    position: "Technical Associate @ Caelius Consulting",
+    program: "Uniques 2.0",
+    image: taniyaImg,
+    bio: "Technical Associate @ Caelius Consulting, web developer, graphic designer.",
+    expertise: ["Web Development", "Graphic Design", "UI/UX"],
+    social: { linkedin: "https://www.linkedin.com/in/taniya-singh/" },
+    isIndustryPro: true
+  },
+  {
+    id: 5,
+    name: "Aryan Kamboj",
+    position: "Frontend Champion",
+    program: "Uniques 3.0",
+    image: `${BASE_URL}/api/image-proxy/1qoV-I6YPWaKM-58pOrWhLRHX8KIsRKv0`,
+    bio: "Rising talent in React ecosystem development with a passion for teaching fellow students modern frontend techniques.",
+    expertise: ["React", "Next.js", "UI Architecture"],
+    social: { linkedin: "https://www.linkedin.com/in/aryan-kammboz-110521252/" },
+    isIndustryPro: false
+  },
+  {
+    id: 6,
+    name: "Riya Singh",
+    position: "Programming Leader",
+    program: "Uniques 4.0",
+    image: `${BASE_URL}/api/image-proxy/1AhUVLUwrplop3WRvTsagm6aR6WPZaYOK`,
+    bio: "Talented student mentor sharing practical C++ programming knowledge and fostering a collaborative learning environment.",
+    expertise: ["C++", "STL", "Logic"],
+    social: { linkedin: "https://www.linkedin.com/in/riya-singh-5b71b7248/" },
+    isIndustryPro: false
+  }
 ];
 
 const TrainerCard = ({ trainer, isDarkMode }) => {
@@ -46,8 +109,11 @@ const TrainerCard = ({ trainer, isDarkMode }) => {
               className="relative w-24 h-24 rounded-3xl overflow-hidden border-2 border-[#ca0019]/30 p-1 bg-gradient-to-tr from-[#ca0019]/20 to-transparent"
             >
               <img 
-                src={trainer.image} 
+                src={trainer.image || "/placeholder.svg"} 
                 alt={trainer.name}
+                onError={(e) => {
+                  e.currentTarget.src = "/placeholder.svg";
+                }}
                 className="w-full h-full object-cover rounded-2xl"
               />
             </motion.div>
@@ -82,7 +148,7 @@ const TrainerCard = ({ trainer, isDarkMode }) => {
           </p>
           
           <div className="flex flex-wrap gap-2">
-            {trainer.expertise.map((tech, i) => (
+            {(trainer.expertise || []).map((tech, i) => (
               <span key={i} className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-[11px] font-bold border transition-colors ${
                 isDarkMode 
                 ? 'bg-white/5 border-white/5 text-gray-400 group-hover:border-[#ca0019]/30 group-hover:text-gray-300' 
@@ -104,7 +170,7 @@ const TrainerCard = ({ trainer, isDarkMode }) => {
           <Monitor size={40} className="absolute -bottom-2 -right-2 opacity-5 text-[#ca0019]" />
           <p className={`text-sm leading-relaxed relative z-10 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
             <span className="text-[#ca0019] font-mono mr-2 opacity-50 font-bold">&gt;</span>
-            {trainer.bio}
+            {trainer.bio || "Dedicated mentor empowering students in modern technologies."}
           </p>
         </div>
 
@@ -117,80 +183,74 @@ const Trainers = () => {
   const { isDarkMode } = useThemeContext();
   const [selectedBatch, setSelectedBatch] = useState("All Batches");
   const [isOpen, setIsOpen] = useState(false);
+  const [trainers, setTrainers] = useState(DEFAULT_TRAINERS);
+  const [storedBatches, setStoredBatches] = useState(() => getStoredBatches());
 
-  const trainers = [
-    {
-      id: 1,
-      name: "Ronit Jaiprakash",
-      position: "Solution Consultant @ Caelius Consulting",
-      program: "Uniques 1.0",
-      image: ronitImg,
-      bio: "Solution Consultant & Technical Associate at Caelius Consulting, Full Stack Developer at Godigitify, and Instructor at Techlearns.",
-      expertise: ["Solution Consultant", "Full Stack Developer", "Technical Associate"],
-      social: { linkedin: "https://www.linkedin.com/in/ronit-jaiprakash/" },
-      isIndustryPro: true
-    },
-    {
-      id: 2,
-      name: "Mantasha Tabassum",
-      position: "Solution Consultant @ Caelius Consulting",
-      program: "Uniques 1.0",
-      image: mantashaImg,
-      bio: "Solution Consultant @ Caelius Consulting, connecting MuleSoft, AI and end systems for seamless workflows, technical trainer, application developer.",
-      expertise: ["MuleSoft & AI", "Technical Trainer", "App Developer"],
-      social: { linkedin: "https://www.linkedin.com/in/mantasha-tabassum/" },
-      isIndustryPro: true
-    },
-    {
-      id: 3,
-      name: "Nishant Singh",
-      position: "Campus Tech Lead",
-      program: "Uniques 3.0",
-      image: `${BASE_URL}/api/image-proxy/1SH3BoI8y1FcIPnOq4--cwjLxAx_MxcWB`,
-      bio: "Talented student mentor specializing in Adobe video editing suite, helping peers create professional-grade video content.",
-      expertise: ["Adobe Premiere", "After Effects", "Video Editing"],
-      social: { linkedin: "https://www.linkedin.com/in/nishant-singh-14769a208/" },
-      isIndustryPro: false
-    },
-    {
-      id: 4,
-      name: "Taniya Singh",
-      position: "Technical Associate @ Caelius Consulting",
-      program: "Uniques 2.0",
-      image: taniyaImg,
-      bio: "Technical Associate @ Caelius Consulting, web developer, graphic designer.",
-      expertise: ["Web Development", "Graphic Design", "UI/UX"],
-      social: { linkedin: "https://www.linkedin.com/in/taniya-singh/" },
-      isIndustryPro: true
-    },
-    {
-      id: 5,
-      name: "Aryan Kamboj",
-      position: "Frontend Champion",
-      program: "Uniques 3.0",
-      image: `${BASE_URL}/api/image-proxy/1qoV-I6YPWaKM-58pOrWhLRHX8KIsRKv0`,
-      bio: "Rising talent in React ecosystem development with a passion for teaching fellow students modern frontend techniques.",
-      expertise: ["React", "Next.js", "UI Architecture"],
-      social: { linkedin: "https://www.linkedin.com/in/aryan-kammboz-110521252/" },
-      isIndustryPro: false
-    },
-    {
-      id: 6,
-      name: "Riya Singh",
-      position: "Programming Leader",
-      program: "Uniques 4.0",
-      image: `${BASE_URL}/api/image-proxy/1AhUVLUwrplop3WRvTsagm6aR6WPZaYOK`,
-      bio: "Talented student mentor sharing practical C++ programming knowledge and fostering a collaborative learning environment.",
-      expertise: ["C++", "STL", "Logic"],
-      social: { linkedin: "https://www.linkedin.com/in/riya-singh-5b71b7248/" },
-      isIndustryPro: false
-    }
-  ];
+  useEffect(() => {
+    fetchBatches().then((b) => {
+      if (b && Array.isArray(b)) setStoredBatches(b);
+    });
+
+    const loadTrainers = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/admin/trainers/all-trainers`);
+        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+          const formatted = response.data.map((t, idx) => {
+            let imageSrc = "/placeholder.svg";
+            if (t.profilePic) {
+              const fileId = t.profilePic.fileId || (typeof t.profilePic === "string" ? t.profilePic : null);
+              if (fileId) {
+                imageSrc = `${BASE_URL}/api/image-proxy/${fileId}`;
+              }
+            } else if (t.image) {
+              imageSrc = t.image;
+            }
+
+            const expertiseArr = Array.isArray(t.skills)
+              ? t.skills
+              : Array.isArray(t.expertise)
+              ? t.expertise
+              : (t.course ? [t.course] : ["Tech Mentor"]);
+
+            return {
+              id: t._id || t.id || idx + 1,
+              name: t.fullName || t.name || "Trainer",
+              position: t.designation || t.position || "Technical Trainer",
+              program: t.teachingBatch || t.batch || "The Uniques Community",
+              image: imageSrc,
+              bio: t.bio || t.description || "Passionate trainer shaping the future tech leaders.",
+              expertise: expertiseArr,
+              social: {
+                linkedin: t.linkedin || t.social?.linkedin || "",
+                github: t.github || t.social?.github || "",
+              },
+              isIndustryPro: Boolean(t.isIndustryPro || t.isTrainer),
+            };
+          });
+          setTrainers(formatted);
+        }
+      } catch (err) {
+        console.warn("Using default trainers list:", err?.message || err);
+      }
+    };
+
+    loadTrainers();
+  }, []);
+
+  const batches = useMemo(() => {
+    const list = storedBatches.map((b) => b.replace(/^The\s+/i, ""));
+    const uniqueBatches = Array.from(new Set(["All Batches", ...list]));
+    return uniqueBatches;
+  }, [storedBatches]);
 
   const filteredTrainers = useMemo(() => {
     if (selectedBatch === "All Batches") return trainers;
-    return trainers.filter(t => t.program.includes(selectedBatch));
-  }, [selectedBatch]);
+    const cleanSelected = selectedBatch.replace(/^The\s+/i, "").toLowerCase();
+    return trainers.filter(t => {
+      const prog = (t.program || "").replace(/^The\s+/i, "").toLowerCase();
+      return prog.includes(cleanSelected) || cleanSelected.includes(prog);
+    });
+  }, [selectedBatch, trainers]);
 
   return (
     <section className={`py-24 transition-colors duration-500 ${isDarkMode ? 'bg-[#0a0a0a]' : 'bg-gray-50'}`}>

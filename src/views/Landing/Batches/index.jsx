@@ -11,9 +11,9 @@ import SchoolIcon from '@mui/icons-material/School';
 import GroupsIcon from '@mui/icons-material/Groups';
 import { AnimatePresence } from "framer-motion";
 import CallToAction from "@/views/Landing/homComponents/CallToAction";
-import { getStoredBatches } from "@/utils/batch/batchesData";
-import { getStoredBatchProfiles } from "@/utils/batch/batchProfilesData";
-import { getStoredCustomMembers } from "@/utils/member/customMembersData";
+import { getStoredBatches, fetchBatches } from "@/utils/batch/batchesData";
+import { getStoredBatchProfiles, fetchBatchProfiles } from "@/utils/batch/batchProfilesData";
+import { getStoredCustomMembers, fetchCustomMembers } from "@/utils/member/customMembersData";
 
 const index = () => {
   // State management
@@ -30,8 +30,17 @@ const index = () => {
   const [totalMembers, setTotalMembers] = useState(0);
   const [countsLoading, setCountsLoading] = useState(true);
 
-  // Sync stored batches dynamically when coordinator adds a new batch
+  // Sync stored batches dynamically when coordinator adds a new batch & fetch from API on mount
   useEffect(() => {
+    // Initial fetch from backend API to get fresh coordinator updates
+    fetchBatches().then((b) => {
+      if (b && Array.isArray(b)) setStoredBatches(b);
+    });
+    fetchBatchProfiles();
+    fetchCustomMembers().then(() => {
+      setCustomMembersVersion((v) => v + 1);
+    });
+
     const handleBatchesUpdate = () => {
       const updated = getStoredBatches();
       setStoredBatches(updated);
