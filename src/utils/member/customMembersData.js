@@ -53,7 +53,7 @@ export const fetchCustomMembers = async () => {
 export const saveStoredCustomMember = async (memberData) => {
   try {
     const current = getStoredCustomMembers();
-    const newMember = {
+    const newMemberPayload = {
       _id: memberData._id || `custom-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
       fullName: memberData.fullName || "Member",
       email: memberData.email || "",
@@ -70,16 +70,24 @@ export const saveStoredCustomMember = async (memberData) => {
       createdAt: new Date().toISOString(),
     };
 
-    const updated = [newMember, ...current.filter((m) => m._id !== newMember._id && m.admno !== newMember.admno)];
+    let savedMember = newMemberPayload;
+    // 1. Store in MongoDB first
+    try {
+      const response = await axios.post(`${BASE_URL}/api/custom-members/add`, newMemberPayload);
+      if (response.data && response.data.success && response.data.data) {
+        savedMember = response.data.data;
+      }
+    } catch (apiErr) {
+      console.warn("Backend MongoDB notice for custom member add:", apiErr?.message || apiErr);
+    }
+
+    // 2. After MongoDB operation, update local cache and broadcast to main webpage
+    const updated = [savedMember, ...current.filter((m) => m._id !== savedMember._id && m.admno !== savedMember.admno)];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     window.dispatchEvent(new CustomEvent("custom-members-updated", { detail: updated }));
+    window.dispatchEvent(new CustomEvent("members-updated", { detail: updated }));
 
-    try {
-      await axios.post(`${BASE_URL}/api/custom-members/add`, newMember);
-    } catch (apiErr) {
-      console.error("API error adding custom member:", apiErr);
-    }
-    return newMember;
+    return savedMember;
   } catch (err) {
     console.error("Error saving custom member:", err);
     return null;
@@ -88,15 +96,19 @@ export const saveStoredCustomMember = async (memberData) => {
 
 export const deleteStoredCustomMember = async (id) => {
   try {
-    const current = getStoredCustomMembers();
-    const updated = current.filter((m) => m._id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    window.dispatchEvent(new CustomEvent("custom-members-updated", { detail: updated }));
+    // 1. Delete from MongoDB first
     try {
       await axios.delete(`${BASE_URL}/api/custom-members/${id}`);
     } catch (apiErr) {
-      console.error("API error deleting custom member:", apiErr);
+      console.warn("Backend MongoDB notice for custom member delete:", apiErr?.message || apiErr);
     }
+
+    // 2. After MongoDB operation, update local storage and broadcast to main webpage
+    const current = getStoredCustomMembers();
+    const updated = current.filter((m) => m._id !== id && m.id !== id);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    window.dispatchEvent(new CustomEvent("custom-members-updated", { detail: updated }));
+    window.dispatchEvent(new CustomEvent("members-updated", { detail: updated }));
     return true;
   } catch (err) {
     console.error("Error deleting custom member:", err);
@@ -106,15 +118,23 @@ export const deleteStoredCustomMember = async (id) => {
 
 export const updateStoredCustomMember = async (id, fields) => {
   try {
+    // 1. Update in MongoDB first
+    let updatedRecord = null;
+    try {
+      const response = await axios.put(`${BASE_URL}/api/custom-members/${id}`, fields);
+      if (response.data && response.data.success && response.data.data) {
+        updatedRecord = response.data.data;
+      }
+    } catch (apiErr) {
+      console.warn("Backend MongoDB notice for custom member update:", apiErr?.message || apiErr);
+    }
+
+    // 2. After MongoDB operation, update local storage and broadcast to main webpage
     const current = getStoredCustomMembers();
-    const updated = current.map((m) => (m._id === id ? { ...m, ...fields } : m));
+    const updated = current.map((m) => (m._id === id || m.id === id ? (updatedRecord || { ...m, ...fields }) : m));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     window.dispatchEvent(new CustomEvent("custom-members-updated", { detail: updated }));
-    try {
-      await axios.put(`${BASE_URL}/api/custom-members/${id}`, fields);
-    } catch (apiErr) {
-      console.error("API error updating custom member:", apiErr);
-    }
+    window.dispatchEvent(new CustomEvent("members-updated", { detail: updated }));
     return true;
   } catch (err) {
     console.error("Error updating custom member:", err);
