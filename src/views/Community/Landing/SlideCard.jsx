@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useThemeContext } from "@/theme/ThemeProvider";
-import { getStoredBenefitsCards } from "@/utils/community/communityBenefitsData";
+import { getStoredBenefitsCards, fetchBenefitsCards } from "@/utils/community/communityBenefitsData";
 
 // Fallback avatar component with initials and brand styling to prevent broken image icons
 function AvatarImage({ src, name, className = "" }) {
@@ -49,6 +49,10 @@ export default function TestimonialCarousel() {
     const touchStartX = useRef(null);
 
     useEffect(() => {
+        fetchBenefitsCards().then((cards) => {
+            if (cards && Array.isArray(cards)) setTestimonials(cards);
+        });
+
         const handleUpdate = () => {
             setTestimonials(getStoredBenefitsCards());
         };

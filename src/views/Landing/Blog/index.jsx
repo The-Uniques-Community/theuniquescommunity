@@ -26,8 +26,11 @@ import CallToAction from "../homComponents/CallToAction";
 import { blogData } from "@/assets/dummyData/blogData";
 import { useThemeContext } from "@/theme/ThemeProvider";
 import { BookOpen } from "lucide-react";
+import axios from "axios";
+import { BASE_URL } from "@/config";
 
 const BlogPage = () => {
+  const [blogsList, setBlogsList] = useState(blogData);
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -35,6 +38,35 @@ const BlogPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { isDarkMode } = useThemeContext();
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/blogs`);
+        if (response.data && response.data.success && Array.isArray(response.data.data) && response.data.data.length > 0) {
+          const apiBlogs = response.data.data.map((b) => ({
+            ...b,
+            id: b._id || b.id,
+            title: b.title,
+            category: b.category || "Technology",
+            readTime: b.readTime || "5",
+            image: b.image || blogData[0]?.image,
+            subContents: b.subContents || [{ heading: "", paragraph: b.description || "" }],
+            tags: b.tags || [],
+          }));
+
+          // Merge API blogs with fallback blogs ensuring no duplicate IDs
+          const apiIds = new Set(apiBlogs.map((b) => b.id));
+          const merged = [...apiBlogs, ...blogData.filter((b) => !apiIds.has(b.id))];
+          setBlogsList(merged);
+        }
+      } catch (err) {
+        // Fallback to blogData
+      }
+    };
+
+    fetchBlogs();
+  }, []);
 
   // Lock body scroll when blog modal is open
   useEffect(() => {
@@ -59,11 +91,11 @@ const BlogPage = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Extract unique categories from blogData
-  const categories = [...new Set(blogData.map((blog) => blog.category || "Uncategorized"))];
+  // Extract unique categories from blogsList
+  const categories = [...new Set(blogsList.map((blog) => blog.category || "Uncategorized"))];
 
   // Filtering logic with null checks
-  const filteredBlogs = blogData.filter((blog) => {
+  const filteredBlogs = blogsList.filter((blog) => {
     const categoryMatch = selectedCategories.length === 0 || 
       selectedCategories.includes(blog.category);
     

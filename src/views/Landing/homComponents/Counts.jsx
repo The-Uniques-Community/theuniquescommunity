@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Users, Lightbulb, BarChart, Calendar } from 'lucide-react';
-import { getStoredStats } from '@/utils/stats/statsData';
+import { getStoredStats, fetchStats } from '@/utils/stats/statsData';
 
 const Counts = () => {
   const sectionRef = useRef(null);
@@ -10,6 +10,13 @@ const Counts = () => {
   const [animationComplete, setAnimationComplete] = useState(false);
 
   useEffect(() => {
+    // Fetch latest stats from backend API immediately on mount
+    fetchStats().then((fresh) => {
+      if (fresh) {
+        setTargetValues(fresh);
+      }
+    });
+
     const handleStatsUpdated = (e) => {
       const updated = e.detail || getStoredStats();
       setTargetValues(updated);
