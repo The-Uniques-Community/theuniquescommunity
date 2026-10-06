@@ -26,17 +26,17 @@ export const updateStats = async (req, res) => {
     let stats = await Stats.findOne().sort({ updatedAt: -1 });
     
     if (stats) {
-      stats.Earnings = Number(Earnings) || stats.Earnings;
-      stats.Clients = Number(Clients) || stats.Clients;
-      stats.Projects = Number(Projects) || stats.Projects;
-      stats.Events = Number(Events) || stats.Events;
+      if (Earnings !== undefined && Earnings !== null) stats.Earnings = Number(Earnings);
+      if (Clients !== undefined && Clients !== null) stats.Clients = Number(Clients);
+      if (Projects !== undefined && Projects !== null) stats.Projects = Number(Projects);
+      if (Events !== undefined && Events !== null) stats.Events = Number(Events);
       await stats.save();
     } else {
       stats = await Stats.create({
-        Earnings: Number(Earnings) || DEFAULT_STATS.Earnings,
-        Clients: Number(Clients) || DEFAULT_STATS.Clients,
-        Projects: Number(Projects) || DEFAULT_STATS.Projects,
-        Events: Number(Events) || DEFAULT_STATS.Events,
+        Earnings: Earnings !== undefined ? Number(Earnings) : DEFAULT_STATS.Earnings,
+        Clients: Clients !== undefined ? Number(Clients) : DEFAULT_STATS.Clients,
+        Projects: Projects !== undefined ? Number(Projects) : DEFAULT_STATS.Projects,
+        Events: Events !== undefined ? Number(Events) : DEFAULT_STATS.Events,
       });
     }
 

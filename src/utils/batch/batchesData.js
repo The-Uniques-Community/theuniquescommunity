@@ -78,16 +78,19 @@ export const addStoredBatch = async (batchName) => {
 
   const current = getStoredBatches();
   if (!current.includes(formatted)) {
-    const updated = [...current, formatted];
+    // 1. Save in MongoDB first
     try {
-      localStorage.setItem(BATCH_STORAGE_KEY, JSON.stringify(updated));
-      window.dispatchEvent(
-        new CustomEvent("batches-updated", { detail: updated })
-      );
       await axios.post(`${BASE_URL}/api/batches/add`, { name: formatted });
     } catch (err) {
-      console.error("Error saving batch to server:", err);
+      console.warn("Backend MongoDB notice for batch add:", err?.message || err);
     }
+
+    // 2. After MongoDB operation, update local storage and broadcast to main webpage
+    const updated = [...current, formatted];
+    localStorage.setItem(BATCH_STORAGE_KEY, JSON.stringify(updated));
+    window.dispatchEvent(
+      new CustomEvent("batches-updated", { detail: updated })
+    );
     return formatted;
   }
   return formatted;

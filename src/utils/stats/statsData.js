@@ -51,21 +51,34 @@ export const fetchStats = async () => {
 };
 
 export const saveStoredStats = async (newStats) => {
-  const updated = {
+  const payload = {
     Earnings: Number(newStats.Earnings) || 0,
     Clients: Number(newStats.Clients) || 0,
     Projects: Number(newStats.Projects) || 0,
     Events: Number(newStats.Events) || 0,
   };
 
+  let savedData = payload;
+
+  // 1. Save to MongoDB database first
   try {
-    localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(updated));
-    window.dispatchEvent(new CustomEvent("stats-updated", { detail: updated }));
-    await axios.post(`${BASE_URL}/api/stats/update`, updated);
+    const response = await axios.post(`${BASE_URL}/api/stats/update`, payload);
+    if (response.data && response.data.success && response.data.data) {
+      savedData = {
+        Earnings: Number(response.data.data.Earnings) ?? payload.Earnings,
+        Clients: Number(response.data.data.Clients) ?? payload.Clients,
+        Projects: Number(response.data.data.Projects) ?? payload.Projects,
+        Events: Number(response.data.data.Events) ?? payload.Events,
+      };
+    }
   } catch (err) {
-    console.error("Error saving stats to server:", err);
+    console.warn("Backend save notice:", err?.message || err);
   }
-  return updated;
+
+  // 2. After MongoDB operation, update local storage and broadcast to main webpage
+  localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(savedData));
+  window.dispatchEvent(new CustomEvent("stats-updated", { detail: savedData }));
+  return savedData;
 };
 
 export const resetStoredStats = async () => {
