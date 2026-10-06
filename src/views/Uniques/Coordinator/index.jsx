@@ -621,129 +621,181 @@ const index = () => {
   // Fetch data when component mounts
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+
+      // 1. Fetch members (Admin API with fallback to Public & Stored Custom Members)
       try {
-        setLoading(true);
-        // Fetch all members
-        const membersRes = await axios.get(
-          `${BASE_URL}/api/admin/member?page=1&limit=10`
-        );
-        // Get recently added members (sorted by creation date)
-        const sortedMembers = [...membersRes.data.data].sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        );
-        setMembers(sortedMembers.slice(0, 3));
+        let allMembersList = [];
+        let totalMembersCount = 0;
 
-        // Fetch total members count
-        const totalMembers =
-          membersRes.data.pagination?.total || membersRes.data.data.length;
-
-        // Fetch members with fines
-        const fineRes = await axios.get(
-          `${BASE_URL}/api/admin/fine/fines/members`
-        );
-        setFineMembers(
-          fineRes.data.data.members.filter((member) => Number(member.totalPendingAmount) > 0)
-        );
-
-        // Calculate total fine amount - improved calculation
-        let totalFineAmount = 0;
-        if (Array.isArray(fineRes.data.data)) {
-          totalFineAmount = fineRes.data.data.reduce((total, member) => {
-            // Make sure fineStatus is converted to a number and has a default of 0
-            const fineAmount = member.fineStatus
-              ? Number(member.fineStatus)
-              : 0;
-            return total + (isNaN(fineAmount) ? 0 : fineAmount);
-          }, 0);
+        try {
+          const membersRes = await axios.get(
+            `${BASE_URL}/api/admin/member?page=1&limit=20`
+          );
+          if (membersRes.data?.data && Array.isArray(membersRes.data.data)) {
+            allMembersList = [...membersRes.data.data];
+            totalMembersCount = membersRes.data.pagination?.total || membersRes.data.data.length;
+          }
+        } catch (adminMemErr) {
+          console.warn("Could not fetch admin members, attempting public members:", adminMemErr?.message);
+          try {
+            const pubRes = await axios.get(`${BASE_URL}/api/public/members`);
+            if (pubRes.data?.data && Array.isArray(pubRes.data.data)) {
+              allMembersList = [...pubRes.data.data];
+              totalMembersCount = pubRes.data.data.length;
+            }
+          } catch (pubErr) {
+            console.warn("Could not fetch public members:", pubErr?.message);
+          }
         }
 
-        // Alternative: fetch total fine directly if API supports it
+        // Merge with locally stored custom members if any
         try {
-          // Try to get the total fine from a dedicated API endpoint
+          const customMembersRaw = localStorage.getItem("tu_community_custom_members");
+          if (customMembersRaw) {
+            const customMembers = JSON.parse(customMembersRaw);
+            if (Array.isArray(customMembers) && customMembers.length > 0) {
+              const existingIds = new Set(allMembersList.map((m) => m._id || m.id || m.admno));
+              const unadded = customMembers.filter((m) => !existingIds.has(m._id) && !existingIds.has(m.admno));
+              allMembersList = [...unadded, ...allMembersList];
+              totalMembersCount += unadded.length;
+            }
+          }
+        } catch (customErr) {
+          console.error("Error reading custom members:", customErr);
+        }
+
+        const sortedMembers = [...allMembersList].sort(
+          (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+        );
+        setMembers(sortedMembers.slice(0, 4));
+        setStats((prev) => ({
+          ...prev,
+          totalMembers: totalMembersCount,
+        }));
+      } catch (err) {
+        console.error("Error setting members:", err);
+      }
+
+      // 2. Fetch members with fines & Fine stats
+      try {
+        let totalFineAmount = 0;
+        let fineMembersList = [];
+
+        try {
+          const fineRes = await axios.get(
+            `${BASE_URL}/api/admin/fine/fines/members`
+          );
+          const membersData = fineRes.data?.data?.members || (Array.isArray(fineRes.data?.data) ? fineRes.data.data : []);
+          fineMembersList = membersData.filter((member) => Number(member.totalPendingAmount || member.fineStatus || 0) > 0);
+          setFineMembers(fineMembersList);
+
+          totalFineAmount = membersData.reduce((total, member) => {
+            const fineAmount = Number(member.totalPendingAmount || member.fineStatus || 0);
+            return total + (isNaN(fineAmount) ? 0 : fineAmount);
+          }, 0);
+        } catch (fineErr) {
+          console.warn("Could not fetch fine members list:", fineErr?.message);
+        }
+
+        try {
           const fineStatsRes = await axios.get(
             `${BASE_URL}/api/admin/fine/fines/statistics`
           );
-          if (
-            fineStatsRes.data &&
-            fineStatsRes.data.success &&
-            fineStatsRes.data.data
-          ) {
-            // Use the total pending amount as the fine amount for the dashboard
-            totalFineAmount =
-              fineStatsRes.data.data.totalPendingAmount || totalFineAmount;
+          if (fineStatsRes.data?.success && fineStatsRes.data?.data) {
+            totalFineAmount = fineStatsRes.data.data.totalPendingAmount ?? totalFineAmount;
           }
-        } catch (error) {
-          console.log("Using calculated fine total instead of API stats");
-          // Continue with the calculated total if the API call fails
+        } catch (fineStatErr) {
+          console.log("Using calculated fine total");
         }
 
-        // Fetch events from the correct API endpoint
+        setStats((prev) => ({
+          ...prev,
+          totalFine: totalFineAmount,
+        }));
+      } catch (err) {
+        console.error("Error setting fines:", err);
+      }
+
+      // 3. Fetch events
+      try {
+        let eventsList = [];
+        let totalEventsCount = 0;
+
         try {
           const eventsRes = await axios.get(`${BASE_URL}/api/events`);
-          // Handle API response based on its structure (data property or direct array)
-          const eventsList = eventsRes.data.events || [];
-          setEvents(eventsList.slice(0, 3));
+          eventsList = eventsRes.data?.events || (Array.isArray(eventsRes.data) ? eventsRes.data : []);
+          totalEventsCount = eventsRes.data?.total || eventsList.length;
+        } catch (eventErr) {
+          console.warn("Could not fetch events from API, checking fallback:", eventErr?.message);
+        }
 
-          // Update total events count from API response
-          const totalEventsCount = eventsRes.data.total || eventsList.length;
-          setStats((prev) => ({
-            ...prev,
-            totalEvents: totalEventsCount,
-          }));
-        } catch (error) {
-          console.error("Error fetching events:", error);
-          // Fallback to mock data if API fails
-          setEvents([
+        if (eventsList.length === 0) {
+          eventsList = [
             {
               eventName: "Tech Workshop",
               eventStatus: "upcoming",
-              eventDate: "2025-04-15",
+              eventDate: "2026-04-15",
               eventTime: "10:00 AM",
             },
             {
               eventName: "Alumni Meet",
               eventStatus: "upcoming",
-              eventDate: "2025-05-20",
+              eventDate: "2026-05-20",
               eventTime: "2:00 PM",
             },
             {
               eventName: "Coding Competition",
               eventStatus: "completed",
-              eventDate: "2025-02-10",
+              eventDate: "2026-02-10",
               eventTime: "9:00 AM",
             },
-          ]);
-
-          // Keep the stats value for events if API fails
-          setStats((prev) => ({
-            ...prev,
-            totalEvents: 6, // Default fallback
-          }));
+          ];
+          totalEventsCount = 3;
         }
 
-        // Update remaining stats
+        setEvents(eventsList.slice(0, 4));
         setStats((prev) => ({
           ...prev,
-          totalMembers,
-          totalFine: totalFineAmount,
-          totalCampus: 1,
+          totalEvents: totalEventsCount,
         }));
+      } catch (err) {
+        console.error("Error setting events:", err);
+      }
 
-        // Fetch members with supplementary exams for semester 1
+      // 4. Fetch supplementary data
+      try {
         const supplementaryRes = await axios.get(
           `${BASE_URL}/api/admin/member/supplementary/semester/${currentSemester}`
         );
-        setSupplementaryMembers(supplementaryRes.data.data || []);
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
+        setSupplementaryMembers(supplementaryRes.data?.data || []);
+      } catch (suppErr) {
+        console.warn("Supplementary data not available:", suppErr?.message);
+        setSupplementaryMembers([]);
       }
+
+      setLoading(false);
     };
 
     fetchData();
-  }, []);
+
+    // Listen for live updates from other tabs
+    const handleMembersUpdated = () => fetchData();
+    const handleEventsUpdated = () => fetchData();
+    const handleTrainersUpdated = () => fetchData();
+
+    window.addEventListener("members-updated", handleMembersUpdated);
+    window.addEventListener("custom-members-updated", handleMembersUpdated);
+    window.addEventListener("events-updated", handleEventsUpdated);
+    window.addEventListener("trainers-updated", handleTrainersUpdated);
+
+    return () => {
+      window.removeEventListener("members-updated", handleMembersUpdated);
+      window.removeEventListener("custom-members-updated", handleMembersUpdated);
+      window.removeEventListener("events-updated", handleEventsUpdated);
+      window.removeEventListener("trainers-updated", handleTrainersUpdated);
+    };
+  }, [currentSemester]);
 
   // Handle semester change for supplementary data
   const handleSemesterChange = async (semester) => {
