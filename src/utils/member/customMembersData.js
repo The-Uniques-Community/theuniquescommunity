@@ -16,17 +16,19 @@ export const getStoredCustomMembers = () => {
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed)) {
-      const hasDeo = parsed.some(
-        (m) =>
-          m.fullName?.toLowerCase().includes("deo") ||
-          m.batch === "The Uniques 5.0" ||
-          m.batch === "Uniques 5.0"
-      );
-      if (!hasDeo) {
-        parsed.unshift(DEFAULT_CUSTOM_MEMBERS[0]);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
-      }
-      return parsed;
+      const normalized = parsed
+        .filter((m) => m && typeof m === "object")
+        .map((m) => {
+          const b = (m.batch || "").toLowerCase();
+          if (b.includes("1.0") || b.includes("2.0") || b.includes("3.0")) {
+            return { ...m, profileStatus: "inactive" };
+          }
+          if ((b.includes("4.0") || b.includes("5.0")) && !m.isSuspended && m.profileStatus !== "blocked") {
+            return { ...m, profileStatus: "active" };
+          }
+          return m;
+        });
+      return normalized;
     }
     return [...DEFAULT_CUSTOM_MEMBERS];
   } catch (err) {
@@ -39,7 +41,18 @@ export const fetchCustomMembers = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/api/custom-members`);
     if (response.data && response.data.success && Array.isArray(response.data.data)) {
-      const members = response.data.data;
+      const members = response.data.data
+        .filter((m) => m && typeof m === "object")
+        .map((m) => {
+          const b = (m.batch || "").toLowerCase();
+          if (b.includes("1.0") || b.includes("2.0") || b.includes("3.0")) {
+            return { ...m, profileStatus: "inactive" };
+          }
+          if ((b.includes("4.0") || b.includes("5.0")) && !m.isSuspended && m.profileStatus !== "blocked") {
+            return { ...m, profileStatus: "active" };
+          }
+          return m;
+        });
       localStorage.setItem(STORAGE_KEY, JSON.stringify(members));
       window.dispatchEvent(new CustomEvent("custom-members-updated", { detail: members }));
       return members;
@@ -53,6 +66,9 @@ export const fetchCustomMembers = async () => {
 export const saveStoredCustomMember = async (memberData) => {
   try {
     const current = getStoredCustomMembers();
+    const isLegacy = /1\.0|2\.0|3\.0/.test(memberData.batch || "");
+    const initialStatus = isLegacy ? "inactive" : "active";
+
     const newMemberPayload = {
       _id: memberData._id || `custom-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
       fullName: memberData.fullName || "Member",
@@ -60,7 +76,7 @@ export const saveStoredCustomMember = async (memberData) => {
       admno: memberData.admno || "",
       batch: memberData.batch || "The Uniques 5.0",
       course: memberData.course || "B.Tech CSE",
-      profileStatus: memberData.profileStatus || (memberData.isSuspended ? "inactive" : "active"),
+      profileStatus: memberData.isSuspended ? "inactive" : (memberData.profileStatus || initialStatus),
       isSuspended: Boolean(memberData.isSuspended),
       bio: memberData.bio || "Member of The Uniques Community.",
       skills: Array.isArray(memberData.skills) ? memberData.skills : ["Developer"],

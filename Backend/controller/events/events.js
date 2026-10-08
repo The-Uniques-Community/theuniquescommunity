@@ -364,4 +364,4 @@ const commingEvents = [
       eventType: "Hackathon",
       eventStatus: "completed"
     }
-  ];
+]

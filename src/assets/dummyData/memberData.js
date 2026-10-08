@@ -14,7 +14,7 @@ export const members = [
       isPlaced: false,
       isVerified: true,
       isSuspended: false,
-      profileStatus: "active",
+      profileStatus: "inactive",
       fineStatus: "0",
       certifications: [
         {
@@ -111,7 +111,7 @@ export const members = [
       isPlaced: true,
       isVerified: true,
       isSuspended: false,
-      profileStatus: "active",
+      profileStatus: "inactive",
       fineStatus: "500",
       certifications: [
         {

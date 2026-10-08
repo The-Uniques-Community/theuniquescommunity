@@ -55,7 +55,6 @@ const memberSchema = new mongoose.Schema(
     },
     batch: {
       type: String,
-      enum: ["The Uniques 1.0", "The Uniques 2.0", "The Uniques 3.0", "The Uniques 4.0"],
     },
     contact: {
       type: String,
@@ -86,7 +85,7 @@ const memberSchema = new mongoose.Schema(
     },
     profileStatus: {
       type: String,
-      default: "inactive",
+      default: "active",
       enum: ["inactive", "active", "pending", "blocked"],
     },
     // Replacing simple fine fields with structured array
