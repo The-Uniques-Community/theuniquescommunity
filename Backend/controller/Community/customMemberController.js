@@ -31,13 +31,16 @@ export const getCustomMembers = async (req, res) => {
 export const addCustomMember = async (req, res) => {
   try {
     const memberData = req.body;
+    const isLegacy = /1\.0|2\.0|3\.0/.test(memberData.batch || "");
+    const initialStatus = isLegacy ? "inactive" : "active";
+
     const newMember = new CustomMember({
       fullName: memberData.fullName || "Member",
       email: memberData.email || "",
       admno: memberData.admno || "",
       batch: memberData.batch || "The Uniques 5.0",
       course: memberData.course || "B.Tech CSE",
-      profileStatus: memberData.profileStatus || (memberData.isSuspended ? "inactive" : "active"),
+      profileStatus: memberData.isSuspended ? "inactive" : (memberData.profileStatus || initialStatus),
       isSuspended: Boolean(memberData.isSuspended),
       bio: memberData.bio || "Member of The Uniques Community.",
       skills: Array.isArray(memberData.skills) ? memberData.skills : ["Developer"],

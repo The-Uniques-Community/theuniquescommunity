@@ -95,3 +95,53 @@ export const addStoredBatch = async (batchName) => {
   }
   return formatted;
 };
+
+/**
+ * Returns active/inactive status based on batch cohort:
+ * - Batches 1.0, 2.0, 3.0 -> "inactive"
+ * - Batch 4.0 (and 5.0+) -> "active"
+ * - Honors suspended / blocked states if user object is provided
+ */
+export const getBatchStatus = (batchOrUser) => {
+  if (!batchOrUser) return "inactive";
+
+  const isUserObj = typeof batchOrUser === "object" && batchOrUser !== null;
+  const batchStr = isUserObj ? (batchOrUser.batch || "") : String(batchOrUser);
+  
+  if (isUserObj) {
+    if (batchOrUser.isSuspended) return "suspended";
+    if (batchOrUser.profileStatus === "blocked") return "blocked";
+  }
+
+  const lower = batchStr.toLowerCase().trim();
+
+  // Batches 1.0, 2.0, 3.0 are inactive (graduated batches)
+  if (
+    lower.includes("1.0") ||
+    lower.includes("2.0") ||
+    lower.includes("3.0") ||
+    lower.endsWith("1.0") ||
+    lower.endsWith("2.0") ||
+    lower.endsWith("3.0")
+  ) {
+    return "inactive";
+  }
+
+  // Batch 4.0, 5.0 and newer batches are active
+  if (
+    lower.includes("4.0") ||
+    lower.includes("5.0") ||
+    lower.includes("6.0") ||
+    lower.includes("7.0") ||
+    lower.includes("8.0") ||
+    lower.includes("9.0")
+  ) {
+    return "active";
+  }
+
+  if (isUserObj && batchOrUser.profileStatus) {
+    return batchOrUser.profileStatus;
+  }
+
+  return "active";
+};

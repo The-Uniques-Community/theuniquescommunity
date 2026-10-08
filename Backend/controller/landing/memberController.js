@@ -78,7 +78,11 @@ export const getPublicMembers = async (req, res) => {
         eventContributionType: member.eventContributionType || [],
         
         // Add profile status info that might be useful for UI rendering
-        profileStatus: member.profileStatus || "incomplete",
+        profileStatus: member.isSuspended 
+          ? "suspended" 
+          : (member.profileStatus === "blocked" 
+              ? "blocked" 
+              : (/1\.0|2\.0|3\.0/.test(member.batch || "") ? "inactive" : "active")),
         isVerified: !!member.isVerified,
         isSuspended: !!member.isSuspended
       }));

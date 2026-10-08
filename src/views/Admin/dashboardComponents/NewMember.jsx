@@ -45,8 +45,10 @@ import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import axios from "axios";
 import userIcon from "@/assets/img/user-icon.webp";
 import tu from "@/assets/logos/tu.png";
+import { getBatchStatus } from "@/utils/batch/batchesData";
 
 export const NewMember = ({ user, refreshData }) => {
+  const effectiveStatus = getBatchStatus(user);
   const [open, setOpen] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [expandedSemesters, setExpandedSemesters] = useState({});
@@ -274,11 +276,11 @@ export const NewMember = ({ user, refreshData }) => {
             </div>
             <span
               className={`${getStatusColor(
-                user.profileStatus
+                effectiveStatus
               )} text-white text-sm px-3 py-1 rounded-full`}
             >
-              {user.profileStatus.charAt(0).toUpperCase() +
-                user.profileStatus.slice(1)}
+              {effectiveStatus.charAt(0).toUpperCase() +
+                effectiveStatus.slice(1)}
             </span>
           </div>
 
@@ -362,8 +364,8 @@ export const NewMember = ({ user, refreshData }) => {
             <div className="flex flex-wrap gap-2">
               <Chip
                 icon={<BadgeIcon />}
-                label={user.profileStatus.toUpperCase()}
-                className={`${getStatusColor(user.profileStatus)} text-white`}
+                label={effectiveStatus.toUpperCase()}
+                className={`${getStatusColor(effectiveStatus)} text-white`}
               />
               {user.isSuspended && (
                 <Chip

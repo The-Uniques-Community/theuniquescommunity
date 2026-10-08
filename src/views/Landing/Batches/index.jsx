@@ -98,7 +98,7 @@ const index = () => {
       );
 
       const customCountForBatch = customMembersList.filter((m) => {
-        if (m.isSuspended) return false;
+        if (!m || typeof m !== "object" || m.isSuspended) return false;
         const b1 = (m.batch || "").toLowerCase().trim();
         const b2 = (batchName || "").toLowerCase().trim();
         return b1 === b2 || (b1.includes("5.0") && b2.includes("5.0"));
@@ -202,7 +202,7 @@ const index = () => {
         // Custom members filtering
         const customMembers = getStoredCustomMembers();
         const matchingCustom = customMembers.filter((m) => {
-          if (m.isSuspended) return false;
+          if (!m || typeof m !== "object" || m.isSuspended) return false;
           if (selectedBatch === "All") return true;
           const b1 = (m.batch || "").toLowerCase().trim();
           const b2 = (selectedBatch || "").toLowerCase().trim();
@@ -382,7 +382,7 @@ const index = () => {
 
         const customMembers = getStoredCustomMembers();
         const matchingCustom = customMembers.filter((m) => {
-          if (m.isSuspended) return false;
+          if (!m || typeof m !== "object" || m.isSuspended) return false;
           if (selectedBatch === "All") return true;
           const b1 = (m.batch || "").toLowerCase().trim();
           const b2 = (selectedBatch || "").toLowerCase().trim();
