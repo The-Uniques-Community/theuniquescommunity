@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { 
   LinkedIn as LinkedInIcon,
-  Twitter as TwitterIcon,
+  WhatsApp as WhatsAppIcon,
   Instagram as InstagramIcon,
   Facebook as FacebookIcon
 } from '@mui/icons-material';
@@ -125,16 +125,16 @@ const Sidebar = ({ students, onDrawerToggle, isDrawerOpen }) => {
           Connect with The Uniques Community
         </Typography>
         <Box>
-          <SocialIcon size="small" aria-label="LinkedIn">
+          <SocialIcon size="small" aria-label="LinkedIn" href="https://www.linkedin.com/company/theuniquesofflicial" target="_blank" rel="noopener noreferrer">
             <LinkedInIcon fontSize="small" />
           </SocialIcon>
-          <SocialIcon size="small" aria-label="Twitter">
-            <TwitterIcon fontSize="small" />
+          <SocialIcon size="small" aria-label="WhatsApp" href="https://chat.whatsapp.com/HYOloogGXKcIkR83DnOjFj" target="_blank" rel="noopener noreferrer">
+            <WhatsAppIcon fontSize="small" />
           </SocialIcon>
-          <SocialIcon size="small" aria-label="Instagram">
+          <SocialIcon size="small" aria-label="Instagram" href="https://www.instagram.com/theuniquescommunity/" target="_blank" rel="noopener noreferrer">
             <InstagramIcon fontSize="small" />
           </SocialIcon>
-          <SocialIcon size="small" aria-label="Facebook">
+          <SocialIcon size="small" aria-label="Facebook" href="https://www.facebook.com/theuniquesofficial" target="_blank" rel="noopener noreferrer">
             <FacebookIcon fontSize="small" />
           </SocialIcon>
         </Box>
