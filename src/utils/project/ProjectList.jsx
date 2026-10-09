@@ -142,15 +142,18 @@ const ProjectList = ({ createRoutePrefix = "/coordinator/projects-overview" }) =
     setSnackbar({ ...snackbar, open: false });
   };
 
-  const handleViewLive = (link) => {
-    if (link && link !== "#") {
-      window.open(link, "_blank", "noopener,noreferrer");
-    } else {
-      setSnackbar({
-        open: true,
-        message: "No live link provided for this project",
-        severity: "info",
-      });
+  const handleViewProject = (project) => {
+    const projectId =
+      project?.id ??
+      project?._id ??
+      (project?.title
+        ? project.title
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-|-$/g, "")
+        : null);
+    if (projectId) {
+      navigate(`${createRoutePrefix}/view/${projectId}`);
     }
   };
 
@@ -286,7 +289,7 @@ const ProjectList = ({ createRoutePrefix = "/coordinator/projects-overview" }) =
               </TableHead>
               <TableBody>
                 {paginatedProjects.map((project) => (
-                  <TableRow key={project.id} hover>
+                  <TableRow key={project.id || project._id} hover>
                     <TableCell>
                       <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                         {project.image ? (
@@ -426,7 +429,7 @@ const ProjectList = ({ createRoutePrefix = "/coordinator/projects-overview" }) =
                           color="primary"
                           size="small"
                           startIcon={<Visibility />}
-                          onClick={() => handleViewLive(project.link)}
+                          onClick={() => handleViewProject(project)}
                           sx={{ borderRadius: 2 }}
                         >
                           View

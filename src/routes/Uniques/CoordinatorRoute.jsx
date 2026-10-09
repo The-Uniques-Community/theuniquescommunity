@@ -33,6 +33,7 @@ const Account = Loader(lazy(() => import("@/views/Uniques/Coordinator/Accounts/i
 const Profile = Loader(lazy(() => import("@/views/Uniques/Member")));
 const EventBudget = Loader(lazy(() => import("@/views/Uniques/Coordinator/Events/Budget")));
 const EventView = Loader(lazy(() => import("@/views/Uniques/Coordinator/Events/View")));
+const ProjectView = Loader(lazy(() => import("@/views/Admin/Projects/View")));
 const Enquiry = Loader(lazy(() => import("@/views/Uniques/Coordinator/Enquiry")));
 const Trainers = Loader(lazy(() => import("@/views/Uniques/Coordinator/Trainers")));
 const Stats = Loader(lazy(() => import("@/views/Uniques/Coordinator/Stats")));
@@ -74,6 +75,10 @@ const CoordinatorRoute = {
     {
       path: "/coordinator/projects-overview/create",
       element: <ProjectForm />,
+    },
+    {
+      path: "/coordinator/projects-overview/view/:id",
+      element: <ProjectView />,
     },
     {
       path: "/coordinator/accounts",
