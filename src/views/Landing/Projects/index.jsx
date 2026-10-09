@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import CelebrationComponent from "@/utils/Header";
 import { ArrowUpRight, Search, Code2, ChevronDown, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -133,6 +134,7 @@ export const PROJECTS_DATA = [
 ];
 
 const Projects = () => {
+  const navigate = useNavigate();
   const [projectsList, setProjectsList] = useState(() => getStoredProjects());
   const [storedBatches, setStoredBatches] = useState(() => getStoredBatches());
   const [selectedBatch, setSelectedBatch] = useState("all");
@@ -328,7 +330,7 @@ const Projects = () => {
               <div
                 key={project.id}
                 onClick={() =>
-                  window.open(project.link, "_blank", "noopener,noreferrer")
+                  navigate(`/projects/${project.id || project._id}`)
                 }
                 className="group cursor-pointer flex flex-col transition-all duration-300 hover:-translate-y-1"
               >
@@ -357,11 +359,15 @@ const Projects = () => {
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        window.open(
-                          project.link,
-                          "_blank",
-                          "noopener,noreferrer"
-                        );
+                        if (project.link && project.link !== "#") {
+                          window.open(
+                            project.link,
+                            "_blank",
+                            "noopener,noreferrer"
+                          );
+                        } else {
+                          navigate(`/projects/${project.id || project._id}`);
+                        }
                       }}
                       className="pointer-events-auto absolute bottom-0 right-0 w-12 h-12 rounded-full flex items-center justify-center text-white bg-[#ea384c] hover:bg-[#ca0019] shadow-md shadow-red-500/30 transition-all duration-300 group-hover:scale-105 group-hover:rotate-45 cursor-pointer"
                       title={`Open ${project.title}`}
