@@ -59,7 +59,7 @@ const testimonialData = {
   ],
   faculty: [
     {
-      name: "Dr. Rajesh Sharma",
+      name: "Vivek Agnihotri",
       role: "Professor of Computer Science",
       image: "https://randomuser.me/api/portraits/men/42.jpg",
       testimonial: "The curriculum at The Uniques Community bridges academic theory with industry practice seamlessly. Our students who engage with their cohorts consistently excel in technical problem-solving.",
@@ -67,24 +67,24 @@ const testimonialData = {
       highlight: "Curriculum"
     },
     {
-      name: "Prof. Anita Desai",
-      role: "Head of IT Department",
+      name: "Neha Mehta",
+      role: "Soft Skills trainer at Sviet",
       image: "https://randomuser.me/api/portraits/women/45.jpg",
       testimonial: "I have witnessed an inspiring transformation in students participating in The Uniques programs. Their technical confidence, code quality, and collaboration skills show immense growth.",
       rating: 5,
       highlight: "Skill Growth"
     },
     {
-      name: "Dr. Vikram Mehta",
-      role: "Dean of Engineering",
+      name: "Gaurav Nagpal",
+      role: "Technical Trainer at Sviet",
       image: "https://randomuser.me/api/portraits/men/32.jpg",
       testimonial: "The Uniques Community's focus on project-driven learning complements our degree programs brilliantly. Their industry mentors provide students with priceless hands-on tech exposure.",
       rating: 5,
       highlight: "Industry Link"
     },
     {
-      name: "Prof. Sunita Patel",
-      role: "Director of Placements",
+      name: "Gurmeet Singh",
+      role: "Technical trainer at Sviet",
       image: "https://randomuser.me/api/portraits/women/68.jpg",
       testimonial: "Leading tech companies actively seek students trained by The Uniques Community. Their structured training significantly elevates campus placement records and career opportunities.",
       rating: 5,
