@@ -1,6 +1,11 @@
-import Project from "../../models/projects/projectModel.js";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import dbconnect from "./config/dbConfig.js";
+import Project from "./models/projects/projectModel.js";
 
-const INITIAL_SEED_PROJECTS = [
+dotenv.config();
+
+const ALL_PROJECTS = [
   {
     title: "UNI CARE",
     batch: "Uniques 4.0",
@@ -146,128 +151,33 @@ const INITIAL_SEED_PROJECTS = [
   },
 ];
 
-// Get all projects (auto-seed if empty)
-export const getAllProjects = async (req, res) => {
+export const seedProjects = async () => {
   try {
-    let projects = await Project.find().sort({ createdAt: -1 });
-    
-    if (!projects || projects.length === 0) {
-      // Seed default initial projects
-      await Project.insertMany(INITIAL_SEED_PROJECTS);
-      projects = await Project.find().sort({ createdAt: -1 });
+    await dbconnect();
+    console.log("Connected to MongoDB, seeding projects...");
+
+    for (const proj of ALL_PROJECTS) {
+      await Project.findOneAndUpdate(
+        { title: proj.title },
+        { $set: proj },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
+      console.log(`✓ Project synced: ${proj.title}`);
     }
 
-    res.status(200).json({
-      success: true,
-      count: projects.length,
-      data: projects,
-    });
+    const total = await Project.countDocuments();
+    console.log(`\n🎉 Success! Total ${total} projects stored in database.`);
   } catch (error) {
-    console.error("Error fetching projects:", error);
-    res.status(500).json({ success: false, message: "Server error fetching projects", error: error.message });
+    console.error("Error seeding projects:", error);
+  } finally {
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.disconnect();
+      console.log("MongoDB disconnected.");
+    }
   }
 };
 
-// Get single project
-export const getProjectById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const project = await Project.findById(id);
-
-    if (!project) {
-      return res.status(404).json({ success: false, message: "Project not found" });
-    }
-
-    res.status(200).json({ success: true, data: project });
-  } catch (error) {
-    console.error("Error fetching project:", error);
-    res.status(500).json({ success: false, message: "Server error fetching project", error: error.message });
-  }
-};
-
-// Create new project
-export const createProject = async (req, res) => {
-  try {
-    const { title, batch, description, image, technologies, category, link, githubLink, buttonColor, status, featured, contributors } = req.body;
-
-    if (!title || !batch || !description) {
-      return res.status(400).json({
-        success: false,
-        message: "Title, batch, and description are required",
-      });
-    }
-
-    const newProject = new Project({
-      title: title.trim(),
-      batch: batch.trim(),
-      description: description.trim(),
-      image: image || "/projects/unicare.webp",
-      technologies: Array.isArray(technologies) ? technologies : [technologies].filter(Boolean),
-      category: category || "General",
-      link: link || "#",
-      githubLink: githubLink || "",
-      buttonColor: buttonColor || "#ea384c",
-      status: status || "Active",
-      featured: typeof featured === "boolean" ? featured : false,
-      contributors: Array.isArray(contributors) ? contributors : [],
-    });
-
-    const savedProject = await newProject.save();
-
-    res.status(201).json({
-      success: true,
-      message: "Project created successfully",
-      data: savedProject,
-    });
-  } catch (error) {
-    console.error("Error creating project:", error);
-    res.status(500).json({ success: false, message: "Server error creating project", error: error.message });
-  }
-};
-
-// Update project
-export const updateProject = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updates = req.body;
-
-    const updated = await Project.findByIdAndUpdate(id, updates, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!updated) {
-      return res.status(404).json({ success: false, message: "Project not found" });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Project updated successfully",
-      data: updated,
-    });
-  } catch (error) {
-    console.error("Error updating project:", error);
-    res.status(500).json({ success: false, message: "Server error updating project", error: error.message });
-  }
-};
-
-// Delete project
-export const deleteProject = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const deleted = await Project.findByIdAndDelete(id);
-
-    if (!deleted) {
-      return res.status(404).json({ success: false, message: "Project not found" });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Project deleted successfully",
-      data: deleted,
-    });
-  } catch (error) {
-    console.error("Error deleting project:", error);
-    res.status(500).json({ success: false, message: "Server error deleting project", error: error.message });
-  }
-};
+// If run directly
+if (process.argv[1]?.includes("seedProjects.js")) {
+  seedProjects();
+}
