@@ -4,7 +4,7 @@ import {
   addBatch,
   getBatchProfiles,
   saveBatchProfiles,
-} from "../../controller/community/batchController.js";
+} from "../../controller/Community/batchController.js";
 
 const router = express.Router();
 

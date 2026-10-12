@@ -2,7 +2,7 @@ import express from "express";
 import {
   getBenefitsCards,
   updateBenefitsCards,
-} from "../../controller/community/communityBenefitsController.js";
+} from "../../controller/Community/communityBenefitsController.js";
 
 const router = express.Router();
 

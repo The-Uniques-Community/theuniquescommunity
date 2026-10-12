@@ -4,7 +4,7 @@ import {
   addCustomMember,
   updateCustomMember,
   deleteCustomMember,
-} from "../../controller/community/customMemberController.js";
+} from "../../controller/Community/customMemberController.js";
 
 const router = express.Router();
 
