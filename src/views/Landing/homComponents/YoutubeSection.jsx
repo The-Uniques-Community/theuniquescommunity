@@ -11,7 +11,7 @@ const YoutubeSection = () => {
   const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
 
   return (
-    <section className="relative py-20 px-4 overflow-hidden">
+    <section className="relative pt-6 sm:pt-10 lg:pt-14 pb-8 sm:pb-12 lg:pb-16 px-4 overflow-hidden">
       {/* Background decorative blobs */}
       <div className="absolute -top-20 -left-20 w-72 h-72 bg-[#ca0019]/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-[#ca0019]/5 rounded-full blur-3xl pointer-events-none" />

@@ -29,37 +29,42 @@ const Carousel = forwardRef(
       align: window.innerWidth < 768 ? 'center' : 'start',
     });
 
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [scrollSnaps, setScrollSnaps] = useState([]);
     const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
     const [nextBtnDisabled, setNextBtnDisabled] = useState(false);
-    // Track if we're on mobile
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
-
-    // Update mobile status on window resize
-    useEffect(() => {
-      const handleResize = () => {
-        setIsMobile(window.innerWidth < 640);
-      };
-
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }, []);
 
     const onSelect = React.useCallback(() => {
       if (!emblaApi) return;
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+      setPrevBtnDisabled(!emblaApi.canScrollPrev());
+      setNextBtnDisabled(!emblaApi.canScrollNext());
+    }, [emblaApi]);
+
+    const onInit = React.useCallback(() => {
+      if (!emblaApi) return;
+      setScrollSnaps(emblaApi.scrollSnapList());
+      setSelectedIndex(emblaApi.selectedScrollSnap());
       setPrevBtnDisabled(!emblaApi.canScrollPrev());
       setNextBtnDisabled(!emblaApi.canScrollNext());
     }, [emblaApi]);
 
     useEffect(() => {
       if (!emblaApi) return;
-      onSelect();
+      onInit();
       emblaApi.on("select", onSelect);
+      emblaApi.on("reInit", onInit);
       if (setApi) setApi(emblaApi);
 
       return () => {
         emblaApi.off("select", onSelect);
+        emblaApi.off("reInit", onInit);
       };
-    }, [emblaApi, onSelect, setApi]);
+    }, [emblaApi, onInit, onSelect, setApi]);
+
+    const snaps = scrollSnaps.length > 0
+      ? scrollSnaps
+      : Array.from({ length: React.Children.count(children) });
 
     return (
       <div
@@ -71,53 +76,65 @@ const Carousel = forwardRef(
           <div className="flex pt-3 pb-2">{children}</div>
         </div>
 
-        {/* Only show buttons on non-touch devices */}
-        {!isMobile && (
-          <>
+        {/* Pagination dots below event cards */}
+        <div className="flex justify-center items-center gap-2 mt-6 mb-4">
+          {snaps.map((_, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => emblaApi?.scrollTo(index)}
+              className={cn(
+                "h-2.5 w-2.5 rounded-full transition-all duration-300 cursor-pointer",
+                selectedIndex === index
+                  ? "bg-[#ca0019] scale-125"
+                  : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400"
+              )}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+
+        {/* Bottom controls: Centered Arrows + Right Side View All */}
+        <div className="relative flex items-center justify-center mt-2 px-1 sm:px-2 min-h-[44px]">
+          {/* Two arrows directed towards left and right */}
+          <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => emblaApi?.scrollPrev()}
               disabled={prevBtnDisabled}
               className={cn(
-                "absolute left-[-15px] sm:left-[-20px] md:left-[-30px] top-1/2 z-[999] -translate-y-1/2 rounded-full bg-white p-2 sm:p-3 shadow-[0_8px_16px_rgba(0,0,0,0.1)] border border-gray-100 hover:bg-gray-50 transition-all duration-300",
-                prevBtnDisabled && "opacity-40 cursor-not-allowed hover:bg-white"
+                "w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 flex items-center justify-center shadow-sm hover:bg-[#ca0019] hover:text-white hover:border-[#ca0019] transition-all duration-200 cursor-pointer",
+                prevBtnDisabled && "opacity-40 cursor-not-allowed hover:bg-white hover:text-gray-700 hover:border-gray-200"
               )}
-              aria-label="Previous slide"
+              aria-label="Previous event"
             >
-              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+              <ArrowLeft className="w-5 h-5" />
             </button>
-
             <button
               type="button"
               onClick={() => emblaApi?.scrollNext()}
               disabled={nextBtnDisabled}
               className={cn(
-                "absolute right-[-15px] sm:right-[-20px] md:right-[-30px] top-1/2 z-[999] -translate-y-1/2 rounded-full bg-white p-2 sm:p-3 shadow-[0_8px_16px_rgba(0,0,0,0.1)] border border-gray-100 hover:bg-gray-50 transition-all duration-300",
-                nextBtnDisabled && "opacity-40 cursor-not-allowed hover:bg-white"
+                "w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 flex items-center justify-center shadow-sm hover:bg-[#ca0019] hover:text-white hover:border-[#ca0019] transition-all duration-200 cursor-pointer",
+                nextBtnDisabled && "opacity-40 cursor-not-allowed hover:bg-white hover:text-gray-700 hover:border-gray-200"
               )}
-              aria-label="Next slide"
+              aria-label="Next event"
             >
-              <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
+              <ArrowRight className="w-5 h-5" />
             </button>
-          </>
-        )}
-
-        {/* Pagination dots for mobile */}
-        {isMobile && (
-          <div className="flex justify-center items-center mt-4">
-            {Array.from({ length: Math.ceil(React.Children.count(children) / 1) }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => emblaApi?.scrollTo(index)}
-                className={`h-2 w-2 mx-1 rounded-full ${emblaApi && emblaApi.selectedScrollSnap() === index
-                    ? 'bg-[#ca0019]'
-                    : 'bg-gray-300'
-                  }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
           </div>
-        )}
+
+          {/* View All Button on Right Side Corner */}
+          <div className="absolute right-0">
+            <Link
+              to="/events"
+              className="inline-flex items-center px-4 sm:px-5 py-2 bg-[#e03232] hover:bg-[#c52020] text-white text-xs sm:text-sm font-medium rounded-lg transition-all duration-300 shadow-sm"
+            >
+              <span>View All</span>
+              <ArrowRight className="ml-1.5 w-4 h-4" />
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
@@ -215,26 +232,16 @@ const Event = () => {
   }
 
   return (
-    <section className="py-8 md:py-16 px-2 md:px-4 bg-transparent relative overflow-hidden">
+    <section className="pt-6 sm:pt-10 lg:pt-14 pb-8 sm:pb-12 lg:pb-16 px-2 md:px-4 bg-transparent relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-6 md:mb-10 flex flex-col md:flex-row justify-between items-start md:items-center">
-          <div className="w-full md:w-1/2 flex flex-col justify-center mb-4 md:mb-0">
-            <div className="flex mb-2 md:mb-5 items-center">
-              <span className="border-l-2 border-[#e03232] h-6 mr-3"></span>
-              <h1 className="text-lg font-bold">OUR EVENTS</h1>
-            </div>
-            <h1 className="text-lg md:text-3xl font-semibold mb-4 md:mb-8">
-              Experience the <span className="text-[#ca2c2c] text-3xl md:text-4xl lg:text-7xl md:py-3 block">excitement</span>
-            </h1>
+        <div className="mb-6 md:mb-10 flex flex-col justify-center">
+          <div className="flex mb-2 md:mb-5 items-center">
+            <span className="border-l-2 border-[#e03232] h-6 mr-3"></span>
+            <h1 className="text-lg font-bold">OUR EVENTS</h1>
           </div>
-
-          <Link
-            to="/events"
-            className="inline-flex items-center px-4 sm:px-5 py-2 bg-[#e03232] hover:bg-[#c52020] text-white text-sm sm:text-base font-medium rounded-lg transition-all duration-300"
-          >
-            View All
-            <ArrowRight className="ml-2 w-4 h-4" />
-          </Link>
+          <h1 className="text-lg md:text-3xl font-semibold">
+            Experience the <span className="text-[#ca2c2c] text-3xl md:text-4xl lg:text-7xl md:py-3 block">excitement</span>
+          </h1>
         </div>
 
         <Carousel
@@ -243,7 +250,7 @@ const Event = () => {
           opts={{
             align: 'start',
             loop: true,
-            dragFree: true
+            dragFree: false
           }}
         >
           {events.map((event, index) => (

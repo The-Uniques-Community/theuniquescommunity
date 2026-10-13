@@ -72,7 +72,7 @@ const CommunityPartners = () => {
   const { isDarkMode } = useThemeContext();
 
   return (
-    <section className={`py-14 transition-colors duration-500 ${isDarkMode ? "bg-[#0d0d0d]" : "bg-gray-50"}`}>
+    <section className={`pt-6 sm:pt-10 lg:pt-14 pb-8 sm:pb-12 lg:pb-16 transition-colors duration-500 ${isDarkMode ? "bg-[#0d0d0d]" : "bg-gray-50"}`}>
       {/* Heading */}
       <div className="text-center mb-10 px-4">
         <div className="flex items-center justify-center gap-3 mb-3">
