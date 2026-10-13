@@ -5,7 +5,7 @@ function Startups() {
   const [activeStep, setActiveStep] = useState(2);
 
   return (
-    <section className="relative overflow-hidden z-[1] px-4 py-12 md:py-[70px]">
+    <section className="relative overflow-hidden z-[1] px-4 pt-6 sm:pt-10 lg:pt-14 pb-8 sm:pb-12 lg:pb-16">
       <div className="container relative">
         <div className="grid grid-cols-12 relative">
           <div className=" mx-auto flex flex-col align-middle justify-start">

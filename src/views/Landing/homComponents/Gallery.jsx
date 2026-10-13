@@ -79,8 +79,8 @@ const Gallery = () => {
   const { isDarkMode } = useThemeContext();
 
   return (
-    <div className={`w-full py-16 flex flex-col items-center justify-start transition-colors duration-500 ${isDarkMode ? "bg-transparent" : "bg-white"}`}>
-      
+    <div className={`w-full pt-6 sm:pt-10 lg:pt-14 pb-4 sm:pb-8 lg:pb-12 flex flex-col items-center justify-start transition-colors duration-500 ${isDarkMode ? "bg-transparent" : "bg-white"}`}>
+
       {/* Header Section */}
       <div className="w-[85%] mx-auto flex flex-col align-middle justify-start mb-6">
         <div className="flex mb-3 items-center">
@@ -98,7 +98,7 @@ const Gallery = () => {
       </div>
 
       {/* 2D Draggable Plane Gallery Wrapper */}
-      <div className="w-[85%] relative h-[600px] md:h-[700px] flex items-center justify-center">
+      <div className="w-[85%] relative h-[440px] sm:h-[500px] md:h-[600px] flex items-center justify-center">
         <DomeGallery
           images={ACHIEVEMENT_IMAGES}
           grayscale={false}

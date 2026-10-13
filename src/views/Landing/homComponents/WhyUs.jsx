@@ -8,23 +8,23 @@ import {
 
 const WhyUs = () => {
   return (
-    <section className="ezy__portfolio10 w-full light py-14 md:py-24 bg-white text-black">
+    <section className="ezy__portfolio10 w-full light pt-6 sm:pt-10 lg:pt-14 pb-8 sm:pb-12 lg:pb-16 bg-white text-black">
       <div className="container mx-auto">
         {/* Section Header */}
         <div className="mx-auto flex flex-col align-middle justify-start">
-  <div className="flex mb-5 items-center">
-    <span className="border-l-2 border-[#ca0019] h-6 mr-3"></span>
-    <h1 className="text-sm md:text-lg font-bold capitalize">
-      A Community Like No Other
-    </h1>
-  </div>
-  <h2 className=" text-2xl md:text-4xl font-semibold leading-relaxed">
-    Driving <span className="brush-bg text-white">Innovation</span> Through  
-    <span className="text-[#ca0019] text-2xl md:text-5xl md:py-2 block mb-5">
-      Collaboration & Visionary Thinking
-    </span>
-  </h2>
-</div>
+          <div className="flex mb-5 items-center">
+            <span className="border-l-2 border-[#ca0019] h-6 mr-3"></span>
+            <h1 className="text-sm md:text-lg font-bold capitalize">
+              A Community Like No Other
+            </h1>
+          </div>
+          <h2 className=" text-2xl md:text-4xl font-semibold leading-relaxed">
+            Driving <span className="brush-bg text-white">Innovation</span> Through
+            <span className="text-[#ca0019] text-2xl md:text-5xl md:py-2 block mb-5">
+              Collaboration & Visionary Thinking
+            </span>
+          </h2>
+        </div>
 
         {/* Features Grid */}
         <div className="grid grid-cols-3 gap-6 mt-6 max-w-7xl mx-auto">
@@ -41,7 +41,7 @@ const WhyUs = () => {
                   ></div>
                 </div>
                 <div className="flex flex-col justify-center w-full md:w-1/2 p-4 sm:p-6 text-black h-full">
-               
+
                   <h1 className="text-sm md:text-lg font-bold capitalize">
                     Global Networking
                   </h1>
@@ -49,7 +49,7 @@ const WhyUs = () => {
                     Build Connections That Matter
                   </h5>
                   <p>
-                    Connect with founders, investors, and industry leaders worldwide to collaborate, grow,  
+                    Connect with founders, investors, and industry leaders worldwide to collaborate, grow,
                     and scale your startup with the right mentorship.
                   </p>
                 </div>
@@ -67,7 +67,7 @@ const WhyUs = () => {
                 Hands-On Learning
               </h5>
               <p>
-                Get exclusive access to expert-led workshops, panel discussions,  
+                Get exclusive access to expert-led workshops, panel discussions,
                 and case studies to refine your business strategy.
               </p>
             </div>
@@ -83,7 +83,7 @@ const WhyUs = () => {
                 Startup Acceleration
               </h3>
               <p>
-                Get access to funding opportunities, pitch competitions,  
+                Get access to funding opportunities, pitch competitions,
                 and acceleration programs designed to take your startup to the next level.
               </p>
             </div>
@@ -109,7 +109,7 @@ const WhyUs = () => {
                     Showcase Your Innovation
                   </h3>
                   <p>
-                    Pitch your ideas in exclusive startup showcases and competitions,  
+                    Pitch your ideas in exclusive startup showcases and competitions,
                     attracting investors, mentors, and potential co-founders.
                   </p>
                 </div>
