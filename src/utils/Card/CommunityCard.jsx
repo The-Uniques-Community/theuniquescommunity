@@ -4,7 +4,7 @@ import ScheduleOutlinedIcon from "@mui/icons-material/ScheduleOutlined";
 import "./communitycard.css";
 import logo from "@/assets/logos/theuniquesCommunity.png";
 
-const CommunityCard = ({ event, onCardClick, onKnowMoreClick, onClick }) => {
+const CommunityCard = ({ event, onCardClick, onKnowMoreClick }) => {
   const navigate = useNavigate();
 
   // Extract Google Drive file ID from object, URL, or string
@@ -180,7 +180,7 @@ const CommunityCard = ({ event, onCardClick, onKnowMoreClick, onClick }) => {
           <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800/60 mt-auto pb-1">
             <img
               src={logo}
-              className="h-6 w-auto max-w-[120px] object-contain object-left pointer-events-none"
+              className="h-5 sm:h-6 w-auto max-w-[100px] sm:max-w-[120px] object-contain object-left pointer-events-none"
               alt="TU Logo"
             />
           </div>
@@ -190,10 +190,10 @@ const CommunityCard = ({ event, onCardClick, onKnowMoreClick, onClick }) => {
       {/* "Know More" Button positioned directly in the bottom-right cutout socket with clean clearance */}
       <button
         onClick={handleKnowMoreClick}
-        className="know-more-button absolute bottom-1.5 right-1.5 bg-[#ca0019] hover:bg-black text-white text-xs font-semibold px-4 py-2 rounded-full shadow-[0_6px_16px_rgba(202,0,25,0.4)] hover:shadow-[0_8px_22px_rgba(202,0,25,0.55)] transition-all duration-200 z-30 flex items-center gap-1.5"
+        className="know-more-button absolute bottom-1.5 right-1.5 bg-[#ca0019] hover:bg-black text-white text-[11px] sm:text-xs font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-[0_6px_16px_rgba(202,0,25,0.4)] hover:shadow-[0_8px_22px_rgba(202,0,25,0.55)] transition-all duration-200 z-30 flex items-center gap-1 sm:gap-1.5"
       >
         <span>Know More</span>
-        <span className="text-sm font-bold leading-none">→</span>
+        <span className="text-xs sm:text-sm font-bold leading-none">→</span>
       </button>
 
       {/* SVG Outline Stroke following the exact custom clipped silhouette */}

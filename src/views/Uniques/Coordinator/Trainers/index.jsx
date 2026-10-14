@@ -337,6 +337,7 @@ const Trainers = () => {
                                 <TrainerCardDashboard
                                     key={trainer._id}
                                     user={trainer}
+                                    onDelete={handleOpenDeleteDialog}
                                 />
                             ))
                         ) : (
@@ -488,10 +489,17 @@ const Trainers = () => {
                 <DialogContent
                     dividers
                     data-lenis-prevent
-                    onWheel={(e) => e.stopPropagation()}
+                    onWheel={(e) => {
+                        e.stopPropagation();
+                        if (e.target && e.target.tagName === 'TEXTAREA' && e.target.scrollHeight > e.target.clientHeight) {
+                            return;
+                        }
+                        e.currentTarget.scrollTop += e.deltaY;
+                    }}
                     sx={{
                         p: { xs: 2, sm: 3 },
                         overflowY: 'auto',
+                        maxHeight: '65vh',
                         overscrollBehavior: 'contain',
                         touchAction: 'pan-y',
                         WebkitOverflowScrolling: 'touch',

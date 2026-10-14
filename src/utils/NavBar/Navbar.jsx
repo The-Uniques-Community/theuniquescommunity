@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation } from "react-router-dom";
 import logo from "../../assets/logos/theuniquesCommunity.png";
 import darkLogo from "../../assets/logos/theuniquesCommunity copy.png";
 import { RiMenu3Line, RiCloseLine } from "react-icons/ri";
@@ -21,14 +21,13 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import SchoolIcon from "@mui/icons-material/School";
 import ArticleIcon from "@mui/icons-material/Article";
 import ScienceIcon from "@mui/icons-material/Science";
+import TimelineIcon from "@mui/icons-material/Timeline";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import { LogIn, LogOut, ChevronRight, Sun, Moon } from "lucide-react"; // Add LogOut import
-// Add this to your imports at the top
+import { LogIn, LogOut, ChevronRight, Sun, Moon } from "lucide-react";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import axios from "axios"; // For logout API call
-import { set } from "date-fns";
+import axios from "axios";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { BASE_URL } from "@/config";
 import { motion, AnimatePresence } from "framer-motion";
@@ -39,7 +38,7 @@ const Navbar = () => {
   const [activeLink, setActiveLink] = React.useState("");
   const [user, setUser] = useState({}); // State to hold user data
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate();
+  const location = useLocation();
   const { isDarkMode, toggleTheme } = useThemeContext();
 
   // Check authentication status on component mount
@@ -55,7 +54,7 @@ const Navbar = () => {
       });
       setUser(response?.data.user);
       setIsLoggedIn(true);
-    } catch (error) {
+    } catch {
       setUser({});
       setIsLoggedIn(false);
     }
@@ -85,12 +84,14 @@ const Navbar = () => {
     // Base navigation items that are always shown
     const baseItems = [
       { text: "Home", icon: <HomeIcon />, link: "/" },
-      { text: "How it started", icon: <WorkIcon />, link: "/howitstarted" },
+      { text: "About Us", icon: <InfoIcon />, link: "/about" },
+      { text: "Community", icon: <GroupsIcon />, link: "/community-main" },
+      { text: "Events", icon: <EventIcon />, link: "/events" },
+      { text: "Projects", icon: <WorkIcon />, link: "/projects" },
+      { text: "How it started", icon: <TimelineIcon />, link: "/howitstarted" },
       { text: "Batches", icon: <SchoolIcon />, link: "/batches" },
       { text: "Training Model", icon: <ScienceIcon />, link: "/training" },
       { text: "Success Stories", icon: <CheckCircleIcon />, link: "/success-stories" },
-      { text: "Community", icon: <GroupsIcon />, link: "/community-main" },
-      { text: "Projects", icon: <WorkIcon />, link: "/projects" },
       { text: "Blogs", icon: <ArticleIcon />, link: "/blogs" },
       { text: "Contact", icon: <ContactMailIcon />, link: "/contact" },
     ];
@@ -117,6 +118,14 @@ const Navbar = () => {
     }
 
     return { baseItems, authItems };
+  };
+
+  // Helper to determine if an item is active
+  const isItemActive = (item) => {
+    if (activeLink === item.text) return true;
+    if (item.link === "/" && location.pathname === "/") return true;
+    if (item.link !== "/" && (location.pathname === item.link || location.pathname.startsWith(`${item.link}/`))) return true;
+    return false;
   };
 
   // Get nav items based on auth status
@@ -240,7 +249,7 @@ const Navbar = () => {
                       bottom: 0,
                       width: '4px',
                       backgroundColor: '#CA0019',
-                      transform: activeLink === item.text ? 'scaleY(0.6)' : 'scaleY(0)',
+                      transform: isItemActive(item) ? 'scaleY(0.6)' : 'scaleY(0)',
                       transition: 'transform 0.3s ease',
                       borderRadius: '0 4px 4px 0',
                     },
@@ -250,7 +259,7 @@ const Navbar = () => {
                       "& .MuiListItemIcon-root": { color: "#CA0019", transform: "scale(1.1)" },
                       "& .MuiTypography-root": { color: "#CA0019", fontWeight: 600 },
                     },
-                    ...(activeLink === item.text && {
+                    ...(isItemActive(item) && {
                       backgroundColor: "rgba(202, 0, 25, 0.08)",
                       boxShadow: '0 4px 12px rgba(202, 0, 25, 0.1)',
                       "& .MuiListItemIcon-root": { color: "#CA0019" },
@@ -261,7 +270,7 @@ const Navbar = () => {
                   <ListItemIcon
                     sx={{
                       minWidth: "36px",
-                      color: activeLink === item.text ? "#CA0019" : (isDarkMode ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.5)"),
+                      color: isItemActive(item) ? "#CA0019" : (isDarkMode ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.5)"),
                       transition: "color 0.2s ease",
                       "& .MuiSvgIcon-root": { fontSize: "1.2rem" }
                     }}
@@ -272,12 +281,12 @@ const Navbar = () => {
                     primary={item.text}
                     primaryTypographyProps={{
                       fontSize: "0.85rem",
-                      fontWeight: activeLink === item.text ? 600 : 500,
-                      color: activeLink === item.text ? "#CA0019" : (isDarkMode ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.8)"),
+                      fontWeight: isItemActive(item) ? 600 : 500,
+                      color: isItemActive(item) ? "#CA0019" : (isDarkMode ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.8)"),
                       letterSpacing: "0.01em",
                     }}
                   />
-                  {activeLink === item.text && (
+                  {isItemActive(item) && (
                     <motion.div layoutId="active-indicator">
                       <ChevronRight size={16} color="#CA0019" />
                     </motion.div>
@@ -403,21 +412,30 @@ const Navbar = () => {
           { name: "COMMUNITY", path: "/community-main" },
           { name: "EVENTS", path: "/events" },
           { name: "PROJECTS", path: "/projects" },
-        ].map((item) => (
-          <Link key={item.name} to={item.path} className="group px-3.5 xl:px-5 py-2.5 whitespace-nowrap shrink-0">
-            <div className="relative inline-block whitespace-nowrap">
-              <motion.span 
-                whileHover={{ scale: 1.02 }}
-                className="relative z-10 text-sm font-bold tracking-wider text-neutral-700 dark:text-neutral-300 group-hover:text-red-600 dark:group-hover:text-red-500 transition-colors duration-300 whitespace-nowrap"
-              >
-                {item.name}
-              </motion.span>
-              <span 
-                className="absolute -bottom-1 left-0 w-full h-0.5 bg-red-600 transform scale-x-0 origin-right transition-transform duration-300 ease-out group-hover:scale-x-100 group-hover:origin-left"
-              />
-            </div>
-          </Link>
-        ))}
+        ].map((item) => {
+          const isActive = location.pathname === item.path || (item.path !== "/" && location.pathname.startsWith(`${item.path}/`));
+          return (
+            <Link key={item.name} to={item.path} className="group px-3.5 xl:px-5 py-2.5 whitespace-nowrap shrink-0">
+              <div className="relative inline-block whitespace-nowrap">
+                <motion.span 
+                  whileHover={{ scale: 1.02 }}
+                  className={`relative z-10 text-sm font-bold tracking-wider transition-colors duration-300 whitespace-nowrap ${
+                    isActive 
+                      ? "text-red-600 dark:text-red-500" 
+                      : "text-neutral-700 dark:text-neutral-300 group-hover:text-red-600 dark:group-hover:text-red-500"
+                  }`}
+                >
+                  {item.name}
+                </motion.span>
+                <span 
+                  className={`absolute -bottom-1 left-0 w-full h-0.5 bg-red-600 transition-transform duration-300 ease-out ${
+                    isActive ? "scale-x-100 origin-left" : "scale-x-0 origin-right group-hover:scale-x-100 group-hover:origin-left"
+                  }`}
+                />
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
       <div className="flex items-center justify-end gap-4">
