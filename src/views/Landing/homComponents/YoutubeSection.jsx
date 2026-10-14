@@ -8,7 +8,7 @@ const YoutubeSection = () => {
   const videoId = "Ay47OixDr2M";
   const channelUrl = "https://www.youtube.com/@TheUniquesOfficial";
   const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+  const embedUrl = `https://www.youtube.com/embed/${videoId}?si=xAlQekqgWVGSXnM_&autoplay=1&rel=0&modestbranding=1`;
 
   return (
     <section className="relative pt-6 sm:pt-10 lg:pt-14 pb-8 sm:pb-12 lg:pb-16 px-4 overflow-hidden">
@@ -55,8 +55,9 @@ const YoutubeSection = () => {
                 <iframe
                   src={embedUrl}
                   title="The Uniques Community YouTube Video"
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  className="w-full h-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
                   allowFullScreen
                 />
               ) : (

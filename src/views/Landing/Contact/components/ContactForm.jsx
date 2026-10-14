@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import PropTypes from "prop-types";
 import { CircularProgress, Snackbar, Alert } from "@mui/material";
 import tu from "@/assets/logos/theuniquesCommunity.png";
 import darkLogo from "@/assets/logos/theuniquesCommunity copy.png";
@@ -8,7 +9,7 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import PhoneInTalkIcon from '@mui/icons-material/PhoneInTalk';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import axios from "axios";
 import { BASE_URL } from "@/config";
 import { useThemeContext } from "@/theme/ThemeProvider";
@@ -60,6 +61,18 @@ const CustomInput = ({ label, name, type = "text", value, onChange, error, requi
       {error && <span className="text-red-500 text-xs mt-1 ml-2 font-medium">{error}</span>}
     </div>
   );
+};
+
+CustomInput.propTypes = {
+  label: PropTypes.string,
+  name: PropTypes.string,
+  type: PropTypes.string,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
+  error: PropTypes.string,
+  required: PropTypes.bool,
+  multiline: PropTypes.bool,
+  rows: PropTypes.number,
 };
 
 const ContactForm = () => {
@@ -116,7 +129,7 @@ const ContactForm = () => {
       } else {
         throw new Error(response.data.message || 'Failed to send');
       }
-    } catch (error) {
+    } catch {
       setAlert({ open: true, message: 'Error sending message. Please try again.', severity: 'error' });
     } finally {
       setLoading(false);
@@ -137,10 +150,10 @@ const ContactForm = () => {
             >
               <img className="h-16 w-auto object-contain" src={isDarkMode ? darkLogo : tu} alt="The Uniques Logo" />
               <h2 className={`text-4xl md:text-6xl font-black tracking-tighter leading-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                Let's build something <span className="text-[#ca0019]">extraordinary</span>.
+                Let&apos;s build something <span className="text-[#ca0019]">extraordinary</span>.
               </h2>
               <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} leading-relaxed`}>
-                Whether you have a specific project in mind or just want to learn more about our community, we're ready to connect.
+                Whether you have a specific project in mind or just want to learn more about our community, we&apos;re ready to connect.
               </p>
             </motion.div>
 
@@ -294,18 +307,18 @@ const ContactForm = () => {
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mt-24 rounded-[3rem] overflow-hidden border-8 border-white/5 shadow-2xl h-[450px] relative group"
+          className="mt-24 rounded-[3rem] overflow-hidden border-8 border-black/5 dark:border-white/10 shadow-2xl h-[450px] relative group"
         >
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d896.082796596709!2d76.6705462696032!3d30.530592153589225!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMzDCsDMxJzUwLjEiTiA3NsKwNDAnMTYuMyJF!5e1!3m2!1sen!2sin!4v1790510941664!5m2!1sen!2sin"
-            style={{ border: 0, filter: isDarkMode ? 'invert(90%) hue-rotate(180deg) brightness(0.9) contrast(0.9)' : 'none' }}
+            style={{ border: 0 }}
             width="100%"
             height="100%"
             allowFullScreen=""
             loading="lazy"
             title="Location Map"
           />
-          <div className="absolute inset-0 pointer-events-none border-[12px] border-black/5 rounded-[2.5rem]" />
+          <div className="absolute inset-0 pointer-events-none border-[12px] border-black/5 dark:border-white/5 rounded-[2.5rem]" />
         </motion.div>
       </div>
 

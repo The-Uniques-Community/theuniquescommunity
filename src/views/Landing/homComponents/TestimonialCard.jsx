@@ -158,6 +158,7 @@ const AvatarImage = ({ src, name }) => {
     <img
       src={imgSrc}
       alt={name}
+      referrerPolicy="no-referrer"
       onError={() => setHasError(true)}
       className="w-full h-full object-cover"
       loading="lazy"
