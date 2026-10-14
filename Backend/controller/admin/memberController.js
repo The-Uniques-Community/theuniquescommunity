@@ -272,9 +272,21 @@ export const getAllMembers = async (req, res) => {
       .populate('event_participation')
       .sort(sortOptions);
 
+    const mappedMembers = members.map((m) => {
+      const doc = m.toObject ? m.toObject() : { ...m };
+      if (!doc.isSuspended && doc.profileStatus !== "blocked") {
+        if (/1\.0|2\.0|3\.0/.test(doc.batch || "")) {
+          doc.profileStatus = "inactive";
+        } else if (/4\.0|5\.0|6\.0|7\.0/.test(doc.batch || "")) {
+          doc.profileStatus = "active";
+        }
+      }
+      return doc;
+    });
+
     return res.status(200).json({
       success: true,
-      data: members,
+      data: mappedMembers,
       count: total
     });
   } catch (error) {
@@ -324,9 +336,7 @@ export const getMembersByBatch = async (req, res) => {
   try {
     const { batch } = req.params;
 
-    // Validate batch
-    const validBatches = ["The Uniques 1.0", "The Uniques 2.0", "The Uniques 3.0"];
-    if (!validBatches.includes(batch)) {
+    if (!batch || !batch.trim()) {
       return res.status(400).json({
         success: false,
         message: 'Invalid batch'

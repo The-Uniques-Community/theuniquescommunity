@@ -81,7 +81,7 @@ const ProjectForm = ({ onSuccess }) => {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
@@ -99,7 +99,7 @@ const ProjectForm = ({ onSuccess }) => {
             .filter(Boolean)
         : [];
 
-      const newProject = addProject({
+      const newProject = await addProject({
         title: formData.title.trim(),
         description: formData.description.trim(),
         batch: formData.batch,

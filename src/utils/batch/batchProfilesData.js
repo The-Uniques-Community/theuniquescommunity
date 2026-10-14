@@ -1,3 +1,5 @@
+import axios from "axios";
+import { BASE_URL } from "@/config";
 import uniques1 from "@/assets/img/About/uniques1.webp";
 import uniques2 from "@/assets/img/About/uniques2.webp";
 import uniques3 from "@/assets/img/About/uniques3.webp";
@@ -49,8 +51,6 @@ export const getStoredBatchProfiles = () => {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
         profiles = parsed.map((p) => {
-          // If profile has a custom image or valid data URL / http url, keep it
-          // Otherwise match with default image if available
           const defaultMatch = DEFAULT_BATCH_PROFILES.find((d) => d.label === p.label || d.id === p.id);
           return {
             ...p,
@@ -64,10 +64,8 @@ export const getStoredBatchProfiles = () => {
       profiles = [...DEFAULT_BATCH_PROFILES];
     }
 
-    // Also ensure all member batches from batchesData are represented
     const memberBatches = getStoredBatches();
     memberBatches.forEach((batchName) => {
-      // Normalize e.g. "The Uniques 5.0" -> "Uniques 5.0"
       const label = batchName.replace(/^The\s+/i, "");
       const exists = profiles.some(
         (p) => p.label.toLowerCase() === label.toLowerCase() || p.title.toLowerCase() === batchName.toLowerCase()
@@ -91,9 +89,29 @@ export const getStoredBatchProfiles = () => {
   }
 };
 
-export const saveStoredBatchProfiles = (profiles) => {
+export const fetchBatchProfiles = async () => {
   try {
-    // Before saving to localStorage, preserve customImage flag
+    const response = await axios.get(`${BASE_URL}/api/batches/profiles`);
+    if (response.data && response.data.success && Array.isArray(response.data.data)) {
+      const remoteProfiles = response.data.data.map((p) => {
+        const defaultMatch = DEFAULT_BATCH_PROFILES.find((d) => d.label === p.label || d.id === p.id);
+        return {
+          ...p,
+          image: p.customImage ? p.image : (defaultMatch ? defaultMatch.image : (p.image || uniques4)),
+        };
+      });
+      localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify(remoteProfiles));
+      window.dispatchEvent(new CustomEvent("batch-profiles-updated", { detail: remoteProfiles }));
+      return remoteProfiles;
+    }
+  } catch (err) {
+    console.warn("Could not fetch batch profiles from server, using cached:", err?.message || err);
+  }
+  return getStoredBatchProfiles();
+};
+
+export const saveStoredBatchProfiles = async (profiles) => {
+  try {
     const toSave = profiles.map((p) => {
       const isCustom = Boolean(
         p.image &&
@@ -112,14 +130,15 @@ export const saveStoredBatchProfiles = (profiles) => {
 
     localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify(toSave));
     window.dispatchEvent(new CustomEvent("batch-profiles-updated", { detail: profiles }));
+    await axios.post(`${BASE_URL}/api/batches/profiles/update`, { profiles: toSave });
     return true;
   } catch (err) {
-    console.error("Error saving batch profiles to localStorage:", err);
+    console.error("Error saving batch profiles:", err);
     return false;
   }
 };
 
-export const updateSingleBatchProfile = (updatedProfile) => {
+export const updateSingleBatchProfile = async (updatedProfile) => {
   const current = getStoredBatchProfiles();
   const index = current.findIndex(
     (p) => (updatedProfile.id && p.id === updatedProfile.id) || p.label === updatedProfile.label
@@ -133,7 +152,7 @@ export const updateSingleBatchProfile = (updatedProfile) => {
     updatedList = [...current, updatedProfile];
   }
 
-  saveStoredBatchProfiles(updatedList);
+  await saveStoredBatchProfiles(updatedList);
   return updatedList;
 };
 

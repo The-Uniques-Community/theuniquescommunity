@@ -37,53 +37,39 @@ const index = () => {
         <Counts />
       </section>
 
-      <div className="spacer py-10"></div>
       <section>
         <AboutSection />
       </section>
 
-      <div className="spacer py-10"></div>
       <section>
         <WhyUs />
       </section>
 
-      <div className="spacer py-10"></div>
       <section>
         <CommunityPartners />
       </section>
 
-
-
-
-
-
-      <div className="spacer py-10"></div>
       <section>
         <Startups />
       </section>
 
-      <div className="spacer py-10"></div>
       <section>
         <Gallery />
       </section>
 
-      <div className="spacer py-10"></div>
       <section>
         <Event />
       </section>
 
-      <div className="spacer py-10"></div>
       <section>
         <YoutubeSection />
       </section>
 
-      <div className="spacer py-10"></div>
       <section>
         <Testimonials />
       </section>
 
-      <div className="spacer py-10"></div>
-      <div className="my-6">
+      <div className="pt-2 sm:pt-4 pb-8 sm:pb-12">
         <CallToAction />
       </div>
     </div>

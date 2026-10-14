@@ -615,6 +615,11 @@ const Index = () => {
   const [selectedFine, setSelectedFine] = useState(null);
   const [openViewModal, setOpenViewModal] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+  const [alert, setAlert] = useState({
+    open: false,
+    message: "",
+    severity: "error",
+  });
   const API_BASE_URL = "https://theuniquesportal-server.vercel.app/api/admin";
 
   // Fetch data when component mounts
@@ -1566,6 +1571,18 @@ const Index = () => {
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
         <Alert severity="success">Payment recorded successfully!</Alert>
+      </Snackbar>
+
+      {/* Alert notification */}
+      <Snackbar
+        open={alert.open}
+        autoHideDuration={4000}
+        onClose={() => setAlert({ ...alert, open: false })}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert severity={alert.severity} onClose={() => setAlert({ ...alert, open: false })}>
+          {alert.message}
+        </Alert>
       </Snackbar>
 
       {/* NEW: Fine Details Modal */}

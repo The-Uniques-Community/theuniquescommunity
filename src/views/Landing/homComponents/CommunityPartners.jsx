@@ -28,11 +28,11 @@ const partners = [
   },
   {
     name: "Notion",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.webp",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png",
   },
   {
     name: "Postman",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/c/c2/Postman_%28software%29.webp",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/c/c2/Postman_%28software%29.png",
   },
   {
     name: "MongoDB",
@@ -44,7 +44,7 @@ const partners = [
   },
   {
     name: "LinkedIn",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.webp",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png",
   },
   {
     name: "Canva",
@@ -72,7 +72,7 @@ const CommunityPartners = () => {
   const { isDarkMode } = useThemeContext();
 
   return (
-    <section className={`py-14 transition-colors duration-500 ${isDarkMode ? "bg-[#0d0d0d]" : "bg-gray-50"}`}>
+    <section className={`pt-6 sm:pt-10 lg:pt-14 pb-8 sm:pb-12 lg:pb-16 transition-colors duration-500 ${isDarkMode ? "bg-[#0d0d0d]" : "bg-gray-50"}`}>
       {/* Heading */}
       <div className="text-center mb-10 px-4">
         <div className="flex items-center justify-center gap-3 mb-3">

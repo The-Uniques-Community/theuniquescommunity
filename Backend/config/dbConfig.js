@@ -1,14 +1,18 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+dotenv.config();
 
-const dbconnect = () => {
-	mongoose.connect(process.env.MONGODB_URI);
-
-	const connection = mongoose.connection;
-
-	connection.once('open', () => {
-		console.log('MongoDB database connection established successfully');
-	});
-}
+const dbconnect = async () => {
+  if (mongoose.connection.readyState >= 1) {
+    return;
+  }
+  try {
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log('MongoDB database connection established successfully');
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+  }
+};
 
 export default dbconnect;
+

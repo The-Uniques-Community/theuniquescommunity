@@ -5,7 +5,7 @@ import ambassadorCriteriaImg from "@/assets/img/Community/ambassador-criteria.we
 const About = (props) => {
     const { isDarkMode } = useThemeContext();
     return (
-        <div className={`transition-colors duration-500 py-24 ${isDarkMode ? 'bg-[#161616]' : 'bg-white'}`}>
+        <div className={`transition-colors duration-500 pt-12 sm:pt-16 md:pt-24 pb-4 md:pb-6 ${isDarkMode ? 'bg-[#161616]' : 'bg-white'}`}>
             <div className="flex container mx-auto justify-center gap-16 md:flex-nowrap flex-wrap items-center">
                 <div className="lg:w-1/2">
                     <div className="lg:ml-auto lg:mx-0 mx-auto">

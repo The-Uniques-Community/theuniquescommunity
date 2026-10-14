@@ -186,8 +186,8 @@ const MembersIndex = () => {
       }
 
       const customMembers = getStoredCustomMembers();
-      const customActive = customMembers.filter(m => !m.isSuspended).length;
-      const customBlocked = customMembers.filter(m => m.isSuspended).length;
+      const customActive = customMembers.filter(m => m && !m.isSuspended).length;
+      const customBlocked = customMembers.filter(m => m && m.isSuspended).length;
 
       setTabCounts({
         all: total + customActive,
@@ -240,6 +240,7 @@ const MembersIndex = () => {
 
       // Filter custom members to match active view
       let matchingCustom = customMembers.filter((m) => {
+        if (!m || typeof m !== "object") return false;
         if (value === "blocked" || value === "6") {
           return m.isSuspended === true;
         }

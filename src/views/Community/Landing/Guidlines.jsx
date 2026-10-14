@@ -7,21 +7,7 @@ const cardData = [
         id: 1,
         title: 'Innovation Challenges',
         description:
-            'Run corporate challenges & hackathons to develop innovative solutions that will transform your business.',
-        modalContent: (
-            <div>
-                <p className="mb-4">Our Innovation Challenges program helps organizations:</p>
-                <ul className="list-disc pl-6 space-y-2">
-                    <li>Organize and run successful hackathons</li>
-                    <li>Connect with talented developers and innovators</li>
-                    <li>Transform business challenges into opportunities</li>
-                    <li>Implement winning solutions effectively</li>
-                    <li>Track and measure innovation outcomes</li>
-                </ul>
-                <p className="mt-4">Join our community of innovators and start your journey towards digital transformation.</p>
-            </div>
-        ),
-        buttonText: 'Learn More',
+            'Organize corporate innovation challenges and hackathons that encourage creative problem-solving, collaboration, and experimentation. Help teams transform promising ideas into practical solutions for real-world business challenges.',
         cardBg: 'bg-white dark:bg-[#111111]',
         iconBg: 'bg-[#9bc8ff]',
         icon: (
@@ -38,20 +24,8 @@ const cardData = [
     {
         id: 2,
         title: 'Product Evangelism',
-        description: 'Ignite customer excitement and drive product adoption through strategic evangelism.',
-        modalContent: (
-            <div>
-                <p className="mb-4">Discover how Product Evangelism can:</p>
-                <ul className="list-disc pl-6 space-y-2">
-                    <li>Boost customer engagement</li>
-                    <li>Increase product adoption rates</li>
-                    <li>Build a loyal customer base</li>
-                    <li>Enhance brand reputation</li>
-                </ul>
-                <p className="mt-4">Learn more about our strategies to make your product a market leader.</p>
-            </div>
-        ),
-        buttonText: 'View More',
+        description:
+            'Build awareness and enthusiasm for innovative products through engaging demonstrations, community outreach, and meaningful feedback. Help users understand product value and encourage adoption through authentic experiences.',
         cardBg: 'bg-white dark:bg-[#111111]',
         iconBg: 'bg-red-100',
         icon: (
@@ -68,20 +42,8 @@ const cardData = [
     {
         id: 3,
         title: 'Startup Pitches',
-        description: 'Connect with students globally to identify the brightest young minds and their game-changing ideas.',
-        modalContent: (
-            <div>
-                <p className="mb-4">Startup Pitches provide:</p>
-                <ul className="list-disc pl-6 space-y-2">
-                    <li>Access to innovative ideas</li>
-                    <li>Opportunities to collaborate with young talent</li>
-                    <li>Insights into emerging trends</li>
-                    <li>Support for entrepreneurial growth</li>
-                </ul>
-                <p className="mt-4">Be part of the next big thing in the startup ecosystem.</p>
-            </div>
-        ),
-        buttonText: 'View More',
+        description:
+            'Connect with aspiring entrepreneurs and students to discover promising startup ideas. Encourage founders to present their vision, explain real-world problems, and showcase innovative solutions with growth potential.',
         cardBg: 'bg-white dark:bg-[#111111]',
         iconBg: 'bg-green-100',
         icon: (
@@ -105,20 +67,8 @@ const cardData = [
     {
         id: 4,
         title: 'Student Challenges',
-        description: 'Explore innovative ideas from student minds.',
-        modalContent: (
-            <div>
-                <p className="mb-4">Student Challenges enable:</p>
-                <ul className="list-disc pl-6 space-y-2">
-                    <li>Engagement with creative students</li>
-                    <li>Discovery of groundbreaking ideas</li>
-                    <li>Opportunities for mentorship</li>
-                    <li>Support for academic innovation</li>
-                </ul>
-                <p className="mt-4">Join us in shaping the future of innovation.</p>
-            </div>
-        ),
-        buttonText: 'View More',
+        description:
+            'Encourage students to explore creative ideas and solve real-world problems through engaging challenges. Help them develop critical thinking, practical skills, collaboration, and confidence while experimenting with new technologies.',
         cardBg: 'bg-white dark:bg-[#111111]',
         iconBg: 'bg-yellow-100',
         icon: (
@@ -135,20 +85,8 @@ const cardData = [
     {
         id: 5,
         title: 'Tech Innovation',
-        description: 'Foster a culture of innovation with cutting-edge technology solutions.',
-        modalContent: (
-            <div>
-                <p className="mb-4">Tech Innovation helps you:</p>
-                <ul className="list-disc pl-6 space-y-2">
-                    <li>Stay ahead in the tech landscape</li>
-                    <li>Adopt innovative solutions</li>
-                    <li>Drive digital transformation</li>
-                    <li>Enhance operational efficiency</li>
-                </ul>
-                <p className="mt-4">Discover how technology can revolutionize your business.</p>
-            </div>
-        ),
-        buttonText: 'Discover',
+        description:
+            'Promote experimentation with emerging technologies and creative approaches to problem-solving. Encourage community members to develop useful solutions, exchange knowledge, and contribute to a culture of continuous innovation.',
         cardBg: 'bg-white dark:bg-[#111111]',
         iconBg: 'bg-purple-100',
         icon: (
@@ -160,13 +98,13 @@ const cardData = [
     },
 ];
 
-const DynamicCard = ({ card, onOpenModal }) => {
+const DynamicCard = ({ card }) => {
     const [persistentActive, setPersistentActive] = useState(false);
     const [hoverActive, setHoverActive] = useState(false);
 
     const active = persistentActive || hoverActive;
 
-    const containerWidthClass = active ? 'lg:w-[19rem]' : 'lg:w-[12rem]';
+    const containerWidthClass = active ? 'w-full max-w-[340px] md:w-auto lg:w-[19rem]' : 'w-full max-w-[340px] md:w-auto lg:w-[12rem]';
     const containerBgClass = active ? card.iconBg : card.cardBg;
     const iconBgClass = active ? card.cardBg : card.iconBg;
 
@@ -174,17 +112,12 @@ const DynamicCard = ({ card, onOpenModal }) => {
         setPersistentActive((prev) => !prev);
     };
 
-    const handleButtonClick = (e) => {
-        e.stopPropagation();
-        onOpenModal(card);
-    };
-
     return (
         <div
             onClick={handleClick}
             onMouseEnter={() => setHoverActive(true)}
             onMouseLeave={() => setHoverActive(false)}
-            className={`group relative h-[22rem] py-4 px-4 overflow-hidden border-[.5px] border-[#E2E2E2]  transition-all duration-500 delay-150 ease-in-out cursor-pointer flex flex-col ${containerWidthClass} ${containerBgClass} transition-all ${card.id === 1 ? 'rounded-tl-[25px] rounded-bl-[25px]' : ''} ${card.id === 5 ? 'rounded-tr-[25px] rounded-br-[25px]' : ''}`}
+            className={`group relative h-[25rem] py-4 px-4 overflow-hidden border-[.5px] border-[#E2E2E2] transition-all duration-500 delay-150 ease-in-out cursor-pointer flex flex-col ${containerWidthClass} ${containerBgClass} ${card.id === 1 ? 'rounded-t-[25px] md:rounded-tr-none md:rounded-bl-[25px]' : ''} ${card.id === 5 ? 'rounded-b-[25px] md:rounded-bl-none md:rounded-tr-[25px]' : ''}`}
         >
             <div className="grow">
                 <div
@@ -195,76 +128,24 @@ const DynamicCard = ({ card, onOpenModal }) => {
                 <div className={`text-[24px] mt-4 font-[500] transition-all duration-500 delay-150 ${active ? 'text-[#212B36]' : 'text-[#212B36] dark:text-white'}`}>
                     {card.title}
                 </div>
-                <p className={`text-[16px] mt-4 font-[400] line-clamp-4 transition-all duration-500 delay-150 ${active ? 'text-[#383838]' : 'text-[#383838] dark:text-gray-300'}`}>
+                <p className={`text-[14px] sm:text-[15px] leading-relaxed mt-4 font-[400] transition-all duration-500 delay-150 ${active ? 'text-[#383838]' : 'text-[#383838] dark:text-gray-300'}`}>
                     {card.description}
                 </p>
             </div>
-            <div className="mt-3 w-full">
-                {active && (
-                    <div className="flex items-center justify-center md:justify-start transition-all duration-500 delay-200">
-                        <button
-                            onClick={handleButtonClick}
-                            className="w-32 z-10 mt-4 bg-[#3462ae] text-base text-white px-2 py-2 rounded-full flex items-center justify-center"
-                        >
-                            {card.buttonText}
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                aria-hidden="true"
-                                role="img"
-                                width="1em"
-                                height="1em"
-                                viewBox="0 0 24 24"
-                                className="text-white text-xl -pl-1"
-                            >
-                                <path fill="currentColor" d="M5 17.59L15.59 7H9V5h10v10h-2V8.41L6.41 19z" />
-                            </svg>
-                        </button>
-                    </div>
-                )}
-            </div>
-            <div className="absolute bottom-0 right-0 w-38 block transition-all duration-500 delay-150">
+            <div className="absolute bottom-0 right-0 w-38 block transition-all duration-500 delay-150 pointer-events-none">
                 <img src={Effect} alt="Effect" />
             </div>
         </div>
     );
 };
 
-const Modal = ({ isOpen, onClose, title, content }) => {
-    if (!isOpen) return null;
-
-    return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="bg-white rounded-lg p-6 w-3/4 max-w-lg">
-                <h2 className="text-xl font-bold mb-4">{title}</h2>
-                <div>{content}</div>
-                <button
-                    onClick={onClose}
-                    className="mt-4 bg-[#3462ae] text-white px-4 py-2 rounded-full"
-                >
-                    Close
-                </button>
-            </div>
-        </div>
-    );
-};
-
 const Guidelines = () => {
-    const [selectedCard, setSelectedCard] = useState(null);
-
-    const handleOpenModal = (card) => {
-        setSelectedCard(card);
-    };
-
-    const handleCloseModal = () => {
-        setSelectedCard(null);
-    };
-
     return (
         <div>
-            <section className="mx-auto container py-10" id="whyH2s">
-                <div className="pt-[30px] max-sm:mt-6 ">
+            <section className="mx-auto container pt-2 pb-10" id="whyH2s">
+                <div className="max-sm:mt-4">
                     <div className="w-full md:w-4/5 mx-auto">
-                        <h2 className="max-sm:text-[24px] sm:text-[40px] text-[#212B36] dark:text-white text-left sm:mb-4 py-4">
+                        <h2 className="max-sm:text-[24px] sm:text-[40px] text-[#212B36] dark:text-white text-left mb-2 sm:mb-4">
                             Community Guidelines
                         </h2>
                         <p className="text-left mt-2 my-6 py-2 max-sm:text-[14px] md:text-[16px] font-[400] text-[#919EAB] dark:text-gray-400">
@@ -272,24 +153,18 @@ const Guidelines = () => {
                         </p>
                     </div>
 
-                    <div className="flex flex-col md:flex-row justify-center items-center lg:flex" id="card-container">
+                    <div className="flex flex-col md:flex-row justify-center items-center px-4 md:px-0" id="card-container">
                         {cardData.map((card) => (
-                            <div key={card.id} className="">
-                                <DynamicCard card={card} onOpenModal={handleOpenModal} />
+                            <div key={card.id} className="w-full md:w-auto flex justify-center">
+                                <DynamicCard card={card} />
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
-
-            <Modal
-                isOpen={selectedCard !== null}
-                onClose={handleCloseModal}
-                title={selectedCard?.title}
-                content={selectedCard?.modalContent}
-            />
         </div>
     );
 };
 
 export default Guidelines;
+

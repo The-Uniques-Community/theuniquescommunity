@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Users, Lightbulb, BarChart, Calendar } from 'lucide-react';
-import { getStoredStats } from '@/utils/stats/statsData';
+import { getStoredStats, fetchStats } from '@/utils/stats/statsData';
 
 const Counts = () => {
   const sectionRef = useRef(null);
@@ -10,6 +10,16 @@ const Counts = () => {
   const [animationComplete, setAnimationComplete] = useState(false);
 
   useEffect(() => {
+    // Fetch latest stats from backend API immediately on mount
+    fetchStats().then((fresh) => {
+      if (fresh) {
+        setTargetValues(fresh);
+        if (statsVisible || animationComplete) {
+          setCounters(fresh);
+        }
+      }
+    });
+
     const handleStatsUpdated = (e) => {
       const updated = e.detail || getStoredStats();
       setTargetValues(updated);
@@ -17,7 +27,7 @@ const Counts = () => {
     };
     window.addEventListener("stats-updated", handleStatsUpdated);
     return () => window.removeEventListener("stats-updated", handleStatsUpdated);
-  }, []);
+  }, [statsVisible, animationComplete]);
 
   // Use Intersection Observer to detect when stats are visible
   useEffect(() => {
@@ -102,7 +112,7 @@ const Counts = () => {
   ];
 
   return (
-    <section ref={sectionRef} className="py-20 bg-transparent relative overflow-hidden">
+    <section ref={sectionRef} className="pt-6 sm:pt-10 lg:pt-14 pb-4 sm:pb-8 lg:pb-10 bg-transparent relative overflow-hidden">
       {/* Enhanced background elements */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-[#ca0019]/5 rounded-full -z-10"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#ca0019]/5 rounded-full -z-10"></div>
@@ -142,7 +152,7 @@ const Counts = () => {
         </div>
 
         {/* Enhanced stats grid */}
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3.5 sm:gap-6 lg:gap-8 lg:grid-cols-4">
           {stats.map((stat, index) => (
             <div
               key={index}
@@ -151,36 +161,36 @@ const Counts = () => {
               style={{ transitionDelay: `${index * 100}ms` }}
             >
               {/* Improved card with more initial visual interest */}
-              <div className="bg-white/60 dark:bg-[#424D53] backdrop-blur-lg p-6 rounded-lg shadow-[0_4px_20px_-4px_rgba(202,0,25,0.1)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-white/40 dark:border-none group relative overflow-hidden">
+              <div className="bg-white/60 dark:bg-[#424D53] backdrop-blur-lg p-3.5 sm:p-6 rounded-lg shadow-[0_4px_20px_-4px_rgba(202,0,25,0.1)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-white/40 dark:border-none group relative overflow-hidden flex flex-col items-center sm:items-start text-center sm:text-left">
                 {/* Card corner accent (visible without hover) */}
-                <div className="absolute top-0 right-0 w-16 h-16">
+                <div className="absolute top-0 right-0 w-12 h-12 sm:w-16 sm:h-16 pointer-events-none">
                   <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-bl from-[#ca0019]/5 to-transparent"></div>
-                  <div className="absolute top-0 right-0 w-4 h-4 bg-[#ca0019]/10 rounded-bl-xl"></div>
+                  <div className="absolute top-0 right-0 w-3 h-3 sm:w-4 sm:h-4 bg-[#ca0019]/10 rounded-bl-xl"></div>
                 </div>
 
                 {/* Fancier icon with animation */}
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#ca0019]/20 to-[#ca0019]/10 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300 shadow-sm">
+                <div className="flex items-center justify-center sm:justify-start w-full mb-3 sm:mb-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br from-[#ca0019]/20 to-[#ca0019]/10 flex items-center justify-center sm:mr-4 group-hover:scale-110 transition-transform duration-300 shadow-sm">
                     <span className="text-[#ca0019] group-hover:rotate-12 transition-transform duration-300">{stat.icon}</span>
                   </div>
-                  <div className="h-px flex-grow bg-gradient-to-r from-[#ca0019]/30 via-gray-200 to-transparent"></div>
+                  <div className="hidden sm:block h-px flex-grow bg-gradient-to-r from-[#ca0019]/30 via-gray-200 to-transparent"></div>
                 </div>
 
                 {/* Enhanced typography with subtle animations */}
-                <div className="mb-3 group-hover:translate-x-1 transition-transform duration-300">
-                  <span className="text-4xl font-bold text-gray-900 relative">
-                    {stat.prefix}{stat.value.toLocaleString()}
-                    <span className="text-lg font-medium text-[#ca0019] ml-1 absolute -right-4 animate-pulse">+</span>
+                <div className="mb-2 sm:mb-3 w-full group-hover:-translate-y-0.5 sm:group-hover:translate-x-1 sm:group-hover:translate-y-0 transition-transform duration-300">
+                  <span className="text-xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white inline-flex items-center justify-center sm:justify-start">
+                    <span>{stat.prefix}{stat.value.toLocaleString()}</span>
+                    <span className="text-base sm:text-lg font-bold text-[#ca0019] ml-1 animate-pulse">+</span>
                   </span>
                 </div>
 
-                <p className="text-sm text-gray-600 font-medium">{stat.label}</p>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-medium leading-snug">{stat.label}</p>
 
                 {/* Subtle decorative corner element */}
-                <div className="absolute -bottom-10 -right-10 w-20 h-20 bg-[#ca0019]/5 rounded-full transition-opacity duration-300 opacity-10 group-hover:opacity-100"></div>
+                <div className="absolute -bottom-10 -right-10 w-20 h-20 bg-[#ca0019]/5 rounded-full transition-opacity duration-300 opacity-10 group-hover:opacity-100 pointer-events-none"></div>
 
                 {/* Bottom line - partially visible by default */}
-                <div className="absolute bottom-0 left-0 h-0.5 w-1/5 bg-[#ca0019]/30 group-hover:w-full group-hover:bg-[#ca0019] transition-all duration-500 ease-out"></div>
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 sm:left-0 sm:translate-x-0 h-0.5 w-1/3 sm:w-1/5 bg-[#ca0019]/30 group-hover:w-full group-hover:bg-[#ca0019] transition-all duration-500 ease-out"></div>
               </div>
             </div>
           ))}
@@ -188,7 +198,7 @@ const Counts = () => {
       </div>
 
       {/* Enhanced footer element */}
-      <div className="mt-20 relative">
+      <div className="mt-8 sm:mt-12 relative">
         <div className="absolute left-1/2 -translate-x-1/2 top-0 w-24 h-px bg-gradient-to-r from-transparent via-[#ca0019]/30 to-transparent"></div>
         <div className="absolute left-1/2 -translate-x-1/2 top-0 w-3 h-3 bg-white border-2 border-[#ca0019]/30 rounded-full -mt-1.5"></div>
       </div>

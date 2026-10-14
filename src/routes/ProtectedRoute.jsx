@@ -8,9 +8,10 @@ const ProtectedRoute = ({ role, element, redirectPath = "/auth/login" }) => {
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Function to log out the user (clearing the token on the backend)
+  // Function to log out the user (clearing the token on the backend and client)
   const logout = async () => {
     try {
+      localStorage.removeItem("token");
       await axios.post(`${BASE_URL}/auth/logout`, {}, { withCredentials: true });
     } catch (error) {
       console.error("Logout failed:", error);

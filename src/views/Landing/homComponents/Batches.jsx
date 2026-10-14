@@ -7,8 +7,8 @@ import MemberCard from "../Batches/components/MemberCard";
 import AchievementCard from "../Batches/components/AchievementCard";
 import { achievementsData } from "../Batches/data/achievementsData";
 import { Link } from "react-router-dom";
-import { getStoredBatches } from "@/utils/batch/batchesData";
-import { getStoredBatchProfiles } from "@/utils/batch/batchProfilesData";
+import { getStoredBatches, fetchBatches } from "@/utils/batch/batchesData";
+import { getStoredBatchProfiles, fetchBatchProfiles } from "@/utils/batch/batchProfilesData";
 
 const Batches = () => {
   // State management
@@ -21,8 +21,13 @@ const Batches = () => {
   const [batchCounts, setBatchCounts] = useState({});
   const [countsLoading, setCountsLoading] = useState(true);
 
-  // Sync stored batches dynamically when coordinator adds a new batch
+  // Sync stored batches dynamically when coordinator adds a new batch & fetch on mount
   useEffect(() => {
+    fetchBatches().then((b) => {
+      if (b && Array.isArray(b)) setStoredBatches(b);
+    });
+    fetchBatchProfiles();
+
     const handleBatchesUpdate = () => {
       setStoredBatches(getStoredBatches());
     };
@@ -152,7 +157,7 @@ const Batches = () => {
           // Process members to ensure no null/undefined values
           const processedMembers = response.data.data.map(member => ({
             ...member,
-            fullName: member.fullName || member.email,
+            fullName: member.fullName || member.email || "Member",
             batch: member.batch || "Unspecified Batch",
             skills: Array.isArray(member.skills) ? member.skills : [],
             projects: Array.isArray(member.projects) ? member.projects : [],

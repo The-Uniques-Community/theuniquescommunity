@@ -40,7 +40,7 @@ import {
   Launch,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { getStoredProjects, deleteProject } from "./projectsData";
+import { getStoredProjects, fetchProjects, deleteProject } from "./projectsData";
 
 const ProjectList = ({ createRoutePrefix = "/coordinator/projects-overview" }) => {
   const [projects, setProjects] = useState([]);
@@ -60,11 +60,17 @@ const ProjectList = ({ createRoutePrefix = "/coordinator/projects-overview" }) =
   const navigate = useNavigate();
   const theme = useTheme();
 
-  const loadProjects = () => {
+  const loadProjects = async () => {
     try {
       setLoading(true);
-      const data = getStoredProjects();
-      setProjects(data);
+      const cached = getStoredProjects();
+      if (cached && cached.length > 0) {
+        setProjects(cached);
+      }
+      const data = await fetchProjects();
+      if (data && Array.isArray(data)) {
+        setProjects(data);
+      }
     } catch (err) {
       console.error("Error loading projects:", err);
     } finally {
@@ -76,7 +82,10 @@ const ProjectList = ({ createRoutePrefix = "/coordinator/projects-overview" }) =
     loadProjects();
 
     const handleUpdate = () => {
-      loadProjects();
+      const current = getStoredProjects();
+      if (current && current.length > 0) {
+        setProjects(current);
+      }
     };
 
     window.addEventListener("projects-updated", handleUpdate);
@@ -108,13 +117,13 @@ const ProjectList = ({ createRoutePrefix = "/coordinator/projects-overview" }) =
     if (!projectToDelete) return;
     try {
       setDeleteLoading(true);
-      deleteProject(projectToDelete.id);
+      await deleteProject(projectToDelete._id || projectToDelete.id);
       setSnackbar({
         open: true,
         message: "Project deleted successfully",
         severity: "success",
       });
-      loadProjects();
+      await loadProjects();
     } catch (error) {
       console.error("Error deleting project:", error);
       setSnackbar({
@@ -133,15 +142,18 @@ const ProjectList = ({ createRoutePrefix = "/coordinator/projects-overview" }) =
     setSnackbar({ ...snackbar, open: false });
   };
 
-  const handleViewLive = (link) => {
-    if (link && link !== "#") {
-      window.open(link, "_blank", "noopener,noreferrer");
-    } else {
-      setSnackbar({
-        open: true,
-        message: "No live link provided for this project",
-        severity: "info",
-      });
+  const handleViewProject = (project) => {
+    const projectId =
+      project?.id ??
+      project?._id ??
+      (project?.title
+        ? project.title
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-|-$/g, "")
+        : null);
+    if (projectId) {
+      navigate(`${createRoutePrefix}/view/${projectId}`);
     }
   };
 
@@ -277,7 +289,7 @@ const ProjectList = ({ createRoutePrefix = "/coordinator/projects-overview" }) =
               </TableHead>
               <TableBody>
                 {paginatedProjects.map((project) => (
-                  <TableRow key={project.id} hover>
+                  <TableRow key={project.id || project._id} hover>
                     <TableCell>
                       <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                         {project.image ? (
@@ -417,7 +429,7 @@ const ProjectList = ({ createRoutePrefix = "/coordinator/projects-overview" }) =
                           color="primary"
                           size="small"
                           startIcon={<Visibility />}
-                          onClick={() => handleViewLive(project.link)}
+                          onClick={() => handleViewProject(project)}
                           sx={{ borderRadius: 2 }}
                         >
                           View

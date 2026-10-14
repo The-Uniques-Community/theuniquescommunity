@@ -1,18 +1,11 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import CelebrationComponent from "@/utils/Header";
 import { ArrowUpRight, Search, Code2, ChevronDown, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CallToAction from "../homComponents/CallToAction";
-import { getStoredProjects } from "@/utils/project/projectsData";
-
-export const BATCHES = [
-  { id: "all", name: "All Batches", icon: "👥" },
-  { id: "Uniques 1.0", name: "The Uniques 1.0", icon: "🥇" },
-  { id: "Uniques 2.0", name: "The Uniques 2.0", icon: "🥈" },
-  { id: "Uniques 3.0", name: "The Uniques 3.0", icon: "🥉" },
-  { id: "Uniques 4.0", name: "The Uniques 4.0", icon: "🏅" },
-  { id: "Uniques 5.0", name: "The Uniques 5.0", icon: "🎖️" },
-];
+import { getStoredProjects, fetchProjects } from "@/utils/project/projectsData";
+import { getStoredBatches, fetchBatches } from "@/utils/batch/batchesData";
 
 export const PROJECTS_DATA = [
   {
@@ -141,18 +134,51 @@ export const PROJECTS_DATA = [
 ];
 
 const Projects = () => {
+  const navigate = useNavigate();
   const [projectsList, setProjectsList] = useState(() => getStoredProjects());
+  const [storedBatches, setStoredBatches] = useState(() => getStoredBatches());
   const [selectedBatch, setSelectedBatch] = useState("all");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const dropdownRef = useRef(null);
 
+  // Dynamic batches array with icons
+  const batches = useMemo(() => {
+    const icons = ["🥇", "🥈", "🥉", "🏅", "🎖️", "🚀", "🌟", "✨"];
+    const items = storedBatches.map((b, idx) => {
+      const label = b.replace(/^The\s+/i, "");
+      return {
+        id: label,
+        name: b.startsWith("The ") ? b : `The ${b}`,
+        icon: icons[idx] || "🎖️",
+      };
+    });
+    return [{ id: "all", name: "All Batches", icon: "👥" }, ...items];
+  }, [storedBatches]);
+
   useEffect(() => {
+    // Initial fetch from backend API
+    fetchProjects().then((data) => {
+      if (data && Array.isArray(data)) {
+        setProjectsList(data);
+      }
+    });
+    fetchBatches().then((b) => {
+      if (b && Array.isArray(b)) setStoredBatches(b);
+    });
+
     const handleProjectsUpdate = () => {
       setProjectsList(getStoredProjects());
     };
+    const handleBatchesUpdate = () => {
+      setStoredBatches(getStoredBatches());
+    };
     window.addEventListener("projects-updated", handleProjectsUpdate);
-    return () => window.removeEventListener("projects-updated", handleProjectsUpdate);
+    window.addEventListener("batches-updated", handleBatchesUpdate);
+    return () => {
+      window.removeEventListener("projects-updated", handleProjectsUpdate);
+      window.removeEventListener("batches-updated", handleBatchesUpdate);
+    };
   }, []);
 
   useEffect(() => {
@@ -166,8 +192,8 @@ const Projects = () => {
   }, []);
 
   const currentBatch = useMemo(
-    () => BATCHES.find((b) => b.id === selectedBatch) || BATCHES[0],
-    [selectedBatch]
+    () => batches.find((b) => b.id === selectedBatch) || batches[0],
+    [selectedBatch, batches]
   );
 
   const filteredProjects = useMemo(() => {
@@ -232,7 +258,7 @@ const Projects = () => {
                     transition={{ duration: 0.18 }}
                     className="absolute top-full left-0 w-full mt-2 bg-white dark:bg-[#161618] border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden z-50 p-1.5"
                   >
-                    {BATCHES.map((batch) => {
+                    {batches.map((batch) => {
                       const isSelected = selectedBatch === batch.id;
                       return (
                         <button
@@ -304,7 +330,7 @@ const Projects = () => {
               <div
                 key={project.id}
                 onClick={() =>
-                  window.open(project.link, "_blank", "noopener,noreferrer")
+                  navigate(`/projects/${project.id || project._id}`)
                 }
                 className="group cursor-pointer flex flex-col transition-all duration-300 hover:-translate-y-1"
               >
@@ -333,11 +359,15 @@ const Projects = () => {
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        window.open(
-                          project.link,
-                          "_blank",
-                          "noopener,noreferrer"
-                        );
+                        if (project.link && project.link !== "#") {
+                          window.open(
+                            project.link,
+                            "_blank",
+                            "noopener,noreferrer"
+                          );
+                        } else {
+                          navigate(`/projects/${project.id || project._id}`);
+                        }
                       }}
                       className="pointer-events-auto absolute bottom-0 right-0 w-12 h-12 rounded-full flex items-center justify-center text-white bg-[#ea384c] hover:bg-[#ca0019] shadow-md shadow-red-500/30 transition-all duration-300 group-hover:scale-105 group-hover:rotate-45 cursor-pointer"
                       title={`Open ${project.title}`}

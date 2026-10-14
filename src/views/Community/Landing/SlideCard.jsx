@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useThemeContext } from "@/theme/ThemeProvider";
-import { getStoredBenefitsCards } from "@/utils/community/communityBenefitsData";
+import { getStoredBenefitsCards, fetchBenefitsCards } from "@/utils/community/communityBenefitsData";
 
 // Fallback avatar component with initials and brand styling to prevent broken image icons
 function AvatarImage({ src, name, className = "" }) {
@@ -49,6 +49,10 @@ export default function TestimonialCarousel() {
     const touchStartX = useRef(null);
 
     useEffect(() => {
+        fetchBenefitsCards().then((cards) => {
+            if (cards && Array.isArray(cards)) setTestimonials(cards);
+        });
+
         const handleUpdate = () => {
             setTestimonials(getStoredBenefitsCards());
         };
@@ -112,7 +116,7 @@ export default function TestimonialCarousel() {
 
     return (
         <div className={`transition-colors duration-700 ${isDarkMode ? 'bg-[#0a0a0a]' : 'bg-white'}`}>
-            <div className="container mx-auto px-4 py-12 sm:py-16 md:py-20 max-w-6xl">
+            <div className="container mx-auto px-4 pt-10 sm:pt-14 md:pt-18 pb-4 sm:pb-6 md:pb-8 max-w-6xl">
                 <h2 className="text-center text-3xl sm:text-4xl md:text-5xl font-bold mb-10 sm:mb-14 md:mb-16 tracking-tight">
                     <span className={isDarkMode ? "text-white" : "text-gray-900"}>Benefits </span>
                     <span className="text-gray-400">You will </span>

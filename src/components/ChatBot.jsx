@@ -17,8 +17,8 @@ const ChatBot = () => {
     <div
       style={{
         position: "fixed",
-        bottom: 20,
-        right: 20,
+        bottom: 55,
+        right: 40,
         zIndex: 9999,
         display: "flex",
         flexDirection: "column",
@@ -75,7 +75,7 @@ const ChatBot = () => {
                   }}
                 >
                   <img
-                    src="https://www.jalaitech.com/floating/Aibot.webp"
+                    src="https://www.jalaitech.com/floating/Aibot.png"
                     alt="Bot Avatar"
                     style={{ width: "100%", height: "100%", objectFit: "cover" }}
                   />
@@ -194,7 +194,7 @@ const ChatBot = () => {
               aria-label="Open chatbot"
             >
               <img
-                src="https://www.jalaitech.com/floating/Aibot.webp"
+                src="https://www.jalaitech.com/floating/Aibot.png"
                 alt="Chatbot"
                 draggable="false"
                 style={{

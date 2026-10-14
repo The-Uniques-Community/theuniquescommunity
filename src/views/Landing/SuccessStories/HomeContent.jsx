@@ -48,6 +48,9 @@ const HomeContent = () => {
               variant="contained" 
               color="primary" 
               size="large"
+              href="https://chat.whatsapp.com/HYOloogGXKcIkR83DnOjFj"
+              target="_blank"
+              rel="noopener noreferrer"
               sx={{ px: 4, py: 1 }}
             >
               Join The Uniques Community

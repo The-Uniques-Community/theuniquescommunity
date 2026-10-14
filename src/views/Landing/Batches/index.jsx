@@ -11,9 +11,9 @@ import SchoolIcon from '@mui/icons-material/School';
 import GroupsIcon from '@mui/icons-material/Groups';
 import { AnimatePresence } from "framer-motion";
 import CallToAction from "@/views/Landing/homComponents/CallToAction";
-import { getStoredBatches } from "@/utils/batch/batchesData";
-import { getStoredBatchProfiles } from "@/utils/batch/batchProfilesData";
-import { getStoredCustomMembers } from "@/utils/member/customMembersData";
+import { getStoredBatches, fetchBatches } from "@/utils/batch/batchesData";
+import { getStoredBatchProfiles, fetchBatchProfiles } from "@/utils/batch/batchProfilesData";
+import { getStoredCustomMembers, fetchCustomMembers } from "@/utils/member/customMembersData";
 
 const index = () => {
   // State management
@@ -30,8 +30,17 @@ const index = () => {
   const [totalMembers, setTotalMembers] = useState(0);
   const [countsLoading, setCountsLoading] = useState(true);
 
-  // Sync stored batches dynamically when coordinator adds a new batch
+  // Sync stored batches dynamically when coordinator adds a new batch & fetch from API on mount
   useEffect(() => {
+    // Initial fetch from backend API to get fresh coordinator updates
+    fetchBatches().then((b) => {
+      if (b && Array.isArray(b)) setStoredBatches(b);
+    });
+    fetchBatchProfiles();
+    fetchCustomMembers().then(() => {
+      setCustomMembersVersion((v) => v + 1);
+    });
+
     const handleBatchesUpdate = () => {
       const updated = getStoredBatches();
       setStoredBatches(updated);
@@ -89,7 +98,7 @@ const index = () => {
       );
 
       const customCountForBatch = customMembersList.filter((m) => {
-        if (m.isSuspended) return false;
+        if (!m || typeof m !== "object" || m.isSuspended) return false;
         const b1 = (m.batch || "").toLowerCase().trim();
         const b2 = (batchName || "").toLowerCase().trim();
         return b1 === b2 || (b1.includes("5.0") && b2.includes("5.0"));
@@ -176,7 +185,6 @@ const index = () => {
         console.log(`Fetching members for batch: ${selectedBatch}`);
 
         let apiMembers = [];
-        let apiCount = 0;
         try {
           const response = await axios.get(`${BASE_URL}/api/public/members`, {
             params: {
@@ -186,7 +194,6 @@ const index = () => {
 
           if (response.data.success) {
             apiMembers = response.data.data || [];
-            apiCount = response.data.count || 0;
           }
         } catch (apiErr) {
           console.warn("Public members API fetch warning:", apiErr);
@@ -195,7 +202,7 @@ const index = () => {
         // Custom members filtering
         const customMembers = getStoredCustomMembers();
         const matchingCustom = customMembers.filter((m) => {
-          if (m.isSuspended) return false;
+          if (!m || typeof m !== "object" || m.isSuspended) return false;
           if (selectedBatch === "All") return true;
           const b1 = (m.batch || "").toLowerCase().trim();
           const b2 = (selectedBatch || "").toLowerCase().trim();
@@ -211,8 +218,8 @@ const index = () => {
         // Process members to ensure no null/undefined values that might break rendering
         const processedMembers = combined.map(member => ({
           ...member,
-          fullName: member.fullName || member.email,
-          batch: member.batch || "Unspecified Batch",
+          fullName: member.fullName || member.email || "Member",
+          batch: member.batch || selectedBatch || "Unspecified Batch",
           skills: Array.isArray(member.skills) ? member.skills : [],
           projects: Array.isArray(member.projects) ? member.projects : [],
           achievements: Array.isArray(member.achievements) ? member.achievements : [],
@@ -220,7 +227,7 @@ const index = () => {
         }));
 
         setMembers(processedMembers);
-        setTotalMembers(apiCount + matchingCustom.length);
+        setTotalMembers(processedMembers.length);
         setError(null);
       } catch (err) {
         console.error("Error fetching members:", err);
@@ -349,34 +356,58 @@ const index = () => {
     const fetchAll = async () => {
       try {
         // First fetch counts
-        const countsResponse = await axios.get(`${BASE_URL}/api/public/members/counts`);
-        if (countsResponse.data.success) {
-          setBatchCounts(countsResponse.data.data);
+        try {
+          const countsResponse = await axios.get(`${BASE_URL}/api/public/members/counts`);
+          if (countsResponse.data.success) {
+            setBatchCounts(countsResponse.data.data);
+          }
+        } catch (cErr) {
+          console.warn("Counts refresh warning:", cErr);
         }
 
         // Then fetch members
-        const membersResponse = await axios.get(`${BASE_URL}/api/public/members`, {
-          params: {
-            batch: selectedBatch !== "All" ? selectedBatch : undefined
+        let apiMembers = [];
+        try {
+          const membersResponse = await axios.get(`${BASE_URL}/api/public/members`, {
+            params: {
+              batch: selectedBatch !== "All" ? selectedBatch : undefined
+            }
+          });
+          if (membersResponse.data.success) {
+            apiMembers = membersResponse.data.data || [];
           }
+        } catch (mErr) {
+          console.warn("Members refresh warning:", mErr);
+        }
+
+        const customMembers = getStoredCustomMembers();
+        const matchingCustom = customMembers.filter((m) => {
+          if (!m || typeof m !== "object" || m.isSuspended) return false;
+          if (selectedBatch === "All") return true;
+          const b1 = (m.batch || "").toLowerCase().trim();
+          const b2 = (selectedBatch || "").toLowerCase().trim();
+          return b1 === b2 || (b1.includes("5.0") && b2.includes("5.0"));
         });
 
-        if (membersResponse.data.success) {
-          const processedMembers = membersResponse.data.data.map(member => ({
-            ...member,
-            fullName: member.fullName || " Member",
-            batch: member.batch || "Unspecified Batch",
-            skills: Array.isArray(member.skills) ? member.skills : [],
-            projects: Array.isArray(member.projects) ? member.projects : [],
-            achievements: Array.isArray(member.achievements) ? member.achievements : [],
-            certifications: Array.isArray(member.certifications) ? member.certifications : []
-          }));
+        const customIds = new Set(matchingCustom.map((m) => m._id));
+        const combined = [
+          ...matchingCustom,
+          ...apiMembers.filter((m) => !customIds.has(m._id))
+        ];
 
-          setMembers(processedMembers);
-          setTotalMembers(membersResponse.data.count);
-        } else {
-          setError("Failed to refresh data");
-        }
+        const processedMembers = combined.map(member => ({
+          ...member,
+          fullName: member.fullName || member.email || "Member",
+          batch: member.batch || selectedBatch || "Unspecified Batch",
+          skills: Array.isArray(member.skills) ? member.skills : [],
+          projects: Array.isArray(member.projects) ? member.projects : [],
+          achievements: Array.isArray(member.achievements) ? member.achievements : [],
+          certifications: Array.isArray(member.certifications) ? member.certifications : []
+        }));
+
+        setMembers(processedMembers);
+        setTotalMembers(processedMembers.length);
+        setError(null);
       } catch (err) {
         console.error("Error refreshing data:", err);
         setError("Failed to refresh data. Please try again.");

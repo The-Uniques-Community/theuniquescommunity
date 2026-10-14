@@ -557,12 +557,12 @@ const EventForm = ({ event, onSuccess }) => {
   const handleReceiptUpload = (index, e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
+
     setCurrentReceipt({
       index,
       file
     });
-    
+
     // Mark the sponsor as having a temporary receipt
     const newSponsors = [...sponsors];
     newSponsors[index].hasNewReceipt = true;
@@ -1526,7 +1526,7 @@ const EventForm = ({ event, onSuccess }) => {
                     {sponsor.receivedStatus === "received" && (
                       <Box sx={{ mt: 2 }}>
                         <Typography variant="body2" gutterBottom>
-                          Receipt Upload 
+                          Receipt Upload
                           {!sponsor.receiptId && !sponsor.hasNewReceipt && (
                             <span style={{ color: 'red' }}> (Required)</span>
                           )}
@@ -1548,7 +1548,7 @@ const EventForm = ({ event, onSuccess }) => {
                             {sponsor.receiptId || sponsor.hasNewReceipt ? "Change Receipt" : "Upload Receipt"}
                           </Button>
                         </label>
-                        
+
                         {(sponsor.receiptId || sponsor.hasNewReceipt) && (
                           <Typography variant="caption" display="block" sx={{ mt: 1 }}>
                             {sponsor.hasNewReceipt ? "New receipt selected" : "Receipt uploaded"}
@@ -1558,11 +1558,11 @@ const EventForm = ({ event, onSuccess }) => {
                     )}
 
                     <Divider sx={{ my: 2 }} />
-                    
+
                     <Typography variant="subtitle2" sx={{ mb: 1 }}>
                       Contact Information
                     </Typography>
-                    
+
                     <Grid container spacing={2}>
                       <Grid item xs={12} sm={6}>
                         <TextField
@@ -1587,7 +1587,7 @@ const EventForm = ({ event, onSuccess }) => {
                         />
                       </Grid>
                     </Grid>
-                    
+
                     <Grid container spacing={2} sx={{ mt: 0.5 }}>
                       <Grid item xs={12} sm={6}>
                         <TextField

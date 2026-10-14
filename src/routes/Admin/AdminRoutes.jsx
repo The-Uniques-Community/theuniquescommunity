@@ -16,6 +16,7 @@ const Account = Loader(lazy(() => import("@/views/Admin/Accounts/index")));
 const Profile = Loader(lazy(() => import("@/views/Admin/Profile")));
 const EventBudget = Loader(lazy(() => import("@/views/Admin/Events/Budget")));
 const EventView = Loader(lazy(() => import("@/views/Admin/Events/View")));
+const ProjectView = Loader(lazy(() => import("@/views/Admin/Projects/View")));
 const Enquiry = Loader(lazy(() => import("@/views/Admin/Enquiry")));
 const Trainers = Loader(lazy(() => import("@/views/Admin/Trainers")));
 const Stats = Loader(lazy(() => import("@/views/Admin/Stats")));
@@ -56,6 +57,10 @@ const AdminRoutes = {
     {
       path: "/admin/projects-overview/create",
       element: <ProjectForm />,
+    },
+    {
+      path: "/admin/projects-overview/view/:id",
+      element: <ProjectView />,
     },
     {
       path: "/admin/accounts",
