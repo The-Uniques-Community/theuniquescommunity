@@ -337,6 +337,7 @@ const Trainers = () => {
                                 <TrainerCardDashboard
                                     key={trainer._id}
                                     user={trainer}
+                                    onDelete={handleOpenDeleteDialog}
                                 />
                             ))
                         ) : (
@@ -460,7 +461,39 @@ const Trainers = () => {
                 <DialogTitle sx={{ fontWeight: 'bold' }}>
                     {selectedTrainer ? "Edit Trainer" : "Add New Trainer"}
                 </DialogTitle>
-                <DialogContent dividers>
+                <DialogContent
+                    dividers
+                    onWheel={(e) => {
+                        if (e.target && e.target.tagName === 'TEXTAREA' && e.target.scrollHeight > e.target.clientHeight) {
+                            return;
+                        }
+                        e.currentTarget.scrollTop += e.deltaY;
+                    }}
+                    sx={{
+                        overflowY: 'auto',
+                        maxHeight: '65vh',
+                        minHeight: 0,
+                        WebkitOverflowScrolling: 'touch',
+                        scrollbarWidth: 'none',
+                        msOverflowStyle: 'none',
+                        '&::-webkit-scrollbar': {
+                            display: 'none !important',
+                            width: '0px !important',
+                            height: '0px !important',
+                        },
+                        '&::-webkit-scrollbar-track': {
+                            display: 'none !important',
+                            background: 'transparent !important',
+                        },
+                        '&::-webkit-scrollbar-thumb': {
+                            display: 'none !important',
+                            background: 'transparent !important',
+                        },
+                        '&::-webkit-scrollbar-button': {
+                            display: 'none !important',
+                        },
+                    }}
+                >
                     <form onSubmit={formik.handleSubmit}>
                         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 2 }}>
                             <Box sx={{ gridColumn: 'span 12' }}>
