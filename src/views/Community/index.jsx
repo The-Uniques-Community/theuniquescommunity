@@ -22,8 +22,8 @@ const index = () => {
 			<SlideCard />
 			<Sliding />
 			<Eligiblity />
-			<div className='p-10'></div>
-			<CallToAction className="mt-10" />
+			<div className="w-full max-w-6xl mx-auto border-b border-gray-200 dark:border-neutral-800" />
+			<CallToAction className="mt-2 sm:mt-4 md:mt-6" />
 			{/* <Flight /> */}
 		</div>
 	)
