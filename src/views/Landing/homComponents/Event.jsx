@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, forwardRef } from 'react';
+import React, { useEffect, useState, forwardRef } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '@/config';
 import { Link } from 'react-router-dom';
@@ -6,27 +6,26 @@ import { ArrowRight, ArrowLeft } from 'lucide-react';
 import Eventmodel from '../Event/Componant/Event';
 import useEmblaCarousel from 'embla-carousel-react';
 import CommunityCard from '@/utils/Card/CommunityCard';
+import { useThemeContext } from '@/theme/ThemeProvider';
 
 // Utility function similar to shadcn's cn
 const cn = (...classes) => {
   return classes.filter(Boolean).join(' ');
 };
 
-
-
 // Carousel Components - Updated with responsive design
 const Carousel = forwardRef(
   ({ className, opts, setApi, children, ...props }, ref) => {
     // Set up responsive options for the carousel
     const [emblaRef, emblaApi] = useEmblaCarousel({
-      ...opts,
-      axis: "x",
+      align: 'center',
+      loop: true,
+      dragFree: false,
       breakpoints: {
-        '(min-width: 768px)': { slidesToScroll: 2 },
-        '(min-width: 1024px)': { slidesToScroll: 3 }
+        '(min-width: 640px)': { align: 'start', slidesToScroll: 2 },
+        '(min-width: 1024px)': { align: 'start', slidesToScroll: 3 }
       },
-      // Adjust slide alignment based on screen size
-      align: window.innerWidth < 768 ? 'center' : 'start',
+      ...opts,
     });
 
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -95,43 +94,43 @@ const Carousel = forwardRef(
         </div>
 
         {/* Bottom controls: Centered Arrows + Right Side View All */}
-        <div className="relative flex items-center justify-center mt-2 px-1 sm:px-2 min-h-[44px]">
+        <div className="relative flex items-center justify-between sm:justify-center mt-3 px-1 sm:px-2 min-h-[44px]">
           {/* Two arrows directed towards left and right */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <button
               type="button"
               onClick={() => emblaApi?.scrollPrev()}
               disabled={prevBtnDisabled}
               className={cn(
-                "w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 flex items-center justify-center shadow-sm hover:bg-[#ca0019] hover:text-white hover:border-[#ca0019] transition-all duration-200 cursor-pointer",
+                "w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 flex items-center justify-center shadow-sm hover:bg-[#ca0019] hover:text-white hover:border-[#ca0019] transition-all duration-200 cursor-pointer",
                 prevBtnDisabled && "opacity-40 cursor-not-allowed hover:bg-white hover:text-gray-700 hover:border-gray-200"
               )}
               aria-label="Previous event"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
             <button
               type="button"
               onClick={() => emblaApi?.scrollNext()}
               disabled={nextBtnDisabled}
               className={cn(
-                "w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 flex items-center justify-center shadow-sm hover:bg-[#ca0019] hover:text-white hover:border-[#ca0019] transition-all duration-200 cursor-pointer",
+                "w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 flex items-center justify-center shadow-sm hover:bg-[#ca0019] hover:text-white hover:border-[#ca0019] transition-all duration-200 cursor-pointer",
                 nextBtnDisabled && "opacity-40 cursor-not-allowed hover:bg-white hover:text-gray-700 hover:border-gray-200"
               )}
               aria-label="Next event"
             >
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
 
           {/* View All Button on Right Side Corner */}
-          <div className="absolute right-0">
+          <div className="sm:absolute sm:right-0">
             <Link
               to="/events"
-              className="inline-flex items-center px-4 sm:px-5 py-2 bg-[#e03232] hover:bg-[#c52020] text-white text-xs sm:text-sm font-medium rounded-lg transition-all duration-300 shadow-sm"
+              className="inline-flex items-center px-3.5 sm:px-5 py-2 bg-[#e03232] hover:bg-[#c52020] text-white text-xs sm:text-sm font-medium rounded-lg transition-all duration-300 shadow-sm"
             >
               <span>View All</span>
-              <ArrowRight className="ml-1.5 w-4 h-4" />
+              <ArrowRight className="ml-1.5 w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </Link>
           </div>
         </div>
@@ -145,9 +144,9 @@ const CarouselItem = forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "min-w-0 px-1 sm:px-2 md:pl-4 relative",
-      // Responsive sizing
-      "flex-[0_0_85%] sm:flex-[0_0_65%] md:flex-[0_0_45%] lg:flex-[0_0_30%]",
+      "min-w-0 px-1.5 sm:px-2 md:pl-4 relative flex-shrink-0",
+      // Responsive sizing: on mobile (360px), 88% width with max 330px centered, on tablet 60%, on desktop 32%
+      "flex-[0_0_88%] max-w-[330px] sm:max-w-none sm:flex-[0_0_65%] md:flex-[0_0_45%] lg:flex-[0_0_32%]",
       className
     )}
     {...props}
@@ -158,6 +157,7 @@ CarouselItem.displayName = "CarouselItem";
 
 // Main Event Component
 const Event = () => {
+  const { isDarkMode } = useThemeContext();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -232,15 +232,20 @@ const Event = () => {
   }
 
   return (
-    <section className="pt-6 sm:pt-10 lg:pt-14 pb-8 sm:pb-12 lg:pb-16 px-2 md:px-4 bg-transparent relative overflow-hidden">
+    <section className="pt-6 sm:pt-10 lg:pt-14 pb-8 sm:pb-12 lg:pb-16 px-4 sm:px-6 lg:px-8 bg-transparent relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6 md:mb-10 flex flex-col justify-center">
-          <div className="flex mb-2 md:mb-5 items-center">
-            <span className="border-l-2 border-[#e03232] h-6 mr-3"></span>
-            <h1 className="text-lg font-bold">OUR EVENTS</h1>
+          <div className="flex mb-2.5 sm:mb-3 items-center">
+            <span className="border-l-2 border-[#ca0019] h-5 sm:h-6 mr-2.5 sm:mr-3"></span>
+            <h1 className={`text-xs sm:text-sm md:text-lg font-semibold tracking-wider uppercase ${isDarkMode ? "text-white/70" : "text-gray-600"}`}>
+              OUR EVENTS
+            </h1>
           </div>
-          <h1 className="text-lg md:text-3xl font-semibold">
-            Experience the <span className="text-[#ca2c2c] text-3xl md:text-4xl lg:text-7xl md:py-3 block">excitement</span>
+          <h1 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+            Experience the
+            <span className="bg-gradient-to-r from-[#ca0019] via-[#ff3b4f] to-[#ca0019] bg-clip-text text-transparent text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black block mt-1 mb-2">
+              Excitement
+            </span>
           </h1>
         </div>
 
@@ -248,7 +253,6 @@ const Event = () => {
           setApi={setCarouselApi}
           className="w-full"
           opts={{
-            align: 'start',
             loop: true,
             dragFree: false
           }}
