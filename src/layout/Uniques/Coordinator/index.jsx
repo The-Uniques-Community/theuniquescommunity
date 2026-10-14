@@ -94,7 +94,10 @@ function DashboardLayoutAppBar() {
   }, [location.pathname]);
 
   const [isOpen, setIsOpen] = React.useState(false);
-  const onClose = () => setIsOpen(false);
+  const onClose = () => {
+    setIsOpen(false);
+    setDrawerOpen(false);
+  };
   const onConfirm = () => {
     fetch("https://theuniquesportal-server.vercel.app/auth/logout", {
       method: "POST",
@@ -133,7 +136,7 @@ function DashboardLayoutAppBar() {
       />
       <Drawer
         variant={isMobile ? "temporary" : "permanent"}
-        open={drawerOpen}
+        open={drawerOpen && !isOpen}
         onClose={toggleDrawer}
         data-lenis-prevent
         sx={{
@@ -286,7 +289,10 @@ function DashboardLayoutAppBar() {
           </ListItem>
           <ListItem
             button
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              setDrawerOpen(false);
+              setIsOpen(true);
+            }}
             sx={{
               backgroundColor: "inherit",
               color: theme.palette.primary.light,

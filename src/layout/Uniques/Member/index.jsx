@@ -66,7 +66,10 @@ function DashboardLayoutAppBar() {
   const [activeItem, setActiveItem] = React.useState(savedActiveItem);
 
   const [isOpen, setIsOpen] = React.useState(false);
-  const onClose = () => setIsOpen(false);
+  const onClose = () => {
+    setIsOpen(false);
+    setDrawerOpen(false);
+  };
   const onConfirm = () => {
     fetch("https://theuniquesportal-server.vercel.app/auth/logout", {
       method: "POST",
@@ -105,7 +108,7 @@ function DashboardLayoutAppBar() {
       />
       <Drawer
         variant={isMobile ? "temporary" : "permanent"}
-        open={drawerOpen}
+        open={drawerOpen && !isOpen}
         onClose={toggleDrawer}
         sx={{
           width: isMobile ? "auto" : drawerOpen ? 240 : 75,
@@ -232,7 +235,10 @@ function DashboardLayoutAppBar() {
           </ListItem>
           <ListItem
             button
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              setDrawerOpen(false);
+              setIsOpen(true);
+            }}
             sx={{
               backgroundColor: "inherit",
               color: theme.palette.primary.light,

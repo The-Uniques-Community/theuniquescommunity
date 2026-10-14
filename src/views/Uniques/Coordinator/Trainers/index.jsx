@@ -456,13 +456,58 @@ const Trainers = () => {
             </TabContext>
 
             {/* Add/Edit Dialog */}
-            <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="sm">
-                <DialogTitle sx={{ fontWeight: 'bold' }}>
+            <Dialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                fullWidth
+                maxWidth="sm"
+                PaperProps={{
+                    "data-lenis-prevent": "true",
+                    sx: {
+                        borderRadius: { xs: 2, sm: 3 },
+                        m: { xs: 1.5, sm: 2 },
+                        maxHeight: { xs: "92vh", sm: "88vh" },
+                        width: { xs: "calc(100% - 24px)", sm: "auto" },
+                        display: "flex",
+                        flexDirection: "column",
+                        overflow: "hidden",
+                    },
+                }}
+            >
+                <DialogTitle
+                    sx={{
+                        fontWeight: 'bold',
+                        fontSize: { xs: '1.1rem', sm: '1.25rem' },
+                        py: { xs: 1.5, sm: 2 },
+                        px: { xs: 2, sm: 3 },
+                        flexShrink: 0,
+                    }}
+                >
                     {selectedTrainer ? "Edit Trainer" : "Add New Trainer"}
                 </DialogTitle>
-                <DialogContent dividers>
-                    <form onSubmit={formik.handleSubmit}>
-                        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 2 }}>
+                <DialogContent
+                    dividers
+                    data-lenis-prevent
+                    onWheel={(e) => e.stopPropagation()}
+                    sx={{
+                        p: { xs: 2, sm: 3 },
+                        overflowY: 'auto',
+                        overscrollBehavior: 'contain',
+                        touchAction: 'pan-y',
+                        WebkitOverflowScrolling: 'touch',
+                        flex: '1 1 auto',
+                        minHeight: 0,
+                    }}
+                >
+                    <form onSubmit={formik.handleSubmit} data-lenis-prevent>
+                        <Box
+                            data-lenis-prevent
+                            sx={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(12, 1fr)',
+                                gap: { xs: 1.5, sm: 2 },
+                            }}
+                        >
                             <Box sx={{ gridColumn: 'span 12' }}>
                                 <TextField
                                     fullWidth
@@ -516,7 +561,7 @@ const Trainers = () => {
                             </Box>
 
                             {formik.values.origin === 'uniques' && (
-                                <Box sx={{ gridColumn: 'span 6' }}>
+                                <Box sx={{ gridColumn: { xs: 'span 12', sm: 'span 6' } }}>
                                     <FormControl fullWidth error={formik.touched.trainerBatch && Boolean(formik.errors.trainerBatch)}>
                                         <InputLabel id="trainer-batch-label">Uniques Batch (From)</InputLabel>
                                         <Select
@@ -541,7 +586,7 @@ const Trainers = () => {
                             )}
 
                             {formik.values.origin === 'external' && (
-                                <Box sx={{ gridColumn: 'span 6' }}>
+                                <Box sx={{ gridColumn: { xs: 'span 12', sm: 'span 6' } }}>
                                     <TextField
                                         fullWidth
                                         id="designation"
@@ -555,7 +600,7 @@ const Trainers = () => {
                                 </Box>
                             )}
 
-                            <Box sx={{ gridColumn: 'span 6' }}>
+                            <Box sx={{ gridColumn: { xs: 'span 12', sm: 'span 6' } }}>
                                 <FormControl fullWidth error={formik.touched.teachingBatch && Boolean(formik.errors.teachingBatch)}>
                                     <InputLabel id="teaching-batch-label">Teaching Batch</InputLabel>
                                     <Select
@@ -577,7 +622,7 @@ const Trainers = () => {
                                     )}
                                 </FormControl>
                             </Box>
-                            <Box sx={{ gridColumn: 'span 6' }}>
+                            <Box sx={{ gridColumn: { xs: 'span 12', sm: 'span 6' } }}>
                                 <TextField
                                     fullWidth
                                     id="course"
@@ -632,7 +677,7 @@ const Trainers = () => {
                         </Box>
                     </form>
                 </DialogContent>
-                <DialogActions sx={{ p: 2 }}>
+                <DialogActions sx={{ p: { xs: 1.5, sm: 2 }, px: { xs: 2, sm: 3 }, gap: 1, flexShrink: 0 }}>
                     <Button onClick={handleCloseDialog} color="inherit">Cancel</Button>
                     <Button onClick={formik.handleSubmit} variant="contained" sx={{ bgcolor: "#ca0019", "&:hover": { bgcolor: "#a30014" } }}>
                         {selectedTrainer ? "Update Trainer" : "Add Trainer"}
@@ -641,7 +686,14 @@ const Trainers = () => {
             </Dialog>
 
             {/* Delete Confirmation Dialog */}
-            <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+            <Dialog
+                open={deleteDialogOpen}
+                onClose={() => setDeleteDialogOpen(false)}
+                PaperProps={{
+                    "data-lenis-prevent": "true",
+                    sx: { borderRadius: { xs: 2, sm: 3 }, m: 2 },
+                }}
+            >
                 <DialogTitle>Confirm Delete</DialogTitle>
                 <DialogContent>
                     <Typography>
