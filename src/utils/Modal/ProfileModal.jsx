@@ -55,7 +55,7 @@ import DoneIcon from "@mui/icons-material/Done";
 import ErrorIcon from "@mui/icons-material/Error";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import userIcon from "@/assets/img/user-icon.png"
+import userIcon from "@/assets/img/user-icon.webp"
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
   return (

@@ -9,5 +9,9 @@ export default defineConfig({
       // Alias "src" to the base src folder
       '@': path.resolve(__dirname, 'src')
     }
+  },
+  server: {
+    port: 5173,
+    strictPort: true
   }
 });

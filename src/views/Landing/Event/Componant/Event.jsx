@@ -16,25 +16,25 @@ import { ContactMail } from '@mui/icons-material';
 const COMMUNITY_PARTNERS = [
     {
       name: "Google Developer Groups Chandigarh",
-      logo: "https://bharat-tech-xperience.theuniques.in/static/media/gdg%20chandigarh.43ca0a92cc45f4c3bcc9.png",
+      logo: "https://bharat-tech-xperience.theuniques.in/static/media/gdg%20chandigarh.43ca0a92cc45f4c3bcc9.webp",
       description: "A community of developers interested in Google's developer technologies.",
       website: "https://gdg.community.dev/gdg-chandigarh/"
     },
     {
       name: "Google Developer Groups Jalandhar",
-      logo: "https://bharat-tech-xperience.theuniques.in/static/media/cp-gdg%20jalandhar.4872d2376bb3273dde32.png",
+      logo: "https://bharat-tech-xperience.theuniques.in/static/media/cp-gdg%20jalandhar.4872d2376bb3273dde32.webp",
       description: "An initiative to concentrate the efforts of many developers in and around Punjab to learn and share Google products.",
       website: "https://gdg.community.dev/gdg-jalandhar/"
     },
     {
       name: "Google Developer Groups Ludhiana",
-      logo: "https://bharat-tech-xperience.theuniques.in/static/media/cp-gdg%20ludhiana.78b882f7fdc3b6b0619f.png",
+      logo: "https://bharat-tech-xperience.theuniques.in/static/media/cp-gdg%20ludhiana.78b882f7fdc3b6b0619f.webp",
       description: "A platform for developers in Ludhiana to learn, network, and collaborate on Google technologies.",
       website: "https://gdg.community.dev/gdg-ludhiana/"
     },
     {
       name: "Google Developer Groups On Campus - DAV University",
-      logo: "https://bharat-tech-xperience.theuniques.in/static/media/dav.b61c694bc933f8c72663.png",
+      logo: "https://bharat-tech-xperience.theuniques.in/static/media/dav.b61c694bc933f8c72663.webp",
       description: "A university-based community at DAV University, Jalandhar for students interested in Google technologies.",
       website: "https://gdg.community.dev/gdg-on-campus-dav-university-jalandhar-india/"
     },
@@ -58,19 +58,19 @@ const COMMUNITY_PARTNERS = [
     },
     {
       name: "Google Developer Groups On Campus - NIT JALANDHAR",
-      logo: "https://bharat-tech-xperience.theuniques.in/static/media/nit.120bad5231a209fe72f7.jpg",
+      logo: "https://bharat-tech-xperience.theuniques.in/static/media/nit.120bad5231a209fe72f7.webp",
       description: "The Google Developer Student Club at the National Institute of Technology, Jalandhar.",
       website: "https://gdg.community.dev/gdg-on-campus-dr-b-r-ambedkar-national-institute-of-technology-jalandhar-india/"
     },
     {
       name: "Google Developer Groups On Campus - RIET CONGOWAL",
-      logo: "https://bharat-tech-xperience.theuniques.in/static/media/slite.83eb41537ac66a4cbde6.png",
+      logo: "https://bharat-tech-xperience.theuniques.in/static/media/slite.83eb41537ac66a4cbde6.webp",
       description: "A Google Developer Group on campus at RIET Congowal.",
       website: null
     },
     {
       name: "GeeksForGeeks (ARESEC CHAPTER)",
-      logo: "https://bharat-tech-xperience.theuniques.in/static/media/gfg.077a7e9ff5911c708565.jpg",
+      logo: "https://bharat-tech-xperience.theuniques.in/static/media/gfg.077a7e9ff5911c708565.webp",
       description: "The ARESEC chapter of GeeksForGeeks, a community focused on computer science and programming.",
       website: "https://www.geeksforgeeks.org/"
     },
@@ -82,7 +82,7 @@ const COMMUNITY_PARTNERS = [
     },
     {
       name: "OPEN SOURCE CHANDIGARH",
-      logo: "https://bharat-tech-xperience.theuniques.in/static/media/open.f20a841a307eb8c05f28.png",
+      logo: "https://bharat-tech-xperience.theuniques.in/static/media/open.f20a841a307eb8c05f28.webp",
       description: "A community in Chandigarh focused on open-source technologies, powered by Chitkara University, Punjab.",
       website: "https://github.com/Open-Source-Chandigarh"
     }
@@ -953,7 +953,7 @@ const fetchTeamMembers = async (eventId) => {
                                         {safeEventSponsors.map((sponsor, index) => (
                                             <div key={index} className="border rounded-lg p-3 sm:p-4 flex items-center">
                                                 <img
-                                                    src={sponsor.logoUrl || "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg"}
+                                                    src={sponsor.logoUrl || "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.webp"}
                                                     className="w-12 h-12 sm:w-16 sm:h-16 object-cover"
                                                     alt={sponsor.name}
                                                 />
@@ -1202,7 +1202,7 @@ const fetchTeamMembers = async (eventId) => {
                                     {safeEventSponsors.slice(0, 3).map((sponsor, index) => (
                                         <div key={index} className="flex items-center">
                                             <img
-                                                src={sponsor.logoUrl || "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg"}
+                                                src={sponsor.logoUrl || "https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.webp"}
                                                 className="w-8 h-8 sm:w-10 sm:h-10 object-cover"
                                                 alt={sponsor.name}
                                             />

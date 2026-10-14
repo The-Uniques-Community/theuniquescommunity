@@ -8,10 +8,10 @@ import {
   Star
 } from "@mui/icons-material"
 import { useThemeContext } from "@/theme/ThemeProvider";
-import ronitImg from "@/assets/img/Success Stories avatars/ronit-jaiprakash.jpeg";
-import praveenImg from "@/assets/img/Success Stories avatars/praveen-jaiswal.jpeg";
-import mantashaImg from "@/assets/img/Success Stories avatars/mantasha-tabassum.jpg";
-import naveenImg from "@/assets/img/Success Stories avatars/naveen-jaiswal.jpg";
+import ronitImg from "@/assets/img/Success Stories avatars/ronit-jaiprakash.webp";
+import praveenImg from "@/assets/img/Success Stories avatars/praveen-jaiswal.webp";
+import mantashaImg from "@/assets/img/Success Stories avatars/mantasha-tabassum.webp";
+import naveenImg from "@/assets/img/Success Stories avatars/naveen-jaiswal.webp";
 
 const colors = {
   primary: "#ca0019",     // Red
@@ -59,7 +59,7 @@ const testimonialData = {
   ],
   faculty: [
     {
-      name: "Dr. Rajesh Sharma",
+      name: "Vivek Agnihotri",
       role: "Professor of Computer Science",
       image: "https://randomuser.me/api/portraits/men/42.jpg",
       testimonial: "The curriculum at The Uniques Community bridges academic theory with industry practice seamlessly. Our students who engage with their cohorts consistently excel in technical problem-solving.",
@@ -67,25 +67,25 @@ const testimonialData = {
       highlight: "Curriculum"
     },
     {
-      name: "Prof. Anita Desai",
-      role: "Head of IT Department",
-      image: "https://randomuser.me/api/portraits/women/45.jpg",
+      name: "Neha Mehta",
+      role: "Soft Skills trainer at Sviet",
+      image: "https://media.licdn.com/dms/image/v2/D4E03AQEa99melTz8QA/profile-displayphoto-crop_800_800/B4EaDzCuCFGQAI-/0/1790783974801?e=1793232000&v=beta&t=BzELJ4evQ8YoIhMj4NLmZtGqnlooWyGtuW_K3rnbkmo",
       testimonial: "I have witnessed an inspiring transformation in students participating in The Uniques programs. Their technical confidence, code quality, and collaboration skills show immense growth.",
       rating: 5,
       highlight: "Skill Growth"
     },
     {
-      name: "Dr. Vikram Mehta",
-      role: "Dean of Engineering",
-      image: "https://randomuser.me/api/portraits/men/32.jpg",
+      name: "Gaurav Nagpal",
+      role: "Technical Trainer at Sviet",
+      image: "https://media.licdn.com/dms/image/v2/D5603AQFeDMIrzspXZw/profile-displayphoto-crop_800_800/B56Z.e.b5UHIAI-/0/1785078595946?e=1793232000&v=beta&t=YrcDIXaMrdI4wgYiJ0Sgx4bqCFAoArQfoA-ssyxVSs4",
       testimonial: "The Uniques Community's focus on project-driven learning complements our degree programs brilliantly. Their industry mentors provide students with priceless hands-on tech exposure.",
       rating: 5,
       highlight: "Industry Link"
     },
     {
-      name: "Prof. Sunita Patel",
-      role: "Director of Placements",
-      image: "https://randomuser.me/api/portraits/women/68.jpg",
+      name: "Gurmeet Singh",
+      role: "Technical trainer at Sviet",
+      image: "https://media.licdn.com/dms/image/v2/C5103AQHy_ZoAclhr3w/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1540530349248?e=1793232000&v=beta&t=tqsi5ErHBkmtzU9VQrJgJ7c0-WCp5W-mlZI7rC1PmIo",
       testimonial: "Leading tech companies actively seek students trained by The Uniques Community. Their structured training significantly elevates campus placement records and career opportunities.",
       rating: 5,
       highlight: "Placements"
@@ -288,7 +288,7 @@ const Testimonials = () => {
   return (
     <section 
       ref={sectionRef} 
-      className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden relative bg-gradient-to-b from-white to-gray-50 dark:bg-none dark:bg-transparent"
+      className="pt-6 sm:pt-10 lg:pt-14 pb-8 sm:pb-12 lg:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden relative bg-gradient-to-b from-white to-gray-50 dark:bg-none dark:bg-transparent"
     >
       {/* Background decorative elements */}
       <div 

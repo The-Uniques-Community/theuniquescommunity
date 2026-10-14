@@ -14,7 +14,7 @@ export const members = [
       isPlaced: false,
       isVerified: true,
       isSuspended: false,
-      profileStatus: "active",
+      profileStatus: "inactive",
       fineStatus: "0",
       certifications: [
         {
@@ -40,7 +40,7 @@ export const members = [
         },
   
       ], // MongoDB ObjectIds
-      profilePic: "https://randomuser.me/api/portraits/men/1.jpg",
+      profilePic: "https://randomuser.me/api/portraits/men/1.webp",
       skills: ["React", "Node.js", "MongoDB", "Tailwind CSS"],
       projects: [ {
         id: "proj1",
@@ -111,7 +111,7 @@ export const members = [
       isPlaced: true,
       isVerified: true,
       isSuspended: false,
-      profileStatus: "active",
+      profileStatus: "inactive",
       fineStatus: "500",
       certifications: [
         {
@@ -136,7 +136,7 @@ export const members = [
           imageUrl: "/placeholder.svg?height=200&width=300",
         },
       ],
-      profilePic: "https://randomuser.me/api/portraits/women/2.jpg",
+      profilePic: "https://randomuser.me/api/portraits/women/2.webp",
       skills: ["Python", "Machine Learning", "Data Science", "React", "Node.js", "MongoDB", "Tailwind CSS"],
       projects: [
         {

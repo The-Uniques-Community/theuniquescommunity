@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation } from "react-router-dom";
 import logo from "../../assets/logos/theuniquesCommunity.png";
 import darkLogo from "../../assets/logos/theuniquesCommunity copy.png";
 import { RiMenu3Line, RiCloseLine } from "react-icons/ri";
@@ -21,14 +21,13 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import SchoolIcon from "@mui/icons-material/School";
 import ArticleIcon from "@mui/icons-material/Article";
 import ScienceIcon from "@mui/icons-material/Science";
+import TimelineIcon from "@mui/icons-material/Timeline";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import { LogIn, LogOut, ChevronRight, Sun, Moon } from "lucide-react"; // Add LogOut import
-// Add this to your imports at the top
+import { LogIn, LogOut, ChevronRight, Sun, Moon } from "lucide-react";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import axios from "axios"; // For logout API call
-import { set } from "date-fns";
+import axios from "axios";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { BASE_URL } from "@/config";
 import { motion, AnimatePresence } from "framer-motion";
@@ -39,7 +38,7 @@ const Navbar = () => {
   const [activeLink, setActiveLink] = React.useState("");
   const [user, setUser] = useState({}); // State to hold user data
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate();
+  const location = useLocation();
   const { isDarkMode, toggleTheme } = useThemeContext();
 
   // Check authentication status on component mount
@@ -49,29 +48,22 @@ const Navbar = () => {
 
   // Function to check if user is logged in
   const checkAuthStatus = async () => {
-    // Check for token in localStorage or sessionStorage
     try {
-      // Call the backend endpoint that verifies the role using the verifyRole middleware
       const response = await axios.get(`${BASE_URL}/auth/verify_user`, {
         withCredentials: true,
       });
-      setUser(response?.data.user); // Set user data from response
-      console.log(response?.data.user);
+      setUser(response?.data.user);
       setIsLoggedIn(true);
-    } catch (error) {
-      // If the error is due to token expiry or invalid token, automatically log out
-      setUser({}); // Clear user data
-      await handleLogout();
-
+    } catch {
+      setUser({});
       setIsLoggedIn(false);
-    } finally {
-      // setLoading(false);
     }
   };
 
   // Handle logout
   const handleLogout = async () => {
     try {
+      localStorage.removeItem("token");
       await axios.post(
         `${BASE_URL}/auth/logout`,
         {},
@@ -81,6 +73,9 @@ const Navbar = () => {
       setIsLoggedIn(false);
     } catch (error) {
       console.error("Logout failed:", error);
+      localStorage.removeItem("token");
+      setUser({});
+      setIsLoggedIn(false);
     }
   };
 
@@ -89,12 +84,14 @@ const Navbar = () => {
     // Base navigation items that are always shown
     const baseItems = [
       { text: "Home", icon: <HomeIcon />, link: "/" },
-      { text: "How it started", icon: <WorkIcon />, link: "/howitstarted" },
+      { text: "About Us", icon: <InfoIcon />, link: "/about" },
+      { text: "Community", icon: <GroupsIcon />, link: "/community-main" },
+      { text: "Events", icon: <EventIcon />, link: "/events" },
+      { text: "Projects", icon: <WorkIcon />, link: "/projects" },
+      { text: "How it started", icon: <TimelineIcon />, link: "/howitstarted" },
       { text: "Batches", icon: <SchoolIcon />, link: "/batches" },
       { text: "Training Model", icon: <ScienceIcon />, link: "/training" },
       { text: "Success Stories", icon: <CheckCircleIcon />, link: "/success-stories" },
-      { text: "Community", icon: <GroupsIcon />, link: "/community-main" },
-      { text: "Projects", icon: <WorkIcon />, link: "/projects" },
       { text: "Blogs", icon: <ArticleIcon />, link: "/blogs" },
       { text: "Contact", icon: <ContactMailIcon />, link: "/contact" },
     ];
@@ -104,7 +101,7 @@ const Navbar = () => {
       authItems.push({
         text: "Dashboard",
         icon: <DashboardIcon />,
-        link: `/${user?.role}`,
+        link: `/${user?.role || "member"}`,
       });
       authItems.push({
         text: "Logout",
@@ -112,9 +109,23 @@ const Navbar = () => {
         onClick: handleLogout,
         link: "#",
       });
+    } else {
+      authItems.push({
+        text: "Login",
+        icon: <LogIn size={20} />,
+        link: "/auth/login",
+      });
     }
 
     return { baseItems, authItems };
+  };
+
+  // Helper to determine if an item is active
+  const isItemActive = (item) => {
+    if (activeLink === item.text) return true;
+    if (item.link === "/" && location.pathname === "/") return true;
+    if (item.link !== "/" && (location.pathname === item.link || location.pathname.startsWith(`${item.link}/`))) return true;
+    return false;
   };
 
   // Get nav items based on auth status
@@ -133,6 +144,7 @@ const Navbar = () => {
 
   const handleLinkClick = (linkText) => {
     setActiveLink(linkText);
+    setDrawerOpen(false);
   };
 
   // Social media links - update these URLs with actual links
@@ -159,11 +171,14 @@ const Navbar = () => {
 
   const drawerContent = (
     <Box
+      data-lenis-prevent
       sx={{
         width: { xs: 'calc(100vw - 32px)', sm: 280 },
         height: "100%",
         display: "flex",
         flexDirection: "column",
+        minHeight: 0,
+        overflow: "hidden",
         background: isDarkMode ? "rgba(30, 30, 30, 0.98)" : "rgba(255, 248, 248, 0.98)", // Dynamic tint based on mode
         backdropFilter: "blur(25px)",
       }}
@@ -171,7 +186,7 @@ const Navbar = () => {
 
     >
       {/* Drawer Header */}
-      <Box sx={{ pt: 2, px: 2, display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+      <Box sx={{ pt: 2, px: 2, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flexShrink: 0 }}>
         <motion.div
           whileHover={{ rotate: 90, scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
@@ -184,16 +199,22 @@ const Navbar = () => {
       </Box>
 
       <List
+        data-lenis-prevent
         sx={{ 
           flexGrow: 1, 
+          minHeight: 0,
           px: 2, 
           pt: 1, 
           pb: 2,
           overflowY: "auto",
+          overscrollBehavior: "contain",
+          touchAction: "pan-y",
+          WebkitOverflowScrolling: "touch",
           scrollbarWidth: "none",
-          "&::-webkit-scrollbar": { display: "none" },
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
         }}
-        onClick={toggleDrawer(false)}
         onKeyDown={toggleDrawer(false)}
       >
         <AnimatePresence>
@@ -228,7 +249,7 @@ const Navbar = () => {
                       bottom: 0,
                       width: '4px',
                       backgroundColor: '#CA0019',
-                      transform: activeLink === item.text ? 'scaleY(0.6)' : 'scaleY(0)',
+                      transform: isItemActive(item) ? 'scaleY(0.6)' : 'scaleY(0)',
                       transition: 'transform 0.3s ease',
                       borderRadius: '0 4px 4px 0',
                     },
@@ -238,7 +259,7 @@ const Navbar = () => {
                       "& .MuiListItemIcon-root": { color: "#CA0019", transform: "scale(1.1)" },
                       "& .MuiTypography-root": { color: "#CA0019", fontWeight: 600 },
                     },
-                    ...(activeLink === item.text && {
+                    ...(isItemActive(item) && {
                       backgroundColor: "rgba(202, 0, 25, 0.08)",
                       boxShadow: '0 4px 12px rgba(202, 0, 25, 0.1)',
                       "& .MuiListItemIcon-root": { color: "#CA0019" },
@@ -249,7 +270,7 @@ const Navbar = () => {
                   <ListItemIcon
                     sx={{
                       minWidth: "36px",
-                      color: activeLink === item.text ? "#CA0019" : (isDarkMode ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.5)"),
+                      color: isItemActive(item) ? "#CA0019" : (isDarkMode ? "rgba(255,255,255,0.7)" : "rgba(0,0,0,0.5)"),
                       transition: "color 0.2s ease",
                       "& .MuiSvgIcon-root": { fontSize: "1.2rem" }
                     }}
@@ -260,12 +281,12 @@ const Navbar = () => {
                     primary={item.text}
                     primaryTypographyProps={{
                       fontSize: "0.85rem",
-                      fontWeight: activeLink === item.text ? 600 : 500,
-                      color: activeLink === item.text ? "#CA0019" : (isDarkMode ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.8)"),
+                      fontWeight: isItemActive(item) ? 600 : 500,
+                      color: isItemActive(item) ? "#CA0019" : (isDarkMode ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.8)"),
                       letterSpacing: "0.01em",
                     }}
                   />
-                  {activeLink === item.text && (
+                  {isItemActive(item) && (
                     <motion.div layoutId="active-indicator">
                       <ChevronRight size={16} color="#CA0019" />
                     </motion.div>
@@ -278,7 +299,7 @@ const Navbar = () => {
       </List>
 
       {/* Auth & Actions Section (Fixed) */}
-      <Box sx={{ px: 2, pb: 2 }}>
+      <Box sx={{ px: 2, pb: 2, flexShrink: 0 }}>
         {authNavItems.length > 0 && <Divider sx={{ mb: 3, opacity: 0.5 }} />}
         {authNavItems.map((item) => (
           <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
@@ -287,6 +308,7 @@ const Navbar = () => {
               to={!item.onClick ? item.link : undefined}
               onClick={() => {
                 if (item.onClick) item.onClick();
+                setDrawerOpen(false);
               }}
               sx={{
                 borderRadius: "8px",
@@ -390,21 +412,30 @@ const Navbar = () => {
           { name: "COMMUNITY", path: "/community-main" },
           { name: "EVENTS", path: "/events" },
           { name: "PROJECTS", path: "/projects" },
-        ].map((item) => (
-          <Link key={item.name} to={item.path} className="group px-3.5 xl:px-5 py-2.5 whitespace-nowrap shrink-0">
-            <div className="relative inline-block whitespace-nowrap">
-              <motion.span 
-                whileHover={{ scale: 1.02 }}
-                className="relative z-10 text-sm font-bold tracking-wider text-neutral-700 dark:text-neutral-300 group-hover:text-red-600 dark:group-hover:text-red-500 transition-colors duration-300 whitespace-nowrap"
-              >
-                {item.name}
-              </motion.span>
-              <span 
-                className="absolute -bottom-1 left-0 w-full h-0.5 bg-red-600 transform scale-x-0 origin-right transition-transform duration-300 ease-out group-hover:scale-x-100 group-hover:origin-left"
-              />
-            </div>
-          </Link>
-        ))}
+        ].map((item) => {
+          const isActive = location.pathname === item.path || (item.path !== "/" && location.pathname.startsWith(`${item.path}/`));
+          return (
+            <Link key={item.name} to={item.path} className="group px-3.5 xl:px-5 py-2.5 whitespace-nowrap shrink-0">
+              <div className="relative inline-block whitespace-nowrap">
+                <motion.span 
+                  whileHover={{ scale: 1.02 }}
+                  className={`relative z-10 text-sm font-bold tracking-wider transition-colors duration-300 whitespace-nowrap ${
+                    isActive 
+                      ? "text-red-600 dark:text-red-500" 
+                      : "text-neutral-700 dark:text-neutral-300 group-hover:text-red-600 dark:group-hover:text-red-500"
+                  }`}
+                >
+                  {item.name}
+                </motion.span>
+                <span 
+                  className={`absolute -bottom-1 left-0 w-full h-0.5 bg-red-600 transition-transform duration-300 ease-out ${
+                    isActive ? "scale-x-100 origin-left" : "scale-x-0 origin-right group-hover:scale-x-100 group-hover:origin-left"
+                  }`}
+                />
+              </div>
+            </Link>
+          );
+        })}
       </div>
 
       <div className="flex items-center justify-end gap-4">
@@ -446,21 +477,25 @@ const Navbar = () => {
             boxShadow: '0 25px 50px -12px rgba(202, 0, 25, 0.1)',
             border: '1px solid rgba(202, 0, 25, 0.05)',
             background: isDarkMode ? 'linear-gradient(135deg, rgba(30, 30, 30, 0.98), rgba(20, 20, 20, 0.95))' : 'linear-gradient(135deg, rgba(255, 252, 252, 0.98), rgba(255, 245, 245, 0.95))',
+            overflow: "hidden",
+            scrollbarWidth: "none",
+            "&::-webkit-scrollbar": { display: "none" },
           },
-
 
           "& .MuiBackdrop-root": {
             backdropFilter: 'blur(4px)',
             backgroundColor: 'rgba(0,0,0,0.2)',
           },
-          overflow: "hidden",
+        }}
+        PaperProps={{
+          "data-lenis-prevent": true,
         }}
       >
         <motion.div
           initial={{ x: 300, opacity: 0, rotate: 5, scale: 0.9 }}
           animate={isDrawerOpen ? { x: 0, opacity: 1, rotate: 0, scale: 1 } : {}}
           transition={{ type: "spring", stiffness: 200, damping: 25 }}
-          style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+          style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
         >
           {drawerContent}
         </motion.div>

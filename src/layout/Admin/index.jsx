@@ -16,7 +16,7 @@ import GroupIcon from "@mui/icons-material/Group";
 
 import LogoutIcon from "@mui/icons-material/Logout";
 import { toast } from "react-toastify";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useThemeContext } from "@/theme/ThemeProvider";
@@ -28,13 +28,23 @@ import Brightness4Icon from "@mui/icons-material/Brightness4"; // Dark Mode Icon
 import Brightness7Icon from "@mui/icons-material/Brightness7"; // Light Mode Icon
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
+import SchoolIcon from "@mui/icons-material/School";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import ClassIcon from "@mui/icons-material/Class";
+import Diversity3Icon from "@mui/icons-material/Diversity3";
 // Navigation items with full paths
 const ADMIN_NAVIGATION = [
   { segment: "", title: "Dashboard", icon: <DashboardIcon /> },
   { segment: "members-overview", title: "Members", icon: <GroupIcon /> },
   { segment: "events-overview", title: "Events", icon: <EventIcon /> },
+  { segment: "projects-overview", title: "Projects", icon: <AccountTreeIcon /> },
   { segment: "accounts", title: "Accounts", icon: <AccountBalance/> },
   { segment: "enquiry", title: "Enquiry", icon: <AnnouncementIcon/> },
+  { segment: "trainers", title: "Trainers", icon: <SchoolIcon /> },
+  { segment: "stats", title: "Stats", icon: <BarChartIcon /> },
+  { segment: "batches", title: "Batches", icon: <ClassIcon /> },
+  { segment: "community", title: "Community", icon: <Diversity3Icon /> },
 ];
 
 function Branding() {
@@ -53,15 +63,28 @@ function DashboardLayoutAppBar() {
   const { isDarkMode, toggleTheme } = useThemeContext(); // Access dark mode state and toggle function
   const theme = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Retrieve the saved active item from localStorage on mount
-  const savedActiveItem = localStorage.getItem("activeItem") || "";
+  const getActiveItemFromPath = () => {
+    const pathSegments = location.pathname.split("/");
+    const currentSegment = pathSegments[2] || ""; 
+    const activeNav = ADMIN_NAVIGATION.find(item => item.segment === currentSegment);
+    return activeNav ? activeNav.title : "";
+  };
+
   const [drawerOpen, setDrawerOpen] = React.useState(false);
-  const [activeItem, setActiveItem] = React.useState(savedActiveItem);
+  const [activeItem, setActiveItem] = React.useState(getActiveItemFromPath());
+
+  React.useEffect(() => {
+    setActiveItem(getActiveItemFromPath());
+  }, [location.pathname]);
 
   const [isOpen, setIsOpen] = React.useState(false);
-  const onClose = () => setIsOpen(false);
+  const onClose = () => {
+    setIsOpen(false);
+    setDrawerOpen(false);
+  };
   const onConfirm = () => {
     fetch("https://theuniquesportal-server.vercel.app/auth/logout", {
       method: "POST",
@@ -100,13 +123,13 @@ function DashboardLayoutAppBar() {
       />
       <Drawer
         variant={isMobile ? "temporary" : "permanent"}
-        open={drawerOpen}
+        open={drawerOpen && !isOpen}
         onClose={toggleDrawer}
+        data-lenis-prevent
         sx={{
           width: isMobile ? "auto" : drawerOpen ? 240 : 75,
           flexShrink: 0,
           zIndex: '2000',
-          
           ml: 2, // Adds margin-left to create space
           "& .MuiDrawer-paper": {
             width: isMobile ? "auto" : drawerOpen ? 240 : 75,
@@ -116,8 +139,15 @@ function DashboardLayoutAppBar() {
             backgroundColor: theme.palette.background.drawer,
             borderRadius: "8px",
             overflowX: "hidden",
+            display: "flex",
+            flexDirection: "column",
             transition: "width 0.3s",
             boxSizing: "border-box",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            "&::-webkit-scrollbar": {
+              display: "none",
+            },
           },
         }}
       >
@@ -146,7 +176,24 @@ function DashboardLayoutAppBar() {
           </Box>
         </Box>
 
-        <List sx={{ padding: 2 }}>
+        <List
+          data-lenis-prevent
+          sx={{
+            padding: 2,
+            flexGrow: 1,
+            minHeight: 0,
+            overflowY: "auto",
+            overflowX: "hidden",
+            overscrollBehavior: "contain",
+            touchAction: "pan-y",
+            WebkitOverflowScrolling: "touch",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            "&::-webkit-scrollbar": {
+              display: "none",
+            },
+          }}
+        >
           {ADMIN_NAVIGATION.map((item) => {
             const isActive = activeItem === item.title;
 
@@ -191,7 +238,7 @@ function DashboardLayoutAppBar() {
             );
           })}
         </List>
-        <List sx={{ padding: 2, marginTop: "auto" }}>
+        <List sx={{ padding: 2, marginTop: "auto", flexShrink: 0 }}>
           <ListItem
             button
             onClick={toggleTheme} // Toggles between light and dark mode
@@ -228,7 +275,10 @@ function DashboardLayoutAppBar() {
           </ListItem>
           <ListItem
             button
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              setDrawerOpen(false);
+              setIsOpen(true);
+            }}
             sx={{
               backgroundColor: "inherit",
               color: theme.palette.primary.light,

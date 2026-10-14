@@ -9,7 +9,11 @@ const Auth = {
   element: <AuthLayout />,
   children: [
     {
-      path: "login", // Fix: should be relative, not absolute
+      index: true,
+      element: <Login />,
+    },
+    {
+      path: "login",
       element: <Login />,
     },
   ],

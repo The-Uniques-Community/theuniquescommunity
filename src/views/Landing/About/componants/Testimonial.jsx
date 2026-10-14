@@ -4,8 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLinkedin, faFacebook } from "@fortawesome/free-brands-svg-icons";
 import { useThemeContext } from "../../../../theme/ThemeProvider";
 
-import sahilGargImg from "../../../../assets/img/About/sahil_garg.png";
-import shubhamGargImg from "../../../../assets/img/About/shubham_garg.png";
+import sahilGargImg from "../../../../assets/img/About/sahil_garg.webp";
+import shubhamGargImg from "../../../../assets/img/About/shubham_garg.webp";
 
 const desk = [
   {
@@ -110,9 +110,7 @@ export default function Testimonial() {
                   alt={activeMember.name}
                   whileHover={{ scale: 1.08 }}
                   transition={{ duration: 0.4 }}
-                  className={`w-full h-full object-cover transition-transform duration-500 cursor-pointer ${
-                    activeMember.id === 3 ? "object-[50%_15%]" : "object-top"
-                  }`}
+                  className="w-full h-full object-cover transition-transform duration-500 cursor-pointer object-top"
                 />
               </div>
 
@@ -195,9 +193,7 @@ export default function Testimonial() {
                     <img
                       src={member.image}
                       alt={member.name}
-                      className={`w-full h-full object-cover ${
-                        member.id === 3 ? "object-[50%_15%]" : "object-top"
-                      }`}
+                      className="w-full h-full object-cover object-top"
                     />
                   </div>
 

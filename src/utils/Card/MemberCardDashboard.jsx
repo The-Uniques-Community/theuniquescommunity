@@ -21,7 +21,8 @@ import {
 } from "@mui/icons-material";
 import "tailwindcss/tailwind.css";
 import ProfileModal from "../Modal/ProfileModal";
-import userIcon from "@/assets/img/user-icon.png";
+import userIcon from "@/assets/img/user-icon.webp";
+import { getBatchStatus } from "@/utils/batch/batchesData";
 const UserProfileModal = ({ open, handleClose, userData }) => {
   const [activeTab, setActiveTab] = useState(0);
 
@@ -268,7 +269,7 @@ const sampleUserData = {
   course: "B.Tech CSE",
   batch: "The Uniques 2.0",
   profileStatus: "active",
-  profilePic: "https://example.com/profile.jpg",
+  profilePic: "https://example.com/profile.webp",
   linkedinProfile: "https://linkedin.com/in/johndoe",
   githubProfile: "https://github.com/johndoe",
   bio: "Software developer with passion for AI",
@@ -299,6 +300,7 @@ const sampleUserData = {
 
 export const MemberCardDashboard = ({ user, onEdit, onDelete, refreshData }) => {
   const [open, setOpen] = useState(false);
+  const effectiveStatus = getBatchStatus(user);
 
   const handleClose = () => setOpen(false);
   const getProxyImageUrl = (fileId) => {
@@ -320,8 +322,16 @@ export const MemberCardDashboard = ({ user, onEdit, onDelete, refreshData }) => 
               />{" "}
               {user.batch}
             </div>
-            <span className="bg-yellow-400 text-yellow-800 text-sm px-3 py-1 rounded-full">
-              {user.profileStatus}
+            <span
+              className={`${
+                effectiveStatus === "active"
+                  ? "bg-green-500 text-white"
+                  : effectiveStatus === "suspended" || effectiveStatus === "blocked"
+                  ? "bg-red-500 text-white"
+                  : "bg-gray-500 text-white"
+              } text-sm px-3 py-1 rounded-full font-medium`}
+            >
+              {effectiveStatus.charAt(0).toUpperCase() + effectiveStatus.slice(1)}
             </span>
           </div>
 

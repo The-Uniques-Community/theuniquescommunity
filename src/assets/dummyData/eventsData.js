@@ -19,7 +19,7 @@ export const events = [
       ],
       eventGuests: [
         {
-          guestImage: "https://example.com/guest1.jpg",
+          guestImage: "https://example.com/guest1.webp",
           guestName: "Dr. Priya Verma",
           guestDesignation: "AI Research Scientist",
           guestCompany: "Google AI",
@@ -32,7 +32,7 @@ export const events = [
     {
       eventName: "Web3 & Blockchain Seminar",
       eventDescription: "Exploring the future of decentralized technologies and their real-world applications.",
-      eventBanner: "https://www.xrtoday.com/wp-content/uploads/2022/10/What_Web3_Going_2023.jpg",
+      eventBanner: "https://www.xrtoday.com/wp-content/uploads/2022/10/What_Web3_Going_2023.webp",
       eventDate: new Date("2025-05-20"),
       eventTime: "11:00 AM - 2:00 PM",
       eventVenue: "Tech Park Hall",
@@ -49,14 +49,14 @@ export const events = [
       ],
       eventGuests: [
         {
-          guestImage: "https://example.com/guest2.jpg",
+          guestImage: "https://example.com/guest2.webp",
           guestName: "Vikram Patel",
           guestDesignation: "Blockchain Developer",
           guestCompany: "Ethereum Foundation",
           guestLinkedin: "https://linkedin.com/in/vikrampatel",
         },
         {
-          guestImage: "https://example.com/guest3.jpg",
+          guestImage: "https://example.com/guest3.webp",
           guestName: "Sarah Johnson",
           guestDesignation: "Web3 Evangelist",
           guestCompany: "Polkadot",
@@ -86,14 +86,14 @@ export const events = [
       ],
       eventGuests: [
         {
-          guestImage: "https://example.com/guest4.jpg",
+          guestImage: "https://example.com/guest4.webp",
           guestName: "Rahul Sharma",
           guestDesignation: "CTO",
           guestCompany: "OpenAI India",
           guestLinkedin: "https://linkedin.com/in/rahulsharma",
         },
         {
-          guestImage: "https://example.com/guest5.jpg",
+          guestImage: "https://example.com/guest5.webp",
           guestName: "Emily Roberts",
           guestDesignation: "Product Manager",
           guestCompany: "Microsoft",

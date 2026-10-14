@@ -3,29 +3,33 @@
 import { useEffect, useRef } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { Card } from "@mui/material"
 import { Users, GraduationCap, UserCheck } from "lucide-react"
-import { useThemeContext } from "@/theme/ThemeProvider"
 
 const sections = [
     { title: "Ready? Let's Start!", color: "text-blue-900" },
     {
         title: "Mentors",
-        icon: <Users />,
+        icon: <Users className="w-6 h-6" />,
         description: "Connect with experienced professionals who can guide your journey.",
         color: "bg-blue-900 text-white",
+        accent: "bg-blue-600",
+        hoverBorder: "hover:border-blue-500/50 hover:shadow-[0_20px_40px_-15px_rgba(37,99,235,0.2)]",
     },
     {
         title: "Alumni",
-        icon: <GraduationCap />,
+        icon: <GraduationCap className="w-6 h-6" />,
         description: "Learn from graduates who've successfully navigated their careers.",
         color: "bg-yellow-400 text-black",
+        accent: "bg-yellow-500",
+        hoverBorder: "hover:border-yellow-500/50 hover:shadow-[0_20px_40px_-15px_rgba(234,179,8,0.25)]",
     },
     {
         title: "Student",
-        icon: <UserCheck />,
+        icon: <UserCheck className="w-6 h-6" />,
         description: "Connect with current students for insider tips and advice.",
         color: "bg-amber-400 text-black",
+        accent: "bg-amber-500",
+        hoverBorder: "hover:border-amber-500/50 hover:shadow-[0_20px_40px_-15px_rgba(245,158,11,0.25)]",
     },
 ]
 
@@ -57,33 +61,34 @@ const FlightPathAnimation = () => {
     }, []);
 
     return (
-        <section ref={containerRef} className="relative py-32 px-4 overflow-hidden bg-white dark:bg-[#161616]">
+        <section ref={containerRef} className="relative py-20 sm:py-28 px-4 overflow-hidden bg-white dark:bg-[#161616]">
             <div className="max-w-7xl mx-auto relative z-10">
-                <div className="text-center mb-20">
-                    <h2 className="text-4xl md:text-6xl font-bold mb-6 dark:text-white">Our Flight to <span className="text-[#ca0019]">Excellence</span></h2>
-                    <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">Every member of our community contributes to the journey. See how we support each other at every stage.</p>
+                <div className="text-center mb-14 sm:mb-16">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 dark:text-white">Our Flight to <span className="text-[#ca0019]">Excellence</span></h2>
+                    <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-base sm:text-lg">Every member of our community contributes to the journey. See how we support each other at every stage.</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
                     {sections.slice(1).map((item, idx) => (
-                        <div key={idx} className="flight-card">
-                            <Card className="h-full group hover:translate-y-[-10px] transition-transform duration-500 bg-white dark:bg-[#424D53]/20 border-none shadow-xl rounded-3xl overflow-hidden backdrop-blur-sm">
-                                <div className={`h-2 w-full ${idx === 0 ? 'bg-blue-500' : idx === 1 ? 'bg-yellow-500' : 'bg-amber-500'}`} />
-                                <div className="p-8">
-                                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 ${item.color} shadow-lg group-hover:scale-110 transition-transform`}>
-                                        {item.icon}
-                                    </div>
-                                    <h3 className="text-2xl font-bold mb-4 dark:text-white">{item.title}</h3>
-                                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{item.description}</p>
-                                    
-                                    <button className="mt-8 flex items-center gap-2 text-[#ca0019] font-bold group/btn">
-                                        Learn More 
-                                        <div className="w-6 h-6 rounded-full border border-[#ca0019] flex items-center justify-center group-hover/btn:bg-[#ca0019] group-hover/btn:text-white transition-all">
-                                            →
+                        <div key={idx} className="flight-card h-full">
+                            <div 
+                                className={`h-full group relative bg-white dark:bg-[#1e1e1e] border border-gray-200/80 dark:border-white/10 rounded-2xl overflow-hidden shadow-sm hover:-translate-y-2.5 transition-all duration-500 ease-out cursor-pointer will-change-transform ${item.hoverBorder}`}
+                            >
+                                <div className={`h-1.5 group-hover:h-2 w-full transition-all duration-500 ease-out ${item.accent}`} />
+                                <div className="p-6 sm:p-7 flex flex-col justify-between">
+                                    <div>
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-5 ${item.color} shadow-sm group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-500 ease-out`}>
+                                            {item.icon}
                                         </div>
-                                    </button>
+                                        <h3 className="text-xl sm:text-2xl font-bold mb-2.5 text-gray-900 dark:text-white group-hover:text-[#ca0019] transition-colors duration-300">
+                                            {item.title}
+                                        </h3>
+                                        <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">
+                                            {item.description}
+                                        </p>
+                                    </div>
                                 </div>
-                            </Card>
+                            </div>
                         </div>
                     ))}
                 </div>

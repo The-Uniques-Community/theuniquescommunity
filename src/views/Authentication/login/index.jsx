@@ -23,6 +23,7 @@ import logo from "@/assets/logos/theuniquesCommunity.png";
 import loginImage from "@/assets/img/login/login.svg";
 import { useNavigate } from "react-router-dom";
 import bg from "@/assets/img/login/bg.png";
+import axios from "axios";
 import { BASE_URL } from "@/config";
 
 const Login = () => {
@@ -33,11 +34,14 @@ const Login = () => {
   const handleClickShowPassword = () => setShowPassword((prev) => !prev);
   const handleMouseDownPassword = (event) => event.preventDefault();
 
-  // Listen for the message from the popup. The backend sends only the role.
+  // Listen for the message from the popup.
   useEffect(() => {
     const receiveMessage = (event) => {
       // Optionally verify event.origin for security
       if (event.data && event.data.role) {
+        if (event.data.token) {
+          localStorage.setItem("token", event.data.token);
+        }
         toast.success("Logged in successfully");
         switch (event.data.role) {
           case "member":
@@ -155,40 +159,52 @@ const Login = () => {
           })}
           onSubmit={async (values, { setErrors, setSubmitting }) => {
             try {
-              const res = await fetch(`${BASE_URL}/auth/emaillogin`, {
-                method: "POST",
-                credentials: "include", // include cookie with the request
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(values),
-              });
-              const data = await res.json();
-              if (res.ok) {
-                toast.success("Logged in successfully");
-                // Use the role from the response to navigate accordingly
-                switch (data.role) {
-                  case "member":
-                    navigate("/member");
-                    break;
-                  case "coordinator":
-                    navigate("/coordinator");
-                    break;
-                  case "communityadmin":
-                    navigate("/community");
-                    break;
-                  case "admin":
-                    navigate("/admin");
-                    break;
-                  default:
-                    navigate("/");
+              const res = await axios.post(
+                `${BASE_URL}/auth/emaillogin`,
+                {
+                  email: values.email.trim(),
+                  password: values.password,
+                },
+                {
+                  withCredentials: true,
+                  headers: { "Content-Type": "application/json" },
                 }
-              } else {
-                setErrors({ submit: data.message || "Login failed" });
+              );
+
+              const data = res.data;
+              if (data.token) {
+                localStorage.setItem("token", data.token);
+              }
+              toast.success(data.message || "Logged in successfully");
+              // Use the role from the response to navigate accordingly
+              const userRole = (data.role || data.member?.role || "").toLowerCase();
+              switch (userRole) {
+                case "member":
+                  navigate("/member");
+                  break;
+                case "coordinator":
+                  navigate("/coordinator");
+                  break;
+                case "communityadmin":
+                  navigate("/community");
+                  break;
+                case "admin":
+                  navigate("/admin");
+                  break;
+                default:
+                  navigate("/");
               }
             } catch (error) {
-              toast.error("An error occurred during login");
-              setErrors({ submit: "An error occurred" });
+              console.error("Login request error:", error);
+              const errMsg =
+                error.response?.data?.message ||
+                error.message ||
+                "An error occurred during login. Please check your credentials.";
+              setErrors({ submit: errMsg });
+              toast.error(errMsg);
+            } finally {
+              setSubmitting(false);
             }
-            setSubmitting(false);
           }}
         >
           {({

@@ -28,9 +28,10 @@ import BusinessIcon from "@mui/icons-material/Business";
 import LoginIcon from "@mui/icons-material/Login";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import InstagramIcon from "@mui/icons-material/Instagram";
+import DeleteIcon from "@mui/icons-material/Delete";
 import tu from "@/assets/logos/tu.png";
 import { Link } from "react-router";
-import userIcon from "@/assets/img/user-icon.png";
+import userIcon from "@/assets/img/user-icon.webp";
 import "tailwindcss/tailwind.css";
 
 const TrainerProfileDialog = ({ open, handleClose, user }) => {
@@ -236,7 +237,7 @@ const TrainerProfileDialog = ({ open, handleClose, user }) => {
     );
 };
 
-export const TrainerCardDashboard = ({ user }) => {
+export const TrainerCardDashboard = ({ user, onDelete }) => {
     const [open, setOpen] = useState(false);
 
     const handleClose = () => setOpen(false);
@@ -301,16 +302,73 @@ export const TrainerCardDashboard = ({ user }) => {
                         ))}
                     </div>
 
-                    {/* View Details Button */}
-                    <div className="mt-3 text-center">
+                    {/* Action Buttons */}
+                    <div className="mt-3 flex items-center gap-2">
                         <Button
                             variant="contained"
-                            startIcon={<FaEye />}
-                            className="text-white w-full hover:bg-black"
+                            size="small"
+                            startIcon={<FaEye style={{ fontSize: "13px" }} />}
+                            sx={{
+                                flex: 1,
+                                height: "35px",
+                                bgcolor: "#ca0019",
+                                color: "#ffffff",
+                                textTransform: "none",
+                                fontSize: "0.8125rem",
+                                fontWeight: 600,
+                                borderRadius: "8px",
+                                boxShadow: "none",
+                                whiteSpace: "nowrap",
+                                px: 1.5,
+                                transition: "all 0.2s ease",
+                                "&:hover": {
+                                    bgcolor: "#111827",
+                                    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.15)",
+                                },
+                                "& .MuiButton-startIcon": {
+                                    mr: 0.75,
+                                    ml: 0,
+                                },
+                            }}
                             onClick={() => setOpen(true)}
                         >
                             View Details
                         </Button>
+                        {onDelete && (
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                startIcon={<DeleteIcon sx={{ fontSize: "16px !important" }} />}
+                                sx={{
+                                    height: "35px",
+                                    px: 1.5,
+                                    bgcolor: "#fef2f2",
+                                    color: "#dc2626",
+                                    borderColor: "#fecaca",
+                                    textTransform: "none",
+                                    fontSize: "0.8125rem",
+                                    fontWeight: 600,
+                                    borderRadius: "8px",
+                                    whiteSpace: "nowrap",
+                                    transition: "all 0.2s ease",
+                                    "&:hover": {
+                                        borderColor: "#f87171",
+                                        bgcolor: "#fee2e2",
+                                        color: "#b91c1c",
+                                    },
+                                    "& .MuiButton-startIcon": {
+                                        mr: 0.6,
+                                        ml: 0,
+                                    },
+                                }}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onDelete(user);
+                                }}
+                            >
+                                Delete
+                            </Button>
+                        )}
                     </div>
                 </CardContent>
             </Card>

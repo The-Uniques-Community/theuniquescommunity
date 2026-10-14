@@ -415,11 +415,7 @@ const Index = () => {
                 {ongoingEvents.map(event => (
                   <div 
                     key={event._id} 
-                    onClick={() => { setSelectedEvent(event); setShowEvent(true); }} 
-                    className="cursor-pointer transition-transform hover:scale-[1.02]"
-                    role="button"
-                    aria-label={`View details for ${event.eventName}`}
-                    tabIndex={0}
+                    className="transition-transform hover:scale-[1.02]"
                   >
                     <CommunityCard event={event} />
                   </div>
@@ -439,11 +435,7 @@ const Index = () => {
                 {getPaginatedEvents(upcomingEvents).map(event => (
                   <div 
                     key={event._id} 
-                    onClick={() => { setSelectedEvent(event); setShowEvent(true); }} 
-                    className="cursor-pointer transition-transform hover:scale-[1.02]"
-                    role="button"
-                    aria-label={`View details for ${event.eventName}`}
-                    tabIndex={0}
+                    className="transition-transform hover:scale-[1.02]"
                   >
                     <CommunityCard event={event} />
                   </div>
@@ -475,11 +467,7 @@ const Index = () => {
                 {getPaginatedEvents(completedEvents).map(event => (
                   <div 
                     key={event._id} 
-                    onClick={() => { setSelectedEvent(event); setShowEvent(true); }} 
-                    className="cursor-pointer transition-transform hover:scale-[1.02]"
-                    role="button"
-                    aria-label={`View details for ${event.eventName}`}
-                    tabIndex={0}
+                    className="transition-transform hover:scale-[1.02]"
                   >
                     <CommunityCard event={event} />
                   </div>

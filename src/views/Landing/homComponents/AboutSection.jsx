@@ -168,7 +168,7 @@ const AboutSection = () => {
   }, []);
 
   return (
-    <div ref={sectionRef} className="bg-transparent text-gray-900 py-24 lg:py-48 px-6 relative overflow-hidden">
+    <div ref={sectionRef} className="bg-transparent text-gray-900 pt-8 sm:pt-16 lg:pt-24 pb-8 sm:pb-12 lg:pb-16 px-6 relative overflow-hidden">
       {/* Decorative Background Elements */}
 
       {/* Background Text */}
@@ -182,26 +182,26 @@ const AboutSection = () => {
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header Section */}
-        <div className="flex flex-col gap-10 lg:gap-6 mb-20">
+        <div className="flex flex-col gap-4 sm:gap-6 mb-12 sm:mb-20">
           <div ref={headerLeftRef} className="text-left max-w-4xl">
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-4 mb-4 sm:mb-6">
               <div className="w-1 h-6 bg-red-600 rounded-full" />
               <h4 className="text-sm uppercase tracking-[0.3em] font-black text-red-600">About Our Community</h4>
             </div>
-            <h2 className="text-4xl lg:text-7xl font-black leading-tight text-neutral-900 mb-6 whitespace-nowrap overflow-visible">
+            <h2 className="text-3xl sm:text-5xl lg:text-7xl font-black leading-tight text-neutral-900 mb-3 sm:mb-6 whitespace-normal sm:whitespace-nowrap">
               The <span className="brush-bg text-white">Uniques</span> Community
             </h2>
-            <h2 className="text-3xl lg:text-5xl font-black text-neutral-300">
+            <h2 className="text-2xl sm:text-3xl lg:text-5xl font-black text-neutral-300 leading-tight">
               Learn, Build, and Grow Together.
             </h2>
           </div>
 
-          <div ref={headerRightRef} className="flex flex-col items-end text-right self-end mt-12 lg:mt-0">
-            <div className="flex items-center gap-4 mb-8">
+          <div ref={headerRightRef} className="flex flex-col items-end text-right self-end mt-2 sm:mt-6 lg:mt-0">
+            <div className="flex items-center gap-4 mb-3 sm:mb-8">
               <div className="w-24 h-px bg-red-800/10" />
               <div className="w-2 h-2 rounded-full bg-red-800/20" />
             </div>
-            <p className="text-xl text-gray-400 leading-relaxed font-medium max-w-3xl italic">
+            <p className="text-base sm:text-lg lg:text-xl text-gray-400 leading-relaxed font-medium max-w-3xl italic">
               "The Uniques Community is a global hub where everyone is welcome. We empower students to bridge the gap between
               theory and practice through peer-to-peer learning and real-world solutions."
             </p>

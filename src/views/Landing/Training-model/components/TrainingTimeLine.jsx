@@ -9,15 +9,15 @@ export function cn(...inputs) {
 
 const logos = [
   "https://tailoredpaw.com/cdn/shop/files/Tailored_1_60x@2x.svg?v=1692629825",
-  "https://goalphakids.com/wp-content/themes/go_alpha/assets/images/site-logo.png",
+  "https://goalphakids.com/wp-content/themes/go_alpha/assets/images/site-logo.webp",
   "https://05h0tt171l.ufs.sh/f/9WspmJu6ypQvEqokRGgtO8RGNpF6JBKc4CzbyiAsfLIqYvMQ",
-  "https://abroadeducares.com/_next/static/media/blackLogo.667801bb.png",
+  "https://abroadeducares.com/_next/static/media/blackLogo.667801bb.webp",
   "https://05h0tt171l.ufs.sh/f/9WspmJu6ypQvzpLCCVlWnGpTC98Himu2RrqelvP14tsOXLEj",
   // Repeat working logos to replace missing/broken ones
   "https://tailoredpaw.com/cdn/shop/files/Tailored_1_60x@2x.svg?v=1692629825",
-  "https://goalphakids.com/wp-content/themes/go_alpha/assets/images/site-logo.png",
+  "https://goalphakids.com/wp-content/themes/go_alpha/assets/images/site-logo.webp",
   "https://05h0tt171l.ufs.sh/f/9WspmJu6ypQvEqokRGgtO8RGNpF6JBKc4CzbyiAsfLIqYvMQ",
-  "https://abroadeducares.com/_next/static/media/blackLogo.667801bb.png",
+  "https://abroadeducares.com/_next/static/media/blackLogo.667801bb.webp",
 ];
 
 // Function to get 4 random logos

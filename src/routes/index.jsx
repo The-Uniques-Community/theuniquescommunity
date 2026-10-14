@@ -23,7 +23,7 @@ import { element } from "prop-types";
 import MemberProfile from "@/views/Landing/Profile/MemberProfile";
 import ForgetPassword from "@/views/Authentication/login/ForgetPassword";
 
-
+const Login = Loader(lazy(() => import("@/views/Authentication/login")), false);
 const Landing = Loader(lazy(() => import("@/views/Landing/index")), false);
 
 const BlogPage = Loader(lazy(() => import("@/views/Landing/Blog/index")), false);
@@ -35,6 +35,7 @@ const CommunityPage = Loader(lazy(() => import("@/views/Landing/Community/index"
 const SuccessStories = Loader(lazy(() => import("@/views/Landing/SuccessStories/index")), false);
 const PrivacyPolicy = Loader(lazy(() => import("@/views/Landing/PrivacyPolicy/index")), false);
 const Projects = Loader(lazy(() => import("@/views/Landing/Projects/index")), false);
+const ProjectDetails = Loader(lazy(() => import("@/views/Landing/Projects/ProjectDetails")), false);
 const Timeline = Loader(lazy(() => import('@/utils/Timeline/Timeline')));
 
 const timelineData = [
@@ -49,7 +50,7 @@ const timelineData = [
   },
   {
     year: "1920",
-    image: "/images/klee.jpg",
+    image: "/images/klee.webp",
     heading: "Paul Klee",
     subheading: "Color Theory Pioneer",
     brief: "Joins and brings his expertise in color theory and form.",
@@ -57,7 +58,7 @@ const timelineData = [
   },
   {
     year: "1923",
-    image: "/images/moholy-nagy.jpg",
+    image: "/images/moholy-nagy.webp",
     heading: "László Moholy-Nagy",
     subheading: "New Vision",
     brief: "Introduced new approaches to photography and typography, promoting the integration of technology and art."
@@ -84,10 +85,13 @@ const LandingRoutes = {
     { path: "privacy-policy", element: <PrivacyPolicy /> },
     { path: "privacy", element: <PrivacyPolicy /> },
     { path: "projects", element: <Projects /> },
+    { path: "projects/:projectId", element: <ProjectDetails /> },
     { path: "project", element: <Projects /> },
+    { path: "project/:projectId", element: <ProjectDetails /> },
     { path: "batches", element: <BatchesPage /> },
     { path: "notices", element: <Notices /> },
     { path: "test", element: <Timeline events={timelineData} /> },
+    { path: "login", element: <Login /> },
     { path: "forget-password", element: <ForgetPassword /> },
     // Member profile route - this should come BEFORE the wildcard route
     { path: "profile/:id", element: <MemberProfile /> },

@@ -1,7 +1,7 @@
-import naveenImg from "@/assets/img/Success Stories avatars/naveen-jaiswal.jpg";
-import mantashaImg from "@/assets/img/Success Stories avatars/mantasha-tabassum.jpg";
-import ronitImg from "@/assets/img/Success Stories avatars/ronit-jaiprakash.jpeg";
-import praveenImg from "@/assets/img/Success Stories avatars/praveen-jaiswal.jpeg";
+import naveenImg from "@/assets/img/Success Stories avatars/naveen-jaiswal.webp";
+import mantashaImg from "@/assets/img/Success Stories avatars/mantasha-tabassum.webp";
+import ronitImg from "@/assets/img/Success Stories avatars/ronit-jaiprakash.webp";
+import praveenImg from "@/assets/img/Success Stories avatars/praveen-jaiswal.webp";
 
 
 export const successStories = [

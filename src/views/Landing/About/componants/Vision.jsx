@@ -1,5 +1,5 @@
 import React from 'react';
-import visionImage from '/src/assets/img/About/VISION.png'; 
+import visionImage from '/src/assets/img/About/VISION.webp'; 
 import { useThemeContext } from "@/theme/ThemeProvider";
 import { ShieldCheck, Rocket, Zap, Users, Target, Globe, BookOpen, Lightbulb, ArrowRight } from 'lucide-react';
 
@@ -63,7 +63,7 @@ const MissionVission = () => {
   const listItemStyle = `group relative py-12 border-b ${isDarkMode ? 'border-white/10' : 'border-black/5'} transition-all duration-500 hover:pl-4`;
 
   return (
-    <div className={`py-32 ${isDarkMode ? 'bg-[#161616] text-white' : 'bg-white text-gray-900'}`}>
+    <div className={`py-16 md:py-24 transition-colors duration-300 ${isDarkMode ? 'bg-[#161616] text-white' : 'bg-white text-gray-900'}`}>
       {/* PHILOSOPHY SECTION */}
       <div className="container max-w-7xl px-6 mx-auto mb-16">
         <div className="flex flex-col md:flex-row items-start gap-20">
@@ -113,7 +113,7 @@ const MissionVission = () => {
         { title: 'Mission', data: MissionData, tag: 'The Driver' },
         { title: 'Vision', data: VisionData, tag: 'The Goal' }
       ].map((section, idx) => (
-        <div key={idx} className="container max-w-7xl px-6 mx-auto mb-40">
+        <div key={idx} className={`container max-w-7xl px-6 mx-auto ${idx === 1 ? 'mb-0' : 'mb-20'}`}>
           <div className={`flex flex-col ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} gap-16 md:gap-32`}>
             <div className={`md:w-1/3 pt-4 ${idx % 2 !== 0 ? 'md:text-right' : ''}`}>
               <span className="text-[#ca0019] font-mono text-sm mb-4 block tracking-widest">{section.tag}</span>

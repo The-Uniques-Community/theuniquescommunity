@@ -10,12 +10,18 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import SchoolIcon from '@mui/icons-material/School';
 import GroupsIcon from '@mui/icons-material/Groups';
 import { AnimatePresence } from "framer-motion";
+import CallToAction from "@/views/Landing/homComponents/CallToAction";
+import { getStoredBatches, fetchBatches } from "@/utils/batch/batchesData";
+import { getStoredBatchProfiles, fetchBatchProfiles } from "@/utils/batch/batchProfilesData";
+import { getStoredCustomMembers, fetchCustomMembers } from "@/utils/member/customMembersData";
 
 const index = () => {
   // State management
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [members, setMembers] = useState([]);
-  const [selectedBatch, setSelectedBatch] = useState("All");
+  const [storedBatches, setStoredBatches] = useState(() => getStoredBatches());
+  const [customMembersVersion, setCustomMembersVersion] = useState(0);
+  const [selectedBatch, setSelectedBatch] = useState("The Uniques 1.0");
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,49 +30,96 @@ const index = () => {
   const [totalMembers, setTotalMembers] = useState(0);
   const [countsLoading, setCountsLoading] = useState(true);
 
-  // Define batches data with count information from API
-  const batchesData = useMemo(() => [
-    {
-      id: "All",
-      name: "All Batches",
-      icon: "👥",
-      description: "All members from The Uniques Community.",
-      memberCount: batchCounts["All"] || 0,
-      iconComponent: <GroupsIcon />
-    },
-    {
-      id: "The Uniques 1.0",
-      name: "The Uniques 1.0",
-      icon: "🥇",
-      description: "The founding batch of The Uniques Community, established in 2021 with a vision to create a supportive learning environment for tech enthusiasts.",
-      memberCount: batchCounts["The Uniques 1.0"] || 0,
-      iconComponent: <SchoolIcon />
-    },
-    {
-      id: "The Uniques 2.0",
-      name: "The Uniques 2.0",
-      icon: "🥈",
-      description: "The second generation of The Uniques Community that continued the legacy with new innovations and community initiatives.",
-      memberCount: batchCounts["The Uniques 2.0"] || 0,
-      iconComponent: <SchoolIcon />
-    },
-    {
-      id: "The Uniques 3.0",
-      name: "The Uniques 3.0",
-      icon: "🥉",
-      description: "The newest members of The Uniques Community, bringing fresh perspectives and energy to our growing tech community.",
-      memberCount: batchCounts["The Uniques 3.0"] || 0,
-      iconComponent: <SchoolIcon />
-    },
-    {
-      id: "The Uniques 4.0",
-      name: "The Uniques 4.0",
-      icon: "🏅",
-      description: "The latest batch of The Uniques Community, driving innovation and collaboration in the tech space.",
-      memberCount: batchCounts["The Uniques 4.0"] || 0,
-      iconComponent: <SchoolIcon />
+  // Sync stored batches dynamically when coordinator adds a new batch & fetch from API on mount
+  useEffect(() => {
+    // Initial fetch from backend API to get fresh coordinator updates
+    fetchBatches().then((b) => {
+      if (b && Array.isArray(b)) setStoredBatches(b);
+    });
+    fetchBatchProfiles();
+    fetchCustomMembers().then(() => {
+      setCustomMembersVersion((v) => v + 1);
+    });
+
+    const handleBatchesUpdate = () => {
+      const updated = getStoredBatches();
+      setStoredBatches(updated);
+    };
+    const handleCustomMembersUpdate = () => {
+      setCustomMembersVersion((v) => v + 1);
+    };
+    window.addEventListener("batches-updated", handleBatchesUpdate);
+    window.addEventListener("batch-profiles-updated", handleBatchesUpdate);
+    window.addEventListener("custom-members-updated", handleCustomMembersUpdate);
+    return () => {
+      window.removeEventListener("batches-updated", handleBatchesUpdate);
+      window.removeEventListener("batch-profiles-updated", handleBatchesUpdate);
+      window.removeEventListener("custom-members-updated", handleCustomMembersUpdate);
+    };
+  }, []);
+
+  // Define batches data dynamically with count information from API and local profiles
+  const batchesData = useMemo(() => {
+    const defaultMeta = {
+      "The Uniques 1.0": {
+        icon: "🥇",
+        description: "The founding batch of The Uniques Community, established in 2021 with a vision to create a supportive learning environment for tech enthusiasts.",
+      },
+      "The Uniques 2.0": {
+        icon: "🥈",
+        description: "The second generation of The Uniques Community that continued the legacy with new innovations and community initiatives.",
+      },
+      "The Uniques 3.0": {
+        icon: "🥉",
+        description: "The newest members of The Uniques Community, bringing fresh perspectives and energy to our growing tech community.",
+      },
+      "The Uniques 4.0": {
+        icon: "🏅",
+        description: "The latest batch of The Uniques Community, driving innovation and collaboration in the tech space.",
+      },
+    };
+
+    let profiles = [];
+    try {
+      profiles = getStoredBatchProfiles();
+    } catch (e) {
+      profiles = [];
     }
-  ], [batchCounts]);
+
+    const icons = ["🥇", "🥈", "🥉", "🏅", "🚀", "🌟", "✨", "🎯", "🏆"];
+    const customMembersList = getStoredCustomMembers();
+
+    return storedBatches.map((batchName, idx) => {
+      const label = batchName.replace(/^The\s+/i, "");
+      const profile = profiles.find(
+        (p) =>
+          p.title?.toLowerCase() === batchName.toLowerCase() ||
+          p.label?.toLowerCase() === label.toLowerCase()
+      );
+
+      const customCountForBatch = customMembersList.filter((m) => {
+        if (!m || typeof m !== "object" || m.isSuspended) return false;
+        const b1 = (m.batch || "").toLowerCase().trim();
+        const b2 = (batchName || "").toLowerCase().trim();
+        return b1 === b2 || (b1.includes("5.0") && b2.includes("5.0"));
+      }).length;
+
+      const icon = defaultMeta[batchName]?.icon || icons[idx] || "🎖️";
+      const desc =
+        profile?.description ||
+        defaultMeta[batchName]?.description ||
+        `${batchName} of The Uniques Community, driving innovation, technical excellence, and collaboration.`;
+
+      return {
+        id: batchName,
+        name: batchName,
+        icon: icon,
+        description: desc,
+        memberCount: (batchCounts[batchName] || 0) + customCountForBatch,
+        iconComponent: <SchoolIcon />
+      };
+    });
+  }, [storedBatches, batchCounts, customMembersVersion]);
 
   // Fetch batch counts using the counts API
   useEffect(() => {
@@ -131,36 +184,51 @@ const index = () => {
         setLoading(true);
         console.log(`Fetching members for batch: ${selectedBatch}`);
 
-        // Fetch all members for the selected batch without search parameter
-        // We'll handle search client-side for better filtering of incomplete profiles
-        const response = await axios.get(`${BASE_URL}/api/public/members`, {
-          params: {
-            batch: selectedBatch !== "All" ? selectedBatch : undefined
+        let apiMembers = [];
+        try {
+          const response = await axios.get(`${BASE_URL}/api/public/members`, {
+            params: {
+              batch: selectedBatch !== "All" ? selectedBatch : undefined
+            }
+          });
+
+          if (response.data.success) {
+            apiMembers = response.data.data || [];
           }
+        } catch (apiErr) {
+          console.warn("Public members API fetch warning:", apiErr);
+        }
+
+        // Custom members filtering
+        const customMembers = getStoredCustomMembers();
+        const matchingCustom = customMembers.filter((m) => {
+          if (!m || typeof m !== "object" || m.isSuspended) return false;
+          if (selectedBatch === "All") return true;
+          const b1 = (m.batch || "").toLowerCase().trim();
+          const b2 = (selectedBatch || "").toLowerCase().trim();
+          return b1 === b2 || (b1.includes("5.0") && b2.includes("5.0"));
         });
 
-        if (response.data.success) {
-          console.log(`Received ${response.data.data.length} members out of ${response.data.count} total`);
+        const customIds = new Set(matchingCustom.map((m) => m._id));
+        const combined = [
+          ...matchingCustom,
+          ...apiMembers.filter((m) => !customIds.has(m._id))
+        ];
 
-          // Process members to ensure no null/undefined values that might break rendering
-          const processedMembers = response.data.data.map(member => ({
-            ...member,
-            // Ensure all potentially problematic properties have fallbacks
-            fullName: member.fullName || member.email,
-            batch: member.batch || "Unspecified Batch",
-            skills: Array.isArray(member.skills) ? member.skills : [],
-            projects: Array.isArray(member.projects) ? member.projects : [],
-            achievements: Array.isArray(member.achievements) ? member.achievements : [],
-            certifications: Array.isArray(member.certifications) ? member.certifications : []
-          }));
+        // Process members to ensure no null/undefined values that might break rendering
+        const processedMembers = combined.map(member => ({
+          ...member,
+          fullName: member.fullName || member.email || "Member",
+          batch: member.batch || selectedBatch || "Unspecified Batch",
+          skills: Array.isArray(member.skills) ? member.skills : [],
+          projects: Array.isArray(member.projects) ? member.projects : [],
+          achievements: Array.isArray(member.achievements) ? member.achievements : [],
+          certifications: Array.isArray(member.certifications) ? member.certifications : []
+        }));
 
-          setMembers(processedMembers);
-          setTotalMembers(response.data.count);
-          setError(null);
-        } else {
-          setError(response.data.message || "Failed to fetch members");
-          setMembers([]);
-        }
+        setMembers(processedMembers);
+        setTotalMembers(processedMembers.length);
+        setError(null);
       } catch (err) {
         console.error("Error fetching members:", err);
         setError("Failed to load members. Please try again later.");
@@ -171,11 +239,11 @@ const index = () => {
     };
 
     fetchMembers();
-  }, [selectedBatch]); // Search is handled client-side
+  }, [selectedBatch, customMembersVersion]); // Search is handled client-side
 
 
   const currentBatch = useMemo(() => {
-    return batchesData.find((batch) => batch.id === selectedBatch);
+    return batchesData.find((batch) => batch.id === selectedBatch) || batchesData[0];
   }, [selectedBatch, batchesData]);
 
   // Achievement Card Component using MUI
@@ -264,7 +332,16 @@ const index = () => {
       ]
     };
 
-    setAchievements(defaultAchievements[selectedBatch] || []);
+    setAchievements(
+      defaultAchievements[selectedBatch] || [
+        {
+          id: `${selectedBatch}-milestone`,
+          title: "Technical Innovation",
+          description: `Empowering members of ${selectedBatch} with hands-on projects, advanced skills, and mentorship.`,
+          color: "rgb(202, 0, 25)",
+        },
+      ]
+    );
   }, [selectedBatch]);
 
   // Function to retry both data fetches
@@ -279,34 +356,58 @@ const index = () => {
     const fetchAll = async () => {
       try {
         // First fetch counts
-        const countsResponse = await axios.get(`${BASE_URL}/api/public/members/counts`);
-        if (countsResponse.data.success) {
-          setBatchCounts(countsResponse.data.data);
+        try {
+          const countsResponse = await axios.get(`${BASE_URL}/api/public/members/counts`);
+          if (countsResponse.data.success) {
+            setBatchCounts(countsResponse.data.data);
+          }
+        } catch (cErr) {
+          console.warn("Counts refresh warning:", cErr);
         }
 
         // Then fetch members
-        const membersResponse = await axios.get(`${BASE_URL}/api/public/members`, {
-          params: {
-            batch: selectedBatch !== "All" ? selectedBatch : undefined
+        let apiMembers = [];
+        try {
+          const membersResponse = await axios.get(`${BASE_URL}/api/public/members`, {
+            params: {
+              batch: selectedBatch !== "All" ? selectedBatch : undefined
+            }
+          });
+          if (membersResponse.data.success) {
+            apiMembers = membersResponse.data.data || [];
           }
+        } catch (mErr) {
+          console.warn("Members refresh warning:", mErr);
+        }
+
+        const customMembers = getStoredCustomMembers();
+        const matchingCustom = customMembers.filter((m) => {
+          if (!m || typeof m !== "object" || m.isSuspended) return false;
+          if (selectedBatch === "All") return true;
+          const b1 = (m.batch || "").toLowerCase().trim();
+          const b2 = (selectedBatch || "").toLowerCase().trim();
+          return b1 === b2 || (b1.includes("5.0") && b2.includes("5.0"));
         });
 
-        if (membersResponse.data.success) {
-          const processedMembers = membersResponse.data.data.map(member => ({
-            ...member,
-            fullName: member.fullName || " Member",
-            batch: member.batch || "Unspecified Batch",
-            skills: Array.isArray(member.skills) ? member.skills : [],
-            projects: Array.isArray(member.projects) ? member.projects : [],
-            achievements: Array.isArray(member.achievements) ? member.achievements : [],
-            certifications: Array.isArray(member.certifications) ? member.certifications : []
-          }));
+        const customIds = new Set(matchingCustom.map((m) => m._id));
+        const combined = [
+          ...matchingCustom,
+          ...apiMembers.filter((m) => !customIds.has(m._id))
+        ];
 
-          setMembers(processedMembers);
-          setTotalMembers(membersResponse.data.count);
-        } else {
-          setError("Failed to refresh data");
-        }
+        const processedMembers = combined.map(member => ({
+          ...member,
+          fullName: member.fullName || member.email || "Member",
+          batch: member.batch || selectedBatch || "Unspecified Batch",
+          skills: Array.isArray(member.skills) ? member.skills : [],
+          projects: Array.isArray(member.projects) ? member.projects : [],
+          achievements: Array.isArray(member.achievements) ? member.achievements : [],
+          certifications: Array.isArray(member.certifications) ? member.certifications : []
+        }));
+
+        setMembers(processedMembers);
+        setTotalMembers(processedMembers.length);
+        setError(null);
       } catch (err) {
         console.error("Error refreshing data:", err);
         setError("Failed to refresh data. Please try again.");
@@ -514,6 +615,9 @@ const index = () => {
           </div>
         </motion.div>
       )}
+
+      {/* Call To Action */}
+      <CallToAction />
     </div>
   );
 };

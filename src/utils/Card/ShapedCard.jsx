@@ -1,4 +1,4 @@
-import bgImg from '@/assets/img/bg-slate.jpg'
+import bgImg from '@/assets/img/bg-slate.webp'
 
 const ShapedCard = ({heading, content}) => {
   return (

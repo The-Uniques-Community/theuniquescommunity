@@ -1,136 +1,185 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import CelebrationComponent from "@/utils/Header";
 import { ArrowUpRight, Search, Code2, ChevronDown, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CallToAction from "../homComponents/CallToAction";
-
-export const BATCHES = [
-  { id: "all", name: "All Batches", icon: "👥" },
-  { id: "Uniques 1.0", name: "The Uniques 1.0", icon: "🥇" },
-  { id: "Uniques 2.0", name: "The Uniques 2.0", icon: "🥈" },
-  { id: "Uniques 3.0", name: "The Uniques 3.0", icon: "🥉" },
-  { id: "Uniques 4.0", name: "The Uniques 4.0", icon: "🏅" },
-];
+import { getStoredProjects, fetchProjects } from "@/utils/project/projectsData";
+import { getStoredBatches, fetchBatches } from "@/utils/batch/batchesData";
 
 export const PROJECTS_DATA = [
-  // ── Uniques 1.0 Projects ──
   {
     id: 1,
-    title: "UniPortal - Student Community LMS",
-    batch: "Uniques 1.0",
+    title: "UNI CARE",
+    batch: "Uniques 4.0",
     description:
-      "A centralized platform for The Uniques Community managing enrollments, training roadmaps, batch assignments, and real-time attendance.",
-    image:
-      "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
-    category: "Web & Full Stack",
-    link: "https://github.com/theuniquesofflicial",
+      "A student-support system that identifies potential problem areas and flags them for timely attention and appropriate support.",
+    image: "/projects/unicare.webp",
+    technologies: ["REACT", "NODE.JS", "MONGODB", "AI"],
+    category: "Support & Mentorship",
+    link: "https://uniques-care.vercel.app/",
     buttonColor: "#ea384c",
   },
   {
     id: 2,
-    title: "CampusConnect - Hackathon & Team Finder",
+    title: "Libraria",
     batch: "Uniques 1.0",
     description:
-      "Mobile-first community platform enabling students to discover hackathon teams, showcase member portfolios, and organize meetups.",
-    image:
-      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["REACT NATIVE", "FIREBASE", "REDUX", "UI/UX"],
-    category: "Mobile & Apps",
-    link: "https://github.com/theuniquesofflicial",
+      "A digital library platform that helps students discover, access, organize, and manage academic books and learning resources.",
+    image: "/projects/libraria.webp",
+    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
+    category: "Digital Library",
+    link: "https://libraria-tu.vercel.app/",
     buttonColor: "#ea384c",
   },
-
-  // ── Uniques 2.0 Projects ──
   {
     id: 3,
-    title: "AI Resume & Skill Gap Analyzer",
-    batch: "Uniques 2.0",
+    title: "TU Portal",
+    batch: "Uniques 1.0",
     description:
-      "Smart NLP pipeline that parses resumes, assesses skill gaps against live tech job postings, and recommends curated learning roadmaps.",
-    image:
-      "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["PYTHON", "FASTAPI", "PYTORCH", "NLP"],
-    category: "AI / ML & Data",
-    link: "https://github.com/theuniquesofflicial",
+      "A centralized student data portal containing profiles, academic information, records, and essential data of all Uniques students.",
+    image: "/projects/tuportal.webp",
+    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
+    category: "Student Records & LMS",
+    link: "https://theuniquesportal.vercel.app/",
     buttonColor: "#ea384c",
   },
   {
     id: 4,
-    title: "CodeSync - Realtime Pair Programming IDE",
-    batch: "Uniques 2.0",
+    title: "Code crusade 0.5",
+    batch: "Uniques 5.0",
     description:
-      "Browser-based code workspace with multi-cursor collaboration, live syntax linting, integrated video call, and terminal execution.",
-    image:
-      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["NEXT.JS", "WEBSOCKETS", "MONACO", "DOCKER"],
-    category: "Web & Full Stack",
-    link: "https://github.com/theuniquesofflicial",
+      "A 7-day intensive workshop designed to develop industry-grade coding skills and evaluate students' knowledge through practical tests.",
+    image: "/projects/codecrusade.webp",
+    technologies: ["WORKSHOP", "CODING", "ASSESSMENT", "PYTHON"],
+    category: "Workshop & Testing",
+    link: "https://codecrusade2026.vercel.app/",
     buttonColor: "#ea384c",
   },
-
-  // ── Uniques 3.0 Projects ──
   {
     id: 5,
-    title: "PlacementPulse - Hiring & Contest Tracker",
-    batch: "Uniques 3.0",
+    title: "Ideajam 2026",
+    batch: "Uniques 4.0",
     description:
-      "Analytical dashboard tracking competitive coding milestones, LeetCode ratings, and recruitment rounds for graduating batches.",
-    image:
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["TYPESCRIPT", "CHART.JS", "POSTGRESQL", "EXPRESS"],
-    category: "Web & Full Stack",
-    link: "https://github.com/theuniquesofflicial",
+      "An internal hackathon portal enabling student teams to pitch innovative ideas and selecting top teams to participate in the Smart India Hackathon (SIH).",
+    image: "/projects/ideajam2026.webp",
+    technologies: ["REACT", "NODE.JS", "TAILWIND", "SIH"],
+    category: "Hackathon & SIH",
+    link: "https://ideajam2026.vercel.app/",
     buttonColor: "#ea384c",
   },
   {
     id: 6,
-    title: "SmartLab - IoT Lab Energy & Access Guard",
-    batch: "Uniques 3.0",
-    description:
-      "Telemetry and automation hardware setup for university computer labs, optimizing power consumption and monitoring lab access via RFID cards.",
-    image:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["C++", "ESP32", "MQTT", "NODE.JS"],
-    category: "Cloud & IoT",
-    link: "https://github.com/theuniquesofflicial",
-    buttonColor: "#ea384c",
-  },
-
-  // ── Uniques 4.0 Projects ──
-  {
-    id: 7,
-    title: "CloudOps - Automated DevOps Pipeline",
+    title: "Eureka - National Ideathon",
     batch: "Uniques 4.0",
     description:
-      "Zero-config CI/CD build runner and deployment orchestrator developed for student open-source repositories.",
-    image:
-      "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["DOCKER", "KUBERNETES", "GO", "GITHUB ACTIONS"],
-    category: "Cloud & DevOps",
-    link: "https://github.com/theuniquesofflicial",
+      "A national-level ideathon platform organized across diverse universities for student innovators to pitch disruptive solutions and compete.",
+    image: "/projects/eureka.webp",
+    technologies: ["REACT", "NODE.JS", "MONGODB", "INNOVATION"],
+    category: "National Ideathon",
+    link: "https://eureka-cyan-six.vercel.app/",
+    buttonColor: "#ea384c",
+  },
+  {
+    id: 7,
+    title: "Elevate 3.0",
+    batch: "Uniques 4.0",
+    description:
+      "An official induction and orientation web portal organized for first-year students to inspire, connect, and onboard them into the community.",
+    image: "/projects/elevate.webp",
+    technologies: ["REACT", "TAILWIND", "FRAMER", "INDUCTION"],
+    category: "Induction & Orientation",
+    link: "https://elevate-sviet.vercel.app/",
     buttonColor: "#ea384c",
   },
   {
     id: 8,
-    title: "NeuroCraft - Realtime Focus & EEG Tracker",
+    title: "Uniques E-Gyan",
     batch: "Uniques 4.0",
     description:
-      "Real-time EEG signal processing neural net detecting cognitive focus and mental fatigue in computer science labs.",
+      "A centralized academic platform providing students with PYQs, notes, study materials, and exam-focused resources.",
     image:
-      "https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["PYTHON", "TENSORFLOW", "NUMPY", "FLASK"],
-    category: "AI & NeuroTech",
+      "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1200&q=80",
+    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
+    category: "Academic & Learning",
+    link: "https://github.com/theuniquesofflicial",
+    buttonColor: "#ea384c",
+  },
+  {
+    id: 9,
+    title: "Uniques Assess",
+    batch: "Uniques 4.0",
+    description:
+      "An online assessment platform for conducting college examinations, managing tests, evaluating students, and tracking performance.",
+    image:
+      "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80",
+    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
+    category: "Assessment & Exams",
+    link: "https://github.com/theuniquesofflicial",
+    buttonColor: "#ea384c",
+  },
+  {
+    id: 10,
+    title: "Uniques 360",
+    batch: "Uniques 1.0",
+    description:
+      "An all-in-one student platform providing a complete view of academics, activities, performance, and community engagement.",
+    image:
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
+    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
+    category: "Analytics & Activities",
     link: "https://github.com/theuniquesofflicial",
     buttonColor: "#ea384c",
   },
 ];
 
 const Projects = () => {
+  const navigate = useNavigate();
+  const [projectsList, setProjectsList] = useState(() => getStoredProjects());
+  const [storedBatches, setStoredBatches] = useState(() => getStoredBatches());
   const [selectedBatch, setSelectedBatch] = useState("all");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const dropdownRef = useRef(null);
+
+  // Dynamic batches array with icons
+  const batches = useMemo(() => {
+    const icons = ["🥇", "🥈", "🥉", "🏅", "🎖️", "🚀", "🌟", "✨"];
+    const items = storedBatches.map((b, idx) => {
+      const label = b.replace(/^The\s+/i, "");
+      return {
+        id: label,
+        name: b.startsWith("The ") ? b : `The ${b}`,
+        icon: icons[idx] || "🎖️",
+      };
+    });
+    return [{ id: "all", name: "All Batches", icon: "👥" }, ...items];
+  }, [storedBatches]);
+
+  useEffect(() => {
+    // Initial fetch from backend API
+    fetchProjects().then((data) => {
+      if (data && Array.isArray(data)) {
+        setProjectsList(data);
+      }
+    });
+    fetchBatches().then((b) => {
+      if (b && Array.isArray(b)) setStoredBatches(b);
+    });
+
+    const handleProjectsUpdate = () => {
+      setProjectsList(getStoredProjects());
+    };
+    const handleBatchesUpdate = () => {
+      setStoredBatches(getStoredBatches());
+    };
+    window.addEventListener("projects-updated", handleProjectsUpdate);
+    window.addEventListener("batches-updated", handleBatchesUpdate);
+    return () => {
+      window.removeEventListener("projects-updated", handleProjectsUpdate);
+      window.removeEventListener("batches-updated", handleBatchesUpdate);
+    };
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -143,13 +192,13 @@ const Projects = () => {
   }, []);
 
   const currentBatch = useMemo(
-    () => BATCHES.find((b) => b.id === selectedBatch) || BATCHES[0],
-    [selectedBatch]
+    () => batches.find((b) => b.id === selectedBatch) || batches[0],
+    [selectedBatch, batches]
   );
 
   const filteredProjects = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
-    return PROJECTS_DATA.filter((project) => {
+    return projectsList.filter((project) => {
       const matchesBatch =
         selectedBatch === "all" ||
         project.batch === selectedBatch ||
@@ -161,7 +210,7 @@ const Projects = () => {
         project.technologies.some((tag) => tag.toLowerCase().includes(q));
       return matchesBatch && matchesSearch;
     });
-  }, [selectedBatch, searchQuery]);
+  }, [projectsList, selectedBatch, searchQuery]);
 
   return (
     <div className="bg-[#f8f9fa] dark:bg-[#0a0a0a] min-h-screen text-slate-800 dark:text-slate-200 transition-colors duration-300">
@@ -209,7 +258,7 @@ const Projects = () => {
                     transition={{ duration: 0.18 }}
                     className="absolute top-full left-0 w-full mt-2 bg-white dark:bg-[#161618] border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-2xl overflow-hidden z-50 p-1.5"
                   >
-                    {BATCHES.map((batch) => {
+                    {batches.map((batch) => {
                       const isSelected = selectedBatch === batch.id;
                       return (
                         <button
@@ -281,7 +330,7 @@ const Projects = () => {
               <div
                 key={project.id}
                 onClick={() =>
-                  window.open(project.link, "_blank", "noopener,noreferrer")
+                  navigate(`/projects/${project.id || project._id}`)
                 }
                 className="group cursor-pointer flex flex-col transition-all duration-300 hover:-translate-y-1"
               >
@@ -310,11 +359,15 @@ const Projects = () => {
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        window.open(
-                          project.link,
-                          "_blank",
-                          "noopener,noreferrer"
-                        );
+                        if (project.link && project.link !== "#") {
+                          window.open(
+                            project.link,
+                            "_blank",
+                            "noopener,noreferrer"
+                          );
+                        } else {
+                          navigate(`/projects/${project.id || project._id}`);
+                        }
                       }}
                       className="pointer-events-auto absolute bottom-0 right-0 w-12 h-12 rounded-full flex items-center justify-center text-white bg-[#ea384c] hover:bg-[#ca0019] shadow-md shadow-red-500/30 transition-all duration-300 group-hover:scale-105 group-hover:rotate-45 cursor-pointer"
                       title={`Open ${project.title}`}

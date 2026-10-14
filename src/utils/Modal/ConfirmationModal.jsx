@@ -1,28 +1,30 @@
 import React from "react";
+import { createPortal } from "react-dom";
 
 const ConfirmationModal = ({ isOpen, onClose, onConfirm, message }) => {
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 z-[10000000] flex items-center justify-center">
-      <div className="bg-white p-6 rounded shadow-lg">
-        <h3 className="text-lg font-semibold mb-4">{message}</h3>
+  return createPortal(
+    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 z-[10000000] flex items-center justify-center p-4">
+      <div className="bg-white p-6 rounded shadow-lg max-w-sm w-full mx-auto">
+        <h3 className="text-lg font-semibold mb-4 text-gray-900">{message}</h3>
         <div className="flex justify-end space-x-4">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
           >
             Confirm
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

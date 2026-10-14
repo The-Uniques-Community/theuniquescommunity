@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import DoubleQuotes from '@/assets/img/Community/Sample1.png';
+import DoubleQuotes from '@/assets/img/Community/Sample1.webp';
 import ApplicationForm from '@/components/ApplicationForm';
 import { useThemeContext } from '@/theme/ThemeProvider';
 
