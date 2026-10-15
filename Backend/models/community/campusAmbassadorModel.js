@@ -106,7 +106,6 @@ const campusAmbassadorSchema = new mongoose.Schema({
 });
 
 // Index for faster queries
-campusAmbassadorSchema.index({ email: 1 });
 campusAmbassadorSchema.index({ status: 1 });
 campusAmbassadorSchema.index({ college: 1 });
 
