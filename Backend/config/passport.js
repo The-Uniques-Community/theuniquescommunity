@@ -8,9 +8,6 @@ import File from "../models/member/fileModel.js";
 import dotenv from "dotenv";
 dotenv.config();
 
-console.log("Google client ID:", process.env.GOOGLE_CLIENT_ID);
-console.log("Google client secret:", process.env.GOOGLE_CLIENT_SECRET);
-
 passport.use(
   new GoogleStrategy.Strategy(
     {

@@ -34,6 +34,11 @@ const Login = () => {
   const handleClickShowPassword = () => setShowPassword((prev) => !prev);
   const handleMouseDownPassword = (event) => event.preventDefault();
 
+  // Redirect to the new portal login
+  useEffect(() => {
+    window.location.replace("https://theuniquesportal.vercel.app/auth/login");
+  }, []);
+
   // Listen for the message from the popup.
   useEffect(() => {
     const receiveMessage = (event) => {
