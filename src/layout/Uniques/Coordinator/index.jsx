@@ -38,6 +38,7 @@ import SchoolIcon from "@mui/icons-material/School";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import ClassIcon from "@mui/icons-material/Class";
 import Diversity3Icon from "@mui/icons-material/Diversity3";
+import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 
 // Navigation items with full paths
 const STUDENT_NAVIGATION = [
@@ -52,6 +53,7 @@ const STUDENT_NAVIGATION = [
   { segment: "stats", title: "Stats", icon: <BarChartIcon /> },
   { segment: "batches", title: "Batches", icon: <ClassIcon /> },
   { segment: "community", title: "Community", icon: <Diversity3Icon /> },
+  { segment: "success-stories", title: "Success Stories", icon: <AutoStoriesIcon /> },
 ];
 
 function Branding() {
@@ -118,7 +120,8 @@ function DashboardLayoutAppBar() {
   const handleNavigation = (path, itemTitle) => {
     setActiveItem(itemTitle);
     localStorage.setItem("activeItem", itemTitle); // Save active item to localStorage
-    navigate(path);
+    const targetPath = path ? (path.startsWith("/") ? path : `/coordinator/${path}`) : "/coordinator";
+    navigate(targetPath);
     if (isMobile) setDrawerOpen(false); // Close drawer on navigation in mobile view
   };
 

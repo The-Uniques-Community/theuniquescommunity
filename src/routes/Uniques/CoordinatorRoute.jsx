@@ -39,6 +39,7 @@ const Trainers = Loader(lazy(() => import("@/views/Uniques/Coordinator/Trainers"
 const Stats = Loader(lazy(() => import("@/views/Uniques/Coordinator/Stats")));
 const Batches = Loader(lazy(() => import("@/views/Uniques/Coordinator/Batches")));
 const Community = Loader(lazy(() => import("@/views/Uniques/Coordinator/Community")));
+const SuccessStories = Loader(lazy(() => import("@/views/Uniques/Coordinator/SuccessStories")));
 
 const CoordinatorRoute = {
   path: "/coordinator",
@@ -107,6 +108,10 @@ const CoordinatorRoute = {
     {
       path: "/coordinator/community",
       element: <Community />,
+    },
+    {
+      path: "/coordinator/success-stories",
+      element: <SuccessStories />,
     },
   ],
 };

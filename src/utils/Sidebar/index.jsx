@@ -192,7 +192,7 @@ const Sidebar = ({ students, onDrawerToggle, isDrawerOpen }) => {
               }
               secondary={
                 <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8rem', mt: 0.5 }}>
-                  {student.batch} • {student.role}
+                  {(student.batch || 'Uniques 1.0').replace(/^the\s+/i, '')} • {student.role}
                 </Typography>
               }
             />

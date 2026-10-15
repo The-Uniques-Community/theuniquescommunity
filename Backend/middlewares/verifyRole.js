@@ -16,8 +16,12 @@ const verifyRole = (roles) => {
     // Convert single role to array for consistent handling
     const allowedRoles = Array.isArray(roles) ? roles : [roles];
     
-    // Check if user has one of the allowed roles
-    if (!allowedRoles.includes(req.user.role)) {
+    // Check if user has one of the allowed roles (case-insensitive check)
+    const userRole = (req.user.role || "").toLowerCase();
+    const isAuthorized = allowedRoles.some(
+      (role) => String(role).toLowerCase() === userRole
+    );
+    if (!isAuthorized) {
       return res.status(403).json({ 
         success: false, 
         message: `Unauthorized: You need ${allowedRoles.length > 1 ? 'one of these roles' : 'the role'}: ${allowedRoles.join(', ')}` 

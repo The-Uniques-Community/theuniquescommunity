@@ -29,6 +29,7 @@ import statsRouter from "./routes/community/statsRoute.js";
 import batchRouter from "./routes/community/batchRoute.js";
 import communityBenefitsRouter from "./routes/community/communityBenefitsRoute.js";
 import customMemberRouter from "./routes/community/customMemberRoute.js";
+import successStoryRouter from "./routes/community/successStoryRoute.js";
 dotenv.config();
 
 const app = express();
@@ -106,6 +107,8 @@ app.use("/api/stats", statsRouter);
 app.use("/api/batches", batchRouter);
 app.use("/api/community-benefits", communityBenefitsRouter);
 app.use("/api/custom-members", customMemberRouter);
+app.use("/api/success-stories", successStoryRouter);
+app.use("/api/community/success-stories", successStoryRouter);
 
 
 app.use('/api/image-proxy/:fileId', async (req, res) => {

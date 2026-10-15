@@ -22,6 +22,7 @@ const Trainers = Loader(lazy(() => import("@/views/Admin/Trainers")));
 const Stats = Loader(lazy(() => import("@/views/Admin/Stats")));
 const Batches = Loader(lazy(() => import("@/views/Admin/Batches")));
 const Community = Loader(lazy(() => import("@/views/Admin/Community")));
+const SuccessStories = Loader(lazy(() => import("@/views/Uniques/Coordinator/SuccessStories")));
 const AdminRoutes = {
   path: "/admin",
   element: <ProtectedRoute role={"admin"} element={<AdminLayout />} />,
@@ -89,6 +90,10 @@ const AdminRoutes = {
     {
       path: "/admin/community",
       element: <Community />,
+    },
+    {
+      path: "/admin/success-stories",
+      element: <SuccessStories />,
     }
   ],
 };

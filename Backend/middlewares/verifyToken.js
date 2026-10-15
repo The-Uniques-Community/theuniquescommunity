@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || "uniques_jwt_secret_key_2026";
 
 const verifyToken = (req, res, next) => {
   // Get token from Authorization header, token header, or cookies

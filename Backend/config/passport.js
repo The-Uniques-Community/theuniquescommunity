@@ -14,8 +14,8 @@ console.log("Google client secret:", process.env.GOOGLE_CLIENT_SECRET);
 passport.use(
   new GoogleStrategy.Strategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientID: process.env.GOOGLE_CLIENT_ID || "mock_client_id.apps.googleusercontent.com",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "mock_client_secret",
       callbackURL: "https://theuniquesbackend.vercel.app/auth/google/callback",
       scope: ["profile", "email"],
       accessType: "offline", // Request offline access to get a refresh token

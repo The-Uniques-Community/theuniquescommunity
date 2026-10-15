@@ -17,9 +17,14 @@ import {
   PlayCircleOutline as VideoIcon
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { successStories } from './successStoriesData';
+import {
+  fetchSuccessStoryById,
+  getStoredSuccessStories,
+} from '@/utils/successStories/successStoriesApi';
+import { CircularProgress } from '@mui/material';
 import ProfileInformation from './ProfileInformation';
 import SuccessTimeline from './SuccessTimeline';
 import VideoMessage from './VideoMessage';
@@ -238,18 +243,77 @@ const StudentStory = () => {
     setDetailTabValue(newValue);
   };
 
-  // Find the student with the matching ID
-  const student = successStories.find(s => s.id === studentId);
+  const outletContext = useOutletContext();
+  const [student, setStudent] = useState(() => {
+    const list = outletContext?.stories || getStoredSuccessStories();
+    return (
+      list.find(
+        (s) =>
+          s.id === studentId ||
+          s.storyId === studentId ||
+          String(s._id) === String(studentId)
+      ) || null
+    );
+  });
+  const [loading, setLoading] = useState(!student);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    const lookupLocally = () => {
+      const list = outletContext?.stories || getStoredSuccessStories();
+      const found = list.find(
+        (s) =>
+          s.id === studentId ||
+          s.storyId === studentId ||
+          String(s._id) === String(studentId)
+      );
+      if (found) {
+        setStudent(found);
+        setLoading(false);
+        return true;
+      }
+      return false;
+    };
+
+    if (!lookupLocally()) {
+      setLoading(true);
+      fetchSuccessStoryById(studentId)
+        .then((data) => {
+          if (isMounted) {
+            setStudent(data);
+            setLoading(false);
+          }
+        })
+        .catch(() => {
+          if (isMounted) setLoading(false);
+        });
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [studentId, outletContext?.stories]);
+
+  if (loading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", py: 12 }}>
+        <CircularProgress sx={{ color: "#ca0019" }} />
+      </Box>
+    );
+  }
 
   // If no matching student is found, show a message or redirect
   if (!student) {
     return (
-      <Box sx={{ p: 4, textAlign: 'center' }}>
-        <Typography variant="h5" gutterBottom>Student not found</Typography>
+      <Box sx={{ p: 4, textAlign: "center" }}>
+        <Typography variant="h5" gutterBottom>
+          Student not found
+        </Typography>
         <Button
           variant="contained"
           color="primary"
-          onClick={() => navigate('/success-stories')}
+          onClick={() => navigate("/success-stories")}
+          sx={{ backgroundColor: "#ca0019", "&:hover": { backgroundColor: "#a10014" } }}
         >
           Back to Success Stories
         </Button>
@@ -298,7 +362,7 @@ const StudentStory = () => {
               {student.role} at {student.company}
             </Typography>
             <Chip
-              label={student.batch}
+              label={student.batch ? student.batch.replace(/^the\s+/i, '') : 'Uniques 1.0'}
               size="small"
               sx={{ mt: 1, bgcolor: '#ca0019', color: 'white' }}
             />

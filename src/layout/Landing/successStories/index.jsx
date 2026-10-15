@@ -17,7 +17,11 @@ import {
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { successStories } from '@/views/Landing/SuccessStories/successStoriesData';
-import Sidebar from '@/utils/Sidebar/index'
+import {
+  fetchSuccessStories,
+  getStoredSuccessStories,
+} from '@/utils/successStories/successStoriesApi';
+import Sidebar from '@/utils/Sidebar/index';
 import Navbar from '@/utils/NavBar/Navbar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useThemeContext } from '@/theme/ThemeProvider';
@@ -48,6 +52,29 @@ const SuccessLayout = () => {
   const { isDarkMode } = useThemeContext();
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+
+  const [dynamicStories, setDynamicStories] = useState(() => getStoredSuccessStories());
+
+  React.useEffect(() => {
+    fetchSuccessStories(false).then((data) => {
+      if (Array.isArray(data) && data.length > 0) {
+        setDynamicStories(data);
+      }
+    });
+
+    const handleUpdate = (e) => {
+      if (e.detail && Array.isArray(e.detail)) {
+        setDynamicStories(e.detail);
+      } else {
+        fetchSuccessStories(false).then((data) => {
+          if (Array.isArray(data)) setDynamicStories(data);
+        });
+      }
+    };
+
+    window.addEventListener("success-stories-updated", handleUpdate);
+    return () => window.removeEventListener("success-stories-updated", handleUpdate);
+  }, []);
 
   const activeTheme = useMemo(() => createTheme({
     palette: {
@@ -124,14 +151,14 @@ const SuccessLayout = () => {
             }}
           >
             <Sidebar
-              students={successStories}
+              students={dynamicStories}
               onDrawerToggle={handleDrawerToggle}
               isDrawerOpen={mobileOpen}
             />
           </Drawer>
         ) : (
           <Sidebar
-            students={successStories}
+            students={dynamicStories}
             isDrawerOpen={true}
           />
         )}
@@ -142,7 +169,7 @@ const SuccessLayout = () => {
           {isMobile && <MuiToolbar />}
 
           {/* This is where the child routes will render */}
-          <Outlet />
+          <Outlet context={{ stories: dynamicStories }} />
         </ContentWrapper>
       </Box>
     </ThemeProvider>
