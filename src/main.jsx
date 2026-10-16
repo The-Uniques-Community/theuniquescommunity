@@ -11,7 +11,7 @@ import ClickSpark from "./utils/clickSpark/ClickSpark";
 import Lenis from 'lenis'
 
 
-// Initialize Lenis
+// Initialize Lenisss
 const lenis = new Lenis({
   autoRaf: true,
 });
