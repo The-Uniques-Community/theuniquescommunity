@@ -12,7 +12,7 @@ const CallToAction = () => {
                 <p className='text-white p-3 text-lg'>Join the community of unique individuals and learn from the best</p>
                 <div className="flex justify-center items-center mt-2">
                   <Button
-                    path="https://theuniquesportal.vercel.app/auth/login"
+                    path="https://the-uniques-portal.vercel.app/"
                     color={"white"}
                     bgColor={"#ca0019"}
                     border={4}

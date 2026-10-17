@@ -34,7 +34,7 @@ const Footer = () => {
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/community-main">Community Page</Link></li>
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/batches">Batches</Link></li>
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/howitstarted">How It Started</Link></li>
-            <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><a href="https://theuniquesportal.vercel.app/auth/login">Member Login</a></li>
+            <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><a href="https://the-uniques-portal.vercel.app/">Member Login</a></li>
           </ul>
         </div>
 
