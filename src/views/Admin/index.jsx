@@ -47,6 +47,8 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import SchoolIcon from "@mui/icons-material/School";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import CloseIcon from "@mui/icons-material/Close";
@@ -583,6 +585,9 @@ const FineDetailsModal = ({ open, onClose, selectedFine, onPayFine, loading }) =
 };
 
 const Index = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   // State for storing fetched data
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -982,6 +987,21 @@ const Index = () => {
             value={tableView}
             onChange={handleTableViewChange}
             aria-label="member filter tabs"
+            variant={isMobile ? "scrollable" : "standard"}
+            scrollButtons={isMobile ? "auto" : false}
+            allowScrollButtonsMobile={isMobile}
+            sx={
+              isMobile
+                ? {
+                    "& .MuiTabs-scroller": {
+                      overflowX: "auto !important",
+                    },
+                    "& .MuiTab-root": {
+                      whiteSpace: "nowrap",
+                    },
+                  }
+                : {}
+            }
           >
             <Tab
               label="Members with Fines"
