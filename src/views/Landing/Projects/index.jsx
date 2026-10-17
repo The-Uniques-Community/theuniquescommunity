@@ -41,7 +41,7 @@ export const PROJECTS_DATA = [
     image: "/projects/tuportal.webp",
     technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
     category: "Student Records & LMS",
-    link: "https://theuniquesportal.vercel.app/",
+    link: "https://the-uniques-portal.vercel.app/",
     buttonColor: "#ea384c",
   },
   {

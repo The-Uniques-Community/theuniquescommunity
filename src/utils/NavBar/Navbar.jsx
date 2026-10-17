@@ -113,7 +113,7 @@ const Navbar = () => {
       authItems.push({
         text: "Login",
         icon: <LogIn size={20} />,
-        link: "https://theuniquesportal.vercel.app/auth/login",
+        link: "https://the-uniques-portal.vercel.app/",
       });
     }
 

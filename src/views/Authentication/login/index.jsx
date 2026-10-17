@@ -36,7 +36,7 @@ const Login = () => {
 
   // Redirect to the new portal login
   useEffect(() => {
-    window.location.replace("https://theuniquesportal.vercel.app/auth/login");
+    window.location.replace("https://the-uniques-portal.vercel.app/");
   }, []);
 
   // Listen for the message from the popup.
