@@ -1,6 +1,7 @@
 
 import React, { useState, forwardRef } from "react";
 import { BASE_URL } from "@/config";
+import { getSafeImageUrl } from "@/utils/imageHelper";
 import {
     Button,
     Card,
@@ -84,11 +85,7 @@ const TrainerProfileDialog = ({ open, handleClose, user }) => {
                             <div className="relative mb-4">
                                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-slate-50">
                                     <img
-                                        src={
-                                            user?.profilePic
-                                                ? getProxyImageUrl(user.profilePic.fileId || user.profilePic)
-                                                : userIcon
-                                        }
+                                        src={getSafeImageUrl(user?.profilePic, userIcon)}
                                         alt="Profile"
                                         className="w-full h-full object-cover"
                                     />
@@ -271,11 +268,7 @@ export const TrainerCardDashboard = ({ user, onDelete }) => {
                     {/* User Details */}
                     <div className="flex items-center gap-3">
                         <img
-                            src={
-                                user?.profilePic
-                                    ? getProxyImageUrl(user.profilePic.fileId || user.profilePic)
-                                    : userIcon
-                            }
+                            src={getSafeImageUrl(user?.profilePic, userIcon)}
                             alt={user.fullName}
                             className="w-16 h-16 rounded-full object-cover object-center"
                         />

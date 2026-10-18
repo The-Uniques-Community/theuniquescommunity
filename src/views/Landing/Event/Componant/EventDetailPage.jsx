@@ -43,6 +43,7 @@ import { toast } from 'react-toastify';
 import { BASE_URL } from "@/config";
 import Button from "@/utils/Buttons/Button";
 import CallToAction from "@/views/Landing/homComponents/CallToAction";
+import { getSafeImageUrl } from "@/utils/imageHelper";
 
 // Static data for community partners (only for Bharat TechXperience Hackathon 2.0)
 const COMMUNITY_PARTNERS = [
@@ -193,13 +194,7 @@ const EventDetailPage = () => {
   };
 
   const getBannerUrl = (banner) => {
-    const fileId = extractBannerFileId(banner);
-    if (fileId) {
-      return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`;
-    }
-    if (typeof banner === 'object' && banner.fileUrl) return banner.fileUrl;
-    if (typeof banner === 'string' && banner.startsWith('http')) return banner;
-    return 'https://placehold.co/1200x600?text=Event+Banner';
+    return getSafeImageUrl(banner, 'https://placehold.co/1200x600?text=Event+Banner');
   };
 
   // Fetch event data
@@ -798,20 +793,8 @@ const EventDetailPage = () => {
               alt={event.eventName || "Event banner"}
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover object-center"
-              onError={(e) => {
-                const fileId = extractBannerFileId(event.eventBanner);
-                if (!fileId) {
-                  setUseIframeFallback(true);
-                  return;
-                }
-                const currentSrc = e.target.src || "";
-                if (currentSrc.includes("thumbnail")) {
-                  e.target.src = `https://lh3.googleusercontent.com/d/${fileId}=w1200`;
-                } else if (currentSrc.includes("lh3.googleusercontent.com")) {
-                  e.target.src = `https://drive.google.com/uc?export=view&id=${fileId}`;
-                } else {
-                  setUseIframeFallback(true);
-                }
+              onError={() => {
+                setUseIframeFallback(true);
               }}
             />
           ) : (

@@ -6,6 +6,7 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import axios from "axios";
 import { BASE_URL } from "@/config";
+import { getSafeImageUrl } from "@/utils/imageHelper";
 
 import { TrainerCardDashboard } from "@/utils/Card/TrainerCardDashboard";
 import {
@@ -90,10 +91,7 @@ const Trainers = () => {
     };
 
     const getProxyImageUrl = (profilePic) => {
-        if (!profilePic) return "/placeholder.svg";
-        const fileId = profilePic.fileId || (typeof profilePic === 'string' ? profilePic : null);
-        if (fileId) return `${burl}/api/image-proxy/${fileId}`;
-        return "/placeholder.svg";
+        return getSafeImageUrl(profilePic);
     };
 
     useEffect(() => {

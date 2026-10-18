@@ -4,6 +4,7 @@ import { Linkedin, Github, Code, ChevronDown, Monitor, Terminal } from 'lucide-r
 import { useThemeContext } from '@/theme/ThemeProvider';
 import axios from 'axios';
 import { BASE_URL } from '@/config';
+import { getSafeImageUrl } from '@/utils/imageHelper';
 import { getStoredBatches, fetchBatches } from '@/utils/batch/batchesData';
 import ronitImg from "@/assets/img/Success Stories avatars/ronit-jaiprakash.webp";
 import mantashaImg from "@/assets/img/Success Stories avatars/mantasha-tabassum.webp";
@@ -196,15 +197,7 @@ const Trainers = () => {
         const response = await axios.get(`${BASE_URL}/api/admin/trainers/all-trainers`);
         if (response.data && Array.isArray(response.data) && response.data.length > 0) {
           const formatted = response.data.map((t, idx) => {
-            let imageSrc = "/placeholder.svg";
-            if (t.profilePic) {
-              const fileId = t.profilePic.fileId || (typeof t.profilePic === "string" ? t.profilePic : null);
-              if (fileId) {
-                imageSrc = `${BASE_URL}/api/image-proxy/${fileId}`;
-              }
-            } else if (t.image) {
-              imageSrc = t.image;
-            }
+            const imageSrc = getSafeImageUrl(t.profilePic || t.image);
 
             const expertiseArr = Array.isArray(t.skills)
               ? t.skills

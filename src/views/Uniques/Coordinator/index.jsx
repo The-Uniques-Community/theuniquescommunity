@@ -10,6 +10,7 @@ import Banner from "./dashboardComponents/Banner";
 import EventOverView from "./dashboardComponents/EventOverView";
 import axios from "axios";
 import { BASE_URL } from "@/config";
+import { getSafeImageUrl } from "@/utils/imageHelper";
 import {
   Table,
   TableBody,
@@ -941,10 +942,6 @@ const index = () => {
       setOpenPaymentModal(true); // Open the payment modal
     }
   };
-  const getProxyImageUrl = (fileId) => {
-    if (!fileId) return '/placeholder.svg'; // Fallback image
-    return `${BASE_URL}/api/image-proxy/${fileId}`;
-  };
 
   return (
     <div className="w-full">
@@ -1078,7 +1075,7 @@ const index = () => {
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <Avatar
-                                src={member.profilePic ? (typeof member.profilePic === 'object' ? getProxyImageUrl(member.profilePic.fileId) : getProxyImageUrl(member.profilePic)) : "/placeholder.svg"}
+                                src={getSafeImageUrl(member.profilePic, "/placeholder.svg")}
                                 alt={member.name}
                               />
                               <div>
@@ -1175,10 +1172,7 @@ const index = () => {
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <Avatar
-                                src={member?.profilePic?.fileId ? 
-                                 getProxyImageUrl(member.profilePic.fileId) : 
-                                 '/placeholder.svg'
-                               }
+                                src={getSafeImageUrl(member?.profilePic, '/placeholder.svg')}
                               />
                               <div>
                                 <div className="font-medium">
@@ -1278,7 +1272,7 @@ const index = () => {
               {/* Member Basic Info */}
               <div className="flex items-center gap-4 mb-6">
                 <Avatar
-                  src={selectedMember.profilePic ? (typeof selectedMember.profilePic === 'object' ? getProxyImageUrl(selectedMember.profilePic.fileId) : getProxyImageUrl(selectedMember.profilePic)) : "/placeholder.svg"}
+                  src={getSafeImageUrl(selectedMember?.profilePic, "/placeholder.svg")}
                   alt={selectedMember.name}
                   sx={{ width: 64, height: 64 }}
                   className="border-2 border-[#ca0019]"

@@ -169,35 +169,41 @@ app.use("/api/community-benefits", communityBenefitsRouter);
 app.use("/api/custom-members", customMemberRouter);
 
 
-app.use('/api/image-proxy/:fileId', async (req, res) => {
+app.get('/api/image-proxy/:fileId', async (req, res) => {
   try {
     const fileId = req.params.fileId;
     if (!fileId) {
       return res.status(400).send('File ID is required');
     }
     
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+
     // Get the auth client from your existing Google Drive service
     const auth = await getAuth();
     const drive = google.drive({ version: 'v3', auth });
     
-    // Get the file metadata first to verify it exists
-    await drive.files.get({ fileId });
-    
-    // Get the actual file content as a stream
+    // Get the actual file content as a stream directly (single API roundtrip)
     const response = await drive.files.get({
       fileId,
       alt: 'media'
     }, { responseType: 'stream' });
     
     // Set content type and cache headers
-    res.setHeader('Content-Type', response.headers['content-type']);
+    res.setHeader('Content-Type', response.headers['content-type'] || 'image/jpeg');
     res.setHeader('Cache-Control', 'public, max-age=86400'); // Cache for 24 hours
     
     // Pipe the image data directly to the response
     response.data.pipe(res);
   } catch (error) {
-    console.error('Error proxying Google Drive image:', error);
-    res.status(500).send('Error retrieving image');
+    console.error('Error proxying Google Drive image:', error?.message || error);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    return res.status(200).send(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><rect width="120" height="120" fill="#f1f5f9"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="sans-serif">Image N/A</text></svg>'
+    );
   }
 });
 

@@ -17,6 +17,7 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import axios from "axios";
 import { BASE_URL } from "@/config";
 import { toast } from "react-toastify";
+import { getSafeImageUrl, getAvatarFallback } from "@/utils/imageHelper";
 
 // Helper function for formatting dates
 const formatDate = (dateString) => {
@@ -127,17 +128,9 @@ const MemberProfile = () => {
     ? `Placed - ${course || ""}`
     : course || "Member";
 
-  // Format profile image
-  const getProxyImageUrl = (fileId) => {
-    if (!fileId) return '/placeholder.svg';
-    return `${BASE_URL}/api/image-proxy/${fileId}`;
-  };
-
-  const profileImg =
-    member.profilePic?.url ||
-    (typeof member.profilePic === "string"
-      ? member.profilePic
-      : `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=ca0019&color=ffffff&size=300`);
+  // Format profile image using safe proxy to prevent BLOCKED_BY_ORB
+  const avatarFallback = getAvatarFallback(fullName);
+  const profileImg = getSafeImageUrl(member.profilePic || profilePic, avatarFallback);
 
   // Format social links
   const socialLinks = {
@@ -287,7 +280,12 @@ const MemberProfile = () => {
             <div className="md:col-span-1">
               <div className="relative mb-5">
                 <img
-                  src={profilePic ? getProxyImageUrl(profilePic?.fileId) : profileImg}
+                  src={profileImg}
+                  onError={(e) => {
+                    if (e.currentTarget.src !== avatarFallback) {
+                      e.currentTarget.src = avatarFallback;
+                    }
+                  }}
                   alt={`${fullName}'s profile`}
                   className="w-full h-64 rounded-lg object-cover shadow-md"
                 />
