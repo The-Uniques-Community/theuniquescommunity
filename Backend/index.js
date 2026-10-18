@@ -34,24 +34,79 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-// Robust CORS middleware handling all origins and preflight requests
+// Check if an origin is permitted: all vercel.app subdomains, localhost, organization domains, and configured env vars
+const isAllowedOrigin = (origin) => {
+  // Allow requests with no origin (e.g. mobile apps, curl, Postman, server-to-server)
+  if (!origin) return true;
+
+  try {
+    const { hostname } = new URL(origin);
+
+    // Allow vercel.app root and all *.vercel.app subdomains
+    if (hostname === "vercel.app" || hostname.endsWith(".vercel.app")) {
+      return true;
+    }
+
+    // Allow localhost and 127.0.0.1 for local development
+    if (
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname.endsWith(".localhost")
+    ) {
+      return true;
+    }
+
+    // Allow community domain(s)
+    if (hostname === "theuniques.in" || hostname.endsWith(".theuniques.in")) {
+      return true;
+    }
+
+    // Allow origins configured via environment variables (comma-separated or single)
+    const envOrigins = [
+      process.env.CLIENT_URL,
+      process.env.FRONTEND_URL,
+      process.env.ALLOWED_ORIGINS,
+    ].filter(Boolean);
+
+    for (const envOrigin of envOrigins) {
+      const allowedList = envOrigin.split(",").map((s) => s.trim());
+      for (const allowed of allowedList) {
+        if (!allowed) continue;
+        if (allowed === origin) return true;
+        try {
+          if (new URL(allowed).hostname === hostname) return true;
+        } catch (_) {}
+      }
+    }
+
+    return false;
+  } catch {
+    return false;
+  }
+};
+
+// Robust CORS middleware handling allowed origins and preflight requests
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  if (origin) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  } else {
-    res.setHeader("Access-Control-Allow-Origin", "*");
+
+  if (isAllowedOrigin(origin)) {
+    if (origin) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+    }
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization, token, X-Requested-With, Accept, Origin"
+    );
+    res.setHeader("Access-Control-Expose-Headers", "Content-Type, Authorization, token");
   }
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, token, X-Requested-With, Accept, Origin"
-  );
-  res.setHeader("Access-Control-Expose-Headers", "Content-Type, Authorization, token");
 
   if (req.method === "OPTIONS") {
-    return res.status(204).end();
+    if (isAllowedOrigin(origin)) {
+      return res.status(204).end();
+    }
+    return res.status(403).json({ message: "Not allowed by CORS" });
   }
   next();
 });
@@ -59,11 +114,17 @@ app.use((req, res, next) => {
 app.use(
   cors({
     origin: (origin, callback) => {
-      callback(null, true);
+      if (isAllowedOrigin(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "token", "X-Requested-With", "Accept", "Origin"],
+    exposedHeaders: ["Content-Type", "Authorization", "token"],
+    optionsSuccessStatus: 204,
   })
 );
 // Ensure database is connected on serverless requests

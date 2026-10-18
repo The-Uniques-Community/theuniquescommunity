@@ -42,7 +42,7 @@ const ALL_PROJECTS = [
     image: "/projects/tuportal.webp",
     technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
     category: "Student Records & LMS",
-    link: "https://theuniquesportal.vercel.app/",
+    link: "https://the-uniques-portal.vercel.app/",
     githubLink: "",
     buttonColor: "#ea384c",
     status: "Active",
