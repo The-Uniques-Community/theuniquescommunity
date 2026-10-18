@@ -72,7 +72,7 @@
 // } from "chart.js";
 // import { Line, Bar, Pie } from "react-chartjs-2";
 // import { toast } from "react-toastify";
-// import { BASE_URL } from "@/config";
+import { BASE_URL } from "@/config";
 
 // // Define the API base URL
 // const API_URL = BASE_URL;
@@ -3927,7 +3927,7 @@ import {
 } from "recharts";
 
 // API base URL
-const API_BASE_URL = "https://theuniquesportal-server.vercel.app";
+const API_BASE_URL = BASE_URL;
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;

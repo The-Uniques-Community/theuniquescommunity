@@ -9,6 +9,7 @@ import Calender from "./dashboardComponents/Calender";
 import Banner from "./dashboardComponents/Banner";
 import EventOverView from "./dashboardComponents/EventOverView";
 import axios from "axios";
+import { BASE_URL } from "@/config";
 import {
   Table,
   TableBody,
@@ -130,7 +131,7 @@ const FinePaymentModal = ({
 
       // Upload the file - make sure the URL is correct
       const uploadResponse = await axios.post(
-        "https://theuniquesportal-server.vercel.app/upload/fine_file_upload",
+        `${BASE_URL}/upload/fine_file_upload`,
         formData,
         {
           headers: {
@@ -150,7 +151,7 @@ const FinePaymentModal = ({
         const fileId = uploadResponse.data.files[0]._id;
 
         // API endpoint for updating fine status - this needs to match your backend routes
-        const updateEndpoint = `https://theuniquesportal-server.vercel.app/api/admin/fine/members/${memberId}/fines/${fine._id}`;
+        const updateEndpoint = `${BASE_URL}/api/admin/fine/members/${memberId}/fines/${fine._id}`;
 
         // Update the fine status and attach the proof
         const updateResponse = await axios.patch(updateEndpoint, {
@@ -620,7 +621,7 @@ const Index = () => {
     message: "",
     severity: "error",
   });
-  const API_BASE_URL = "https://theuniquesportal-server.vercel.app/api/admin";
+  const API_BASE_URL = `${BASE_URL}/api/admin`;
 
   // Fetch data when component mounts
   useEffect(() => {
@@ -629,7 +630,7 @@ const Index = () => {
         setLoading(true);
         // Fetch all members
         const membersRes = await axios.get(
-          "https://theuniquesportal-server.vercel.app/api/admin/member?page=1&limit=10"
+          `${BASE_URL}/api/admin/member?page=1&limit=10`
         );
         // Get recently added members (sorted by creation date)
         const sortedMembers = [...membersRes.data.data].sort(
@@ -643,7 +644,7 @@ const Index = () => {
 
         // Fetch members with fines
         const fineRes = await axios.get(
-          "https://theuniquesportal-server.vercel.app/api/admin/fine/fines/members"
+          `${BASE_URL}/api/admin/fine/fines/members`
         );
         setFineMembers(
           fineRes.data.data.members.filter((member) => Number(member.totalPendingAmount) > 0)
@@ -665,7 +666,7 @@ const Index = () => {
         try {
           // Try to get the total fine from a dedicated API endpoint
           const fineStatsRes = await axios.get(
-            "https://theuniquesportal-server.vercel.app/api/admin/fine/fines/statistics"
+            `${BASE_URL}/api/admin/fine/fines/statistics`
           );
           if (
             fineStatsRes.data &&
@@ -683,7 +684,7 @@ const Index = () => {
 
         // Fetch events from the correct API endpoint
         try {
-          const eventsRes = await axios.get("https://theuniquesportal-server.vercel.app/api/events");
+          const eventsRes = await axios.get(`${BASE_URL}/api/events`);
           // Handle API response based on its structure (data property or direct array)
           const eventsList = eventsRes.data.events || [];
           setEvents(eventsList.slice(0, 3));
@@ -735,7 +736,7 @@ const Index = () => {
 
         // Fetch members with supplementary exams for semester 1
         const supplementaryRes = await axios.get(
-          `https://theuniquesportal-server.vercel.app/api/admin/member/supplementary/semester/${currentSemester}`
+          `${BASE_URL}/api/admin/member/supplementary/semester/${currentSemester}`
         );
         setSupplementaryMembers(supplementaryRes.data.data || []);
 
@@ -756,7 +757,7 @@ const Index = () => {
       setCurrentSemester(semester);
 
       const res = await axios.get(
-        `https://theuniquesportal-server.vercel.app/api/admin/member/supplementary/semester/${semester}`
+        `${BASE_URL}/api/admin/member/supplementary/semester/${semester}`
       );
 
       // Debug the API response
@@ -804,7 +805,7 @@ const Index = () => {
     // Refresh the data
     try {
       const fineRes = await axios.get(
-        "https://theuniquesportal-server.vercel.app/api/admin/member/fines/all"
+        `${BASE_URL}/api/admin/member/fines/all`
       );
 
       if (fineRes.data && fineRes.data.data) {
