@@ -660,21 +660,7 @@ const index = () => {
           }
         }
 
-        // Merge with locally stored custom members if any
-        try {
-          const customMembersRaw = localStorage.getItem("tu_community_custom_members");
-          if (customMembersRaw) {
-            const customMembers = JSON.parse(customMembersRaw);
-            if (Array.isArray(customMembers) && customMembers.length > 0) {
-              const existingIds = new Set(allMembersList.map((m) => m._id || m.id || m.admno));
-              const unadded = customMembers.filter((m) => !existingIds.has(m._id) && !existingIds.has(m.admno));
-              allMembersList = [...unadded, ...allMembersList];
-              totalMembersCount += unadded.length;
-            }
-          }
-        } catch (customErr) {
-          console.error("Error reading custom members:", customErr);
-        }
+
 
         const sortedMembers = [...allMembersList].sort(
           (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
@@ -796,13 +782,11 @@ const index = () => {
     const handleTrainersUpdated = () => fetchData();
 
     window.addEventListener("members-updated", handleMembersUpdated);
-    window.addEventListener("custom-members-updated", handleMembersUpdated);
     window.addEventListener("events-updated", handleEventsUpdated);
     window.addEventListener("trainers-updated", handleTrainersUpdated);
 
     return () => {
       window.removeEventListener("members-updated", handleMembersUpdated);
-      window.removeEventListener("custom-members-updated", handleMembersUpdated);
       window.removeEventListener("events-updated", handleEventsUpdated);
       window.removeEventListener("trainers-updated", handleTrainersUpdated);
     };
