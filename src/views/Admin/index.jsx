@@ -658,12 +658,12 @@ const Index = () => {
 
         // Calculate total fine amount - improved calculation
         let totalFineAmount = 0;
-        if (Array.isArray(fineRes.data.data)) {
-          totalFineAmount = fineRes.data.data.reduce((total, member) => {
-            // Make sure fineStatus is converted to a number and has a default of 0
-            const fineAmount = member.fineStatus
-              ? Number(member.fineStatus)
-              : 0;
+        const membersList = fineRes.data.data?.members || [];
+        if (Array.isArray(membersList)) {
+          totalFineAmount = membersList.reduce((total, member) => {
+            const fineAmount = member.totalPendingAmount
+              ? Number(member.totalPendingAmount)
+              : (member.fineStatus ? Number(member.fineStatus) : 0);
             return total + (isNaN(fineAmount) ? 0 : fineAmount);
           }, 0);
         }
@@ -811,18 +811,17 @@ const Index = () => {
     // Refresh the data
     try {
       const fineRes = await axios.get(
-        `${BASE_URL}/api/admin/member/fines/all`
+        `${BASE_URL}/api/admin/fine/fines/members`
       );
 
       if (fineRes.data && fineRes.data.data) {
-        setFineMembers(fineRes.data.data);
+        const membersList = fineRes.data.data?.members || [];
+        setFineMembers(membersList.filter((m) => Number(m.totalPendingAmount || m.fineStatus || 0) > 0));
 
         // Recalculate total fine amount
-        if (Array.isArray(fineRes.data.data)) {
-          const totalFineAmount = fineRes.data.data.reduce((total, member) => {
-            const fineAmount = member.fineStatus
-              ? Number(member.fineStatus)
-              : 0;
+        if (Array.isArray(membersList)) {
+          const totalFineAmount = membersList.reduce((total, member) => {
+            const fineAmount = Number(member.totalPendingAmount || member.fineStatus || 0);
             return total + (isNaN(fineAmount) ? 0 : fineAmount);
           }, 0);
 
@@ -852,9 +851,10 @@ const Index = () => {
   const viewFineDetails = async (member) => {
     try {
       setLoading(true);
+      const memberId = member.id || member._id;
       
       // Get complete fine history for the member
-      const response = await axios.get(`${API_BASE_URL}/fine/members/${member.id}/fines`);
+      const response = await axios.get(`${API_BASE_URL}/fine/members/${memberId}/fines`);
       
       setSelectedFine({
         member,
@@ -897,7 +897,7 @@ const Index = () => {
   };
   const getProxyImageUrl = (fileId) => {
     if (!fileId) return '/placeholder.svg'; // Fallback image
-    return `${API_BASE_URL}/api/image-proxy/${fileId}`;
+    return `${BASE_URL}/api/image-proxy/${fileId}`;
   };
 
   return (

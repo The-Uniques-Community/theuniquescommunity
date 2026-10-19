@@ -62,7 +62,7 @@ export const saveStoredStats = async (newStats) => {
 
   // 1. Save to MongoDB database first
   try {
-    const response = await axios.post(`${BASE_URL}/api/stats/update`, payload);
+    const response = await axios.post(`${BASE_URL}/api/stats/update`, payload, { withCredentials: true });
     if (response.data && response.data.success && response.data.data) {
       savedData = {
         Earnings: Number(response.data.data.Earnings) ?? payload.Earnings,

@@ -333,19 +333,31 @@ const EventForm = ({ event, onSuccess }) => {
         if (currentReceipt) {
           const receiptFormData = new FormData();
           receiptFormData.append("files", currentReceipt.file);
+          receiptFormData.append("file", currentReceipt.file);
           receiptFormData.append("eventName", values.eventName);
           receiptFormData.append("fileKey", "sponsorReceipt");
+          if (eventId) {
+            receiptFormData.append("eventId", eventId);
+            receiptFormData.append("itemType", "sponsor");
+            const sponsorItem = sponsors[currentReceipt.index];
+            receiptFormData.append("itemId", sponsorItem?._id || currentReceipt.index);
+          }
 
           try {
+            const uploadEndpoint = eventId
+              ? `${BASE_URL}/upload/budget_file_upload`
+              : `${BASE_URL}/upload/event_file_upload`;
             const receiptResponse = await axios.post(
-              `${BASE_URL}/upload/event_file_upload`,
-              receiptFormData
+              uploadEndpoint,
+              receiptFormData,
+              { withCredentials: true }
             );
 
-            if (receiptResponse.data.files && receiptResponse.data.files.length > 0) {
+            const uploadedFile = receiptResponse.data.file || (receiptResponse.data.files && receiptResponse.data.files[0]);
+            if (uploadedFile) {
               // Update the receipt ID in the sponsor
               const newSponsors = [...sponsors];
-              newSponsors[currentReceipt.index].receiptId = receiptResponse.data.files[0]._id;
+              newSponsors[currentReceipt.index].receiptId = uploadedFile._id || uploadedFile.fileId;
               delete newSponsors[currentReceipt.index].hasNewReceipt; // Remove temp flag
               setSponsors(newSponsors);
             }

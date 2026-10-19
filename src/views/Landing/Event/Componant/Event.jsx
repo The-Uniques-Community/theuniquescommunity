@@ -132,7 +132,7 @@ const fetchTeamMembers = async (eventId) => {
     
     // Use the same base URL as your other API calls
     const response = await axios.get(`${BASE_URL}/api/events/${eventId}/members`, {
-      credentials: "include"
+      withCredentials: true
     });
     
     console.log("Team members API response:", response.data);
@@ -610,7 +610,7 @@ const fetchTeamMembers = async (eventId) => {
         // Fetch all events to populate related events and tabs
         axios.get(`${BASE_URL}/api/events`)
             .then(response => {
-                const events = response.data.data || response.data || [];
+                const events = response.data.events || response.data.data || [];
                 setAllEvents(events);
 
                 // Extract unique event types for tabs
@@ -666,7 +666,7 @@ const fetchTeamMembers = async (eventId) => {
     const fetchEventDetails = async (eventId) => {
         try {
             const response = await axios.get(`${BASE_URL}/api/events/${eventId}`);
-            setSelectedDetailEvent(response.data.data || response.data);
+            setSelectedDetailEvent(response.data.event || response.data.data || response.data);
         } catch (error) {
             console.error("Error fetching event details:", error);
         }

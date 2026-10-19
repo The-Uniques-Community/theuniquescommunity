@@ -113,14 +113,12 @@ const Batches = () => {
 
         if (response.data.success) {
           // Transform the response data to ensure proper count format
-          const batchData = response.data.data;
-          const counts = {
-            "The Uniques 1.0": parseInt(batchData["The Uniques 1.0"] || 0),
-            "The Uniques 2.0": parseInt(batchData["The Uniques 2.0"] || 0),
-            "The Uniques 3.0": parseInt(batchData["The Uniques 3.0"] || 0),
-            "The Uniques 4.0": parseInt(batchData["The Uniques 4.0"] || 0)
-          };
-          setBatchCounts(counts);
+          const batchData = response.data.data || {};
+          const counts = {};
+          Object.keys(batchData).forEach((key) => {
+            counts[key] = parseInt(batchData[key] || 0, 10);
+          });
+          setBatchCounts({ ...batchData, ...counts });
 
           // Debug log to verify counts
           console.log('Batch counts:', counts);

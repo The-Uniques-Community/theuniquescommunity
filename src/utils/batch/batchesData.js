@@ -80,7 +80,7 @@ export const addStoredBatch = async (batchName) => {
   if (!current.includes(formatted)) {
     // 1. Save in MongoDB first
     try {
-      await axios.post(`${BASE_URL}/api/batches/add`, { name: formatted });
+      await axios.post(`${BASE_URL}/api/batches/add`, { name: formatted }, { withCredentials: true });
     } catch (err) {
       console.warn("Backend MongoDB notice for batch add:", err?.message || err);
     }
