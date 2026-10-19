@@ -22,6 +22,7 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useThemeContext } from "@/theme/ThemeProvider";
 import ConfirmationModal from "@/utils/Modal/ConfirmationModal";
+import { BASE_URL } from "@/config";
 import logo from "@/assets/logos/theuniquesCommunity.png";
 import uniques_white from "@/assets/logos/uniqueswhite.png";
 import Brightness4Icon from "@mui/icons-material/Brightness4"; // Dark Mode Icon
@@ -71,18 +72,21 @@ function DashboardLayoutAppBar() {
     setDrawerOpen(false);
   };
   const onConfirm = () => {
-    fetch("https://theuniquesportal-server.vercel.app/auth/logout", {
+    fetch(`${BASE_URL}/auth/logout`, {
       method: "POST",
       credentials: "include",
     })
       .then(() => {
-        localStorage.removeItem("activeItem");
-        localStorage.removeItem("role");
         toast.success("Logged out successfully");
-        navigate("/");
       })
       .catch((error) => {
         console.error("Logout error:", error);
+      })
+      .finally(() => {
+        localStorage.removeItem("activeItem");
+        localStorage.removeItem("role");
+        localStorage.removeItem("token");
+        navigate("/");
       });
     setIsOpen(false);
   };

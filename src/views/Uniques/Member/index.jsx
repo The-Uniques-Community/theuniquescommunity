@@ -72,7 +72,7 @@
 // } from "chart.js";
 // import { Line, Bar, Pie } from "react-chartjs-2";
 // import { toast } from "react-toastify";
-// import { BASE_URL } from "@/config";
+import { BASE_URL } from "@/config";
 
 // // Define the API base URL
 // const API_URL = BASE_URL;
@@ -3830,6 +3830,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { getSafeImageUrl } from "@/utils/imageHelper";
 import {
   Button,
   Chip,
@@ -3927,7 +3928,7 @@ import {
 } from "recharts";
 
 // API base URL
-const API_BASE_URL = "https://theuniquesportal-server.vercel.app";
+const API_BASE_URL = BASE_URL;
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -3958,9 +3959,8 @@ function a11yProps(index) {
 }
 
 // Add this helper function near the top of your component
-const getProxyImageUrl = (fileId) => {
-  if (!fileId) return "/placeholder.svg"; // Fallback image
-  return `${API_BASE_URL}/api/image-proxy/${fileId}`;
+const getProxyImageUrl = (source) => {
+  return getSafeImageUrl(source, "/placeholder.svg");
 };
 
 const Index = () => {
@@ -5492,13 +5492,7 @@ const Index = () => {
           >
             <Box sx={{ position: "relative" }}>
               <Avatar
-                src={
-                  user?.profilePic?.fileId
-                    ? getProxyImageUrl(user.profilePic.fileId)
-                    : typeof user?.profilePic === "string" && user.profilePic
-                    ? (user.profilePic.startsWith("http") || user.profilePic.startsWith("/") ? user.profilePic : getProxyImageUrl(user.profilePic))
-                    : "/placeholder.svg"
-                }
+                src={getSafeImageUrl(user?.profilePic, "/placeholder.svg")}
                 alt={user?.fullName || "User"}
                 sx={{
                   width: 120,
@@ -7671,13 +7665,7 @@ const Index = () => {
               >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                   <Avatar
-                    src={
-                      user?.profilePic?.fileId
-                        ? getProxyImageUrl(user.profilePic.fileId)
-                        : typeof user?.profilePic === "string" && user.profilePic
-                        ? (user.profilePic.startsWith("http") || user.profilePic.startsWith("/") ? user.profilePic : getProxyImageUrl(user.profilePic))
-                        : "/placeholder.svg"
-                    }
+                    src={getSafeImageUrl(user?.profilePic, "/placeholder.svg")}
                     alt={user?.fullName || "User"}
                     sx={{ width: 40, height: 40 }}
                   />
@@ -7775,11 +7763,7 @@ const Index = () => {
               src={
                 profilePicture
                   ? URL.createObjectURL(profilePicture)
-                  : user?.profilePic?.fileId
-                  ? getProxyImageUrl(user.profilePic.fileId)
-                  : typeof user?.profilePic === "string" && user.profilePic
-                  ? (user.profilePic.startsWith("http") || user.profilePic.startsWith("/") ? user.profilePic : getProxyImageUrl(user.profilePic))
-                  : "/placeholder.svg"
+                  : getSafeImageUrl(user?.profilePic, "/placeholder.svg")
               }
               alt={user?.fullName || "User"}
               sx={{

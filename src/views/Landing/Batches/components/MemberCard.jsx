@@ -10,6 +10,7 @@ import { FaXTwitter, FaGithub } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "@/config";
 import { motion } from "framer-motion";
+import { getSafeImageUrl, getAvatarFallback } from "@/utils/imageHelper";
 
 const MemberCard = ({ member }) => {
   const navigate = useNavigate();
@@ -37,12 +38,9 @@ const MemberCard = ({ member }) => {
   const firstName = nameParts[0] || "Member";
   const lastName = nameParts.slice(1).join(' ');
 
-  // Format profile image - handle both object reference and direct URL
-  const profileImg =
-    member.profilePic?.fileUrl || member.profilePic?.url ||
-    (typeof member.profilePic === "string" && member.profilePic
-      ? member.profilePic
-      : `https://ui-avatars.com/api/?name=${encodeURIComponent(safeFullName)}&background=ca0019&color=fff`);
+  // Format profile image using safe proxy to prevent BLOCKED_BY_ORB
+  const avatarFallback = getAvatarFallback(safeFullName);
+  const profileImg = getSafeImageUrl(profilePic || member.profilePic, avatarFallback);
 
   // Format social links
   const socialLinks = {
@@ -116,9 +114,15 @@ const MemberCard = ({ member }) => {
 
       {/* Profile Image */}
       <img
-        src={profilePic?.fileId ? getProxyImageUrl(profilePic.fileId) : profileImg}
+        src={profileImg}
+        onError={(e) => {
+          if (e.currentTarget.src !== avatarFallback) {
+            e.currentTarget.src = avatarFallback;
+          }
+        }}
         className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
-        alt={`${fullName}'s Profile`}
+        alt={`${safeFullName}'s Profile`}
+        loading="lazy"
       />
 
       {/* Optional Batch Badge - top left */}

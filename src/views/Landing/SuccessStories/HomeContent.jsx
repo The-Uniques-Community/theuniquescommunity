@@ -45,6 +45,10 @@ const HomeContent = () => {
           
           <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
             <Button 
+              component="a"
+              href="https://chat.whatsapp.com/HYOloogGXKcIkR83DnOjFj"
+              target="_blank"
+              rel="noopener noreferrer"
               variant="contained" 
               color="primary" 
               size="large"

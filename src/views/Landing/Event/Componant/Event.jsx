@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '@/config';
+import { getSafeImageUrl } from '@/utils/imageHelper';
 import { Users, X, Calendar, Clock, MapPin, User, Users as UsersIcon, Award } from 'lucide-react';
 import Button from "@/utils/Buttons/Button";
 import { Tabs, Tab } from '@mui/material';
@@ -694,13 +695,7 @@ const fetchTeamMembers = async (eventId) => {
     };
 
     const getBannerUrl = (banner) => {
-        const fileId = extractBannerFileId(banner);
-        if (fileId) {
-            return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`;
-        }
-        if (typeof banner === 'object' && banner.fileUrl) return banner.fileUrl;
-        if (typeof banner === 'string' && banner.startsWith('http')) return banner;
-        return 'https://placehold.co/1200x600?text=Event+Banner';
+        return getSafeImageUrl(banner, 'https://placehold.co/1200x600?text=Event+Banner');
     };
 
     // If no event is provided, show a loading state
@@ -734,20 +729,8 @@ const fetchTeamMembers = async (eventId) => {
                             alt={event.eventName || "Event banner"}
                             referrerPolicy="no-referrer"
                             className="w-full h-full object-cover object-center"
-                            onError={(e) => {
-                                const fileId = extractBannerFileId(event.eventBanner);
-                                if (!fileId) {
-                                    setUseIframeFallback(true);
-                                    return;
-                                }
-                                const currentSrc = e.target.src || "";
-                                if (currentSrc.includes("thumbnail")) {
-                                    e.target.src = `https://lh3.googleusercontent.com/d/${fileId}=w1200`;
-                                } else if (currentSrc.includes("lh3.googleusercontent.com")) {
-                                    e.target.src = `https://drive.google.com/uc?export=view&id=${fileId}`;
-                                } else {
-                                    setUseIframeFallback(true);
-                                }
+                            onError={() => {
+                                setUseIframeFallback(true);
                             }}
                         />
                     ) : (

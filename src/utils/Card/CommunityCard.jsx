@@ -3,6 +3,7 @@ import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import ScheduleOutlinedIcon from "@mui/icons-material/ScheduleOutlined";
 import "./communitycard.css";
 import logo from "@/assets/logos/theuniquesCommunity.png";
+import { getSafeImageUrl } from "@/utils/imageHelper";
 
 const CommunityCard = ({ event, onCardClick, onKnowMoreClick }) => {
   const navigate = useNavigate();
@@ -29,17 +30,9 @@ const CommunityCard = ({ event, onCardClick, onKnowMoreClick }) => {
     return null;
   };
 
-  // High-resolution direct image URL
+  // Safe proxied image URL
   const getBannerUrl = (bannerData) => {
-    const fileId = extractFileId(bannerData);
-    if (fileId) {
-      return `https://lh3.googleusercontent.com/d/${fileId}=w1000`;
-    }
-    if (typeof bannerData === "object" && bannerData.fileUrl)
-      return bannerData.fileUrl;
-    if (typeof bannerData === "string" && bannerData.startsWith("http"))
-      return bannerData;
-    return "https://placehold.co/600x400?text=Event";
+    return getSafeImageUrl(bannerData, "https://placehold.co/600x400?text=Event");
   };
 
   // Get the correct event ID
@@ -120,9 +113,8 @@ const CommunityCard = ({ event, onCardClick, onKnowMoreClick }) => {
             className="w-full h-full object-contain object-center p-1.5 transition-transform duration-500 ease-out group-hover:scale-[1.02]"
             loading="lazy"
             onError={(e) => {
-              const fileId = extractFileId(event?.eventBanner);
-              if (fileId && !e.target.src.includes("thumbnail")) {
-                e.target.src = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+              if (e.target.src !== logo) {
+                e.target.src = logo;
               }
             }}
           />

@@ -35,24 +35,79 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-// Robust CORS middleware handling all origins and preflight requests
+// Check if an origin is permitted: all vercel.app subdomains, localhost, organization domains, and configured env vars
+const isAllowedOrigin = (origin) => {
+  // Allow requests with no origin (e.g. mobile apps, curl, Postman, server-to-server)
+  if (!origin) return true;
+
+  try {
+    const { hostname } = new URL(origin);
+
+    // Allow vercel.app root and all *.vercel.app subdomains
+    if (hostname === "vercel.app" || hostname.endsWith(".vercel.app")) {
+      return true;
+    }
+
+    // Allow localhost and 127.0.0.1 for local development
+    if (
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname.endsWith(".localhost")
+    ) {
+      return true;
+    }
+
+    // Allow community domain(s)
+    if (hostname === "theuniques.in" || hostname.endsWith(".theuniques.in")) {
+      return true;
+    }
+
+    // Allow origins configured via environment variables (comma-separated or single)
+    const envOrigins = [
+      process.env.CLIENT_URL,
+      process.env.FRONTEND_URL,
+      process.env.ALLOWED_ORIGINS,
+    ].filter(Boolean);
+
+    for (const envOrigin of envOrigins) {
+      const allowedList = envOrigin.split(",").map((s) => s.trim());
+      for (const allowed of allowedList) {
+        if (!allowed) continue;
+        if (allowed === origin) return true;
+        try {
+          if (new URL(allowed).hostname === hostname) return true;
+        } catch (_) {}
+      }
+    }
+
+    return false;
+  } catch {
+    return false;
+  }
+};
+
+// Robust CORS middleware handling allowed origins and preflight requests
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  if (origin) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  } else {
-    res.setHeader("Access-Control-Allow-Origin", "*");
+
+  if (isAllowedOrigin(origin)) {
+    if (origin) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+    }
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization, token, X-Requested-With, Accept, Origin"
+    );
+    res.setHeader("Access-Control-Expose-Headers", "Content-Type, Authorization, token");
   }
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, token, X-Requested-With, Accept, Origin"
-  );
-  res.setHeader("Access-Control-Expose-Headers", "Content-Type, Authorization, token");
 
   if (req.method === "OPTIONS") {
-    return res.status(204).end();
+    if (isAllowedOrigin(origin)) {
+      return res.status(204).end();
+    }
+    return res.status(403).json({ message: "Not allowed by CORS" });
   }
   next();
 });
@@ -60,11 +115,17 @@ app.use((req, res, next) => {
 app.use(
   cors({
     origin: (origin, callback) => {
-      callback(null, true);
+      if (isAllowedOrigin(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "token", "X-Requested-With", "Accept", "Origin"],
+    exposedHeaders: ["Content-Type", "Authorization", "token"],
+    optionsSuccessStatus: 204,
   })
 );
 // Ensure database is connected on serverless requests
@@ -111,35 +172,41 @@ app.use("/api/success-stories", successStoryRouter);
 app.use("/api/community/success-stories", successStoryRouter);
 
 
-app.use('/api/image-proxy/:fileId', async (req, res) => {
+app.get('/api/image-proxy/:fileId', async (req, res) => {
   try {
     const fileId = req.params.fileId;
     if (!fileId) {
       return res.status(400).send('File ID is required');
     }
     
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+
     // Get the auth client from your existing Google Drive service
     const auth = await getAuth();
     const drive = google.drive({ version: 'v3', auth });
     
-    // Get the file metadata first to verify it exists
-    await drive.files.get({ fileId });
-    
-    // Get the actual file content as a stream
+    // Get the actual file content as a stream directly (single API roundtrip)
     const response = await drive.files.get({
       fileId,
       alt: 'media'
     }, { responseType: 'stream' });
     
     // Set content type and cache headers
-    res.setHeader('Content-Type', response.headers['content-type']);
+    res.setHeader('Content-Type', response.headers['content-type'] || 'image/jpeg');
     res.setHeader('Cache-Control', 'public, max-age=86400'); // Cache for 24 hours
     
     // Pipe the image data directly to the response
     response.data.pipe(res);
   } catch (error) {
-    console.error('Error proxying Google Drive image:', error);
-    res.status(500).send('Error retrieving image');
+    console.error('Error proxying Google Drive image:', error?.message || error);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    return res.status(200).send(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><rect width="120" height="120" fill="#f1f5f9"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="sans-serif">Image N/A</text></svg>'
+    );
   }
 });
 

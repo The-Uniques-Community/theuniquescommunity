@@ -6,6 +6,7 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import axios from "axios";
 import { BASE_URL } from "@/config";
+import { getSafeImageUrl } from "@/utils/imageHelper";
 
 import { TrainerCardDashboard } from "@/utils/Card/TrainerCardDashboard";
 import {
@@ -90,10 +91,7 @@ const Trainers = () => {
     };
 
     const getProxyImageUrl = (profilePic) => {
-        if (!profilePic) return "/placeholder.svg";
-        const fileId = profilePic.fileId || (typeof profilePic === 'string' ? profilePic : null);
-        if (fileId) return `${burl}/api/image-proxy/${fileId}`;
-        return "/placeholder.svg";
+        return getSafeImageUrl(profilePic);
     };
 
     useEffect(() => {
@@ -257,20 +255,35 @@ const Trainers = () => {
     );
 
     return (
-        <Box sx={{ width: "100%", typography: "body1", p: 3 }}>
+        <Box sx={{ width: "100%", typography: "body1", p: { xs: 1.5, sm: 2, md: 3 } }}>
             <ToastContainer position="top-right" autoClose={3000} />
             {loading && <CustomLoader />}
             {/* Header */}
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-                <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#ca0019', display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <SchoolIcon fontSize="large" /> Trainers Overview
+            <Box sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                justifyContent: "space-between",
+                alignItems: { xs: "stretch", sm: "center" },
+                gap: { xs: 2, sm: 2 },
+                mb: 2
+            }}>
+                <Typography variant="h4" sx={{
+                    fontWeight: 'bold',
+                    color: '#ca0019',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    fontSize: { xs: '1.4rem', sm: '1.75rem', md: '2.125rem' }
+                }}>
+                    <SchoolIcon sx={{ fontSize: { xs: '1.75rem', sm: '2.1875rem' } }} /> Trainers Overview
                 </Typography>
-                <Box sx={{ display: 'flex', gap: 2 }}>
+                <Box sx={{ display: 'flex', gap: { xs: 1, sm: 2 }, width: { xs: '100%', sm: 'auto' } }}>
                     <Button
                         variant="outlined"
                         startIcon={<RefreshIcon />}
                         onClick={handleRefresh}
                         sx={{
+                            flex: { xs: 1, sm: 'none' },
                             color: "#ca0019",
                             borderColor: "#ca0019",
                             "&:hover": { bgcolor: "#ffebee", borderColor: "#ca0019" },
@@ -284,6 +297,8 @@ const Trainers = () => {
                         startIcon={<PersonAddIcon />}
                         onClick={() => handleOpenDialog()}
                         sx={{
+                            flex: { xs: 1, sm: 'none' },
+                            whiteSpace: 'nowrap',
                             bgcolor: "#ca0019",
                             "&:hover": { bgcolor: "#a30014" },
                             textTransform: 'none'
@@ -318,7 +333,7 @@ const Trainers = () => {
                         variant="outlined"
                         size="small"
                         fullWidth
-                        sx={{ maxWidth: '400px', bgcolor: 'background.paper' }}
+                        sx={{ maxWidth: { xs: '100%', sm: '400px' }, bgcolor: 'background.paper' }}
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
@@ -350,8 +365,8 @@ const Trainers = () => {
 
                 {/* Manage Tab */}
                 <TabPanel value="2" sx={{ p: 0 }}>
-                    <TableContainer component={Paper} elevation={2} sx={{ borderRadius: 2 }}>
-                        <Table>
+                    <TableContainer component={Paper} elevation={2} sx={{ borderRadius: 2, overflowX: 'auto' }}>
+                        <Table sx={{ minWidth: 650 }}>
                             <TableHead sx={{ bgcolor: '#f5f5f5' }}>
                                 <TableRow>
                                     <TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>

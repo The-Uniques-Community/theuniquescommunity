@@ -76,10 +76,11 @@ import axios from "axios";
 import * as dateFns from 'date-fns';
 import tu from '@/assets/logos/tu.png';
 import * as XLSX from 'xlsx';
+import { BASE_URL } from '@/config';
 
 // Base API URL
-const API_BASE_URL = 'https://theuniquesportal-server.vercel.app/api/admin/fine';
-const UPLOAD_API_URL = 'https://theuniquesportal-server.vercel.app/upload/fine_file_upload';
+const API_BASE_URL = `${BASE_URL}/api/admin/fine`;
+const UPLOAD_API_URL = `${BASE_URL}/upload/fine_file_upload`;
 
 // Fine Payment Modal Component - Fix Receipt icon reference
 const FinePaymentModal = ({ open, onClose, memberId, fine, onPaymentComplete }) => {

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { BASE_URL } from "@/config";
+import { getSafeImageUrl } from "@/utils/imageHelper";
 import { Button, Card, CardContent, Avatar, IconButton } from "@mui/material";
 import { FaEye } from "react-icons/fa";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
@@ -44,10 +45,6 @@ const UserProfileModal = ({ open, handleClose, userData }) => {
     maxHeight: "90vh",
     overflowY: "auto",
   };
-  const getProxyImageUrl = (fileId) => {
-    if (!fileId) return "/placeholder.svg"; // Fallback image
-    return `${BASE_URL}/api/image-proxy/${fileId}`;
-  };
 
   return (
     <Modal open={open} onClose={handleClose}>
@@ -56,11 +53,12 @@ const UserProfileModal = ({ open, handleClose, userData }) => {
         <div className="flex flex-col md:flex-row gap-6 mb-6">
           <div className="flex-shrink-0">
             <img
-              src={
-                user?.profilePic?.fileId
-                  ? getProxyImageUrl(user.profilePic.fileId)
-                  : userIcon
-              }
+              src={getSafeImageUrl(user?.profilePic, userIcon)}
+              onError={(e) => {
+                if (e.currentTarget.src !== userIcon) {
+                  e.currentTarget.src = userIcon;
+                }
+              }}
               sx={{ width: 120, height: 120 }}
               className="border-2 border-gray-200"
             />
@@ -303,10 +301,6 @@ export const MemberCardDashboard = ({ user, onEdit, onDelete, refreshData }) => 
   const effectiveStatus = getBatchStatus(user);
 
   const handleClose = () => setOpen(false);
-  const getProxyImageUrl = (fileId) => {
-    if (!fileId) return "/placeholder.svg"; // Fallback image
-    return `${BASE_URL}/api/image-proxy/${fileId}`;
-  };
   return (
     <>
       {/* User Card */}
@@ -370,11 +364,12 @@ export const MemberCardDashboard = ({ user, onEdit, onDelete, refreshData }) => 
           {/* User Details */}
           <div className="flex items-center gap-3">
             <img
-              src={
-                user?.profilePic?.fileId
-                  ? getProxyImageUrl(user.profilePic.fileId)
-                  : userIcon
-              }
+              src={getSafeImageUrl(user?.profilePic, userIcon)}
+              onError={(e) => {
+                if (e.currentTarget.src !== userIcon) {
+                  e.currentTarget.src = userIcon;
+                }
+              }}
               alt={user.fullName}
               className="w-16 h-16 rounded-full object-cover object-center"
             />

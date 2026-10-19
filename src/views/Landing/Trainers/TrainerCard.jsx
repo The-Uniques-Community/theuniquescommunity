@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { BASE_URL } from "@/config";
+import { getSafeImageUrl, getAvatarFallback } from "@/utils/imageHelper";
 import { useTheme } from "@mui/material/styles";
 import { FaLinkedinIn, FaInstagram, FaGithub } from "react-icons/fa";
 import { GoArrowUpRight } from "react-icons/go";
@@ -25,20 +26,14 @@ export const TrainerCard = ({ user }) => {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    // Image Handling
-    const getProxyImageUrl = (fileId) => {
-        if (!fileId) return null;
-        return `${BASE_URL}/api/image-proxy/${fileId}`;
-    };
-
-    const initialImg = user.profilePic
-        ? getProxyImageUrl(user.profilePic.fileId || user.profilePic)
-        : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName)}&background=random`;
+    // Safe Image Handling to prevent BLOCKED_BY_ORB
+    const avatarFallback = getAvatarFallback(user.fullName || "Trainer");
+    const initialImg = getSafeImageUrl(user.profilePic, avatarFallback);
 
     const [imgSrc, setImgSrc] = useState(initialImg);
 
     const handleImgError = () => {
-        setImgSrc(`https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName)}&background=random`);
+        setImgSrc(avatarFallback);
     };
 
     return (

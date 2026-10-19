@@ -1,6 +1,7 @@
 
 import React, { useState, forwardRef } from "react";
 import { BASE_URL } from "@/config";
+import { getSafeImageUrl } from "@/utils/imageHelper";
 import {
     Button,
     Card,
@@ -55,15 +56,18 @@ const TrainerProfileDialog = ({ open, handleClose, user }) => {
             fullScreen
             open={open}
             onClose={handleClose}
+            PaperProps={{
+                "data-lenis-prevent": "true",
+            }}
             sx={{ "& .MuiDialog-paper": { bgcolor: "#f8fafc" } }} // Light slate background
         >
-            <div className="h-screen overflow-y-auto p-4 md:p-8">
+            <div data-lenis-prevent className="h-screen overflow-y-auto p-4 md:p-8">
                 {/* Close Button */}
-                <div className="flex justify-end mb-6">
+                <div className="flex justify-end mb-4 md:mb-6">
                     <Tooltip title="Close" arrow>
                         <div
                             onClick={handleClose}
-                            className="p-3 w-12 h-12 rounded-full cursor-pointer flex items-center justify-center bg-white shadow-sm hover:bg-slate-100 transition-colors"
+                            className="p-2 sm:p-3 w-10 h-10 sm:w-12 sm:h-12 rounded-full cursor-pointer flex items-center justify-center bg-white shadow-sm hover:bg-slate-100 transition-colors"
                         >
                             <CloseIcon />
                         </div>
@@ -77,15 +81,11 @@ const TrainerProfileDialog = ({ open, handleClose, user }) => {
                     <div className="xl:col-span-1 lg:col-span-1 flex flex-col gap-6">
 
                         {/* Identity Card */}
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center text-center">
+                        <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center text-center">
                             <div className="relative mb-4">
                                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-slate-50">
                                     <img
-                                        src={
-                                            user?.profilePic
-                                                ? getProxyImageUrl(user.profilePic.fileId || user.profilePic)
-                                                : userIcon
-                                        }
+                                        src={getSafeImageUrl(user?.profilePic, userIcon)}
                                         alt="Profile"
                                         className="w-full h-full object-cover"
                                     />
@@ -133,7 +133,7 @@ const TrainerProfileDialog = ({ open, handleClose, user }) => {
                     <div className="xl:col-span-3 lg:col-span-2 flex flex-col gap-6">
 
                         {/* Key Details Bar */}
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                             <div className="flex items-center gap-3">
                                 <img src={tu} className="h-8 w-8 object-contain opacity-80" alt="" />
                                 <div>
@@ -165,7 +165,7 @@ const TrainerProfileDialog = ({ open, handleClose, user }) => {
                         </div>
 
                         {/* Overview Sections (Designed as per Screenshot style) */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
 
                             {/* Contact Info */}
                             <div>
@@ -248,7 +248,7 @@ export const TrainerCardDashboard = ({ user, onDelete }) => {
     return (
         <>
             {/* User Card */}
-            <Card className="rounded-md shadow-sm border border-slate-200 bg-white p-4 max-w-96">
+            <Card className="w-full rounded-md shadow-sm border border-slate-200 bg-white p-4 max-w-full sm:max-w-96">
                 <CardContent className="flex flex-col gap-2">
                     {/* Status Tags */}
                     <div className="flex justify-between items-center my-4">
@@ -268,11 +268,7 @@ export const TrainerCardDashboard = ({ user, onDelete }) => {
                     {/* User Details */}
                     <div className="flex items-center gap-3">
                         <img
-                            src={
-                                user?.profilePic
-                                    ? getProxyImageUrl(user.profilePic.fileId || user.profilePic)
-                                    : userIcon
-                            }
+                            src={getSafeImageUrl(user?.profilePic, userIcon)}
                             alt={user.fullName}
                             className="w-16 h-16 rounded-full object-cover object-center"
                         />
@@ -285,7 +281,7 @@ export const TrainerCardDashboard = ({ user, onDelete }) => {
                     </div>
 
                     {/* Social Media Links */}
-                    <div className="flex justify-start gap-x-4 mt-3">
+                    <div className="flex justify-start gap-2 sm:gap-x-4 mt-3 flex-wrap">
                         {[
                             { link: user.githubProfile, icon: <GitHubIcon fontSize="medium" className="text-white" />, bg: "bg-black" },
                             { link: user.linkedinProfile, icon: <LinkedInIcon fontSize="medium" className="text-white" />, bg: "bg-black" },

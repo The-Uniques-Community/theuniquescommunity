@@ -2192,7 +2192,7 @@ const EventView = () => {
                       try {
                         setLoading(true);
                         const response = await fetch(
-                          `https://theuniquesportal-server.vercel.app/api/events/${id}/status`,
+                          `${BASE_URL}/api/events/${id}/status`,
                           {
                             method: "PATCH",
                             headers: {

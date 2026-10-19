@@ -113,7 +113,7 @@ const Navbar = () => {
       authItems.push({
         text: "Login",
         icon: <LogIn size={20} />,
-        link: "/auth/login",
+        link: "https://the-uniques-portal.vercel.app/",
       });
     }
 
@@ -304,8 +304,9 @@ const Navbar = () => {
         {authNavItems.map((item) => (
           <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
             <ListItemButton
-              component={item.onClick ? "button" : Link}
-              to={!item.onClick ? item.link : undefined}
+              component={item.onClick ? "button" : (item.link?.startsWith("http") ? "a" : Link)}
+              to={!item.onClick && !item.link?.startsWith("http") ? item.link : undefined}
+              href={!item.onClick && item.link?.startsWith("http") ? item.link : undefined}
               onClick={() => {
                 if (item.onClick) item.onClick();
                 setDrawerOpen(false);

@@ -4,7 +4,7 @@ import { Navigate } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "@/config";
 
-const ProtectedRoute = ({ role, element, redirectPath = "/auth/login" }) => {
+const ProtectedRoute = ({ role, element, redirectPath = "https://the-uniques-portal.vercel.app/" }) => {
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -43,7 +43,13 @@ const ProtectedRoute = ({ role, element, redirectPath = "/auth/login" }) => {
   }, [role]);
 
   if (loading) return <div>Loading...</div>;
-  if (!authorized) return <Navigate to={redirectPath} />;
+  if (!authorized) {
+    if (redirectPath.startsWith("http")) {
+      window.location.href = redirectPath;
+      return null;
+    }
+    return <Navigate to={redirectPath} />;
+  }
   return element;
 };
 

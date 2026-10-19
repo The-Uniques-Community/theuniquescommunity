@@ -1,18 +1,13 @@
 import { useState, useEffect, useCallback } from "react"
 import axios from 'axios'
 import { BASE_URL } from '@/config';
+import { getSafeImageUrl } from '@/utils/imageHelper';
 import { motion, AnimatePresence } from "framer-motion"
 import { Play, ChevronRight, ChevronLeft } from "lucide-react"
 import useEmblaCarousel from "embla-carousel-react"
 import Autoplay from "embla-carousel-autoplay"
 import { Calendar as CalendarIcon, MapPin as MapPinIcon } from 'lucide-react'
-import Eventmodel from '../Event/Componant/Event' // Import the EventModel component
-
-// Update the helper function to use your proxy endpoint
-const getProxiedImageUrl = (fileId) => {
-  if (!fileId) return "/placeholder.svg"
-  return `${BASE_URL}/api/image-proxy/${fileId}`
-}
+import Eventmodel from '../Event/Componant/Event'
 
 // Update the transformEventToDestination function
 const transformEventToDestination = (event) => {
@@ -32,8 +27,8 @@ const transformEventToDestination = (event) => {
     level: event.eventType || "Community Event",
     duration: formattedDate,
     distance: event.eventVenue,
-    image: getProxiedImageUrl(event.eventBanner?.fileId),
-    images: event.eventGallery?.map(img => getProxiedImageUrl(img.fileId)) || [],
+    image: getSafeImageUrl(event.eventBanner),
+    images: event.eventGallery?.map(img => getSafeImageUrl(img)) || [],
     isHot: event.eventStatus === 'completed',
     attendees: event.eventGuests?.length || 0,
     // Store the original event data for the modal

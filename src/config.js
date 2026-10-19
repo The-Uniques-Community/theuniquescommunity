@@ -1,6 +1,8 @@
 import axios from "axios";
 
-export const BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://theuniquesportal-server.vercel.app";
+export const BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.DEV ? "http://localhost:5001" : "https://the-uniques-portal.vercel.app");
 
 axios.defaults.withCredentials = true;
 
