@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { BASE_URL } from "@/config";
+import { getSafeImageUrl } from "@/utils/imageHelper";
 import tu from "@/assets/logos/tu.png";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import GitHubIcon from "@mui/icons-material/GitHub";
@@ -174,11 +175,6 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
     });
   };
 
-  const getProxyImageUrl = (fileId) => {
-    if (!fileId) return '/placeholder.svg'; // Fallback image
-    return `${BASE_URL}/api/image-proxy/${fileId}`;
-  };
-
 
   // Handle opening fine modal
   const handleOpenFineModal = () => {
@@ -261,13 +257,14 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
             <div className="xl:col-span-1 lg:col-span-1 col-span-1 flex gap-x-5 items-center">
               <div className="bg-black w-36 h-36 overflow-hidden rounded-full relative">
                 <img
-                  src={
-                    user?.profilePic?.fileId
-                      ? getProxyImageUrl(user.profilePic.fileId)
-                      : userIcon
-                  }
+                  src={getSafeImageUrl(user?.profilePic, userIcon)}
                   alt="Profile"
                   className="w-full h-full object-contain"
+                  onError={(e) => {
+                    if (e.currentTarget.src !== userIcon) {
+                      e.currentTarget.src = userIcon;
+                    }
+                  }}
                 />
                 {user?.isVerified && (
                   <div className="absolute bottom-1 right-1 bg-white rounded-full p-1">
@@ -1116,7 +1113,7 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
               </Typography>
               <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-md">
                 <Avatar
-                  src={user.profilePic?.fileUrl || userIcon}
+                  src={getSafeImageUrl(user?.profilePic, userIcon)}
                   alt={user.fullName}
                   sx={{ width: 40, height: 40 }}
                 />

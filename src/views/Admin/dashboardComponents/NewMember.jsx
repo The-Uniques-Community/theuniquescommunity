@@ -44,6 +44,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import axios from "axios";
 import { BASE_URL } from "@/config";
+import { getSafeImageUrl } from "@/utils/imageHelper";
 import userIcon from "@/assets/img/user-icon.webp";
 import tu from "@/assets/logos/tu.png";
 import { getBatchStatus } from "@/utils/batch/batchesData";
@@ -80,10 +81,6 @@ export const NewMember = ({ user, refreshData }) => {
     }));
   };
 
-  const getProxyImageUrl = (fileId) => {
-    if (!fileId) return "/placeholder.svg"; // Fallback image
-    return `${BASE_URL}/api/image-proxy/${fileId}`;
-  };
   // Get status badge color
   const getStatusColor = (status) => {
     switch (status) {
@@ -288,11 +285,7 @@ export const NewMember = ({ user, refreshData }) => {
           {/* User Details */}
           <div className="flex items-center gap-3">
             <Avatar
-              src={
-                user?.profilePic?.fileId
-                  ? getProxyImageUrl(user.profilePic.fileId)
-                  : userIcon
-              }
+              src={getSafeImageUrl(user?.profilePic, userIcon)}
               alt={user.fullName}
               sx={{ 
                 width: 60, 
@@ -333,10 +326,12 @@ export const NewMember = ({ user, refreshData }) => {
           <div className="flex items-center flex-wrap gap-y-5 justify-between mb-4">
             <div className="flex items-center gap-4">
               <img
-                src={user?.profilePic?.fileId ? 
-                  getProxyImageUrl(user.profilePic.fileId) : 
-                  userIcon
-                }
+                src={getSafeImageUrl(user?.profilePic, userIcon)}
+                onError={(e) => {
+                  if (e.currentTarget.src !== userIcon) {
+                    e.currentTarget.src = userIcon;
+                  }
+                }}
                 alt={user.fullName}
                 className="w-16 h-16 rounded-full object-cover"
               />

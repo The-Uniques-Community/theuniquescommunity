@@ -10,6 +10,7 @@ import Banner from "./dashboardComponents/Banner";
 import EventOverView from "./dashboardComponents/EventOverView";
 import axios from "axios";
 import { BASE_URL } from "@/config";
+import { getSafeImageUrl } from "@/utils/imageHelper";
 import {
   Table,
   TableBody,
@@ -1026,7 +1027,7 @@ const Index = () => {
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <Avatar
-                                src={member.profilePic}
+                                src={getSafeImageUrl(member?.profilePic, '/placeholder.svg')}
                                 alt={member.name  }
                               />
                               <div>
@@ -1123,10 +1124,7 @@ const Index = () => {
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <Avatar
-                           src={user?.profilePic?.fileId ? 
-                            getProxyImageUrl(user.profilePic.fileId) : 
-                            '/placeholder.svg'
-                          }
+                                src={getSafeImageUrl(member?.profilePic, '/placeholder.svg')}
                               />
                               <div>
                                 <div className="font-medium">
@@ -1226,7 +1224,7 @@ const Index = () => {
               {/* Member Basic Info */}
               <div className="flex items-center gap-4 mb-6">
                 <Avatar
-                  src={selectedMember.profilePic}
+                  src={getSafeImageUrl(selectedMember?.profilePic, '/placeholder.svg')}
                   alt={selectedMember.name}
                   sx={{ width: 64, height: 64 }}
                   className="border-2 border-[#ca0019]"
