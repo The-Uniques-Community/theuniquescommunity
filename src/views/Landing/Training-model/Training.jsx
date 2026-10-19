@@ -21,8 +21,14 @@ const Training = () => {
 		<FourPhase />
 		<div className='p-10 '></div>
 		<Trainingculture />
-		<div className='container w-9/12 mx-auto px-4 py-8'>
-			<img src={trainingMethod} />
+		<div className='container w-11/12 lg:w-9/12 mx-auto px-4 py-8'>
+			<div className='bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-gray-100 dark:border-white/10 flex justify-center items-center'>
+				<img 
+					src={trainingMethod} 
+					alt="Training Model - Professional Trainer to Uniques batches" 
+					className='w-full h-auto object-contain max-w-5xl rounded-2xl'
+				/>
+			</div>
 		</div>
 		<div className='p-10 '></div>
 		<Trainers />
