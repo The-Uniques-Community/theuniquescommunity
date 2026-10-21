@@ -1,5 +1,7 @@
 import axios from "axios";
 import { BASE_URL } from "@/config";
+import { networkFirstFetch, registerCacheFetcher } from "@/utils/cache/networkFirst";
+import { setCache, getCache } from "@/utils/cache/idbStorage";
 
 export const DEFAULT_STATS = {
   Earnings: 860000,
@@ -8,47 +10,55 @@ export const DEFAULT_STATS = {
   Events: 40,
 };
 
-const STATS_STORAGE_KEY = "tu_community_stats";
+const STATS_CACHE_KEY = "tu_community_stats";
+const LEGACY_STORAGE_KEY = "tu_community_stats";
+
+// In-memory runtime cache for instantaneous synchronous initial render
+let inMemoryStats = { ...DEFAULT_STATS };
+
+// Pre-load from IndexedDB asynchronously on module load
+if (typeof window !== "undefined") {
+  getCache(STATS_CACHE_KEY).then((cached) => {
+    if (cached && cached.data) {
+      inMemoryStats = { ...DEFAULT_STATS, ...cached.data };
+    }
+  }).catch(() => {});
+}
 
 export const getStoredStats = () => {
-  try {
-    const raw = localStorage.getItem(STATS_STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(DEFAULT_STATS));
-      return { ...DEFAULT_STATS };
-    }
-    const parsed = JSON.parse(raw);
-    return {
-      Earnings: Number(parsed.Earnings) || DEFAULT_STATS.Earnings,
-      Clients: Number(parsed.Clients) || DEFAULT_STATS.Clients,
-      Projects: Number(parsed.Projects) || DEFAULT_STATS.Projects,
-      Events: Number(parsed.Events) || DEFAULT_STATS.Events,
-    };
-  } catch (err) {
-    console.error("Error reading stored stats:", err);
-    return { ...DEFAULT_STATS };
-  }
+  return { ...inMemoryStats };
 };
 
 export const fetchStats = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/api/stats`);
-    if (response.data && response.data.success && response.data.data) {
-      const stats = {
-        Earnings: Number(response.data.data.Earnings) || DEFAULT_STATS.Earnings,
-        Clients: Number(response.data.data.Clients) || DEFAULT_STATS.Clients,
-        Projects: Number(response.data.data.Projects) || DEFAULT_STATS.Projects,
-        Events: Number(response.data.data.Events) || DEFAULT_STATS.Events,
+  const result = await networkFirstFetch({
+    cacheKey: STATS_CACHE_KEY,
+    legacyKey: LEGACY_STORAGE_KEY,
+    fallbackDefault: DEFAULT_STATS,
+    timeoutMs: 3500,
+    fetcher: (signal) => axios.get(`${BASE_URL}/api/stats`, { signal }),
+    transform: (data) => {
+      if (!data) return DEFAULT_STATS;
+      return {
+        Earnings: Number(data.Earnings) || DEFAULT_STATS.Earnings,
+        Clients: Number(data.Clients) || DEFAULT_STATS.Clients,
+        Projects: Number(data.Projects) || DEFAULT_STATS.Projects,
+        Events: Number(data.Events) || DEFAULT_STATS.Events,
       };
-      localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
-      window.dispatchEvent(new CustomEvent("stats-updated", { detail: stats }));
-      return stats;
-    }
-  } catch (err) {
-    console.warn("Could not fetch stats from backend API, using cached:", err?.message || err);
+    },
+  });
+
+  if (result.data) {
+    inMemoryStats = { ...result.data };
+    window.dispatchEvent(new CustomEvent("stats-updated", { detail: result.data }));
   }
-  return getStoredStats();
+
+  return result.data;
 };
+
+// Register for global network retry button
+if (typeof window !== "undefined") {
+  registerCacheFetcher(STATS_CACHE_KEY, fetchStats);
+}
 
 export const saveStoredStats = async (newStats) => {
   const payload = {
@@ -75,8 +85,9 @@ export const saveStoredStats = async (newStats) => {
     console.warn("Backend save notice:", err?.message || err);
   }
 
-  // 2. After MongoDB operation, update local storage and broadcast to main webpage
-  localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(savedData));
+  // 2. Update in-memory & IndexedDB cache, broadcast to app
+  inMemoryStats = { ...savedData };
+  await setCache(STATS_CACHE_KEY, savedData);
   window.dispatchEvent(new CustomEvent("stats-updated", { detail: savedData }));
   return savedData;
 };

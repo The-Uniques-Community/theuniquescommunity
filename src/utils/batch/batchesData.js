@@ -1,5 +1,7 @@
 import axios from "axios";
 import { BASE_URL } from "@/config";
+import { networkFirstFetch, registerCacheFetcher } from "@/utils/cache/networkFirst";
+import { setCache, getCache } from "@/utils/cache/idbStorage";
 
 export const DEFAULT_BATCHES = [
   "The Uniques 1.0",
@@ -8,46 +10,63 @@ export const DEFAULT_BATCHES = [
   "The Uniques 4.0",
 ];
 
-const BATCH_STORAGE_KEY = "tu_community_member_batches";
+const BATCH_CACHE_KEY = "tu_community_member_batches";
+const LEGACY_STORAGE_KEY = "tu_community_member_batches";
+
+const mergeBatches = (rawList) => {
+  if (!Array.isArray(rawList) || rawList.length === 0) return [...DEFAULT_BATCHES];
+  const merged = [...DEFAULT_BATCHES];
+  rawList.forEach((b) => {
+    if (b && !merged.includes(b)) {
+      merged.push(b);
+    }
+  });
+  return merged;
+};
+
+// In-memory runtime cache for synchronous lookups
+let inMemoryBatches = [...DEFAULT_BATCHES];
+
+// Asynchronously hydrate from IndexedDB on startup
+if (typeof window !== "undefined") {
+  getCache(BATCH_CACHE_KEY).then((cached) => {
+    if (cached && Array.isArray(cached.data)) {
+      inMemoryBatches = mergeBatches(cached.data);
+    }
+  }).catch(() => {});
+}
 
 export const getStoredBatches = () => {
-  try {
-    const raw = localStorage.getItem(BATCH_STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(BATCH_STORAGE_KEY, JSON.stringify(DEFAULT_BATCHES));
-      return [...DEFAULT_BATCHES];
-    }
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      const merged = [...DEFAULT_BATCHES];
-      parsed.forEach((b) => {
-        if (b && !merged.includes(b)) {
-          merged.push(b);
-        }
-      });
-      return merged;
-    }
-    return [...DEFAULT_BATCHES];
-  } catch (err) {
-    console.error("Error reading stored batches:", err);
-    return [...DEFAULT_BATCHES];
-  }
+  return [...inMemoryBatches];
 };
 
 export const fetchBatches = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/api/batches/all`);
-    if (response.data && response.data.success && Array.isArray(response.data.data)) {
-      const batches = response.data.data;
-      localStorage.setItem(BATCH_STORAGE_KEY, JSON.stringify(batches));
-      window.dispatchEvent(new CustomEvent("batches-updated", { detail: batches }));
-      return batches;
-    }
-  } catch (err) {
-    console.warn("Could not fetch batches from backend API, using cached:", err?.message || err);
+  const result = await networkFirstFetch({
+    cacheKey: BATCH_CACHE_KEY,
+    legacyKey: LEGACY_STORAGE_KEY,
+    fallbackDefault: [...DEFAULT_BATCHES],
+    timeoutMs: 3500,
+    fetcher: (signal) => axios.get(`${BASE_URL}/api/batches/all`, { signal }),
+    transform: (data) => {
+      if (Array.isArray(data)) {
+        return mergeBatches(data);
+      }
+      return [...DEFAULT_BATCHES];
+    },
+  });
+
+  if (result.data) {
+    inMemoryBatches = result.data;
+    window.dispatchEvent(new CustomEvent("batches-updated", { detail: result.data }));
   }
-  return getStoredBatches();
+
+  return result.data;
 };
+
+// Register for global network retry button
+if (typeof window !== "undefined") {
+  registerCacheFetcher(BATCH_CACHE_KEY, fetchBatches);
+}
 
 export const suggestNextBatch = (existingBatches = getStoredBatches()) => {
   let maxNum = 4.0;
@@ -85,9 +104,10 @@ export const addStoredBatch = async (batchName) => {
       console.warn("Backend MongoDB notice for batch add:", err?.message || err);
     }
 
-    // 2. After MongoDB operation, update local storage and broadcast to main webpage
+    // 2. Update memory & IndexedDB cache, broadcast to app
     const updated = [...current, formatted];
-    localStorage.setItem(BATCH_STORAGE_KEY, JSON.stringify(updated));
+    inMemoryBatches = updated;
+    await setCache(BATCH_CACHE_KEY, updated);
     window.dispatchEvent(
       new CustomEvent("batches-updated", { detail: updated })
     );

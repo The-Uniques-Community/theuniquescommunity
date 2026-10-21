@@ -1,5 +1,7 @@
 import axios from "axios";
 import { BASE_URL } from "@/config";
+import { networkFirstFetch, registerCacheFetcher } from "@/utils/cache/networkFirst";
+import { setCache, getCache } from "@/utils/cache/idbStorage";
 
 export const INITIAL_PROJECTS = [
   {
@@ -375,7 +377,8 @@ export const PROJECT_CATEGORIES = [
   "Others",
 ];
 
-const STORAGE_KEY = "tu_community_projects";
+const PROJECTS_CACHE_KEY = "tu_community_projects";
+const LEGACY_STORAGE_KEY = "tu_community_projects";
 
 // Normalizes project objects so both id and _id work seamlessly
 const normalizeProject = (p) => ({
@@ -384,59 +387,68 @@ const normalizeProject = (p) => ({
   _id: p._id || p.id,
 });
 
+// Helper to merge raw items with INITIAL_PROJECTS
+const mergeWithInitialProjects = (items) => {
+  if (!Array.isArray(items) || items.length === 0) {
+    return INITIAL_PROJECTS.map(normalizeProject);
+  }
+  return items.map((item) => {
+    const initialMatch = INITIAL_PROJECTS.find(
+      (init) => String(init.id) === String(item.id) || init.title === item.title
+    );
+    return normalizeProject({
+      ...(initialMatch || {}),
+      ...item,
+    });
+  });
+};
+
+// In-memory runtime cache for synchronous initial renders
+let inMemoryProjects = INITIAL_PROJECTS.map(normalizeProject);
+
+// Asynchronously hydrate from IndexedDB on startup
+if (typeof window !== "undefined") {
+  getCache(PROJECTS_CACHE_KEY).then((cached) => {
+    if (cached && Array.isArray(cached.data)) {
+      inMemoryProjects = mergeWithInitialProjects(cached.data);
+    }
+  }).catch(() => {});
+}
+
 export const getStoredProjects = () => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PROJECTS));
-      return INITIAL_PROJECTS.map(normalizeProject);
-    }
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      // Merge with INITIAL_PROJECTS so enriched fields are always present
-      return parsed.map((item) => {
-        const initialMatch = INITIAL_PROJECTS.find(
-          (init) => String(init.id) === String(item.id) || init.title === item.title
-        );
-        return normalizeProject({
-          ...(initialMatch || {}),
-          ...item,
-        });
-      });
-    }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PROJECTS));
-    return INITIAL_PROJECTS.map(normalizeProject);
-  } catch (err) {
-    console.error("Error reading stored projects:", err);
-    return INITIAL_PROJECTS.map(normalizeProject);
-  }
+  return [...inMemoryProjects];
 };
 
-// Fetch latest projects from MongoDB backend API and sync with localStorage cache
+// Fetch latest projects from MongoDB backend API via Network-First approach
 export const fetchProjects = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/api/projects`);
-    if (response.data && response.data.success && Array.isArray(response.data.data)) {
-      const normalized = response.data.data.map((item) => {
-        const initialMatch = INITIAL_PROJECTS.find(
-          (init) => String(init.id) === String(item.id) || init.title === item.title
-        );
-        return normalizeProject({
-          ...(initialMatch || {}),
-          ...item,
-        });
-      });
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
-      window.dispatchEvent(new CustomEvent("projects-updated", { detail: normalized }));
-      return normalized;
-    }
-  } catch (err) {
-    console.warn("Backend /api/projects request failed, using cached projects:", err?.message || err);
+  const result = await networkFirstFetch({
+    cacheKey: PROJECTS_CACHE_KEY,
+    legacyKey: LEGACY_STORAGE_KEY,
+    fallbackDefault: INITIAL_PROJECTS.map(normalizeProject),
+    timeoutMs: 3500,
+    fetcher: (signal) => axios.get(`${BASE_URL}/api/projects`, { signal }),
+    transform: (data) => {
+      if (Array.isArray(data)) {
+        return mergeWithInitialProjects(data);
+      }
+      return INITIAL_PROJECTS.map(normalizeProject);
+    },
+  });
+
+  if (result.data) {
+    inMemoryProjects = result.data;
+    window.dispatchEvent(new CustomEvent("projects-updated", { detail: result.data }));
   }
-  return getStoredProjects();
+
+  return result.data;
 };
 
-// Add new project - calls MongoDB Backend API + falls back to cache
+// Register for global network retry button
+if (typeof window !== "undefined") {
+  registerCacheFetcher(PROJECTS_CACHE_KEY, fetchProjects);
+}
+
+// Add new project - calls MongoDB Backend API + persists to IndexedDB
 export const addProject = async (projectData) => {
   try {
     const response = await axios.post(`${BASE_URL}/api/projects`, projectData, { withCredentials: true });
@@ -444,7 +456,8 @@ export const addProject = async (projectData) => {
       const saved = normalizeProject(response.data.data);
       const current = getStoredProjects();
       const updated = [saved, ...current.filter((p) => String(p._id) !== String(saved._id))];
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      inMemoryProjects = updated;
+      await setCache(PROJECTS_CACHE_KEY, updated);
       window.dispatchEvent(new CustomEvent("projects-updated", { detail: updated }));
       return saved;
     }
@@ -460,8 +473,9 @@ export const addProject = async (projectData) => {
     createdAt: new Date().toISOString(),
   });
   const updated = [newProject, ...existing];
+  inMemoryProjects = updated;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    await setCache(PROJECTS_CACHE_KEY, updated);
     window.dispatchEvent(new CustomEvent("projects-updated", { detail: updated }));
   } catch (err) {
     console.error("Error saving project locally:", err);
@@ -479,7 +493,8 @@ export const updateProject = async (id, projectData) => {
       const updated = current.map((p) =>
         String(p._id) === String(id) || String(p.id) === String(id) ? updatedItem : p
       );
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      inMemoryProjects = updated;
+      await setCache(PROJECTS_CACHE_KEY, updated);
       window.dispatchEvent(new CustomEvent("projects-updated", { detail: updated }));
       return updatedItem;
     }
@@ -493,7 +508,8 @@ export const updateProject = async (id, projectData) => {
       ? { ...p, ...projectData }
       : p
   );
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  inMemoryProjects = updated;
+  await setCache(PROJECTS_CACHE_KEY, updated);
   window.dispatchEvent(new CustomEvent("projects-updated", { detail: updated }));
   return updated.find((p) => String(p.id) === String(id));
 };
@@ -508,8 +524,9 @@ export const deleteProject = async (id) => {
 
   const existing = getStoredProjects();
   const updated = existing.filter((p) => String(p.id) !== String(id) && String(p._id) !== String(id));
+  inMemoryProjects = updated;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    await setCache(PROJECTS_CACHE_KEY, updated);
     window.dispatchEvent(new CustomEvent("projects-updated", { detail: updated }));
   } catch (err) {
     console.error("Error deleting project from storage:", err);

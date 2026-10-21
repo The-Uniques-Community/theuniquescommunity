@@ -5,6 +5,8 @@ import uniques2 from "@/assets/img/About/uniques2.webp";
 import uniques3 from "@/assets/img/About/uniques3.webp";
 import uniques4 from "@/assets/img/About/uniques4.webp";
 import { getStoredBatches } from "./batchesData";
+import { networkFirstFetch, registerCacheFetcher } from "@/utils/cache/networkFirst";
+import { setCache, getCache, deleteCache } from "@/utils/cache/idbStorage";
 
 export const DEFAULT_BATCH_PROFILES = [
   {
@@ -41,74 +43,89 @@ export const DEFAULT_BATCH_PROFILES = [
   },
 ];
 
-const PROFILES_STORAGE_KEY = "tu_community_batch_profiles";
+const PROFILES_CACHE_KEY = "tu_community_batch_profiles";
+const LEGACY_STORAGE_KEY = "tu_community_batch_profiles";
+
+const resolveProfilesWithDefaults = (rawList) => {
+  let profiles = [];
+  if (Array.isArray(rawList) && rawList.length > 0) {
+    profiles = rawList.map((p) => {
+      const defaultMatch = DEFAULT_BATCH_PROFILES.find((d) => d.label === p.label || d.id === p.id);
+      return {
+        ...p,
+        image: p.customImage ? p.image : (defaultMatch ? defaultMatch.image : (p.image || uniques4)),
+      };
+    });
+  }
+
+  if (profiles.length === 0) {
+    profiles = [...DEFAULT_BATCH_PROFILES];
+  }
+
+  const memberBatches = getStoredBatches();
+  memberBatches.forEach((batchName) => {
+    const label = batchName.replace(/^The\s+/i, "");
+    const exists = profiles.some(
+      (p) => p.label.toLowerCase() === label.toLowerCase() || p.title.toLowerCase() === batchName.toLowerCase()
+    );
+    if (!exists) {
+      profiles.push({
+        id: `batch-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+        label: label,
+        title: batchName,
+        description: `${batchName} is actively engaged in advanced skills training, projects, and innovation within The Uniques Community.`,
+        image: uniques4,
+        customImage: false,
+      });
+    }
+  });
+
+  return profiles;
+};
+
+// In-memory runtime cache for synchronous UI reads
+let inMemoryProfiles = resolveProfilesWithDefaults(DEFAULT_BATCH_PROFILES);
+
+// Asynchronously hydrate from IndexedDB on startup
+if (typeof window !== "undefined") {
+  getCache(PROFILES_CACHE_KEY).then((cached) => {
+    if (cached && Array.isArray(cached.data)) {
+      inMemoryProfiles = resolveProfilesWithDefaults(cached.data);
+    }
+  }).catch(() => {});
+}
 
 export const getStoredBatchProfiles = () => {
-  try {
-    const raw = localStorage.getItem(PROFILES_STORAGE_KEY);
-    let profiles = [];
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        profiles = parsed.map((p) => {
-          const defaultMatch = DEFAULT_BATCH_PROFILES.find((d) => d.label === p.label || d.id === p.id);
-          return {
-            ...p,
-            image: p.customImage ? p.image : (defaultMatch ? defaultMatch.image : (p.image || uniques4)),
-          };
-        });
-      }
-    }
-
-    if (profiles.length === 0) {
-      profiles = [...DEFAULT_BATCH_PROFILES];
-    }
-
-    const memberBatches = getStoredBatches();
-    memberBatches.forEach((batchName) => {
-      const label = batchName.replace(/^The\s+/i, "");
-      const exists = profiles.some(
-        (p) => p.label.toLowerCase() === label.toLowerCase() || p.title.toLowerCase() === batchName.toLowerCase()
-      );
-      if (!exists) {
-        profiles.push({
-          id: `batch-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-          label: label,
-          title: batchName,
-          description: `${batchName} is actively engaged in advanced skills training, projects, and innovation within The Uniques Community.`,
-          image: uniques4,
-          customImage: false,
-        });
-      }
-    });
-
-    return profiles;
-  } catch (err) {
-    console.error("Error reading stored batch profiles:", err);
-    return [...DEFAULT_BATCH_PROFILES];
-  }
+  return [...inMemoryProfiles];
 };
 
 export const fetchBatchProfiles = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/api/batches/profiles`);
-    if (response.data && response.data.success && Array.isArray(response.data.data)) {
-      const remoteProfiles = response.data.data.map((p) => {
-        const defaultMatch = DEFAULT_BATCH_PROFILES.find((d) => d.label === p.label || d.id === p.id);
-        return {
-          ...p,
-          image: p.customImage ? p.image : (defaultMatch ? defaultMatch.image : (p.image || uniques4)),
-        };
-      });
-      localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify(remoteProfiles));
-      window.dispatchEvent(new CustomEvent("batch-profiles-updated", { detail: remoteProfiles }));
-      return remoteProfiles;
-    }
-  } catch (err) {
-    console.warn("Could not fetch batch profiles from server, using cached:", err?.message || err);
+  const result = await networkFirstFetch({
+    cacheKey: PROFILES_CACHE_KEY,
+    legacyKey: LEGACY_STORAGE_KEY,
+    fallbackDefault: resolveProfilesWithDefaults(DEFAULT_BATCH_PROFILES),
+    timeoutMs: 3500,
+    fetcher: (signal) => axios.get(`${BASE_URL}/api/batches/profiles`, { signal }),
+    transform: (data) => {
+      if (Array.isArray(data)) {
+        return resolveProfilesWithDefaults(data);
+      }
+      return resolveProfilesWithDefaults(DEFAULT_BATCH_PROFILES);
+    },
+  });
+
+  if (result.data) {
+    inMemoryProfiles = result.data;
+    window.dispatchEvent(new CustomEvent("batch-profiles-updated", { detail: result.data }));
   }
-  return getStoredBatchProfiles();
+
+  return result.data;
 };
+
+// Register for global network retry button
+if (typeof window !== "undefined") {
+  registerCacheFetcher(PROFILES_CACHE_KEY, fetchBatchProfiles);
+}
 
 export const saveStoredBatchProfiles = async (profiles) => {
   try {
@@ -128,8 +145,9 @@ export const saveStoredBatchProfiles = async (profiles) => {
       };
     });
 
-    localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify(toSave));
-    window.dispatchEvent(new CustomEvent("batch-profiles-updated", { detail: profiles }));
+    inMemoryProfiles = resolveProfilesWithDefaults(profiles);
+    await setCache(PROFILES_CACHE_KEY, toSave);
+    window.dispatchEvent(new CustomEvent("batch-profiles-updated", { detail: inMemoryProfiles }));
     await axios.post(`${BASE_URL}/api/batches/profiles/update`, { profiles: toSave }, { withCredentials: true });
     return true;
   } catch (err) {
@@ -156,9 +174,10 @@ export const updateSingleBatchProfile = async (updatedProfile) => {
   return updatedList;
 };
 
-export const resetStoredBatchProfiles = () => {
+export const resetStoredBatchProfiles = async () => {
   try {
-    localStorage.removeItem(PROFILES_STORAGE_KEY);
+    await deleteCache(PROFILES_CACHE_KEY);
+    inMemoryProfiles = resolveProfilesWithDefaults(DEFAULT_BATCH_PROFILES);
     window.dispatchEvent(
       new CustomEvent("batch-profiles-updated", { detail: DEFAULT_BATCH_PROFILES })
     );

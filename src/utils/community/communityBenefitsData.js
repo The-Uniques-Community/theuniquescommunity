@@ -5,6 +5,8 @@ import technicalLeadImg from "@/assets/img/Community/testimonials/technical-lead
 import graphicsLeadImg from "@/assets/img/Community/testimonials/graphics-lead.webp";
 import eventCoordinatorImg from "@/assets/img/Community/testimonials/event-coordinator.webp";
 import socialMediaLeadImg from "@/assets/img/Community/testimonials/social-media-lead.webp";
+import { networkFirstFetch, registerCacheFetcher } from "@/utils/cache/networkFirst";
+import { setCache, getCache, deleteCache } from "@/utils/cache/idbStorage";
 
 export const DEFAULT_BENEFITS_CARDS = [
   {
@@ -49,60 +51,70 @@ export const DEFAULT_BENEFITS_CARDS = [
   },
 ];
 
-const STORAGE_KEY = "tu_community_benefits_cards";
+const BENEFITS_CACHE_KEY = "tu_community_benefits_cards";
+const LEGACY_STORAGE_KEY = "tu_community_benefits_cards";
 
-export const getStoredBenefitsCards = () => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      return [...DEFAULT_BENEFITS_CARDS];
-    }
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return DEFAULT_BENEFITS_CARDS.map((defaultCard, index) => {
-        const stored = parsed[index];
-        if (!stored) return defaultCard;
-        return {
-          id: defaultCard.id,
-          name: stored.name || defaultCard.name,
-          title: stored.title || defaultCard.title,
-          quote: stored.quote || defaultCard.quote,
-          avatar: stored.customAvatar ? stored.avatar : (stored.avatar || defaultCard.avatar),
-          customAvatar: Boolean(stored.customAvatar),
-        };
-      });
-    }
-    return [...DEFAULT_BENEFITS_CARDS];
-  } catch (err) {
-    console.error("Error reading stored benefits cards:", err);
+const resolveBenefitsWithDefaults = (parsed) => {
+  if (!Array.isArray(parsed) || parsed.length === 0) {
     return [...DEFAULT_BENEFITS_CARDS];
   }
+  return DEFAULT_BENEFITS_CARDS.map((defaultCard, index) => {
+    const stored = parsed[index];
+    if (!stored) return defaultCard;
+    return {
+      id: defaultCard.id,
+      name: stored.name || defaultCard.name,
+      title: stored.title || defaultCard.title,
+      quote: stored.quote || defaultCard.quote,
+      avatar: stored.customAvatar ? stored.avatar : (stored.avatar || defaultCard.avatar),
+      customAvatar: Boolean(stored.customAvatar),
+    };
+  });
+};
+
+// In-memory runtime cache for synchronous initial renders
+let inMemoryBenefits = [...DEFAULT_BENEFITS_CARDS];
+
+// Asynchronously hydrate from IndexedDB on startup
+if (typeof window !== "undefined") {
+  getCache(BENEFITS_CACHE_KEY).then((cached) => {
+    if (cached && Array.isArray(cached.data)) {
+      inMemoryBenefits = resolveBenefitsWithDefaults(cached.data);
+    }
+  }).catch(() => {});
+}
+
+export const getStoredBenefitsCards = () => {
+  return [...inMemoryBenefits];
 };
 
 export const fetchBenefitsCards = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/api/community-benefits`);
-    if (response.data && response.data.success && Array.isArray(response.data.data)) {
-      const cards = response.data.data.map((stored, idx) => {
-        const defaultCard = DEFAULT_BENEFITS_CARDS[idx] || {};
-        return {
-          id: stored.cardId || defaultCard.id || idx + 1,
-          name: stored.name || defaultCard.name,
-          title: stored.title || defaultCard.title,
-          quote: stored.quote || defaultCard.quote,
-          avatar: stored.customAvatar ? stored.avatar : (stored.avatar || defaultCard.avatar),
-          customAvatar: Boolean(stored.customAvatar),
-        };
-      });
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
-      window.dispatchEvent(new CustomEvent("community-benefits-updated", { detail: cards }));
-      return cards;
-    }
-  } catch (err) {
-    console.warn("Could not fetch community benefits cards from server, using cached:", err?.message || err);
+  const result = await networkFirstFetch({
+    cacheKey: BENEFITS_CACHE_KEY,
+    legacyKey: LEGACY_STORAGE_KEY,
+    fallbackDefault: [...DEFAULT_BENEFITS_CARDS],
+    timeoutMs: 3500,
+    fetcher: (signal) => axios.get(`${BASE_URL}/api/community-benefits`, { signal }),
+    transform: (data) => {
+      if (Array.isArray(data)) {
+        return resolveBenefitsWithDefaults(data);
+      }
+      return [...DEFAULT_BENEFITS_CARDS];
+    },
+  });
+
+  if (result.data) {
+    inMemoryBenefits = result.data;
+    window.dispatchEvent(new CustomEvent("community-benefits-updated", { detail: result.data }));
   }
-  return getStoredBenefitsCards();
+
+  return result.data;
 };
+
+// Register for global network retry button
+if (typeof window !== "undefined") {
+  registerCacheFetcher(BENEFITS_CACHE_KEY, fetchBenefitsCards);
+}
 
 export const saveStoredBenefitsCards = async (cards) => {
   try {
@@ -128,9 +140,10 @@ export const saveStoredBenefitsCards = async (cards) => {
       };
     });
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+    inMemoryBenefits = resolveBenefitsWithDefaults(toSave);
+    await setCache(BENEFITS_CACHE_KEY, toSave);
     window.dispatchEvent(
-      new CustomEvent("community-benefits-updated", { detail: getStoredBenefitsCards() })
+      new CustomEvent("community-benefits-updated", { detail: inMemoryBenefits })
     );
     await axios.post(`${BASE_URL}/api/community-benefits/update`, { cards: toSave }, { withCredentials: true });
     return true;
@@ -140,9 +153,10 @@ export const saveStoredBenefitsCards = async (cards) => {
   }
 };
 
-export const resetStoredBenefitsCards = () => {
+export const resetStoredBenefitsCards = async () => {
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    await deleteCache(BENEFITS_CACHE_KEY);
+    inMemoryBenefits = [...DEFAULT_BENEFITS_CARDS];
     window.dispatchEvent(
       new CustomEvent("community-benefits-updated", { detail: DEFAULT_BENEFITS_CARDS })
     );
