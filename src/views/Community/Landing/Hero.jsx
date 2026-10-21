@@ -62,11 +62,11 @@ const Hero = () => {
                         </span>
                     </h1>
 
-                    <div className="text-gray-800 mt-5 sm:mt-7 pb-5 sm:pb-7 flex items-center gap-3.5 max-w-md">
+                    <div className="mt-5 sm:mt-7 pb-5 sm:pb-7 flex items-center gap-3.5 max-w-md">
                         <span className="shrink-0 opacity-75">
                             <img src={DoubleQuotes} alt="quote icon" className="w-10 h-10 md:w-11 md:h-11 object-contain" />
                         </span>
-                        <p className="text-sm sm:text-base md:text-[16px] text-gray-700 leading-relaxed font-normal max-w-sm sm:max-w-md">
+                        <p className="hero-quote-text text-sm sm:text-base md:text-[16px] text-gray-700 dark:!text-[#18181b] leading-relaxed font-normal max-w-sm sm:max-w-md">
                             Join the community of unique individuals and learn from the best
                         </p>
                     </div>
