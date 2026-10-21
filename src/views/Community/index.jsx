@@ -1,32 +1,61 @@
-import React from 'react'
-import Hero from './Landing/Hero'
-import SlideCard from './Landing/SlideCard'
-import About from './Landing/About'
-import Guidelines from './Landing/Guidlines'
+import { lazy, Suspense } from 'react';
+import Hero from './Landing/Hero';
+import About from './Landing/About';
+import LazyViewport from '@/components/LazyViewport';
+import SectionSkeleton from '@/components/SectionSkeleton';
 
-import Eligiblity from './Landing/Eligiblity'
-import CTA from "./Landing/CallToAction"
+const Guidelines = lazy(() => import('./Landing/Guidlines'));
+const CTA = lazy(() => import("./Landing/CallToAction"));
+const SlideCard = lazy(() => import('./Landing/SlideCard'));
+const Sliding = lazy(() => import("./Landing/Sliding"));
+const Eligiblity = lazy(() => import('./Landing/Eligiblity'));
+const CallToAction = lazy(() => import('../Landing/homComponents/CallToAction'));
 
-import Sliding from "./Landing/Sliding"
-import SpotCard from './Landing/SpotCard'
-import Flight from '../Landing/HowItStarted/components/Flight'
-import CallToAction from '../Landing/homComponents/CallToAction'
-
-const index = () => {
+const CommunityLandingPage = () => {
 	return (
 		<div>
 			<Hero />
 			<About />
-			<Guidelines />
-			<CTA />
-			<SlideCard />
-			<Sliding />
-			<Eligiblity />
-			<div className="w-full max-w-6xl mx-auto border-b border-gray-200 dark:border-neutral-800" />
-			<CallToAction className="mt-2 sm:mt-4 md:mt-6" />
-			{/* <Flight /> */}
-		</div>
-	)
-}
 
-export default index
+			<LazyViewport minHeight="450px">
+				<Suspense fallback={<SectionSkeleton height="450px" />}>
+					<Guidelines />
+				</Suspense>
+			</LazyViewport>
+
+			<LazyViewport minHeight="300px">
+				<Suspense fallback={<SectionSkeleton height="300px" />}>
+					<CTA />
+				</Suspense>
+			</LazyViewport>
+
+			<LazyViewport minHeight="480px">
+				<Suspense fallback={<SectionSkeleton height="480px" />}>
+					<SlideCard />
+				</Suspense>
+			</LazyViewport>
+
+			<LazyViewport minHeight="400px">
+				<Suspense fallback={<SectionSkeleton height="400px" />}>
+					<Sliding />
+				</Suspense>
+			</LazyViewport>
+
+			<LazyViewport minHeight="400px">
+				<Suspense fallback={<SectionSkeleton height="400px" />}>
+					<Eligiblity />
+				</Suspense>
+			</LazyViewport>
+
+			<div className="w-full max-w-6xl mx-auto border-b border-gray-200 dark:border-neutral-800" />
+
+			<LazyViewport minHeight="240px">
+				<Suspense fallback={<SectionSkeleton height="240px" />}>
+					<CallToAction className="mt-2 sm:mt-4 md:mt-6" />
+				</Suspense>
+			</LazyViewport>
+		</div>
+	);
+};
+
+export default CommunityLandingPage;

@@ -1,4 +1,5 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
+import { useInView } from 'framer-motion';
 import './CurvedLoop.css';
 
 const CurvedLoop = ({
@@ -10,6 +11,7 @@ const CurvedLoop = ({
   isDarkMode = false
 }) => {
   const containerRef = useRef(null);
+  const isInView = useInView(containerRef, { margin: '150px 0px' });
   const [width, setWidth] = useState(1440);
   const [offset, setOffset] = useState(0);
 
@@ -32,8 +34,9 @@ const CurvedLoop = ({
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
 
-  // Animation Loop
+  // Animation Loop (Pauses when scrolled out of view)
   useEffect(() => {
+    if (!isInView) return;
     let frame = 0;
     const step = () => {
       if (!dragRef.current) {
@@ -44,7 +47,7 @@ const CurvedLoop = ({
     };
     frame = requestAnimationFrame(step);
     return () => cancelAnimationFrame(frame);
-  }, [speed]);
+  }, [speed, isInView]);
 
   // Pointer/Drag Handlers
   const onPointerDown = e => {

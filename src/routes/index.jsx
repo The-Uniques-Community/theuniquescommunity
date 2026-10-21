@@ -7,36 +7,31 @@ import CoordinatorRoutes from "@/routes/Uniques/CoordinatorRoute";
 import MemberRoutes from "@/routes/Uniques/MemberRoutes";
 import LandingLayout from "@/layout/Landing/index";
 import Auth from "@/routes/Authentication/Auth";
-import About from "@/views/Landing/About/index"
-import HowItStarted from "@/views/Landing/HowItStarted/index"
-import Community from "@/views/Community/index"
-
-import Event from "@/views/Landing/Event/Index"
-import EventDetailPage from "@/views/Landing/Event/Componant/EventDetailPage"
-import BatchesPage from "@/views/Landing/Batches/index"
-// import AdvisoryBoard from "@/views/Landing/AdvisoryBoard";
-import Notices from "@/views/Landing/Notices/index"
 import SuccessStoriesRoutes from "./successStories";
-import { element } from "prop-types";
 
-// Fix the import path - change from Batches/MemberProfile to Profile/MemberProfile
-import MemberProfile from "@/views/Landing/Profile/MemberProfile";
-import ForgetPassword from "@/views/Authentication/login/ForgetPassword";
-
-const Login = Loader(lazy(() => import("@/views/Authentication/login")), false);
-const Landing = Loader(lazy(() => import("@/views/Landing/index")), false);
-
-const BlogPage = Loader(lazy(() => import("@/views/Landing/Blog/index")), false);
-const Contact = Loader(lazy(() => import("@/views/Landing/Contact/index")), false);
-const Training = Loader(lazy(() => import("@/views/Landing/Training-model/Training")), false);
-const TermsOfService = Loader(lazy(() => import("@/views/Landing/TermsOfService")), false);
-const NotFound = Loader(lazy(() => import("@/views/Landing/NotFound/index")), false);
-const CommunityPage = Loader(lazy(() => import("@/views/Landing/Community/index")), false);
-const SuccessStories = Loader(lazy(() => import("@/views/Landing/SuccessStories/index")), false);
-const PrivacyPolicy = Loader(lazy(() => import("@/views/Landing/PrivacyPolicy/index")), false);
-const Projects = Loader(lazy(() => import("@/views/Landing/Projects/index")), false);
-const ProjectDetails = Loader(lazy(() => import("@/views/Landing/Projects/ProjectDetails")), false);
-const Timeline = Loader(lazy(() => import('@/utils/Timeline/Timeline')));
+// Lazy-loaded landing & public route views
+const Landing = Loader(lazy(() => import("@/views/Landing/index")));
+const About = Loader(lazy(() => import("@/views/Landing/About/index")));
+const HowItStarted = Loader(lazy(() => import("@/views/Landing/HowItStarted/index")));
+const Community = Loader(lazy(() => import("@/views/Community/index")));
+const CommunityPage = Loader(lazy(() => import("@/views/Landing/Community/index")));
+const Event = Loader(lazy(() => import("@/views/Landing/Event/Index")));
+const EventDetailPage = Loader(lazy(() => import("@/views/Landing/Event/Componant/EventDetailPage")));
+const BatchesPage = Loader(lazy(() => import("@/views/Landing/Batches/index")));
+const Notices = Loader(lazy(() => import("@/views/Landing/Notices/index")));
+const MemberProfile = Loader(lazy(() => import("@/views/Landing/Profile/MemberProfile")));
+const ForgetPassword = Loader(lazy(() => import("@/views/Authentication/login/ForgetPassword")));
+const Login = Loader(lazy(() => import("@/views/Authentication/login")));
+const BlogPage = Loader(lazy(() => import("@/views/Landing/Blog/index")));
+const Contact = Loader(lazy(() => import("@/views/Landing/Contact/index")));
+const Training = Loader(lazy(() => import("@/views/Landing/Training-model/Training")));
+const TermsOfService = Loader(lazy(() => import("@/views/Landing/TermsOfService")));
+const NotFound = Loader(lazy(() => import("@/views/Landing/NotFound/index")));
+const SuccessStories = Loader(lazy(() => import("@/views/Landing/SuccessStories/index")));
+const PrivacyPolicy = Loader(lazy(() => import("@/views/Landing/PrivacyPolicy/index")));
+const Projects = Loader(lazy(() => import("@/views/Landing/Projects/index")));
+const ProjectDetails = Loader(lazy(() => import("@/views/Landing/Projects/ProjectDetails")));
+const Timeline = Loader(lazy(() => import("@/utils/Timeline/Timeline")));
 
 const timelineData = [
   {

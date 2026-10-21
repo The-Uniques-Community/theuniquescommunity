@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useInView } from "framer-motion";
 import { useThemeContext } from "@/theme/ThemeProvider";
 import { getStoredBenefitsCards, fetchBenefitsCards } from "@/utils/community/communityBenefitsData";
 
@@ -43,6 +44,8 @@ function AvatarImage({ src, name, className = "" }) {
 
 export default function TestimonialCarousel() {
     const { isDarkMode } = useThemeContext();
+    const containerRef = useRef(null);
+    const isInView = useInView(containerRef, { margin: "100px 0px" });
     const [testimonials, setTestimonials] = useState(() => getStoredBenefitsCards());
     const [activeIndex, setActiveIndex] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -96,14 +99,15 @@ export default function TestimonialCarousel() {
         touchStartX.current = null;
     };
 
-    // Auto-rotate slides every 6 seconds
+    // Auto-rotate slides every 6 seconds (only when visible in viewport)
     useEffect(() => {
+        if (!isInView) return;
         const interval = setInterval(() => {
             nextSlide();
         }, 6000);
 
         return () => clearInterval(interval);
-    }, [activeIndex, isAnimating]);
+    }, [activeIndex, isAnimating, isInView]);
 
     // Calculate indices for visible cards
     const getVisibleIndices = () => {
@@ -115,7 +119,7 @@ export default function TestimonialCarousel() {
     const { prevIndex, nextIndex } = getVisibleIndices();
 
     return (
-        <div className={`transition-colors duration-700 ${isDarkMode ? 'bg-[#0a0a0a]' : 'bg-white'}`}>
+        <div ref={containerRef} className={`transition-colors duration-700 ${isDarkMode ? 'bg-[#0a0a0a]' : 'bg-white'}`}>
             <div className="container mx-auto px-4 pt-10 sm:pt-14 md:pt-18 pb-4 sm:pb-6 md:pb-8 max-w-6xl">
                 <h2 className="text-center text-3xl sm:text-4xl md:text-5xl font-bold mb-10 sm:mb-14 md:mb-16 tracking-tight">
                     <span className={isDarkMode ? "text-white" : "text-gray-900"}>Benefits </span>

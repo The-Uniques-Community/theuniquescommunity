@@ -1,18 +1,36 @@
-import React from 'react'
+import { lazy, Suspense } from 'react';
 import CelebrationComponent from "@/utils/Header";
-import TimeLine from "@/views/Landing/HowItStarted/components/TimeLine"
-import CallToAction from '../homComponents/CallToAction'
-import Flight from './components/Flight'
+import LazyViewport from "@/components/LazyViewport";
+import SectionSkeleton from "@/components/SectionSkeleton";
 
-const index = () => {
+const TimeLine = lazy(() => import("@/views/Landing/HowItStarted/components/TimeLine"));
+const Flight = lazy(() => import("./components/Flight"));
+const CallToAction = lazy(() => import("../homComponents/CallToAction"));
+
+const HowItStartedPage = () => {
     return (
         <div>
             <CelebrationComponent title="Uniques’ Odyssey → Idea to Impact ✦" />
-            <TimeLine />
-            <Flight />
-            <CallToAction />
-        </div>
-    )
-}
 
-export default index
+            <LazyViewport minHeight="600px">
+                <Suspense fallback={<SectionSkeleton height="600px" />}>
+                    <TimeLine />
+                </Suspense>
+            </LazyViewport>
+
+            <LazyViewport minHeight="450px">
+                <Suspense fallback={<SectionSkeleton height="450px" />}>
+                    <Flight />
+                </Suspense>
+            </LazyViewport>
+
+            <LazyViewport minHeight="240px">
+                <Suspense fallback={<SectionSkeleton height="240px" />}>
+                    <CallToAction />
+                </Suspense>
+            </LazyViewport>
+        </div>
+    );
+};
+
+export default HowItStartedPage;
