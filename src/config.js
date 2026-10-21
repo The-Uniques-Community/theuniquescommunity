@@ -1,8 +1,15 @@
 import axios from "axios";
 
 export const BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.DEV ? "http://localhost:5001" : "https://the-uniques-portal.vercel.app");
+  import.meta.env?.VITE_API_BASE_URL || "https://the-uniques-portal.vercel.app";
+
+// Log active backend URL for immediate debugging in browser console
+console.log(
+  `%c[API Config]%c Active Backend URL: %c${BASE_URL}`,
+  "color: #ca0019; font-weight: bold;",
+  "color: inherit;",
+  "color: #0284c7; font-weight: bold; text-decoration: underline;"
+);
 
 axios.defaults.withCredentials = true;
 

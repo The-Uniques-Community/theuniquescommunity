@@ -439,7 +439,7 @@ export const fetchProjects = async () => {
 // Add new project - calls MongoDB Backend API + falls back to cache
 export const addProject = async (projectData) => {
   try {
-    const response = await axios.post(`${BASE_URL}/api/projects`, projectData);
+    const response = await axios.post(`${BASE_URL}/api/projects`, projectData, { withCredentials: true });
     if (response.data && response.data.success && response.data.data) {
       const saved = normalizeProject(response.data.data);
       const current = getStoredProjects();
@@ -472,7 +472,7 @@ export const addProject = async (projectData) => {
 // Update existing project in MongoDB Backend API
 export const updateProject = async (id, projectData) => {
   try {
-    const response = await axios.put(`${BASE_URL}/api/projects/${id}`, projectData);
+    const response = await axios.put(`${BASE_URL}/api/projects/${id}`, projectData, { withCredentials: true });
     if (response.data && response.data.success && response.data.data) {
       const updatedItem = normalizeProject(response.data.data);
       const current = getStoredProjects();
@@ -501,7 +501,7 @@ export const updateProject = async (id, projectData) => {
 // Delete project in MongoDB Backend API
 export const deleteProject = async (id) => {
   try {
-    await axios.delete(`${BASE_URL}/api/projects/${id}`);
+    await axios.delete(`${BASE_URL}/api/projects/${id}`, { withCredentials: true });
   } catch (err) {
     console.error("Backend delete project error:", err);
   }

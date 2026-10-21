@@ -660,21 +660,7 @@ const index = () => {
           }
         }
 
-        // Merge with locally stored custom members if any
-        try {
-          const customMembersRaw = localStorage.getItem("tu_community_custom_members");
-          if (customMembersRaw) {
-            const customMembers = JSON.parse(customMembersRaw);
-            if (Array.isArray(customMembers) && customMembers.length > 0) {
-              const existingIds = new Set(allMembersList.map((m) => m._id || m.id || m.admno));
-              const unadded = customMembers.filter((m) => !existingIds.has(m._id) && !existingIds.has(m.admno));
-              allMembersList = [...unadded, ...allMembersList];
-              totalMembersCount += unadded.length;
-            }
-          }
-        } catch (customErr) {
-          console.error("Error reading custom members:", customErr);
-        }
+
 
         const sortedMembers = [...allMembersList].sort(
           (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
@@ -796,13 +782,11 @@ const index = () => {
     const handleTrainersUpdated = () => fetchData();
 
     window.addEventListener("members-updated", handleMembersUpdated);
-    window.addEventListener("custom-members-updated", handleMembersUpdated);
     window.addEventListener("events-updated", handleEventsUpdated);
     window.addEventListener("trainers-updated", handleTrainersUpdated);
 
     return () => {
       window.removeEventListener("members-updated", handleMembersUpdated);
-      window.removeEventListener("custom-members-updated", handleMembersUpdated);
       window.removeEventListener("events-updated", handleEventsUpdated);
       window.removeEventListener("trainers-updated", handleTrainersUpdated);
     };
@@ -863,18 +847,16 @@ const index = () => {
     // Refresh the data
     try {
       const fineRes = await axios.get(
-        `${BASE_URL}/api/admin/member/fines/all`
+        `${BASE_URL}/api/admin/fine/fines/members`
       );
 
       if (fineRes.data && fineRes.data.data) {
-        setFineMembers(fineRes.data.data);
+        const membersList = fineRes.data.data?.members || (Array.isArray(fineRes.data.data) ? fineRes.data.data : []);
+        setFineMembers(membersList.filter((m) => Number(m.totalPendingAmount || m.fineStatus || 0) > 0));
 
-        // Recalculate total fine amount
-        if (Array.isArray(fineRes.data.data)) {
-          const totalFineAmount = fineRes.data.data.reduce((total, member) => {
-            const fineAmount = member.fineStatus
-              ? Number(member.fineStatus)
-              : 0;
+        if (Array.isArray(membersList)) {
+          const totalFineAmount = membersList.reduce((total, member) => {
+            const fineAmount = Number(member.totalPendingAmount || member.fineStatus || 0);
             return total + (isNaN(fineAmount) ? 0 : fineAmount);
           }, 0);
 
@@ -904,9 +886,10 @@ const index = () => {
   const viewFineDetails = async (member) => {
     try {
       setLoading(true);
+      const memberId = member.id || member._id;
       
       // Get complete fine history for the member
-      const response = await axios.get(`${API_BASE_URL}/fine/members/${member.id}/fines`);
+      const response = await axios.get(`${API_BASE_URL}/fine/members/${memberId}/fines`);
       
       setSelectedFine({
         member,

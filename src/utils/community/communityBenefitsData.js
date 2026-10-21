@@ -132,7 +132,7 @@ export const saveStoredBenefitsCards = async (cards) => {
     window.dispatchEvent(
       new CustomEvent("community-benefits-updated", { detail: getStoredBenefitsCards() })
     );
-    await axios.post(`${BASE_URL}/api/community-benefits/update`, { cards: toSave });
+    await axios.post(`${BASE_URL}/api/community-benefits/update`, { cards: toSave }, { withCredentials: true });
     return true;
   } catch (err) {
     console.error("Error saving community benefits cards:", err);

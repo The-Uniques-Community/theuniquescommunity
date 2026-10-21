@@ -13,14 +13,12 @@ import { AnimatePresence } from "framer-motion";
 import CallToAction from "@/views/Landing/homComponents/CallToAction";
 import { getStoredBatches, fetchBatches } from "@/utils/batch/batchesData";
 import { getStoredBatchProfiles, fetchBatchProfiles } from "@/utils/batch/batchProfilesData";
-import { getStoredCustomMembers, fetchCustomMembers } from "@/utils/member/customMembersData";
 
 const index = () => {
   // State management
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [members, setMembers] = useState([]);
   const [storedBatches, setStoredBatches] = useState(() => getStoredBatches());
-  const [customMembersVersion, setCustomMembersVersion] = useState(0);
   const [selectedBatch, setSelectedBatch] = useState("The Uniques 1.0");
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
@@ -37,24 +35,16 @@ const index = () => {
       if (b && Array.isArray(b)) setStoredBatches(b);
     });
     fetchBatchProfiles();
-    fetchCustomMembers().then(() => {
-      setCustomMembersVersion((v) => v + 1);
-    });
 
     const handleBatchesUpdate = () => {
       const updated = getStoredBatches();
       setStoredBatches(updated);
     };
-    const handleCustomMembersUpdate = () => {
-      setCustomMembersVersion((v) => v + 1);
-    };
     window.addEventListener("batches-updated", handleBatchesUpdate);
     window.addEventListener("batch-profiles-updated", handleBatchesUpdate);
-    window.addEventListener("custom-members-updated", handleCustomMembersUpdate);
     return () => {
       window.removeEventListener("batches-updated", handleBatchesUpdate);
       window.removeEventListener("batch-profiles-updated", handleBatchesUpdate);
-      window.removeEventListener("custom-members-updated", handleCustomMembersUpdate);
     };
   }, []);
 
@@ -87,7 +77,6 @@ const index = () => {
     }
 
     const icons = ["🥇", "🥈", "🥉", "🏅", "🚀", "🌟", "✨", "🎯", "🏆"];
-    const customMembersList = getStoredCustomMembers();
 
     return storedBatches.map((batchName, idx) => {
       const label = batchName.replace(/^The\s+/i, "");
@@ -96,13 +85,6 @@ const index = () => {
           p.title?.toLowerCase() === batchName.toLowerCase() ||
           p.label?.toLowerCase() === label.toLowerCase()
       );
-
-      const customCountForBatch = customMembersList.filter((m) => {
-        if (!m || typeof m !== "object" || m.isSuspended) return false;
-        const b1 = (m.batch || "").toLowerCase().trim();
-        const b2 = (batchName || "").toLowerCase().trim();
-        return b1 === b2 || (b1.includes("5.0") && b2.includes("5.0"));
-      }).length;
 
       const icon = defaultMeta[batchName]?.icon || icons[idx] || "🎖️";
       const desc =
@@ -115,11 +97,11 @@ const index = () => {
         name: batchName,
         icon: icon,
         description: desc,
-        memberCount: (batchCounts[batchName] || 0) + customCountForBatch,
+        memberCount: batchCounts[batchName] || 0,
         iconComponent: <SchoolIcon />
       };
     });
-  }, [storedBatches, batchCounts, customMembersVersion]);
+  }, [storedBatches, batchCounts]);
 
   // Fetch batch counts using the counts API
   useEffect(() => {
@@ -199,24 +181,8 @@ const index = () => {
           console.warn("Public members API fetch warning:", apiErr);
         }
 
-        // Custom members filtering
-        const customMembers = getStoredCustomMembers();
-        const matchingCustom = customMembers.filter((m) => {
-          if (!m || typeof m !== "object" || m.isSuspended) return false;
-          if (selectedBatch === "All") return true;
-          const b1 = (m.batch || "").toLowerCase().trim();
-          const b2 = (selectedBatch || "").toLowerCase().trim();
-          return b1 === b2 || (b1.includes("5.0") && b2.includes("5.0"));
-        });
-
-        const customIds = new Set(matchingCustom.map((m) => m._id));
-        const combined = [
-          ...matchingCustom,
-          ...apiMembers.filter((m) => !customIds.has(m._id))
-        ];
-
         // Process members to ensure no null/undefined values that might break rendering
-        const processedMembers = combined.map(member => ({
+        const processedMembers = apiMembers.map(member => ({
           ...member,
           fullName: member.fullName || member.email || "Member",
           batch: member.batch || selectedBatch || "Unspecified Batch",
@@ -239,7 +205,7 @@ const index = () => {
     };
 
     fetchMembers();
-  }, [selectedBatch, customMembersVersion]); // Search is handled client-side
+  }, [selectedBatch]); // Search is handled client-side
 
 
   const currentBatch = useMemo(() => {
@@ -380,22 +346,7 @@ const index = () => {
           console.warn("Members refresh warning:", mErr);
         }
 
-        const customMembers = getStoredCustomMembers();
-        const matchingCustom = customMembers.filter((m) => {
-          if (!m || typeof m !== "object" || m.isSuspended) return false;
-          if (selectedBatch === "All") return true;
-          const b1 = (m.batch || "").toLowerCase().trim();
-          const b2 = (selectedBatch || "").toLowerCase().trim();
-          return b1 === b2 || (b1.includes("5.0") && b2.includes("5.0"));
-        });
-
-        const customIds = new Set(matchingCustom.map((m) => m._id));
-        const combined = [
-          ...matchingCustom,
-          ...apiMembers.filter((m) => !customIds.has(m._id))
-        ];
-
-        const processedMembers = combined.map(member => ({
+        const processedMembers = apiMembers.map(member => ({
           ...member,
           fullName: member.fullName || member.email || "Member",
           batch: member.batch || selectedBatch || "Unspecified Batch",

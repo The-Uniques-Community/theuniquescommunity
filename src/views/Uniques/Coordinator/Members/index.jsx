@@ -39,12 +39,6 @@ import {
   addStoredBatch,
   suggestNextBatch,
 } from "@/utils/batch/batchesData";
-import {
-  getStoredCustomMembers,
-  saveStoredCustomMember,
-  deleteStoredCustomMember,
-  updateStoredCustomMember,
-} from "@/utils/member/customMembersData";
 
 const MembersIndex = () => {
   // State for active batch filter or 'blocked'
@@ -110,15 +104,15 @@ const MembersIndex = () => {
         setBatches(getStoredBatches());
       }
     };
-    const handleCustomMembersUpdate = () => {
+    const handleMembersUpdate = () => {
       fetchMembers();
       fetchTabCounts();
     };
     window.addEventListener("batches-updated", handleBatchesUpdate);
-    window.addEventListener("custom-members-updated", handleCustomMembersUpdate);
+    window.addEventListener("members-updated", handleMembersUpdate);
     return () => {
       window.removeEventListener("batches-updated", handleBatchesUpdate);
-      window.removeEventListener("custom-members-updated", handleCustomMembersUpdate);
+      window.removeEventListener("members-updated", handleMembersUpdate);
     };
   }, []);
 
@@ -186,17 +180,13 @@ const MembersIndex = () => {
         console.warn("Count API warning:", countErr);
       }
 
-      const customMembers = getStoredCustomMembers();
-      const customActive = customMembers.filter(m => m && !m.isSuspended).length;
-      const customBlocked = customMembers.filter(m => m && m.isSuspended).length;
-
       setTabCounts({
-        all: total + customActive,
+        all: total,
         batch1: b1,
         batch2: b2,
         batch3: b3,
         batch4: b4,
-        blocked: blk + customBlocked
+        blocked: blk
       });
     } catch (err) {
       console.error("Error fetching tab counts:", err);
@@ -236,34 +226,6 @@ const MembersIndex = () => {
         console.warn("API members fetch warning:", apiErr);
       }
 
-      // Load custom members
-      const customMembers = getStoredCustomMembers();
-
-      // Filter custom members to match active view
-      let matchingCustom = customMembers.filter((m) => {
-        if (!m || typeof m !== "object") return false;
-        if (value === "blocked" || value === "6") {
-          return m.isSuspended === true;
-        }
-        if (batchFilter) {
-          const b1 = (m.batch || "").toLowerCase().trim();
-          const b2 = (batchFilter || "").toLowerCase().trim();
-          return b1 === b2 || (b1.includes("5.0") && b2.includes("5.0"));
-        }
-        return !m.isSuspended;
-      });
-
-      // Filter custom members by search keyword if present
-      if (search && search.trim()) {
-        const s = search.toLowerCase().trim();
-        matchingCustom = matchingCustom.filter((m) =>
-          (m.fullName && m.fullName.toLowerCase().includes(s)) ||
-          (m.email && m.email.toLowerCase().includes(s)) ||
-          (m.admno && m.admno.toLowerCase().includes(s)) ||
-          (m.course && m.course.toLowerCase().includes(s))
-        );
-      }
-
       // Client-side filtering for API members
       let filteredApiMembers = apiMembers;
       if (value === "blocked" || value === "6") {
@@ -272,15 +234,8 @@ const MembersIndex = () => {
         filteredApiMembers = filteredApiMembers.filter(member => member.batch === batchFilter);
       }
 
-      // Merge: place custom members first so newly created members appear immediately on Page 1
-      const customIds = new Set(matchingCustom.map((m) => m._id));
-      const combined = [
-        ...matchingCustom,
-        ...filteredApiMembers.filter((m) => !customIds.has(m._id))
-      ];
-
-      setMembers(combined);
-      setTotalPages(Math.max(1, Math.ceil((totalApiCount + matchingCustom.length) / limit)));
+      setMembers(filteredApiMembers);
+      setTotalPages(Math.max(1, Math.ceil(totalApiCount / limit)));
       setError(null);
     } catch (err) {
       console.error("Error fetching members:", err);
@@ -383,29 +338,11 @@ const MembersIndex = () => {
     try {
       setAddMemberLoading(true);
 
-      // Save locally first so custom batches (5.0, 6.0, etc.) are guaranteed to be saved and visible
-      const savedMember = saveStoredCustomMember(newMember);
-
-      let memberInfo = {
-        member: savedMember || {
-          fullName: newMember.fullName,
-          email: newMember.email,
-          batch: newMember.batch
-        },
-        temporaryPassword: 'Password not available'
+      const response = await axios.post(`${BASE_URL}/api/admin/member/add`, newMember);
+      const memberInfo = {
+        member: response.data?.data?.member || response.data?.data || newMember,
+        temporaryPassword: response.data?.data?.temporaryPassword || 'Password not available'
       };
-
-      try {
-        const response = await axios.post(`${BASE_URL}/api/admin/member/add`, newMember);
-        if (response.data?.success) {
-          memberInfo = {
-            member: response.data.data.member || savedMember,
-            temporaryPassword: response.data.data.temporaryPassword || 'Password not available'
-          };
-        }
-      } catch (apiErr) {
-        console.warn("Backend add member returned error (persisted locally for custom batch):", apiErr.response?.data || apiErr.message);
-      }
 
       setAddedMemberInfo(memberInfo);
 
@@ -474,15 +411,7 @@ const MembersIndex = () => {
 
     try {
       setEditMemberLoading(true);
-      if (String(editingMember._id).startsWith("custom-")) {
-        updateStoredCustomMember(editingMember._id, editingMember);
-      } else {
-        try {
-          await axios.put(`${BASE_URL}/api/admin/member/${editingMember._id}`, editingMember);
-        } catch (apiErr) {
-          updateStoredCustomMember(editingMember._id, editingMember);
-        }
-      }
+      await axios.put(`${BASE_URL}/api/admin/member/${editingMember._id}`, editingMember);
 
       setAlert({
         open: true,
@@ -521,15 +450,7 @@ const MembersIndex = () => {
 
     try {
       setDeleteMemberLoading(true);
-      if (String(memberToDelete._id).startsWith("custom-")) {
-        deleteStoredCustomMember(memberToDelete._id);
-      } else {
-        try {
-          await axios.delete(`${BASE_URL}/api/admin/member/${memberToDelete._id}`);
-        } catch (apiErr) {
-          deleteStoredCustomMember(memberToDelete._id);
-        }
-      }
+      await axios.delete(`${BASE_URL}/api/admin/member/${memberToDelete._id}`);
 
       setAlert({
         open: true,

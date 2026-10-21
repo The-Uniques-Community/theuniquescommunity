@@ -130,7 +130,7 @@ export const saveStoredBatchProfiles = async (profiles) => {
 
     localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify(toSave));
     window.dispatchEvent(new CustomEvent("batch-profiles-updated", { detail: profiles }));
-    await axios.post(`${BASE_URL}/api/batches/profiles/update`, { profiles: toSave });
+    await axios.post(`${BASE_URL}/api/batches/profiles/update`, { profiles: toSave }, { withCredentials: true });
     return true;
   } catch (err) {
     console.error("Error saving batch profiles:", err);

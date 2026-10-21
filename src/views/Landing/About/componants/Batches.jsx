@@ -10,7 +10,8 @@ import uniques4 from "../../../../assets/img/About/uniques4.webp";
 
 import { useNavigate } from "react-router-dom";
 import { useThemeContext } from "../../../../theme/ThemeProvider";
-import { getStoredBatchProfiles } from "@/utils/batch/batchProfilesData";
+import { getStoredBatchProfiles, fetchBatchProfiles } from "@/utils/batch/batchProfilesData";
+import { fetchBatches } from "@/utils/batch/batchesData";
 
 const BatchProfile = () => {
   const { isDarkMode } = useThemeContext();
@@ -22,11 +23,22 @@ const BatchProfile = () => {
   const [batchData, setBatchData] = useState(() => getStoredBatchProfiles());
 
   useEffect(() => {
+    fetchBatches();
+    fetchBatchProfiles().then((profiles) => {
+      if (profiles && Array.isArray(profiles) && profiles.length > 0) {
+        setBatchData(profiles);
+      }
+    });
+
     const handleUpdate = () => {
       setBatchData(getStoredBatchProfiles());
     };
     window.addEventListener("batch-profiles-updated", handleUpdate);
-    return () => window.removeEventListener("batch-profiles-updated", handleUpdate);
+    window.addEventListener("batches-updated", handleUpdate);
+    return () => {
+      window.removeEventListener("batch-profiles-updated", handleUpdate);
+      window.removeEventListener("batches-updated", handleUpdate);
+    };
   }, []);
 
   const handleChange = (event) => {

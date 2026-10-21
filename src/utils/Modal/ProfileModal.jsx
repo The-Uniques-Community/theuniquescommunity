@@ -108,7 +108,9 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
 
       // Make API call to toggle block status
       const response = await axios.patch(
-        `${BASE_URL}/api/admin/member/${user._id}/block`
+        `${BASE_URL}/api/admin/member/${user._id}/block`,
+        {},
+        { withCredentials: true }
       );
 
       // Show success message
@@ -211,7 +213,8 @@ const ProfileModal = ({ open, handleClose, user, refreshData }) => {
         {
           amount: Number(fineAmount),
           reason: fineReason.trim(),
-        }
+        },
+        { withCredentials: true }
       );
 
       // Show success message
