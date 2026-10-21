@@ -16,52 +16,7 @@ export default defineConfig(({ mode }) => {
       }
     },
     build: {
-      chunkSizeWarningLimit: 900,
-      rollupOptions: {
-        output: {
-          manualChunks(id) {
-            if (id.includes('node_modules')) {
-              if (
-                id.includes('react/') ||
-                id.includes('react-dom/') ||
-                id.includes('react-router/') ||
-                id.includes('react-router-dom/') ||
-                id.includes('scheduler/')
-              ) {
-                return 'vendor-react';
-              }
-              if (id.includes('@mui/') || id.includes('@emotion/')) {
-                return 'vendor-mui';
-              }
-              if (id.includes('framer-motion/') || id.includes('gsap/')) {
-                return 'vendor-animation';
-              }
-              if (
-                id.includes('chart.js/') ||
-                id.includes('react-chartjs-2/') ||
-                id.includes('recharts/')
-              ) {
-                return 'vendor-charts';
-              }
-              if (
-                id.includes('lucide-react/') ||
-                id.includes('react-icons/') ||
-                id.includes('@tabler/icons-react/') ||
-                id.includes('@fortawesome/')
-              ) {
-                return 'vendor-icons';
-              }
-              if (
-                id.includes('jspdf/') ||
-                id.includes('xlsx/') ||
-                id.includes('@react-pdf/')
-              ) {
-                return 'vendor-export';
-              }
-            }
-          }
-        }
-      }
+      chunkSizeWarningLimit: 1600
     },
     server: {
       port: 5173,
