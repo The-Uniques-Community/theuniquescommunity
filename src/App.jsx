@@ -1,15 +1,20 @@
-import React from "react";
 import router from "@/routes";
 import { RouterProvider } from "react-router-dom";
 import GridBackground from "./utils/GridBackground.jsx/GridBackground";
-
+import { CacheProvider } from "@/context/CacheContext";
+import OfflineCacheBanner from "@/components/OfflineCacheBanner";
 
 const App = () => {
   return (
     <div className="relative overflow-x-clip">
+      {/* Floating offline / cached data banner isolated with its own provider */}
+      <CacheProvider>
+        <OfflineCacheBanner />
+      </CacheProvider>
+
       {/* Global grid hover effect */}
-      <GridBackground/>
-      
+      <GridBackground />
+
       {/* Main app content */}
       <div className="relative z-10">
         <RouterProvider router={router} />

@@ -1,7 +1,8 @@
 import axios from "axios";
 
 export const BASE_URL =
-  import.meta.env?.VITE_API_BASE_URL || "https://the-uniques-portal.vercel.app";
+  import.meta.env?.VITE_API_BASE_URL ||
+  (import.meta.env?.DEV ? "" : "https://the-uniques-portal.vercel.app");
 
 // Log active backend URL for immediate debugging in browser console
 console.log(

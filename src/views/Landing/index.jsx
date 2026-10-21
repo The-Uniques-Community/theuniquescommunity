@@ -1,79 +1,117 @@
-import React, { useState } from "react";
-import { useTheme } from "@mui/material/styles";
-
-import CallToAction from "./homComponents/CallToAction";
-
-import AboutSection from "./homComponents/AboutSection";
-import TrainingTabs from "./homComponents/TrainingTabs";
-
-// import ShapedCard from "@/utils/Card/ShapedCard";
-
-import Gallery from "./homComponents/Gallery";
-import Counts from "./homComponents/Counts";
-
-import Startups from "./homComponents/Startups";
-import WhyUs from "./homComponents/WhyUs";
-// import TestimonialSectionCarousel from "./homComponents/TestimonialCard";
-import Batches from "./homComponents/Batches";
-import CommunityPartners from "./homComponents/CommunityPartners";
-
-
+import { lazy, Suspense } from "react";
 import HomeHero from "./homComponents/HomeHero";
-import BlogSection from "./homComponents/BlogSection";
-import Event from "./homComponents/Event";
-import YoutubeSection from "./homComponents/YoutubeSection";
-// import Testimonial from "./homComponents/TestimonialCard";
-import Testimonials from "./homComponents/TestimonialCard";
+import LazyViewport from "@/components/LazyViewport";
+import SectionSkeleton from "@/components/SectionSkeleton";
 
-const index = () => {
-  const theme = useTheme();
-  const [selectedBlog, setSelectedBlog] = useState(null);
+// Lazy-load all below-the-fold landing page sections
+const Counts = lazy(() => import("./homComponents/Counts"));
+const AboutSection = lazy(() => import("./homComponents/AboutSection"));
+const WhyUs = lazy(() => import("./homComponents/WhyUs"));
+const CommunityPartners = lazy(() => import("./homComponents/CommunityPartners"));
+const Startups = lazy(() => import("./homComponents/Startups"));
+const Gallery = lazy(() => import("./homComponents/Gallery"));
+const Event = lazy(() => import("./homComponents/Event"));
+const YoutubeSection = lazy(() => import("./homComponents/YoutubeSection"));
+const Testimonials = lazy(() => import("./homComponents/TestimonialCard"));
+const CallToAction = lazy(() => import("./homComponents/CallToAction"));
+
+const LandingPage = () => {
   return (
     <div>
-      {/* <Navbar /> */}
+      {/* 1. Above-the-fold Hero rendered immediately for optimal LCP */}
       <HomeHero />
+
+      {/* 2. Key impact statistics */}
       <section>
-        {/* <LandingStats /> */}
-        <Counts />
+        <LazyViewport minHeight="340px">
+          <Suspense fallback={<SectionSkeleton height="340px" />}>
+            <Counts />
+          </Suspense>
+        </LazyViewport>
       </section>
 
+      {/* 3. About Section with GSAP scroll animations */}
       <section>
-        <AboutSection />
+        <LazyViewport minHeight="650px">
+          <Suspense fallback={<SectionSkeleton height="650px" />}>
+            <AboutSection />
+          </Suspense>
+        </LazyViewport>
       </section>
 
+      {/* 4. Why Us value proposition cards */}
       <section>
-        <WhyUs />
+        <LazyViewport minHeight="550px">
+          <Suspense fallback={<SectionSkeleton height="550px" />}>
+            <WhyUs />
+          </Suspense>
+        </LazyViewport>
       </section>
 
+      {/* 5. Community & corporate partners logo marquee */}
       <section>
-        <CommunityPartners />
+        <LazyViewport minHeight="240px">
+          <Suspense fallback={<SectionSkeleton height="240px" />}>
+            <CommunityPartners />
+          </Suspense>
+        </LazyViewport>
       </section>
 
+      {/* 6. Innovative Startups showcase */}
       <section>
-        <Startups />
+        <LazyViewport minHeight="650px">
+          <Suspense fallback={<SectionSkeleton height="650px" />}>
+            <Startups />
+          </Suspense>
+        </LazyViewport>
       </section>
 
+      {/* 7. Gallery with 2-row continuous photo tracks and lightbox */}
       <section>
-        <Gallery />
+        <LazyViewport minHeight="600px">
+          <Suspense fallback={<SectionSkeleton height="600px" />}>
+            <Gallery />
+          </Suspense>
+        </LazyViewport>
       </section>
 
+      {/* 8. Recent events and activities carousel */}
       <section>
-        <Event />
+        <LazyViewport minHeight="550px">
+          <Suspense fallback={<SectionSkeleton height="550px" />}>
+            <Event />
+          </Suspense>
+        </LazyViewport>
       </section>
 
+      {/* 9. YouTube live moments and video channel */}
       <section>
-        <YoutubeSection />
+        <LazyViewport minHeight="550px">
+          <Suspense fallback={<SectionSkeleton height="550px" />}>
+            <YoutubeSection />
+          </Suspense>
+        </LazyViewport>
       </section>
 
+      {/* 10. Student and faculty testimonials */}
       <section>
-        <Testimonials />
+        <LazyViewport minHeight="600px">
+          <Suspense fallback={<SectionSkeleton height="600px" />}>
+            <Testimonials />
+          </Suspense>
+        </LazyViewport>
       </section>
 
+      {/* 11. Bottom Call to Action banner */}
       <div className="pt-2 sm:pt-4 pb-8 sm:pb-12">
-        <CallToAction />
+        <LazyViewport minHeight="240px">
+          <Suspense fallback={<SectionSkeleton height="240px" />}>
+            <CallToAction />
+          </Suspense>
+        </LazyViewport>
       </div>
     </div>
   );
 };
 
-export default index;
+export default LandingPage;

@@ -1,5 +1,6 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { useInView } from 'framer-motion';
 import './DomeGallery.css';
 
 export default function DomeGallery({
@@ -7,6 +8,8 @@ export default function DomeGallery({
   grayscale = false
 }) {
   const [activeImage, setActiveImage] = useState(null);
+  const containerRef = useRef(null);
+  const isInView = useInView(containerRef, { margin: "100px 0px" });
 
   // Lock body scroll and listen for Esc key when modal is open
   useEffect(() => {
@@ -87,18 +90,24 @@ export default function DomeGallery({
   );
 
   return (
-    <div className="two-row-gallery-root">
+    <div ref={containerRef} className="two-row-gallery-root">
 
-      {/* Row 1: Smooth continuous move to Left */}
+      {/* Row 1: Smooth continuous move to Left (Pauses when offscreen) */}
       <div className="marquee-row-container">
-        <div className="marquee-track marquee-track-left">
+        <div
+          className="marquee-track marquee-track-left"
+          style={{ animationPlayState: isInView ? 'running' : 'paused' }}
+        >
           {row1.map((item, idx) => renderCard(item, `row1-${idx}`))}
         </div>
       </div>
 
-      {/* Row 2: Smooth continuous move to Right */}
+      {/* Row 2: Smooth continuous move to Right (Pauses when offscreen) */}
       <div className="marquee-row-container">
-        <div className="marquee-track marquee-track-right">
+        <div
+          className="marquee-track marquee-track-right"
+          style={{ animationPlayState: isInView ? 'running' : 'paused' }}
+        >
           {row2.map((item, idx) => renderCard(item, `row2-${idx}`))}
         </div>
       </div>

@@ -42,21 +42,29 @@ const ProjectDetails = () => {
   }, [currentId]);
 
   useEffect(() => {
-    // If not found in memory/localStorage, attempt to fetch latest projects
-    if (!project) {
-      setLoading(true);
-      fetchProjects()
-        .then(() => {
-          const found = getProjectById(currentId);
-          setProject(found || null);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } else {
+    let isMounted = true;
+    const existing = getProjectById(currentId);
+    if (existing) {
+      setProject(existing);
       setLoading(false);
+      return;
     }
-  }, [currentId, project]);
+
+    setLoading(true);
+    fetchProjects()
+      .then(() => {
+        if (!isMounted) return;
+        const found = getProjectById(currentId);
+        setProject(found || null);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentId]);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);

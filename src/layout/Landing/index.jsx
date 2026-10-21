@@ -1,10 +1,11 @@
-import { Suspense, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navbar from "@/utils/NavBar/Navbar";
 import Footer from "@/utils/Footer/Footer";
 import CustomLoader from "@/utils/Loader/CustomLoader";
-import ChatBot from "@/components/ChatBot";
+
+const ChatBot = lazy(() => import("@/components/ChatBot"));
 
 const LandingLayout = () => {
   const { pathname } = useLocation();
@@ -29,26 +30,28 @@ const LandingLayout = () => {
 
   return (
     <div className="relative min-h-screen">
-      <Suspense fallback={<CustomLoader />}>
-        <Navbar />
+      {/* Navbar stays persistently mounted across route transitions */}
+      <Navbar />
 
-        {/* Main Content: Slides over the footer */}
-        <div
-          className="relative z-10 bg-white dark:bg-[#0a0a0a] layout-bottom-clip overflow-x-clip min-h-screen"
-          style={{
-            marginBottom: `${footerHeight}px`,
-            filter: 'drop-shadow(0 20px 50px rgba(0,0,0,0.1))'
-          }}
-        >
+      {/* Main Content: Slides over the footer */}
+      <div
+        className="relative z-10 bg-white dark:bg-[#0a0a0a] layout-bottom-clip overflow-x-clip min-h-screen"
+        style={{
+          marginBottom: `${footerHeight}px`,
+          filter: 'drop-shadow(0 20px 50px rgba(0,0,0,0.1))'
+        }}
+      >
+        <Suspense fallback={<CustomLoader />}>
           <motion.div
+            key={pathname}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.35 }}
           >
             <Outlet />
           </motion.div>
-        </div>
-      </Suspense>
+        </Suspense>
+      </div>
 
       {/* Reveal Footer: Stays fixed at the bottom */}
       <div
@@ -57,7 +60,10 @@ const LandingLayout = () => {
       >
         <Footer />
       </div>
-      <ChatBot />
+
+      <Suspense fallback={null}>
+        <ChatBot />
+      </Suspense>
     </div>
   );
 };

@@ -1,11 +1,11 @@
 
-// import { Button } from '@mui/material';
 import { ArrowForward } from '@mui/icons-material';
-import Button from "@/utils/Buttons/Button"
+import Button from "@/utils/Buttons/Button";
 import Marquee from 'react-fast-marquee';
 import tu from '@/assets/logos/tu.png';
-import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router';
+import { useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { useInView } from 'framer-motion';
 
 const images = [
   'https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1rEz8jr2og9AYBbcu0eXTH81rnVdpozvG6K4WI',
@@ -19,6 +19,9 @@ const images = [
 ];
 
 export default function Landing() {
+  const marqueeRef = useRef(null);
+  const isMarqueeInView = useInView(marqueeRef, { margin: "100px 0px" });
+
   return (
     <div className="w-full flex flex-col items-center justify-center bg-transparent relative pt-14 sm:pt-20 pb-8">
       {/* Decorative Square Grid (Left Side) - Commented out
@@ -65,9 +68,9 @@ export default function Landing() {
         </div>
       </div>
 
-      {/* Image Carousel */}
-      <div className="w-full overflow-hidden py-6 relative z-10 bg-transparent">
-        <Marquee gradient={false} speed={40}>
+      {/* Image Carousel (Pauses when scrolled out of view) */}
+      <div ref={marqueeRef} className="w-full overflow-hidden py-6 relative z-10 bg-transparent">
+        <Marquee play={isMarqueeInView} gradient={false} speed={40}>
           <div className="flex gap-4">
             {images.concat(images).map((src, i) => (
               <div

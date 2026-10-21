@@ -537,7 +537,7 @@ const FineDetailsModal = ({ open, onClose, selectedFine, onPayFine, loading }) =
                             size="small"
                             variant="contained"
                             color="primary"
-                            onClick={() => onPayFine(selectedFine.member.id, fine._id)}
+                            onClick={() => onPayFine(selectedFine.member.id || selectedFine.member._id, fine._id)}
                             disabled={loading}
                           >
                             Mark as Paid

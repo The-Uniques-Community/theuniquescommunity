@@ -1,4 +1,6 @@
+import { useRef } from "react";
 import Marquee from "react-fast-marquee";
+import { useInView } from "framer-motion";
 import { useThemeContext } from "@/theme/ThemeProvider";
 
 const partners = [
@@ -70,9 +72,11 @@ const PartnerLogo = ({ partner, isDarkMode }) => (
 
 const CommunityPartners = () => {
   const { isDarkMode } = useThemeContext();
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { margin: "100px 0px" });
 
   return (
-    <section className={`pt-6 sm:pt-10 lg:pt-14 pb-8 sm:pb-12 lg:pb-16 transition-colors duration-500 ${isDarkMode ? "bg-[#0d0d0d]" : "bg-gray-50"}`}>
+    <section ref={sectionRef} className={`pt-6 sm:pt-10 lg:pt-14 pb-8 sm:pb-12 lg:pb-16 transition-colors duration-500 ${isDarkMode ? "bg-[#0d0d0d]" : "bg-gray-50"}`}>
       {/* Heading */}
       <div className="text-center mb-10 px-4">
         <div className="flex items-center justify-center gap-3 mb-3">
@@ -108,7 +112,7 @@ const CommunityPartners = () => {
         <div className={`absolute left-0 top-0 h-full w-24 z-10 pointer-events-none ${isDarkMode ? "bg-gradient-to-r from-[#0d0d0d]" : "bg-gradient-to-r from-gray-50"} to-transparent`} />
         <div className={`absolute right-0 top-0 h-full w-24 z-10 pointer-events-none ${isDarkMode ? "bg-gradient-to-l from-[#0d0d0d]" : "bg-gradient-to-l from-gray-50"} to-transparent`} />
 
-        <Marquee gradient={false} speed={40} pauseOnHover={true}>
+        <Marquee play={isInView} gradient={false} speed={40} pauseOnHover={true}>
           {[...partners, ...partners].map((partner, i) => (
             <PartnerLogo key={`row1-${i}`} partner={partner} isDarkMode={isDarkMode} />
           ))}
@@ -120,7 +124,7 @@ const CommunityPartners = () => {
         <div className={`absolute left-0 top-0 h-full w-24 z-10 pointer-events-none ${isDarkMode ? "bg-gradient-to-r from-[#0d0d0d]" : "bg-gradient-to-r from-gray-50"} to-transparent`} />
         <div className={`absolute right-0 top-0 h-full w-24 z-10 pointer-events-none ${isDarkMode ? "bg-gradient-to-l from-[#0d0d0d]" : "bg-gradient-to-l from-gray-50"} to-transparent`} />
 
-        <Marquee gradient={false} speed={35} direction="right" pauseOnHover={true}>
+        <Marquee play={isInView} gradient={false} speed={35} direction="right" pauseOnHover={true}>
           {[...partners].reverse().concat([...partners].reverse()).map((partner, i) => (
             <PartnerLogo key={`row2-${i}`} partner={partner} isDarkMode={isDarkMode} />
           ))}
