@@ -23,6 +23,16 @@
     }
 }
 
+/* Ensure hero supporting paragraph has high contrast against light beige (#e8e8e2) background in both themes */
+.svg-shaped-div .hero-quote-text {
+    color: #374151;
+}
+
+.dark .svg-shaped-div .hero-quote-text,
+.dark .svg-shaped-div p {
+    color: #18181b !important;
+}
+
 g {
     clip-path: url(#clip0_242_492);
     transform: matrix(-0.62105, 0.32296, -0.32296, -0.62105, 34.693, 19.3954);
