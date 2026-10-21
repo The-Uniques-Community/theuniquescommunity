@@ -80,6 +80,13 @@ const Counts = () => {
     }
   }, [statsVisible, animationComplete]);
 
+  // Update counters with fresh targetValues once initial animation has completed
+  useEffect(() => {
+    if (animationComplete) {
+      setCounters(targetValues);
+    }
+  }, [animationComplete, targetValues]);
+
   const stats = [
     {
       value: counters.Earnings,

@@ -86,13 +86,17 @@ const resolveProfilesWithDefaults = (rawList) => {
 // In-memory runtime cache for synchronous UI reads
 let inMemoryProfiles = resolveProfilesWithDefaults(DEFAULT_BATCH_PROFILES);
 
-// Asynchronously hydrate from IndexedDB on startup
+// Asynchronously hydrate from IndexedDB on startup & listen for batch updates
 if (typeof window !== "undefined") {
   getCache(PROFILES_CACHE_KEY).then((cached) => {
     if (cached && Array.isArray(cached.data)) {
       inMemoryProfiles = resolveProfilesWithDefaults(cached.data);
     }
   }).catch(() => {});
+
+  window.addEventListener("batches-updated", () => {
+    inMemoryProfiles = resolveProfilesWithDefaults(inMemoryProfiles);
+  });
 }
 
 export const getStoredBatchProfiles = () => {

@@ -5,6 +5,7 @@ import path from 'path';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const target = env.VITE_API_BASE_URL || 'https://the-uniques-portal.vercel.app';
+  const isLocalHttps = /^https:\/\/(localhost|127\.0\.0\.1|\[::1\])(?::\d+)?(?:$|\/)/i.test(target);
 
   return {
     plugins: [react()],
@@ -69,17 +70,17 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target,
           changeOrigin: true,
-          secure: false,
+          ...(isLocalHttps ? { secure: false } : {}),
         },
         '/auth': {
           target,
           changeOrigin: true,
-          secure: false,
+          ...(isLocalHttps ? { secure: false } : {}),
         },
         '/upload': {
           target,
           changeOrigin: true,
-          secure: false,
+          ...(isLocalHttps ? { secure: false } : {}),
         }
       }
     }

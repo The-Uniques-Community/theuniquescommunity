@@ -332,16 +332,20 @@ const EventForm = ({ event, onSuccess }) => {
         // Process receipt uploads if any
         if (currentReceipt) {
           const receiptFormData = new FormData();
-          receiptFormData.append("files", currentReceipt.file);
-          receiptFormData.append("file", currentReceipt.file);
-          receiptFormData.append("eventName", values.eventName);
-          receiptFormData.append("fileKey", "sponsorReceipt");
+          // Endpoint-specific field name: budget_file_upload uses 'file', event_file_upload uses 'files'
           if (eventId) {
+            receiptFormData.append("file", currentReceipt.file);
             receiptFormData.append("eventId", eventId);
             receiptFormData.append("itemType", "sponsor");
             const sponsorItem = sponsors[currentReceipt.index];
-            receiptFormData.append("itemId", sponsorItem?._id || currentReceipt.index);
+            if (sponsorItem?._id) {
+              receiptFormData.append("itemId", sponsorItem._id);
+            }
+          } else {
+            receiptFormData.append("files", currentReceipt.file);
           }
+          receiptFormData.append("eventName", values.eventName);
+          receiptFormData.append("fileKey", "sponsorReceipt");
 
           try {
             const uploadEndpoint = eventId

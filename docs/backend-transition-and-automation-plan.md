@@ -14,7 +14,7 @@
 ## 2. Current Workflow & Why It Uses the Outdated Backend
 
 ### How the Frontend Currently Connects
-All HTTP communications flow through [`src/config.js`](file:///run/media/jimfleax/DEV/Projects/theuniquescommunity/src/config.js#L3-L5):
+All HTTP communications flow through [`src/config.js`](../src/config.js#L3-L5):
 
 ```javascript
 export const BASE_URL =
@@ -44,7 +44,7 @@ flowchart TD
 ### The Root Causes of Why the Outdated Backend is Still Being Used:
 
 1. **Explicit `.env` Override:**
-   The local [`.env`](file:///run/media/jimfleax/DEV/Projects/theuniquescommunity/.env) file is committed/present with:
+   The local [`.env`](../.env) file is committed/present with:
    ```env
    VITE_API_BASE_URL=http://localhost:5001
    ```
@@ -112,7 +112,7 @@ axios.interceptors.request.use(
 ```
 
 ### 2. Vite Dev Server Reverse Proxy (Automating Local CORS)
-By adding proxy configuration to [`vite.config.js`](file:///run/media/jimfleax/DEV/Projects/theuniquescommunity/vite.config.js), local development can proxy `/api`, `/auth`, and `/upload` to the target backend dynamically:
+By adding proxy configuration to [`vite.config.js`](../vite.config.js), local development can proxy `/api`, `/auth`, and `/upload` to the target backend dynamically:
 
 ```javascript
 import { defineConfig, loadEnv } from 'vite';
@@ -180,7 +180,7 @@ We verified the live CORS implementation on `https://the-uniques-portal.vercel.a
 ## 4. Step-by-Step Action Plan to Fully Delete `Backend/`
 
 ### Step 1: Update Frontend Environment Files
-Update [`.env`](file:///run/media/jimfleax/DEV/Projects/theuniquescommunity/.env) and [`.env.example`](file:///run/media/jimfleax/DEV/Projects/theuniquescommunity/.env.example):
+Update [`.env`](../.env) and [`.env.example`](../.env.example):
 ```env
 # Hosted Backend API (The Uniques Portal)
 VITE_API_BASE_URL=https://the-uniques-portal.vercel.app

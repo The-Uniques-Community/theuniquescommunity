@@ -91,9 +91,9 @@ export const networkFirstFetch = async ({
 
   const executionPromise = (async () => {
     // 1. If legacyKey provided, run one-time lazy migration in the background
-    if (legacyKey) {
-      migrateFromLocalStorage(legacyKey, cacheKey).catch(() => {});
-    }
+    const migrationPromise = legacyKey
+      ? migrateFromLocalStorage(legacyKey, cacheKey).catch(() => {})
+      : null;
 
     // 2. Attempt Network Request First
     try {
@@ -105,8 +105,12 @@ export const networkFirstFetch = async ({
       const response = await fetcher(controller.signal);
       clearTimeout(timerId);
 
-      // Validate response payload
-      const rawData = response?.data?.data !== undefined ? response.data.data : response?.data ?? response;
+      // Validate response payload: reject bodies with success === false or missing data
+      if (!response || response.data?.success === false || response.data?.data === undefined) {
+        throw new Error(`Invalid response payload for "${cacheKey}"`);
+      }
+
+      const rawData = response.data.data;
       const finalData = transform(rawData);
 
       // Asynchronously update IndexedDB cache
@@ -134,6 +138,9 @@ export const networkFirstFetch = async ({
 
     // 3. Fallback to IndexedDB Cache
     try {
+      if (migrationPromise) {
+        await migrationPromise;
+      }
       const cached = await getCache(cacheKey);
       if (cached && cached.data !== undefined) {
         broadcastCacheStatus({
