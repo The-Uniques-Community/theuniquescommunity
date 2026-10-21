@@ -3,7 +3,7 @@
  * Context to monitor network status and cached entity states.
  */
 
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 import PropTypes from "prop-types";
 import { subscribeCacheStatus } from "@/utils/cache/networkFirst";
 
@@ -46,17 +46,28 @@ export const CacheProvider = ({ children }) => {
       if (!detail || !detail.cacheKey) return;
 
       setCachedEntities((prev) => {
-        const next = { ...prev };
         if (detail.isFromCache) {
-          next[detail.cacheKey] = {
-            timestamp: detail.timestamp,
-            isDefault: Boolean(detail.isDefault),
-            error: detail.error,
+          // If already in cache with identical timestamp, avoid re-render
+          if (prev[detail.cacheKey]?.timestamp === detail.timestamp) {
+            return prev;
+          }
+          return {
+            ...prev,
+            [detail.cacheKey]: {
+              timestamp: detail.timestamp,
+              isDefault: Boolean(detail.isDefault),
+              error: detail.error,
+            },
           };
         } else {
+          // If key wasn't in cachedEntities, avoid creating new object reference
+          if (!prev[detail.cacheKey]) {
+            return prev;
+          }
+          const next = { ...prev };
           delete next[detail.cacheKey];
+          return next;
         }
-        return next;
       });
     });
 
@@ -68,18 +79,20 @@ export const CacheProvider = ({ children }) => {
     window.dispatchEvent(new CustomEvent("tu-cache-retry-all"));
   }, []);
 
-  const hasCachedData = Object.keys(cachedEntities).length > 0;
+  const hasCachedData = useMemo(() => {
+    return Object.keys(cachedEntities).length > 0;
+  }, [cachedEntities]);
+
+  const contextValue = useMemo(() => ({
+    isOnline,
+    cachedEntities,
+    hasCachedData,
+    refreshTimestamp,
+    retryAll,
+  }), [isOnline, cachedEntities, hasCachedData, refreshTimestamp, retryAll]);
 
   return (
-    <CacheContext.Provider
-      value={{
-        isOnline,
-        cachedEntities,
-        hasCachedData,
-        refreshTimestamp,
-        retryAll,
-      }}
-    >
+    <CacheContext.Provider value={contextValue}>
       {children}
     </CacheContext.Provider>
   );

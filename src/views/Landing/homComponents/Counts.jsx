@@ -10,24 +10,20 @@ const Counts = () => {
   const [animationComplete, setAnimationComplete] = useState(false);
 
   useEffect(() => {
-    // Fetch latest stats from backend API immediately on mount
+    // Fetch latest stats from backend API once on mount
     fetchStats().then((fresh) => {
       if (fresh) {
         setTargetValues(fresh);
-        if (statsVisible || animationComplete) {
-          setCounters(fresh);
-        }
       }
     });
 
     const handleStatsUpdated = (e) => {
       const updated = e.detail || getStoredStats();
       setTargetValues(updated);
-      setCounters(updated);
     };
     window.addEventListener("stats-updated", handleStatsUpdated);
     return () => window.removeEventListener("stats-updated", handleStatsUpdated);
-  }, [statsVisible, animationComplete]);
+  }, []);
 
   // Use Intersection Observer to detect when stats are visible
   useEffect(() => {

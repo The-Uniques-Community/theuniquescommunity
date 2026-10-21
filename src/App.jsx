@@ -6,20 +6,20 @@ import OfflineCacheBanner from "@/components/OfflineCacheBanner";
 
 const App = () => {
   return (
-    <CacheProvider>
-      <div className="relative overflow-x-clip">
-        {/* Floating offline / cached data banner */}
+    <div className="relative overflow-x-clip">
+      {/* Floating offline / cached data banner isolated with its own provider */}
+      <CacheProvider>
         <OfflineCacheBanner />
+      </CacheProvider>
 
-        {/* Global grid hover effect */}
-        <GridBackground />
+      {/* Global grid hover effect */}
+      <GridBackground />
 
-        {/* Main app content */}
-        <div className="relative z-10">
-          <RouterProvider router={router} />
-        </div>
+      {/* Main app content */}
+      <div className="relative z-10">
+        <RouterProvider router={router} />
       </div>
-    </CacheProvider>
+    </div>
   );
 };
 

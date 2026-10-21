@@ -48,6 +48,9 @@ export const broadcastCacheStatus = (detail) => {
   }
 };
 
+// In-flight request deduplication map to prevent multiple concurrent requests for the same key
+const inFlightRequests = new Map();
+
 /**
  * Subscribes to cache status updates.
  * @param {(detail: object) => void} callback
@@ -81,82 +84,94 @@ export const networkFirstFetch = async ({
   timeoutMs = 3500,
   transform = (x) => x,
 }) => {
-  // 1. If legacyKey provided, run one-time lazy migration in the background
-  if (legacyKey) {
-    migrateFromLocalStorage(legacyKey, cacheKey).catch(() => {});
+  // Reuse in-flight request if one is already pending for this cacheKey
+  if (inFlightRequests.has(cacheKey)) {
+    return inFlightRequests.get(cacheKey);
   }
 
-  // 2. Attempt Network Request First
-  try {
-    const controller = new AbortController();
-    const timerId = setTimeout(() => {
-      controller.abort();
-    }, timeoutMs);
+  const executionPromise = (async () => {
+    // 1. If legacyKey provided, run one-time lazy migration in the background
+    if (legacyKey) {
+      migrateFromLocalStorage(legacyKey, cacheKey).catch(() => {});
+    }
 
-    const response = await fetcher(controller.signal);
-    clearTimeout(timerId);
+    // 2. Attempt Network Request First
+    try {
+      const controller = new AbortController();
+      const timerId = setTimeout(() => {
+        controller.abort();
+      }, timeoutMs);
 
-    // Validate response payload
-    const rawData = response?.data?.data !== undefined ? response.data.data : response?.data ?? response;
-    const finalData = transform(rawData);
+      const response = await fetcher(controller.signal);
+      clearTimeout(timerId);
 
-    // Asynchronously update IndexedDB cache
-    const now = Date.now();
-    await setCache(cacheKey, finalData);
+      // Validate response payload
+      const rawData = response?.data?.data !== undefined ? response.data.data : response?.data ?? response;
+      const finalData = transform(rawData);
 
-    // Notify UI that content is fresh from the live network
-    broadcastCacheStatus({
-      cacheKey,
-      isFromCache: false,
-      timestamp: now,
-      error: null,
-    });
+      // Asynchronously update IndexedDB cache
+      const now = Date.now();
+      await setCache(cacheKey, finalData);
 
-    return {
-      data: finalData,
-      isFromCache: false,
-      timestamp: now,
-    };
-  } catch (err) {
-    console.warn(
-      `[networkFirst] Network request failed for "${cacheKey}" (${err?.message || err}). Falling back to IndexedDB.`
-    );
-  }
-
-  // 3. Fallback to IndexedDB Cache
-  try {
-    const cached = await getCache(cacheKey);
-    if (cached && cached.data !== undefined) {
+      // Notify UI that content is fresh from the live network
       broadcastCacheStatus({
         cacheKey,
-        isFromCache: true,
-        timestamp: cached.timestamp,
-        error: "Network unavailable. Serving from offline cache.",
+        isFromCache: false,
+        timestamp: now,
+        error: null,
       });
 
       return {
-        data: cached.data,
-        isFromCache: true,
-        timestamp: cached.timestamp,
+        data: finalData,
+        isFromCache: false,
+        timestamp: now,
       };
+    } catch (err) {
+      console.warn(
+        `[networkFirst] Network request failed for "${cacheKey}" (${err?.message || err}). Falling back to IndexedDB.`
+      );
     }
-  } catch (idbErr) {
-    console.error(`[networkFirst] Error accessing IndexedDB for "${cacheKey}":`, idbErr);
-  }
 
-  // 4. Ultimate Fallback to Hardcoded Defaults
-  broadcastCacheStatus({
-    cacheKey,
-    isFromCache: true,
-    isDefault: true,
-    timestamp: null,
-    error: "Network unavailable and no cached snapshot found.",
+    // 3. Fallback to IndexedDB Cache
+    try {
+      const cached = await getCache(cacheKey);
+      if (cached && cached.data !== undefined) {
+        broadcastCacheStatus({
+          cacheKey,
+          isFromCache: true,
+          timestamp: cached.timestamp,
+          error: "Network unavailable. Serving from offline cache.",
+        });
+
+        return {
+          data: cached.data,
+          isFromCache: true,
+          timestamp: cached.timestamp,
+        };
+      }
+    } catch (idbErr) {
+      console.error(`[networkFirst] Error accessing IndexedDB for "${cacheKey}":`, idbErr);
+    }
+
+    // 4. Ultimate Fallback to Hardcoded Defaults
+    broadcastCacheStatus({
+      cacheKey,
+      isFromCache: true,
+      isDefault: true,
+      timestamp: null,
+      error: "Network unavailable and no cached snapshot found.",
+    });
+
+    return {
+      data: fallbackDefault,
+      isFromCache: true,
+      isDefault: true,
+      timestamp: null,
+    };
+  })().finally(() => {
+    inFlightRequests.delete(cacheKey);
   });
 
-  return {
-    data: fallbackDefault,
-    isFromCache: true,
-    isDefault: true,
-    timestamp: null,
-  };
+  inFlightRequests.set(cacheKey, executionPromise);
+  return executionPromise;
 };
