@@ -434,7 +434,7 @@ export const getStoredProjects = () => {
 
 // Fetch latest projects from MongoDB backend API via Network-First approach
 export const fetchProjects = async () => {
-  const effectiveBaseUrl = BASE_URL ? BASE_URL.replace(/\/+$/, "") : "";
+  const effectiveBaseUrl = BASE_URL ? BASE_URL.replace(/\/+$/, "") : "https://the-uniques-portal.vercel.app";
   const result = await networkFirstFetch({
     cacheKey: PROJECTS_CACHE_KEY,
     legacyKey: LEGACY_STORAGE_KEY,
