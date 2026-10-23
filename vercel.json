@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/image-proxy/:path*",
+      "destination": "https://the-uniques-portal.vercel.app/api/image-proxy/:path*"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "https://the-uniques-portal.vercel.app/api/$1"
     },
