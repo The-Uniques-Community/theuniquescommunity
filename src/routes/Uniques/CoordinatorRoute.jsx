@@ -1,48 +1,30 @@
-// import { lazy } from "react";
-// import Loader from "@/utils/Loader";
-// import ProtectedRoute from "@/routes/ProtectedRoute";
-
-// const CoordinatorLayout = Loader(lazy(() => import("@/layout/Uniques/Coordinator")));
-// const CoordinatorDashboard = Loader(lazy(() => import("@/views/Uniques/Uniques/Coordinator")));
-
-// const CoordinatorRoute = {
-//   path: "/coordinator",
-//   element: <ProtectedRoute role={'coordinator'} element={<CoordinatorLayout />} />,
-//   children: [
-//     {
-//       path: "/coordinator",
-//       element: <CoordinatorDashboard />,
-//     },
-//   ],
-// };
-
-// export default CoordinatorRoute;
-
-import { lazy } from "react";
+import lazyWithRetry from "@/utils/lazyWithRetry";
 import Loader from "@/utils/Loader";
 import ProtectedRoute from "@/routes/ProtectedRoute";
+import { RouteErrorBoundaryView } from "@/components/RouteErrorBoundary";
 
-const EventForm = Loader(lazy(() => import("@/utils/event/EventForm")));
-const ProjectForm = Loader(lazy(() => import("@/utils/project/ProjectForm")));
-const CoordinatorLayout = Loader(lazy(() => import("@/layout/Uniques/Coordinator")));
-const CoordinatorDashboard = Loader(lazy(() => import("@/views/Uniques/Coordinator")));
-const Member = Loader(lazy(() => import("@/views/Uniques/Coordinator/Members")));
-const Event = Loader(lazy(() => import("@/views/Uniques/Coordinator/Events")));
-const Projects = Loader(lazy(() => import("@/views/Uniques/Coordinator/Projects")));
-const Account = Loader(lazy(() => import("@/views/Uniques/Coordinator/Accounts/index")));
-const Profile = Loader(lazy(() => import("@/views/Uniques/Member")));
-const EventBudget = Loader(lazy(() => import("@/views/Uniques/Coordinator/Events/Budget")));
-const EventView = Loader(lazy(() => import("@/views/Uniques/Coordinator/Events/View")));
-const ProjectView = Loader(lazy(() => import("@/views/Admin/Projects/View")));
-const Enquiry = Loader(lazy(() => import("@/views/Uniques/Coordinator/Enquiry")));
-const Trainers = Loader(lazy(() => import("@/views/Uniques/Coordinator/Trainers")));
-const Stats = Loader(lazy(() => import("@/views/Uniques/Coordinator/Stats")));
-const Batches = Loader(lazy(() => import("@/views/Uniques/Coordinator/Batches")));
-const Community = Loader(lazy(() => import("@/views/Uniques/Coordinator/Community")));
+const EventForm = Loader(lazyWithRetry(() => import("@/utils/event/EventForm")));
+const ProjectForm = Loader(lazyWithRetry(() => import("@/utils/project/ProjectForm")));
+const CoordinatorLayout = Loader(lazyWithRetry(() => import("@/layout/Uniques/Coordinator")));
+const CoordinatorDashboard = Loader(lazyWithRetry(() => import("@/views/Uniques/Coordinator")));
+const Member = Loader(lazyWithRetry(() => import("@/views/Uniques/Coordinator/Members")));
+const Event = Loader(lazyWithRetry(() => import("@/views/Uniques/Coordinator/Events")));
+const Projects = Loader(lazyWithRetry(() => import("@/views/Uniques/Coordinator/Projects")));
+const Account = Loader(lazyWithRetry(() => import("@/views/Uniques/Coordinator/Accounts/index")));
+const Profile = Loader(lazyWithRetry(() => import("@/views/Uniques/Member")));
+const EventBudget = Loader(lazyWithRetry(() => import("@/views/Uniques/Coordinator/Events/Budget")));
+const EventView = Loader(lazyWithRetry(() => import("@/views/Uniques/Coordinator/Events/View")));
+const ProjectView = Loader(lazyWithRetry(() => import("@/views/Admin/Projects/View")));
+const Enquiry = Loader(lazyWithRetry(() => import("@/views/Uniques/Coordinator/Enquiry")));
+const Trainers = Loader(lazyWithRetry(() => import("@/views/Uniques/Coordinator/Trainers")));
+const Stats = Loader(lazyWithRetry(() => import("@/views/Uniques/Coordinator/Stats")));
+const Batches = Loader(lazyWithRetry(() => import("@/views/Uniques/Coordinator/Batches")));
+const Community = Loader(lazyWithRetry(() => import("@/views/Uniques/Coordinator/Community")));
 
 const CoordinatorRoute = {
   path: "/coordinator",
   element: <ProtectedRoute role={"coordinator"} element={<CoordinatorLayout />} />,
+  errorElement: <RouteErrorBoundaryView />,
   children: [
     {
       path: "/coordinator",

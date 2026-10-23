@@ -1,11 +1,12 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import CelebrationComponent from "@/utils/Header";
 import LazyViewport from "@/components/LazyViewport";
 import SectionSkeleton from "@/components/SectionSkeleton";
+import lazyWithRetry from "@/utils/lazyWithRetry";
 
-const TimeLine = lazy(() => import("@/views/Landing/HowItStarted/components/TimeLine"));
-const Flight = lazy(() => import("./components/Flight"));
-const CallToAction = lazy(() => import("../homComponents/CallToAction"));
+const TimeLine = lazyWithRetry(() => import("@/views/Landing/HowItStarted/components/TimeLine"));
+const Flight = lazyWithRetry(() => import("./components/Flight"));
+const CallToAction = lazyWithRetry(() => import("../homComponents/CallToAction"));
 
 const HowItStartedPage = () => {
     return (

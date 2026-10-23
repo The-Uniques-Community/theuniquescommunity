@@ -1,21 +1,23 @@
-import { lazy } from "react";
+import lazyWithRetry from "@/utils/lazyWithRetry";
 import Loader from "@/utils/Loader";
 import ProtectedRoute from "@/routes/ProtectedRoute";
-import { element } from "prop-types";
+import { RouteErrorBoundaryView } from "@/components/RouteErrorBoundary";
 
-const MemberLayout = Loader(lazy(() => import("@/layout/Uniques/Member")));
-const MemberDashboard = Loader(lazy(() => import("@/views/Uniques/Member")));
-const CreateBlog = Loader(lazy(() => import("@/views/Uniques/Member/Blog")));
+const MemberLayout = Loader(lazyWithRetry(() => import("@/layout/Uniques/Member")));
+const MemberDashboard = Loader(lazyWithRetry(() => import("@/views/Uniques/Member")));
+const CreateBlog = Loader(lazyWithRetry(() => import("@/views/Uniques/Member/Blog")));
+
 const MemberRoutes = {
   path: "/member",
   element: <ProtectedRoute role={'member'} element={<MemberLayout />} />,
+  errorElement: <RouteErrorBoundaryView />,
   children: [
     {
       path: "/member",
       element: <MemberDashboard />,
     },
     {
-      path:"/member/createBlog",
+      path: "/member/createBlog",
       element: <CreateBlog/>,
     }
   ],
