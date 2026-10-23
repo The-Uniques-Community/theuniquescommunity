@@ -93,7 +93,7 @@ export const fetchBenefitsCards = async () => {
     cacheKey: BENEFITS_CACHE_KEY,
     legacyKey: LEGACY_STORAGE_KEY,
     fallbackDefault: [...DEFAULT_BENEFITS_CARDS],
-    timeoutMs: 3500,
+    timeoutMs: 10000,
     fetcher: (signal) => axios.get(`${BASE_URL}/api/community-benefits`, { signal }),
     transform: (data) => {
       if (Array.isArray(data)) {

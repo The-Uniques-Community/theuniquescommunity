@@ -1,11 +1,13 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import Navbar from "@/utils/NavBar/Navbar";
 import Footer from "@/utils/Footer/Footer";
 import CustomLoader from "@/utils/Loader/CustomLoader";
+import lazyWithRetry from "@/utils/lazyWithRetry";
+import RouteErrorBoundary from "@/components/RouteErrorBoundary";
 
-const ChatBot = lazy(() => import("@/components/ChatBot"));
+const ChatBot = lazyWithRetry(() => import("@/components/ChatBot"));
 
 const LandingLayout = () => {
   const { pathname } = useLocation();
@@ -41,16 +43,18 @@ const LandingLayout = () => {
           filter: 'drop-shadow(0 20px 50px rgba(0,0,0,0.1))'
         }}
       >
-        <Suspense fallback={<CustomLoader />}>
-          <motion.div
-            key={pathname}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.35 }}
-          >
-            <Outlet />
-          </motion.div>
-        </Suspense>
+        <RouteErrorBoundary>
+          <Suspense fallback={<CustomLoader />}>
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.35 }}
+            >
+              <Outlet />
+            </motion.div>
+          </Suspense>
+        </RouteErrorBoundary>
       </div>
 
       {/* Reveal Footer: Stays fixed at the bottom */}
@@ -61,9 +65,11 @@ const LandingLayout = () => {
         <Footer />
       </div>
 
-      <Suspense fallback={null}>
-        <ChatBot />
-      </Suspense>
+      <RouteErrorBoundary fallback={null}>
+        <Suspense fallback={null}>
+          <ChatBot />
+        </Suspense>
+      </RouteErrorBoundary>
     </div>
   );
 };

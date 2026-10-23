@@ -45,7 +45,7 @@ export const fetchBatches = async () => {
     cacheKey: BATCH_CACHE_KEY,
     legacyKey: LEGACY_STORAGE_KEY,
     fallbackDefault: [...DEFAULT_BATCHES],
-    timeoutMs: 3500,
+    timeoutMs: 10000,
     fetcher: (signal) => axios.get(`${BASE_URL}/api/batches/all`, { signal }),
     transform: (data) => {
       if (Array.isArray(data)) {

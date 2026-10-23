@@ -1,19 +1,20 @@
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import HomeHero from "./homComponents/HomeHero";
 import LazyViewport from "@/components/LazyViewport";
 import SectionSkeleton from "@/components/SectionSkeleton";
+import lazyWithRetry from "@/utils/lazyWithRetry";
 
-// Lazy-load all below-the-fold landing page sections
-const Counts = lazy(() => import("./homComponents/Counts"));
-const AboutSection = lazy(() => import("./homComponents/AboutSection"));
-const WhyUs = lazy(() => import("./homComponents/WhyUs"));
-const CommunityPartners = lazy(() => import("./homComponents/CommunityPartners"));
-const Startups = lazy(() => import("./homComponents/Startups"));
-const Gallery = lazy(() => import("./homComponents/Gallery"));
-const Event = lazy(() => import("./homComponents/Event"));
-const YoutubeSection = lazy(() => import("./homComponents/YoutubeSection"));
-const Testimonials = lazy(() => import("./homComponents/TestimonialCard"));
-const CallToAction = lazy(() => import("./homComponents/CallToAction"));
+// Lazy-load all below-the-fold landing page sections with resilient retry logic
+const Counts = lazyWithRetry(() => import("./homComponents/Counts"));
+const AboutSection = lazyWithRetry(() => import("./homComponents/AboutSection"));
+const WhyUs = lazyWithRetry(() => import("./homComponents/WhyUs"));
+const CommunityPartners = lazyWithRetry(() => import("./homComponents/CommunityPartners"));
+const Startups = lazyWithRetry(() => import("./homComponents/Startups"));
+const Gallery = lazyWithRetry(() => import("./homComponents/Gallery"));
+const Event = lazyWithRetry(() => import("./homComponents/Event"));
+const YoutubeSection = lazyWithRetry(() => import("./homComponents/YoutubeSection"));
+const Testimonials = lazyWithRetry(() => import("./homComponents/TestimonialCard"));
+const CallToAction = lazyWithRetry(() => import("./homComponents/CallToAction"));
 
 const LandingPage = () => {
   return (

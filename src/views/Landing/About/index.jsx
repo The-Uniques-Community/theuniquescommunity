@@ -1,19 +1,20 @@
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import CelebrationComponent from "@/utils/Header";
 import Second from "./componants/Batches";
 import LazyViewport from "@/components/LazyViewport";
 import SectionSkeleton from "@/components/SectionSkeleton";
+import lazyWithRetry from "@/utils/lazyWithRetry";
 
 // Below-the-fold sub-sections lazy-loaded to optimize initial About page load
-const Fifth = lazy(() => import("./componants/Fifth"));
-const TrainingTabs = lazy(() => import("./componants/TraningModel"));
-const VisionMission = lazy(() => import("./componants/Vision"));
-const Mentor = lazy(() => import("./componants/Mentor"));
-const Infrastructure = lazy(() => import("./componants/Infrastructure"));
-const Placements = lazy(() => import("../homComponents/Placements"));
-const Testimonial = lazy(() => import("./componants/Testimonial"));
-const Faq = lazy(() => import("./componants/Faq"));
-const CallToAction = lazy(() => import("../homComponents/CallToAction"));
+const Fifth = lazyWithRetry(() => import("./componants/Fifth"));
+const TrainingTabs = lazyWithRetry(() => import("./componants/TraningModel"));
+const VisionMission = lazyWithRetry(() => import("./componants/Vision"));
+const Mentor = lazyWithRetry(() => import("./componants/Mentor"));
+const Infrastructure = lazyWithRetry(() => import("./componants/Infrastructure"));
+const Placements = lazyWithRetry(() => import("../homComponents/Placements"));
+const Testimonial = lazyWithRetry(() => import("./componants/Testimonial"));
+const Faq = lazyWithRetry(() => import("./componants/Faq"));
+const CallToAction = lazyWithRetry(() => import("../homComponents/CallToAction"));
 
 const AboutPage = () => {
   return (
