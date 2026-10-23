@@ -1,9 +1,14 @@
 import axios from "axios";
 
+/**
+ * Resolved Backend API Base URL.
+ * Directly targets the configured VITE_API_BASE_URL if set and non-empty.
+ * Otherwise defaults to the canonical hosted backend URL.
+ */
 export const BASE_URL =
-  import.meta.env?.VITE_API_BASE_URL !== undefined
-    ? import.meta.env.VITE_API_BASE_URL
-    : (import.meta.env?.DEV ? "" : (typeof window !== "undefined" ? "" : "https://the-uniques-portal.vercel.app"));
+  import.meta.env?.VITE_API_BASE_URL && String(import.meta.env.VITE_API_BASE_URL).trim() !== ""
+    ? String(import.meta.env.VITE_API_BASE_URL).trim().replace(/\/+$/, "")
+    : "https://the-uniques-portal.vercel.app";
 
 // Log active backend URL for immediate debugging in browser console
 console.log(

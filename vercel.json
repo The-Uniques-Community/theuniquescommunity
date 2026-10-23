@@ -29,6 +29,14 @@
       "destination": "https://the-uniques-portal.vercel.app/api/$1"
     },
     {
+      "source": "/auth/(.*)",
+      "destination": "https://the-uniques-portal.vercel.app/auth/$1"
+    },
+    {
+      "source": "/upload/(.*)",
+      "destination": "https://the-uniques-portal.vercel.app/upload/$1"
+    },
+    {
       "source": "/((?!assets/|.*\\.[a-zA-Z0-9]+$).*)",
       "destination": "/index.html"
     }
