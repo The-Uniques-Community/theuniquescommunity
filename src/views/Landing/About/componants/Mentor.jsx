@@ -58,13 +58,13 @@ export default function MentorSection() {
                   Director of Operations | Ankur Gill
                 </p>
                 <div className="mt-3 flex justify-center md:justify-start gap-5 text-gray-600 dark:text-gray-300">
-                  <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#ca0019] transition-colors">
+                  <a href="https://x.com/ankurgillchd" target="_blank" rel="noopener noreferrer" className="hover:text-[#ca0019] transition-colors">
                     <FaTwitter className="text-xl" />
                   </a>
-                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#ca0019] transition-colors">
+                  <a href="https://www.instagram.com/ankurgillofficials?mdxt=dW1oM3Q4ZGxhcXRm" target="_blank" rel="noopener noreferrer" className="hover:text-[#ca0019] transition-colors">
                     <FaInstagram className="text-xl" />
                   </a>
-                  <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-[#ca0019] transition-colors">
+                  <a href="https://www.linkedin.com/in/ankurgillofficials?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener noreferrer" className="hover:text-[#ca0019] transition-colors">
                     <FaLinkedin className="text-xl" />
                   </a>
                 </div>
