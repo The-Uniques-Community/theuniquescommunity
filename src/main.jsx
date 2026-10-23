@@ -11,19 +11,31 @@ import { Provider } from "react-redux";
 import ClickSpark from "./utils/clickSpark/ClickSpark";
 import Lenis from 'lenis'
 
+// Global recovery handler for Vite dynamic import preload failures (new deployments / chunk mismatches)
+if (typeof window !== "undefined") {
+  window.addEventListener("vite:preloadError", (event) => {
+    event.preventDefault();
+    const KEY = "tu_vite_preload_reload";
+    try {
+      const lastReload = sessionStorage.getItem(KEY);
+      const now = Date.now();
+      // Reload at most once every 20 seconds to prevent refresh loops
+      if (!lastReload || now - Number(lastReload) > 20000) {
+        sessionStorage.setItem(KEY, String(now));
+        window.location.reload();
+      } else {
+        console.error("[Vite] Repeated dynamic import preload failure:", event);
+      }
+    } catch {
+      window.location.reload();
+    }
+  });
+}
 
-// Initialize Lenis
-const lenis = new Lenis({
+// Initialize Lenis smooth scroll
+new Lenis({
   autoRaf: true,
 });
-
-window.lenis = lenis;
-export { lenis };
-
-// Listen for the scroll event and log the event data
-// lenis.on('scroll', (e) => {
-//   // console.log(e);
-// });
 
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>

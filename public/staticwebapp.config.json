@@ -2,17 +2,12 @@
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": [
+      "/api/*",
       "/assets/*",
       "/images/*",
       "/testimonials/*",
       "/projects/*",
       "/*.{ico,png,svg,json,txt,jpg,jpeg,webp}"
     ]
-  },
-  "responseOverrides": {
-    "404": {
-      "rewrite": "/index.html",
-      "statusCode": 200
-    }
   }
 }

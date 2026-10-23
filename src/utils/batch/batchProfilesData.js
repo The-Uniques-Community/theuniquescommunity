@@ -108,7 +108,7 @@ export const fetchBatchProfiles = async () => {
     cacheKey: PROFILES_CACHE_KEY,
     legacyKey: LEGACY_STORAGE_KEY,
     fallbackDefault: resolveProfilesWithDefaults(DEFAULT_BATCH_PROFILES),
-    timeoutMs: 3500,
+    timeoutMs: 10000,
     fetcher: (signal) => axios.get(`${BASE_URL}/api/batches/profiles`, { signal }),
     transform: (data) => {
       if (Array.isArray(data)) {

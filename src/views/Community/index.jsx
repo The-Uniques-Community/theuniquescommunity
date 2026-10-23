@@ -1,15 +1,16 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import Hero from './Landing/Hero';
 import About from './Landing/About';
 import LazyViewport from '@/components/LazyViewport';
 import SectionSkeleton from '@/components/SectionSkeleton';
+import lazyWithRetry from '@/utils/lazyWithRetry';
 
-const Guidelines = lazy(() => import('./Landing/Guidlines'));
-const CTA = lazy(() => import("./Landing/CallToAction"));
-const SlideCard = lazy(() => import('./Landing/SlideCard'));
-const Sliding = lazy(() => import("./Landing/Sliding"));
-const Eligiblity = lazy(() => import('./Landing/Eligiblity'));
-const CallToAction = lazy(() => import('../Landing/homComponents/CallToAction'));
+const Guidelines = lazyWithRetry(() => import('./Landing/Guidlines'));
+const CTA = lazyWithRetry(() => import("./Landing/CallToAction"));
+const SlideCard = lazyWithRetry(() => import('./Landing/SlideCard'));
+const Sliding = lazyWithRetry(() => import("./Landing/Sliding"));
+const Eligiblity = lazyWithRetry(() => import('./Landing/Eligiblity'));
+const CallToAction = lazyWithRetry(() => import('../Landing/homComponents/CallToAction'));
 
 const CommunityLandingPage = () => {
 	return (

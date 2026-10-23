@@ -1,10 +1,13 @@
 /**
  * @file networkFirst.js
- * Universal Network-First data fetching utility.
- * Always attempts to query the fresh backend database first.
- * If the network fails, is offline, or times out (3.5s default),
- * it seamlessly falls back to high-capacity IndexedDB cache and dispatches
- * status events to trigger transparent offline UI indicators.
+ * High-performance Stale-While-Revalidate (SWR) data fetching engine with IndexedDB persistence.
+ *
+ * Pattern:
+ * 1. Instant Cache Return: If cached snapshot exists, returns it immediately (0ms blocking time).
+ * 2. Background Revalidation: Automatically revalidates against the live backend with a realistic
+ *    timeout (10s) that accommodates serverless cold starts.
+ * 3. Silent Sync: Updates cache and dispatches entity-update events cleanly without jarring UI flashes.
+ * 4. True Offline Detection: Does NOT report network failure or show error banners if the client is online.
  */
 
 import { getCache, setCache, migrateFromLocalStorage } from "./idbStorage.js";
@@ -25,7 +28,7 @@ export const registerCacheFetcher = (cacheKey, fetcherFn) => {
   return () => registeredFetchers.delete(cacheKey);
 };
 
-// Listen for global retry request from OfflineCacheBanner
+// Listen for global retry request from OfflineCacheBanner or manual sync
 if (typeof window !== "undefined") {
   window.addEventListener("tu-cache-retry-all", () => {
     registeredFetchers.forEach((fetchFn) => {
@@ -38,13 +41,27 @@ if (typeof window !== "undefined") {
   });
 }
 
+// Universal event bus that works across browser and testing environments
+const globalEventBus =
+  typeof window !== "undefined"
+    ? window
+    : (typeof globalThis !== "undefined" && globalThis.EventTarget ? new globalThis.EventTarget() : null);
+
 /**
  * Dispatches a global event when an entity is fetched or served from cache.
  * @param {object} detail
  */
 export const broadcastCacheStatus = (detail) => {
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent(CACHE_STATUS_EVENT, { detail }));
+  if (globalEventBus && typeof globalEventBus.dispatchEvent === "function") {
+    let event;
+    if (typeof CustomEvent === "function") {
+      event = new CustomEvent(CACHE_STATUS_EVENT, { detail });
+    } else {
+      // Node.js EventTarget fallback
+      event = new Event(CACHE_STATUS_EVENT);
+      event.detail = detail;
+    }
+    globalEventBus.dispatchEvent(event);
   }
 };
 
@@ -57,14 +74,21 @@ const inFlightRequests = new Map();
  * @returns {() => void} Unsubscribe function
  */
 export const subscribeCacheStatus = (callback) => {
-  if (typeof window === "undefined") return () => {};
-  const handler = (e) => callback(e.detail);
-  window.addEventListener(CACHE_STATUS_EVENT, handler);
-  return () => window.removeEventListener(CACHE_STATUS_EVENT, handler);
+  if (!globalEventBus || typeof globalEventBus.addEventListener !== "function") return () => {};
+  const handler = (e) => callback(e.detail || e);
+  globalEventBus.addEventListener(CACHE_STATUS_EVENT, handler);
+  return () => globalEventBus.removeEventListener(CACHE_STATUS_EVENT, handler);
 };
 
 /**
- * Executes a network-first fetch with IndexedDB fallback.
+ * Helper to determine if browser is truly online
+ */
+export const isBrowserOnline = () => {
+  return typeof navigator === "undefined" || navigator.onLine !== false;
+};
+
+/**
+ * Executes a Stale-While-Revalidate fetch with IndexedDB persistence.
  *
  * @template T
  * @param {object} options
@@ -72,8 +96,9 @@ export const subscribeCacheStatus = (callback) => {
  * @param {string} [options.legacyKey] - Optional legacy localStorage key for one-time migration
  * @param {(signal: AbortSignal) => Promise<any>} options.fetcher - Async function making the network call
  * @param {T} options.fallbackDefault - Static fallback if both network & cache fail
- * @param {number} [options.timeoutMs=3500] - Max time to wait for network before falling back to cache
+ * @param {number} [options.timeoutMs=10000] - Max time to wait for network before falling back to cache
  * @param {(data: any) => T} [options.transform] - Optional transformer function applied to raw response data
+ * @param {boolean} [options.forceFresh=false] - If true, bypasses immediate cache return and awaits fresh network response
  * @returns {Promise<{ data: T, isFromCache: boolean, timestamp: number | null, isDefault?: boolean }>}
  */
 export const networkFirstFetch = async ({
@@ -81,27 +106,23 @@ export const networkFirstFetch = async ({
   legacyKey = null,
   fetcher,
   fallbackDefault,
-  timeoutMs = 3500,
+  timeoutMs = 10000,
   transform = (x) => x,
+  forceFresh = false,
 }) => {
-  // Reuse in-flight request if one is already pending for this cacheKey
-  if (inFlightRequests.has(cacheKey)) {
-    return inFlightRequests.get(cacheKey);
+  // 1. One-time legacy localStorage migration if configured
+  if (legacyKey) {
+    migrateFromLocalStorage(legacyKey, cacheKey).catch(() => {});
   }
 
-  const executionPromise = (async () => {
-    // 1. If legacyKey provided, run one-time lazy migration in the background
-    const migrationPromise = legacyKey
-      ? migrateFromLocalStorage(legacyKey, cacheKey).catch(() => {})
-      : null;
+  // Helper executing the network call with timeout
+  const executeNetworkCall = async () => {
+    const controller = new AbortController();
+    const timerId = setTimeout(() => {
+      controller.abort();
+    }, timeoutMs);
 
-    // 2. Attempt Network Request First
     try {
-      const controller = new AbortController();
-      const timerId = setTimeout(() => {
-        controller.abort();
-      }, timeoutMs);
-
       const response = await fetcher(controller.signal);
       clearTimeout(timerId);
 
@@ -113,11 +134,9 @@ export const networkFirstFetch = async ({
       const rawData = response.data.data;
       const finalData = transform(rawData);
 
-      // Asynchronously update IndexedDB cache
       const now = Date.now();
       await setCache(cacheKey, finalData);
 
-      // Notify UI that content is fresh from the live network
       broadcastCacheStatus({
         cacheKey,
         isFromCache: false,
@@ -130,51 +149,93 @@ export const networkFirstFetch = async ({
         isFromCache: false,
         timestamp: now,
       };
-    } catch (err) {
-      console.warn(
-        `[networkFirst] Network request failed for "${cacheKey}" (${err?.message || err}). Falling back to IndexedDB.`
-      );
-    }
+    } catch (networkErr) {
+      clearTimeout(timerId);
+      const online = isBrowserOnline();
 
-    // 3. Fallback to IndexedDB Cache
-    try {
-      if (migrationPromise) {
-        await migrationPromise;
-      }
-      const cached = await getCache(cacheKey);
-      if (cached && cached.data !== undefined) {
-        broadcastCacheStatus({
-          cacheKey,
-          isFromCache: true,
-          timestamp: cached.timestamp,
-          error: "Network unavailable. Serving from offline cache.",
+      // Only report an error if genuinely offline
+      const errorMsg = online
+        ? null
+        : "Network unavailable. Serving from offline cache.";
+
+      broadcastCacheStatus({
+        cacheKey,
+        isFromCache: true,
+        timestamp: Date.now(),
+        error: errorMsg,
+      });
+
+      throw networkErr;
+    }
+  };
+
+  // 2. Check existing cache
+  let cachedRecord = null;
+  try {
+    cachedRecord = await getCache(cacheKey);
+  } catch (idbErr) {
+    console.warn(`[networkFirst] Cache read error for "${cacheKey}":`, idbErr);
+  }
+
+  const hasValidCache = cachedRecord && cachedRecord.data !== undefined;
+
+  // Stale-While-Revalidate: If we have valid cache and forceFresh is NOT requested,
+  // return cached data immediately and revalidate silently in the background
+  if (hasValidCache && !forceFresh) {
+    // Schedule background revalidation if no request is currently in-flight
+    if (!inFlightRequests.has(cacheKey)) {
+      const bgPromise = executeNetworkCall()
+        .catch((err) => {
+          // Suppress error in console when online (normal slow/cold-start revalidation)
+          if (isBrowserOnline()) {
+            console.debug(`[networkFirst] Background revalidation failed for "${cacheKey}":`, err?.message || err);
+          } else {
+            console.warn(`[networkFirst] Offline revalidation failed for "${cacheKey}".`);
+          }
+        })
+        .finally(() => {
+          inFlightRequests.delete(cacheKey);
         });
 
-        return {
-          data: cached.data,
-          isFromCache: true,
-          timestamp: cached.timestamp,
-        };
-      }
-    } catch (idbErr) {
-      console.error(`[networkFirst] Error accessing IndexedDB for "${cacheKey}":`, idbErr);
+      inFlightRequests.set(cacheKey, bgPromise);
     }
 
-    // 4. Ultimate Fallback to Hardcoded Defaults
-    broadcastCacheStatus({
-      cacheKey,
-      isFromCache: true,
-      isDefault: true,
-      timestamp: null,
-      error: "Network unavailable and no cached snapshot found.",
-    });
-
     return {
-      data: fallbackDefault,
+      data: cachedRecord.data,
       isFromCache: true,
-      isDefault: true,
-      timestamp: null,
+      timestamp: cachedRecord.timestamp,
     };
+  }
+
+  // 3. No cache available OR forceFresh requested: Must await network call
+  if (inFlightRequests.has(cacheKey)) {
+    return inFlightRequests.get(cacheKey);
+  }
+
+  const executionPromise = (async () => {
+    try {
+      return await executeNetworkCall();
+    } catch (err) {
+      console.warn(
+        `[networkFirst] Initial network fetch failed for "${cacheKey}" (${err?.message || err}). Falling back to defaults/cache.`
+      );
+
+      if (hasValidCache) {
+        return {
+          data: cachedRecord.data,
+          isFromCache: true,
+          timestamp: cachedRecord.timestamp,
+        };
+      }
+
+      // Fallback to hardcoded default
+      return {
+        data: fallbackDefault,
+        isFromCache: true,
+        isDefault: true,
+        timestamp: null,
+      };
+    }
   })().finally(() => {
     inFlightRequests.delete(cacheKey);
   });
@@ -182,3 +243,6 @@ export const networkFirstFetch = async ({
   inFlightRequests.set(cacheKey, executionPromise);
   return executionPromise;
 };
+
+// Modern semantic alias
+export const swrFetch = networkFirstFetch;

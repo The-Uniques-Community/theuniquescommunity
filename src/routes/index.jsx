@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import { lazy } from "react";
+import lazyWithRetry from "@/utils/lazyWithRetry";
 import Loader from "@/utils/Loader";
 import AdminRoutes from "@/routes/Admin/AdminRoutes";
 import CommunityRoutes from "@/routes/Community/CommunityRoutes";
@@ -8,30 +8,30 @@ import MemberRoutes from "@/routes/Uniques/MemberRoutes";
 import LandingLayout from "@/layout/Landing/index";
 import Auth from "@/routes/Authentication/Auth";
 import SuccessStoriesRoutes from "./successStories";
+import { RouteErrorBoundaryView } from "@/components/RouteErrorBoundary";
 
-// Lazy-loaded landing & public route views
-const Landing = Loader(lazy(() => import("@/views/Landing/index")));
-const About = Loader(lazy(() => import("@/views/Landing/About/index")));
-const HowItStarted = Loader(lazy(() => import("@/views/Landing/HowItStarted/index")));
-const Community = Loader(lazy(() => import("@/views/Community/index")));
-const CommunityPage = Loader(lazy(() => import("@/views/Landing/Community/index")));
-const Event = Loader(lazy(() => import("@/views/Landing/Event/Index")));
-const EventDetailPage = Loader(lazy(() => import("@/views/Landing/Event/Componant/EventDetailPage")));
-const BatchesPage = Loader(lazy(() => import("@/views/Landing/Batches/index")));
-const Notices = Loader(lazy(() => import("@/views/Landing/Notices/index")));
-const MemberProfile = Loader(lazy(() => import("@/views/Landing/Profile/MemberProfile")));
-const ForgetPassword = Loader(lazy(() => import("@/views/Authentication/login/ForgetPassword")));
-const Login = Loader(lazy(() => import("@/views/Authentication/login")));
-const BlogPage = Loader(lazy(() => import("@/views/Landing/Blog/index")));
-const Contact = Loader(lazy(() => import("@/views/Landing/Contact/index")));
-const Training = Loader(lazy(() => import("@/views/Landing/Training-model/Training")));
-const TermsOfService = Loader(lazy(() => import("@/views/Landing/TermsOfService")));
-const NotFound = Loader(lazy(() => import("@/views/Landing/NotFound/index")));
-const SuccessStories = Loader(lazy(() => import("@/views/Landing/SuccessStories/index")));
-const PrivacyPolicy = Loader(lazy(() => import("@/views/Landing/PrivacyPolicy/index")));
-const Projects = Loader(lazy(() => import("@/views/Landing/Projects/index")));
-const ProjectDetails = Loader(lazy(() => import("@/views/Landing/Projects/ProjectDetails")));
-const Timeline = Loader(lazy(() => import("@/utils/Timeline/Timeline")));
+// Resilient lazy-loaded landing & public route views
+const Landing = Loader(lazyWithRetry(() => import("@/views/Landing/index")));
+const About = Loader(lazyWithRetry(() => import("@/views/Landing/About/index")));
+const HowItStarted = Loader(lazyWithRetry(() => import("@/views/Landing/HowItStarted/index")));
+const Community = Loader(lazyWithRetry(() => import("@/views/Community/index")));
+const CommunityPage = Loader(lazyWithRetry(() => import("@/views/Landing/Community/index")));
+const Event = Loader(lazyWithRetry(() => import("@/views/Landing/Event/Index")));
+const EventDetailPage = Loader(lazyWithRetry(() => import("@/views/Landing/Event/Componant/EventDetailPage")));
+const BatchesPage = Loader(lazyWithRetry(() => import("@/views/Landing/Batches/index")));
+const Notices = Loader(lazyWithRetry(() => import("@/views/Landing/Notices/index")));
+const MemberProfile = Loader(lazyWithRetry(() => import("@/views/Landing/Profile/MemberProfile")));
+const ForgetPassword = Loader(lazyWithRetry(() => import("@/views/Authentication/login/ForgetPassword")));
+const Login = Loader(lazyWithRetry(() => import("@/views/Authentication/login/index")));
+const BlogPage = Loader(lazyWithRetry(() => import("@/views/Landing/Blog/index")));
+const Contact = Loader(lazyWithRetry(() => import("@/views/Landing/Contact/index")));
+const Training = Loader(lazyWithRetry(() => import("@/views/Landing/Training-model/Training")));
+const TermsOfService = Loader(lazyWithRetry(() => import("@/views/Landing/TermsOfService/index")));
+const NotFound = Loader(lazyWithRetry(() => import("@/views/Landing/NotFound/index")));
+const PrivacyPolicy = Loader(lazyWithRetry(() => import("@/views/Landing/PrivacyPolicy/index")));
+const Projects = Loader(lazyWithRetry(() => import("@/views/Landing/Projects/index")));
+const ProjectDetails = Loader(lazyWithRetry(() => import("@/views/Landing/Projects/ProjectDetails")));
+const Timeline = Loader(lazyWithRetry(() => import("@/utils/Timeline/Timeline")));
 
 const timelineData = [
   {
@@ -62,13 +62,14 @@ const timelineData = [
 
 const LandingRoutes = {
   path: "/",
-  element: <LandingLayout />, // Wrap all pages inside LandingLayout
+  element: <LandingLayout />,
+  errorElement: <RouteErrorBoundaryView />,
   children: [
-    { index: true, element: <Landing /> }, // Default route ("/")
+    { index: true, element: <Landing /> },
     { path: "about", element: <About /> },
     { path: "howitstarted", element: <div><HowItStarted /></div> },
     { path: "events", element: <Event /> },
-    { path: "events/:id", element: <EventDetailPage /> }, // Add this line for event detail page
+    { path: "events/:id", element: <EventDetailPage /> },
     { path: "community-page", element: <CommunityPage /> },
     { path: "community-main", element: <Community /> },
     { path: "register", element: <Community /> },
@@ -88,16 +89,13 @@ const LandingRoutes = {
     { path: "test", element: <Timeline events={timelineData} /> },
     { path: "login", element: <Login /> },
     { path: "forget-password", element: <ForgetPassword /> },
-    // Member profile route - this should come BEFORE the wildcard route
     { path: "profile/:id", element: <MemberProfile /> },
-
-    // Wildcard route should be last
     { path: "*", element: <NotFound /> },
   ],
 };
 
 const router = createBrowserRouter([
-  LandingRoutes,  // ✅ Fix: Use object directly, no spread operator
+  LandingRoutes,
   AdminRoutes,
   CommunityRoutes,
   CoordinatorRoutes,
