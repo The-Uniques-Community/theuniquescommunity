@@ -1,6 +1,7 @@
 /**
  * @file CacheContext.jsx
  * Context to monitor network status and cached entity states.
+ * Provides resilient online/offline state tracking with reconnect notifications.
  */
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
@@ -9,6 +10,7 @@ import { subscribeCacheStatus } from "@/utils/cache/networkFirst";
 
 const CacheContext = createContext({
   isOnline: true,
+  justReconnected: false,
   cachedEntities: {},
   hasCachedData: false,
   refreshTimestamp: null,
@@ -17,30 +19,47 @@ const CacheContext = createContext({
 
 export const CacheProvider = ({ children }) => {
   const [isOnline, setIsOnline] = useState(
-    typeof navigator !== "undefined" ? navigator.onLine : true
+    typeof navigator !== "undefined" ? navigator.onLine !== false : true
   );
+  const [justReconnected, setJustReconnected] = useState(false);
   const [cachedEntities, setCachedEntities] = useState({});
   const [refreshTimestamp, setRefreshTimestamp] = useState(Date.now());
 
   // Listen for browser online / offline transitions
   useEffect(() => {
+    let reconnectTimer = null;
+
     const handleOnline = () => {
       setIsOnline(true);
-      // Trigger refresh when back online
+      setJustReconnected(true);
       setRefreshTimestamp(Date.now());
+
+      // Trigger automatic background revalidation when back online
+      window.dispatchEvent(new CustomEvent("tu-cache-retry-all"));
+
+      // Auto-dismiss the "Back Online" notification after 3.5 seconds
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      reconnectTimer = setTimeout(() => {
+        setJustReconnected(false);
+      }, 3500);
     };
-    const handleOffline = () => setIsOnline(false);
+
+    const handleOffline = () => {
+      setIsOnline(false);
+      setJustReconnected(false);
+    };
 
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
 
     return () => {
+      if (reconnectTimer) clearTimeout(reconnectTimer);
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
   }, []);
 
-  // Listen to networkFirst events
+  // Listen to networkFirst/SWR events
   useEffect(() => {
     const unsubscribe = subscribeCacheStatus((detail) => {
       if (!detail || !detail.cacheKey) return;
@@ -60,7 +79,7 @@ export const CacheProvider = ({ children }) => {
             },
           };
         } else {
-          // If key wasn't in cachedEntities, avoid creating new object reference
+          // Fresh network response arrived: clear cached status for this entity
           if (!prev[detail.cacheKey]) {
             return prev;
           }
@@ -85,11 +104,12 @@ export const CacheProvider = ({ children }) => {
 
   const contextValue = useMemo(() => ({
     isOnline,
+    justReconnected,
     cachedEntities,
     hasCachedData,
     refreshTimestamp,
     retryAll,
-  }), [isOnline, cachedEntities, hasCachedData, refreshTimestamp, retryAll]);
+  }), [isOnline, justReconnected, cachedEntities, hasCachedData, refreshTimestamp, retryAll]);
 
   return (
     <CacheContext.Provider value={contextValue}>

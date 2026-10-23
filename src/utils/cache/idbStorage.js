@@ -9,13 +9,17 @@ const DB_NAME = "tu_community_cache_db";
 const DB_VERSION = 1;
 const STORE_NAME = "app_cache";
 
+export const isIndexedDBSupported = () => {
+  return typeof window !== "undefined" && Boolean(window.indexedDB);
+};
+
 /**
  * Opens or initializes the IndexedDB database.
  * @returns {Promise<IDBDatabase>}
  */
 const openDB = () => {
   return new Promise((resolve, reject) => {
-    if (typeof window === "undefined" || !window.indexedDB) {
+    if (!isIndexedDBSupported()) {
       return reject(new Error("IndexedDB is not supported in this environment"));
     }
 
@@ -39,6 +43,7 @@ const openDB = () => {
  * @returns {Promise<{ data: any, timestamp: number } | null>}
  */
 export const getCache = async (key) => {
+  if (!isIndexedDBSupported()) return null;
   try {
     const db = await openDB();
     return new Promise((resolve, reject) => {
@@ -72,6 +77,7 @@ export const getCache = async (key) => {
  * @returns {Promise<boolean>}
  */
 export const setCache = async (key, data) => {
+  if (!isIndexedDBSupported()) return false;
   try {
     const db = await openDB();
     return new Promise((resolve, reject) => {
@@ -99,6 +105,7 @@ export const setCache = async (key, data) => {
  * @returns {Promise<boolean>}
  */
 export const deleteCache = async (key) => {
+  if (!isIndexedDBSupported()) return false;
   try {
     const db = await openDB();
     return new Promise((resolve, reject) => {
@@ -120,6 +127,7 @@ export const deleteCache = async (key) => {
  * @returns {Promise<boolean>}
  */
 export const clearAllCache = async () => {
+  if (!isIndexedDBSupported()) return false;
   try {
     const db = await openDB();
     return new Promise((resolve, reject) => {

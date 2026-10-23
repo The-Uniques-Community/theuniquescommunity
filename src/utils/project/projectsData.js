@@ -434,12 +434,12 @@ export const getStoredProjects = () => {
 
 // Fetch latest projects from MongoDB backend API via Network-First approach
 export const fetchProjects = async () => {
-  const effectiveBaseUrl = BASE_URL ? BASE_URL.replace(/\/+$/, "") : "https://the-uniques-portal.vercel.app";
+  const effectiveBaseUrl = BASE_URL ? BASE_URL.replace(/\/+$/, "") : "";
   const result = await networkFirstFetch({
     cacheKey: PROJECTS_CACHE_KEY,
     legacyKey: LEGACY_STORAGE_KEY,
     fallbackDefault: INITIAL_PROJECTS.map(normalizeProject),
-    timeoutMs: 8000,
+    timeoutMs: 10000,
     fetcher: (signal) => axios.get(`${effectiveBaseUrl}/api/projects`, { signal }),
     transform: (data) => {
       if (Array.isArray(data)) {
