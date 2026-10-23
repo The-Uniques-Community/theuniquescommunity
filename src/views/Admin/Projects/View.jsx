@@ -58,6 +58,7 @@ import {
   PROJECT_BATCHES,
   PROJECT_CATEGORIES,
 } from "@/utils/project/projectsData";
+import { getSafeImageUrl } from "@/utils/imageHelper";
 
 const ProjectView = () => {
   const { id } = useParams();
@@ -139,7 +140,7 @@ const ProjectView = () => {
       githubUrl: project.githubUrl || "https://github.com/theuniquesofflicial",
       image: project.image || "",
     });
-    setImagePreview(project.image || "");
+    setImagePreview(project.image ? getSafeImageUrl(project.image, "/projects/unicare.webp") : "");
     setFormErrors({});
     setEditOpen(true);
   };
@@ -543,11 +544,11 @@ const ProjectView = () => {
               {/* Centered Image with Zoom Control */}
               <Box
                 component="img"
-                src={project.image || "/projects/unicare.webp"}
+                src={getSafeImageUrl(project.image, "/projects/unicare.webp")}
                 alt={project.title}
                 onError={(e) => {
-                  e.currentTarget.src =
-                    "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80";
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = "/projects/unicare.webp";
                 }}
                 sx={{
                   maxWidth: "92%",
@@ -1276,6 +1277,10 @@ const ProjectView = () => {
                     component="img"
                     src={imagePreview}
                     alt="Preview"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = "/projects/unicare.webp";
+                    }}
                     sx={{
                       maxWidth: "100%",
                       maxHeight: { xs: 150, sm: 200 },

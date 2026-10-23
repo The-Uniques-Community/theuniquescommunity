@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import CallToAction from "../homComponents/CallToAction";
 import { getStoredProjects, fetchProjects } from "@/utils/project/projectsData";
 import { getStoredBatches, fetchBatches } from "@/utils/batch/batchesData";
+import { getSafeImageUrl } from "@/utils/imageHelper";
 
 export const PROJECTS_DATA = [
   {
@@ -337,10 +338,14 @@ const Projects = () => {
                 {/* Top Image with Rounded Corners & Cutout Circular Arrow Button */}
                 <div className="relative rounded-[26px] overflow-hidden aspect-[16/10] bg-slate-200 dark:bg-slate-800">
                   <img
-                    src={project.image}
+                    src={getSafeImageUrl(project.image, "/projects/unicare.webp")}
                     alt={project.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = "/projects/unicare.webp";
+                    }}
                   />
 
                   {/* Single Smooth Cutout Notch for Circular Button */}

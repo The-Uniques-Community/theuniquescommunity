@@ -18,6 +18,7 @@ import { FaGithub } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import CallToAction from "../homComponents/CallToAction";
 import { getProjectById, fetchProjects } from "@/utils/project/projectsData";
+import { getSafeImageUrl } from "@/utils/imageHelper";
 
 const getNameInitials = (name) => {
   if (!name) return "TU";
@@ -130,7 +131,7 @@ const ProjectDetails = () => {
 
   // Fallbacks for data fields
   const title = project.title || "Project Title";
-  const image = project.image || "/projects/unicare.webp";
+  const image = getSafeImageUrl(project.image, "/projects/unicare.webp");
   const batch = project.batch || "The Uniques Community";
   const category = project.category || "Web Application";
   const overview =
@@ -229,8 +230,8 @@ const ProjectDetails = () => {
             alt={title}
             className="w-full h-full object-contain object-center transition-transform duration-500 group-hover:scale-[1.01]"
             onError={(e) => {
-              e.currentTarget.src =
-                "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80";
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "/projects/unicare.webp";
             }}
           />
         </div>

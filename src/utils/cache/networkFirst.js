@@ -7,7 +7,7 @@
  * status events to trigger transparent offline UI indicators.
  */
 
-import { getCache, setCache, migrateFromLocalStorage } from "./idbStorage";
+import { getCache, setCache, migrateFromLocalStorage } from "./idbStorage.js";
 
 export const CACHE_STATUS_EVENT = "tu-cache-status-updated";
 

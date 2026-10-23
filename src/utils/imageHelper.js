@@ -1,4 +1,4 @@
-import { BASE_URL } from "@/config";
+import { BASE_URL } from "../config.js";
 
 /**
  * Extracts a Google Drive file ID from an object, URL, or raw ID string.
@@ -9,6 +9,7 @@ import { BASE_URL } from "@/config";
  * - Open/Thumbnail URLs: https://drive.google.com/open?id=XYZ or thumbnail?id=XYZ
  * - Usercontent URLs: https://drive.usercontent.google.com/download?id=XYZ
  * - Googleusercontent: https://lh3.googleusercontent.com/d/XYZ
+ * - Proxy URLs/paths: /api/image-proxy/XYZ or https://domain/api/image-proxy/XYZ
  * - Raw Google Drive file IDs (alphanumeric string of length >= 20 without / or ?)
  */
 export const extractDriveFileId = (source) => {
@@ -43,7 +44,13 @@ export const extractDriveFileId = (source) => {
     return dPathMatch[1];
   }
 
-  // Pattern 3: If it's a raw Drive ID without slashes, queries, or whitespace, length >= 20
+  // Pattern 3: Image proxy path /api/image-proxy/:fileId
+  const proxyMatch = trimmed.match(/(?:^|\/)api\/image-proxy\/([a-zA-Z0-9_-]+)/i);
+  if (proxyMatch && proxyMatch[1]) {
+    return proxyMatch[1];
+  }
+
+  // Pattern 4: If it's a raw Drive ID without slashes, queries, or whitespace, length >= 20
   if (
     !trimmed.includes("/") &&
     !trimmed.includes("?") &&
@@ -63,15 +70,39 @@ export const extractDriveFileId = (source) => {
  */
 export const getSafeImageUrl = (source, fallback = "/placeholder.svg") => {
   if (!source) return fallback;
+  if (typeof source === "string" && !source.trim()) return fallback;
 
-  // 1. If it's a Drive file or contains a Drive ID, always route through backend image proxy
-  const fileId = extractDriveFileId(source);
-  if (fileId) {
-    return `${BASE_URL}/api/image-proxy/${fileId}`;
+  // 1. If it's already an absolute image proxy URL, preserve it cleanly
+  if (typeof source === "string") {
+    const trimmed = source.trim();
+    if (
+      (trimmed.startsWith("http://") || trimmed.startsWith("https://")) &&
+      trimmed.includes("/api/image-proxy/")
+    ) {
+      return trimmed;
+    }
   }
 
-  // 2. If it's an object with a non-drive URL
-  if (typeof source === "object") {
+  if (typeof source === "object" && source !== null) {
+    const rawUrl = source.fileUrl || source.url || source.imageUrl || source.src || source.image;
+    if (
+      typeof rawUrl === "string" &&
+      (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) &&
+      rawUrl.includes("/api/image-proxy/")
+    ) {
+      return rawUrl.trim();
+    }
+  }
+
+  // 2. If it's a Drive file, contains a Drive ID, or is a relative image-proxy path, route through backend image proxy
+  const fileId = extractDriveFileId(source);
+  if (fileId) {
+    const prefix = BASE_URL ? BASE_URL.replace(/\/+$/, "") : "";
+    return `${prefix}/api/image-proxy/${fileId}`;
+  }
+
+  // 3. If it's an object with a non-drive URL
+  if (typeof source === "object" && source !== null) {
     const rawUrl = source.fileUrl || source.url || source.imageUrl || source.src;
     if (
       rawUrl &&
@@ -84,7 +115,7 @@ export const getSafeImageUrl = (source, fallback = "/placeholder.svg") => {
     return fallback;
   }
 
-  // 3. If it's already an external non-Drive URL or asset path
+  // 4. If it's already an external non-Drive URL or asset path
   if (typeof source === "string") {
     const trimmed = source.trim();
     if (

@@ -1,7 +1,8 @@
 import axios from "axios";
-import { BASE_URL } from "@/config";
-import { networkFirstFetch, registerCacheFetcher } from "@/utils/cache/networkFirst";
-import { setCache, getCache } from "@/utils/cache/idbStorage";
+import { BASE_URL } from "../../config.js";
+import { networkFirstFetch, registerCacheFetcher } from "../cache/networkFirst.js";
+import { setCache, getCache } from "../cache/idbStorage.js";
+import { getSafeImageUrl } from "../imageHelper.js";
 
 export const INITIAL_PROJECTS = [
   {
@@ -380,12 +381,16 @@ export const PROJECT_CATEGORIES = [
 const PROJECTS_CACHE_KEY = "tu_community_projects";
 const LEGACY_STORAGE_KEY = "tu_community_projects";
 
-// Normalizes project objects so both id and _id work seamlessly
-const normalizeProject = (p) => ({
-  ...p,
-  id: p._id || p.id,
-  _id: p._id || p.id,
-});
+// Normalizes project objects so both id and _id work seamlessly and images are safe
+export const normalizeProject = (p) => {
+  if (!p || typeof p !== "object") return p;
+  return {
+    ...p,
+    id: p._id || p.id,
+    _id: p._id || p.id,
+    image: getSafeImageUrl(p.image, "/projects/unicare.webp"),
+  };
+};
 
 // Helper to merge raw items with INITIAL_PROJECTS
 const mergeWithInitialProjects = (items) => {
@@ -505,7 +510,7 @@ export const updateProject = async (id, projectData) => {
   const existing = getStoredProjects();
   const updated = existing.map((p) =>
     String(p.id) === String(id) || String(p._id) === String(id)
-      ? { ...p, ...projectData }
+      ? normalizeProject({ ...p, ...projectData })
       : p
   );
   inMemoryProjects = updated;
