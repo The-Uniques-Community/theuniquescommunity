@@ -381,6 +381,9 @@ export const PROJECT_CATEGORIES = [
 const PROJECTS_CACHE_KEY = "tu_community_projects";
 const LEGACY_STORAGE_KEY = "tu_community_projects";
 
+const cleanTitle = (str) =>
+  (str || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+
 // Normalizes project objects so both id and _id work seamlessly and images are safe
 export const normalizeProject = (p) => {
   if (!p || typeof p !== "object") return p;
@@ -393,17 +396,22 @@ export const normalizeProject = (p) => {
 };
 
 // Helper to merge raw items with INITIAL_PROJECTS
-const mergeWithInitialProjects = (items) => {
+export const mergeWithInitialProjects = (items) => {
   if (!Array.isArray(items) || items.length === 0) {
     return INITIAL_PROJECTS.map(normalizeProject);
   }
   return items.map((item) => {
+    const itemTitleClean = cleanTitle(item.title);
     const initialMatch = INITIAL_PROJECTS.find(
-      (init) => String(init.id) === String(item.id) || init.title === item.title
+      (init) =>
+        String(init.id) === String(item.id) ||
+        (itemTitleClean && cleanTitle(init.title) === itemTitleClean)
     );
     return normalizeProject({
       ...(initialMatch || {}),
       ...item,
+      // Ensure backend image takes strict precedence if present and non-empty
+      image: item.image || (initialMatch ? initialMatch.image : "/projects/unicare.webp"),
     });
   });
 };
@@ -426,12 +434,13 @@ export const getStoredProjects = () => {
 
 // Fetch latest projects from MongoDB backend API via Network-First approach
 export const fetchProjects = async () => {
+  const effectiveBaseUrl = BASE_URL ? BASE_URL.replace(/\/+$/, "") : "https://the-uniques-portal.vercel.app";
   const result = await networkFirstFetch({
     cacheKey: PROJECTS_CACHE_KEY,
     legacyKey: LEGACY_STORAGE_KEY,
     fallbackDefault: INITIAL_PROJECTS.map(normalizeProject),
-    timeoutMs: 3500,
-    fetcher: (signal) => axios.get(`${BASE_URL}/api/projects`, { signal }),
+    timeoutMs: 8000,
+    fetcher: (signal) => axios.get(`${effectiveBaseUrl}/api/projects`, { signal }),
     transform: (data) => {
       if (Array.isArray(data)) {
         return mergeWithInitialProjects(data);

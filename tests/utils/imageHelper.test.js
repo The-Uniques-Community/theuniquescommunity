@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { extractDriveFileId, getSafeImageUrl } from "../../src/utils/imageHelper.js";
+import { extractDriveFileId, getSafeImageUrl, DEFAULT_PROXY_BASE } from "../../src/utils/imageHelper.js";
 import { BASE_URL } from "../../src/config.js";
 
 describe("imageHelper seam S1", () => {
@@ -58,6 +58,10 @@ describe("imageHelper seam S1", () => {
       const fullUrl = `https://the-uniques-portal.vercel.app/api/image-proxy/${sampleFileId}`;
       const result = getSafeImageUrl(fullUrl);
       assert.strictEqual(result, fullUrl);
+    });
+
+    it("verifies DEFAULT_PROXY_BASE constant is set to canonical portal domain", () => {
+      assert.strictEqual(DEFAULT_PROXY_BASE, "https://the-uniques-portal.vercel.app");
     });
 
     it("case g: preserves local static asset path", () => {

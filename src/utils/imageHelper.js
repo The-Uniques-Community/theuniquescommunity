@@ -1,5 +1,7 @@
 import { BASE_URL } from "../config.js";
 
+export const DEFAULT_PROXY_BASE = "https://the-uniques-portal.vercel.app";
+
 /**
  * Extracts a Google Drive file ID from an object, URL, or raw ID string.
  * Supports:
@@ -97,7 +99,8 @@ export const getSafeImageUrl = (source, fallback = "/placeholder.svg") => {
   // 2. If it's a Drive file, contains a Drive ID, or is a relative image-proxy path, route through backend image proxy
   const fileId = extractDriveFileId(source);
   if (fileId) {
-    const prefix = BASE_URL ? BASE_URL.replace(/\/+$/, "") : "";
+    const rawBase = BASE_URL && typeof BASE_URL === "string" ? BASE_URL.trim() : "";
+    const prefix = rawBase ? rawBase.replace(/\/+$/, "") : DEFAULT_PROXY_BASE;
     return `${prefix}/api/image-proxy/${fileId}`;
   }
 

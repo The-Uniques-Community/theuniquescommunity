@@ -1,10 +1,10 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { normalizeProject, getProjectById } from "../../src/utils/project/projectsData.js";
+import { normalizeProject, getProjectById, mergeWithInitialProjects } from "../../src/utils/project/projectsData.js";
 import { BASE_URL } from "../../src/config.js";
 
 describe("projectsData seam S2", () => {
-  const normalizedBaseUrl = BASE_URL ? BASE_URL.replace(/\/+$/, "") : "";
+  const normalizedBaseUrl = BASE_URL ? BASE_URL.replace(/\/+$/, "") : "https://the-uniques-portal.vercel.app";
   const sampleFileId = "1PqxZ9aOCL1pYKpFbzZkSgiH_x8ar13Dz";
 
   describe("normalizeProject", () => {
@@ -72,6 +72,31 @@ describe("projectsData seam S2", () => {
       const resultNumeric = normalizeProject(numericItem);
       assert.strictEqual(resultNumeric.id, 42);
       assert.strictEqual(resultNumeric._id, 42);
+    });
+  });
+
+  describe("mergeWithInitialProjects", () => {
+    it("merges backend item with initial project matching case-insensitively and preserves backend image", () => {
+      const backendItems = [
+        {
+          _id: "6adb02aaa1805aee0a0aa3b8",
+          title: "Uniques eGyan",
+          image: `/api/image-proxy/${sampleFileId}`,
+          technologies: ["REACT", "NODE.JS", "MONGODB"],
+        },
+      ];
+
+      const merged = mergeWithInitialProjects(backendItems);
+      assert.strictEqual(merged.length, 1);
+      assert.strictEqual(merged[0]._id, "6adb02aaa1805aee0a0aa3b8");
+      assert.strictEqual(merged[0].title, "Uniques eGyan");
+      // The backend image must override any initial default image
+      assert.strictEqual(
+        merged[0].image,
+        `${normalizedBaseUrl}/api/image-proxy/${sampleFileId}`
+      );
+      // Features or rich metadata from initial match should be inherited
+      assert.ok(Array.isArray(merged[0].features), "Should inherit features from initial project");
     });
   });
 
