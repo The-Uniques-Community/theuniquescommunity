@@ -25,61 +25,19 @@ import TimelineIcon from "@mui/icons-material/Timeline";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import { LogIn, LogOut, ChevronRight, Sun, Moon } from "lucide-react";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import axios from "axios";
+import { ExternalLink, ChevronRight, Sun, Moon } from "lucide-react";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { BASE_URL } from "@/config";
+import { PORTAL_URL } from "@/config";
 import { motion, AnimatePresence } from "framer-motion";
 import { useThemeContext } from "../../theme/ThemeProvider";
 
 const Navbar = () => {
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
   const [activeLink, setActiveLink] = React.useState("");
-  const [user, setUser] = useState({}); // State to hold user data
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
   const { isDarkMode, toggleTheme } = useThemeContext();
 
-  // Check authentication status on component mount
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
-
-  // Function to check if user is logged in
-  const checkAuthStatus = async () => {
-    try {
-      const response = await axios.get(`${BASE_URL}/auth/verify_user`, {
-        withCredentials: true,
-      });
-      setUser(response?.data.user);
-      setIsLoggedIn(true);
-    } catch {
-      setUser({});
-      setIsLoggedIn(false);
-    }
-  };
-
-  // Handle logout
-  const handleLogout = async () => {
-    try {
-      localStorage.removeItem("token");
-      await axios.post(
-        `${BASE_URL}/auth/logout`,
-        {},
-        { withCredentials: true }
-      );
-      setUser({}); // Clear user data
-      setIsLoggedIn(false);
-    } catch (error) {
-      console.error("Logout failed:", error);
-      localStorage.removeItem("token");
-      setUser({});
-      setIsLoggedIn(false);
-    }
-  };
-
-  // Dynamically generate navItems based on auth status
+  // Dynamically generate navItems
   const generateNavItems = () => {
     // Base navigation items that are always shown
     const baseItems = [
@@ -96,26 +54,13 @@ const Navbar = () => {
       { text: "Contact", icon: <ContactMailIcon />, link: "/contact" },
     ];
 
-    const authItems = [];
-    if (isLoggedIn) {
-      authItems.push({
-        text: "Dashboard",
-        icon: <DashboardIcon />,
-        link: `/${user?.role || "member"}`,
-      });
-      authItems.push({
-        text: "Logout",
-        icon: <LogOut />,
-        onClick: handleLogout,
-        link: "#",
-      });
-    } else {
-      authItems.push({
-        text: "Login",
-        icon: <LogIn size={20} />,
-        link: "https://the-uniques-portal.vercel.app/",
-      });
-    }
+    const authItems = [
+      {
+        text: "Open Portal",
+        icon: <ExternalLink size={20} />,
+        link: PORTAL_URL,
+      },
+    ];
 
     return { baseItems, authItems };
   };
@@ -307,6 +252,8 @@ const Navbar = () => {
               component={item.onClick ? "button" : (item.link?.startsWith("http") ? "a" : Link)}
               to={!item.onClick && !item.link?.startsWith("http") ? item.link : undefined}
               href={!item.onClick && item.link?.startsWith("http") ? item.link : undefined}
+              target={item.link?.startsWith("http") ? "_blank" : undefined}
+              rel={item.link?.startsWith("http") ? "noopener noreferrer" : undefined}
               onClick={() => {
                 if (item.onClick) item.onClick();
                 setDrawerOpen(false);
@@ -314,8 +261,8 @@ const Navbar = () => {
               sx={{
                 borderRadius: "8px",
                 py: 1.5,
-                backgroundColor: item.text === "Login" ? "#CA0019" : "rgba(0,0,0,0.03)",
-                color: item.text === "Login" ? "white" : "text.primary",
+                backgroundColor: (item.text === "Login" || item.text === "Open Portal") ? "#CA0019" : "rgba(0,0,0,0.03)",
+                color: (item.text === "Login" || item.text === "Open Portal") ? "white" : "text.primary",
                 position: 'relative',
                 overflow: 'hidden',
                 zIndex: 1,

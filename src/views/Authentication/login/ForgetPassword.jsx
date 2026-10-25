@@ -29,7 +29,7 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { BASE_URL } from "@/config";
+import { BASE_URL, PORTAL_URL } from "@/config";
 import logo from "@/assets/logos/theuniquesCommunity.png";
 import bg from "@/assets/img/login/bg.png";
 
@@ -129,7 +129,7 @@ const ForgetPassword = () => {
         setActiveStep(0);
         setEmail("");
         resetFormStates();
-        window.location.href = "https://the-uniques-portal.vercel.app/";
+        window.location.href = PORTAL_URL;
       } else {
         setErrors({ submit: response.data.message || "Failed to reset password" });
         toast.error(response.data.message || "Failed to reset password");
@@ -471,7 +471,7 @@ const ForgetPassword = () => {
           
           <Button
             startIcon={<ArrowBack />}
-            onClick={() => { window.location.href = "https://the-uniques-portal.vercel.app/"; }}
+            onClick={() => { window.location.href = PORTAL_URL; }}
             sx={{ mb: 2 }}
           >
             Back to Login

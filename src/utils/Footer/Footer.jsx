@@ -3,6 +3,7 @@ import { FaLinkedinIn, FaTwitter, FaInstagram, FaGithub, FaWhatsapp } from "reac
 import logo from '../../assets/logos/theuniquesCommunity.png'
 import { Link } from "react-router";
 import { WhatsApp } from "@mui/icons-material";
+import { PORTAL_URL } from "@/config";
 
 const Footer = () => {
     const theme = useTheme();
@@ -34,7 +35,7 @@ const Footer = () => {
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/community-main">Community Page</Link></li>
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/batches">Batches</Link></li>
             <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><Link to="/howitstarted">How It Started</Link></li>
-            <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><a href="https://the-uniques-portal.vercel.app/">Member Login</a></li>
+            <li className="hover:text-slate-900 dark:hover:text-white hover:underline transition-colors"><a href={PORTAL_URL} target="_blank" rel="noopener noreferrer">Open Portal</a></li>
           </ul>
         </div>
 

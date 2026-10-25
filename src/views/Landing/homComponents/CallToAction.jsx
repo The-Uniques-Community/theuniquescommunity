@@ -1,5 +1,6 @@
 import Button from '@/utils/Buttons/Button'
 import ContainerFull from '@/utils/Container/ContainerFull'
+import { PORTAL_URL } from '@/config'
 
 const CallToAction = () => {
   return (
@@ -12,14 +13,14 @@ const CallToAction = () => {
                 <p className='text-white p-3 text-lg'>Join the community of unique individuals and learn from the best</p>
                 <div className="flex justify-center items-center mt-2">
                   <Button
-                    path="https://the-uniques-portal.vercel.app/"
+                    path={PORTAL_URL}
                     color={"white"}
                     bgColor={"#ca0019"}
                     border={4}
                     borderColor={"#ca0019"}
                     iconColor={"black"}
                   >
-                    <span>Login</span>
+                    <span>Open Portal</span>
                   </Button>
                 </div>
           </div>

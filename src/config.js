@@ -10,12 +10,32 @@ export const BASE_URL =
     ? String(import.meta.env.VITE_API_BASE_URL).trim().replace(/\/+$/, "")
     : "https://the-uniques-portal.vercel.app";
 
-// Log active backend URL for immediate debugging in browser console
+/**
+ * Resolved Portal Frontend URL.
+ * Directly targets the configured VITE_PORTAL_URL or VITE_PORTAL_FRONTEND_URL if set.
+ * Otherwise defaults to the canonical hosted portal frontend URL.
+ */
+export const PORTAL_URL =
+  (import.meta.env?.VITE_PORTAL_URL && String(import.meta.env.VITE_PORTAL_URL).trim() !== ""
+    ? String(import.meta.env.VITE_PORTAL_URL).trim().replace(/\/+$/, "")
+    : null) ||
+  (import.meta.env?.VITE_PORTAL_FRONTEND_URL && String(import.meta.env.VITE_PORTAL_FRONTEND_URL).trim() !== ""
+    ? String(import.meta.env.VITE_PORTAL_FRONTEND_URL).trim().replace(/\/+$/, "")
+    : null) ||
+  "https://the-uniques-portal.vercel.app";
+
+// Log active backend & portal URLs for immediate debugging in browser console
 console.log(
   `%c[API Config]%c Active Backend URL: %c${BASE_URL}`,
   "color: #ca0019; font-weight: bold;",
   "color: inherit;",
   "color: #0284c7; font-weight: bold; text-decoration: underline;"
+);
+console.log(
+  `%c[Portal Config]%c Active Portal URL: %c${PORTAL_URL}`,
+  "color: #ca0019; font-weight: bold;",
+  "color: inherit;",
+  "color: #10b981; font-weight: bold; text-decoration: underline;"
 );
 
 axios.defaults.withCredentials = true;
