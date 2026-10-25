@@ -7,84 +7,6 @@ import axios from 'axios';
 import { BASE_URL } from '@/config';
 import { getSafeImageUrl } from '@/utils/imageHelper';
 import { getStoredBatches, fetchBatches } from '@/utils/batch/batchesData';
-import ronitImg from "@/assets/img/Success Stories avatars/ronit-jaiprakash.webp";
-import mantashaImg from "@/assets/img/Success Stories avatars/mantasha-tabassum.webp";
-import taniyaImg from "@/assets/img/Success Stories avatars/Taniya_singh.webp";
-
-const DEFAULT_TRAINERS = [
-  {
-    id: 1,
-    name: "Ronit Jaiprakash",
-    position: "Solution Consultant @ Caelius Consulting",
-    program: "Uniques 1.0",
-    course: "Cloud Architecture & Full Stack",
-    image: ronitImg,
-    bio: "Solution Consultant & Technical Associate at Caelius Consulting, Full Stack Developer at Godigitify, and Instructor at Techlearns. Passionate about designing scalable cloud applications, distributed systems, and coaching future software engineers in modern technology stacks.",
-    expertise: ["Solution Consultant", "Full Stack Developer", "Technical Associate", "Cloud Architecture", "System Design", "Node.js", "React", "AWS"],
-    social: { linkedin: "https://www.linkedin.com/in/ronit-jaiprakash/" },
-    isIndustryPro: true
-  },
-  {
-    id: 2,
-    name: "Mantasha Tabassum",
-    position: "Solution Consultant @ Caelius Consulting",
-    program: "Uniques 1.0",
-    course: "MuleSoft Integration & AI Workflows",
-    image: mantashaImg,
-    bio: "Solution Consultant @ Caelius Consulting, connecting MuleSoft, AI and end systems for seamless workflows, technical trainer, application developer. Experienced in designing enterprise integrations and guiding students through modern enterprise stacks.",
-    expertise: ["MuleSoft & AI", "Technical Trainer", "App Developer", "API Integration", "Enterprise Systems", "Java", "Salesforce", "Cloud Workflows"],
-    social: { linkedin: "https://www.linkedin.com/in/mantasha-tabassum/" },
-    isIndustryPro: true
-  },
-  {
-    id: 3,
-    name: "Nishant Singh",
-    position: "Campus Tech Lead",
-    program: "Uniques 3.0",
-    course: "Video Editing & Motion Graphics",
-    image: `${BASE_URL}/api/image-proxy/1SH3BoI8y1FcIPnOq4--cwjLxAx_MxcWB`,
-    bio: "Talented student mentor specializing in Adobe video editing suite, helping peers create professional-grade video content. Dedicated to nurturing visual storytelling, post-production workflows, and creative media production.",
-    expertise: ["Adobe Premiere", "After Effects", "Video Editing", "Motion Graphics", "Content Strategy", "Color Grading", "Visual Storytelling", "Sound Design"],
-    social: { linkedin: "https://www.linkedin.com/in/nishant-singh-14769a208/" },
-    isIndustryPro: false
-  },
-  {
-    id: 4,
-    name: "Taniya Singh",
-    position: "Technical Associate @ Caelius Consulting",
-    program: "Uniques 2.0",
-    course: "UI/UX & Frontend Architecture",
-    image: taniyaImg,
-    bio: "Technical Associate @ Caelius Consulting, web developer, graphic designer. Focused on building intuitive user interfaces, modern frontend architectures, and coaching students on design systems and UI/UX design.",
-    expertise: ["Web Development", "Graphic Design", "UI/UX", "Figma", "Frontend Architecture", "Brand Identity", "Design Systems", "Prototyping"],
-    social: { linkedin: "https://www.linkedin.com/in/taniya-singh/" },
-    isIndustryPro: true
-  },
-  {
-    id: 5,
-    name: "Aryan Kamboj",
-    position: "Frontend Champion",
-    program: "Uniques 3.0",
-    course: "Modern React Ecosystem",
-    image: `${BASE_URL}/api/image-proxy/1qoV-I6YPWaKM-58pOrWhLRHX8KIsRKv0`,
-    bio: "Rising talent in React ecosystem development with a passion for teaching fellow students modern frontend techniques, responsive component patterns, and state-of-the-art web applications.",
-    expertise: ["React", "Next.js", "UI Architecture", "TypeScript", "Tailwind CSS", "State Management", "Redux", "REST APIs"],
-    social: { linkedin: "https://www.linkedin.com/in/aryan-kammboz-110521252/" },
-    isIndustryPro: false
-  },
-  {
-    id: 6,
-    name: "Riya Singh",
-    position: "Programming Leader",
-    program: "Uniques 4.0",
-    course: "C++ & Data Structures",
-    image: `${BASE_URL}/api/image-proxy/1AhUVLUwrplop3WRvTsagm6aR6WPZaYOK`,
-    bio: "Talented student mentor sharing practical C++ programming knowledge, data structures, algorithms, and fostering a collaborative learning environment for aspiring software developers.",
-    expertise: ["C++", "STL", "Logic Building", "Data Structures", "Algorithms", "Competitive Programming", "Problem Solving", "System Concepts"],
-    social: { linkedin: "https://www.linkedin.com/in/riya-singh-5b71b7248/" },
-    isIndustryPro: false
-  }
-];
 
 const TrainerModal = ({ trainer, isOpen, onClose, isDarkMode }) => {
   const [mounted, setMounted] = useState(false);
@@ -518,7 +440,9 @@ const Trainers = () => {
   const { isDarkMode } = useThemeContext();
   const [selectedBatch, setSelectedBatch] = useState("All Batches");
   const [isOpen, setIsOpen] = useState(false);
-  const [trainers, setTrainers] = useState(DEFAULT_TRAINERS);
+  const [trainers, setTrainers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [storedBatches, setStoredBatches] = useState(() => getStoredBatches());
   const [selectedTrainer, setSelectedTrainer] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -540,6 +464,7 @@ const Trainers = () => {
 
     const loadTrainers = async () => {
       try {
+        setLoading(true);
         const response = await axios.get(`${BASE_URL}/api/admin/trainers/all-trainers`);
         if (response.data && Array.isArray(response.data) && response.data.length > 0) {
           const formatted = response.data.map((t, idx) => {
@@ -589,9 +514,16 @@ const Trainers = () => {
             };
           });
           setTrainers(formatted);
+          setError(null);
+        } else {
+          setTrainers([]);
         }
       } catch (err) {
-        console.warn("Using default trainers list:", err?.message || err);
+        console.warn("Could not load trainers from backend:", err?.message || err);
+        setError("Unable to load trainers at this time.");
+        setTrainers([]);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -700,11 +632,23 @@ const Trainers = () => {
           </AnimatePresence>
         </motion.div>
 
-        {filteredTrainers.length === 0 && (
+        {loading ? (
           <div className="py-24 text-center">
-            <h3 className="text-2xl font-black text-gray-500 uppercase tracking-widest">No Trainers Found in this Batch</h3>
+            <div className="w-10 h-10 border-4 border-gray-300 border-t-[#ca0019] rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-500 font-medium">Loading trainers...</p>
           </div>
-        )}
+        ) : error ? (
+          <div className="py-24 text-center">
+            <h3 className="text-xl font-bold text-red-500 mb-2">{error}</h3>
+            <p className="text-gray-400 text-sm">Please check your network connection or try again later.</p>
+          </div>
+        ) : filteredTrainers.length === 0 ? (
+          <div className="py-24 text-center">
+            <h3 className="text-2xl font-black text-gray-500 uppercase tracking-widest">
+              {selectedBatch === "All Batches" ? "No Trainers Available" : `No Trainers Found in ${selectedBatch}`}
+            </h3>
+          </div>
+        ) : null}
       </div>
 
       {/* Details Popup / Modal */}

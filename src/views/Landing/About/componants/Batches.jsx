@@ -74,8 +74,9 @@ const BatchProfile = () => {
           {/* Dropdown Section */}
           <FormControl sx={{ minWidth: 220, alignSelf: { xs: "stretch", md: "auto" } }}>
             <Select
-              value={value}
+              value={batchData.length > 0 ? value : 0}
               onChange={handleChange}
+              disabled={batchData.length === 0}
               sx={{
                 borderRadius: "12px",
                 color: isDarkMode ? "white" : "black",
@@ -104,104 +105,131 @@ const BatchProfile = () => {
                 }
               }}
             >
-              {batchData.map((batch, index) => (
-                <MenuItem
-                  key={index}
-                  value={index}
-                  sx={{
-                    fontWeight: 500,
-                    '&.Mui-selected': {
-                      backgroundColor: "rgba(202, 0, 25, 0.15)",
-                      color: "#CA0019",
-                      '&:hover': {
-                        backgroundColor: "rgba(202, 0, 25, 0.25)",
-                      }
-                    },
-                    '&:hover': {
-                      backgroundColor: isDarkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
-                    }
-                  }}
-                >
-                  {batch.label}
+              {batchData.length === 0 ? (
+                <MenuItem disabled value={0}>
+                  No Batches Available
                 </MenuItem>
-              ))}
+              ) : (
+                batchData.map((batch, index) => (
+                  <MenuItem
+                    key={index}
+                    value={index}
+                    sx={{
+                      fontWeight: 500,
+                      '&.Mui-selected': {
+                        backgroundColor: "rgba(202, 0, 25, 0.15)",
+                        color: "#CA0019",
+                        '&:hover': {
+                          backgroundColor: "rgba(202, 0, 25, 0.25)",
+                        }
+                      },
+                      '&:hover': {
+                        backgroundColor: isDarkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
+                      }
+                    }}
+                  >
+                    {batch.label}
+                  </MenuItem>
+                ))
+              )}
             </Select>
           </FormControl>
         </Box>
 
         {/* Dynamic Content */}
-        <Grid container spacing={4} alignItems="center" justifyContent="center" sx={{ marginTop: "1rem" }}>
-          {/* Left Section - Clean picture with no thick frame */}
-          <Grid item xs={12} sm={6} sx={{ textAlign: "center" }}>
-            <Box
-              onClick={() => setSelectedImageModal(currentBatch)}
-              sx={{
-                width: "100%",
-                borderRadius: "16px",
-                overflow: "hidden",
-                cursor: "pointer",
-                transition: "transform 0.3s ease",
-                "&:hover": {
-                  transform: "scale(1.015)",
-                }
-              }}
-            >
-              <img
-                src={currentBatch.image}
-                alt={currentBatch.title}
-                loading="lazy"
-                decoding="async"
-                style={{
+        {batchData.length === 0 ? (
+          <Box
+            sx={{
+              textAlign: "center",
+              py: 8,
+              px: 3,
+              borderRadius: "16px",
+              backgroundColor: isDarkMode ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+              border: isDarkMode ? "1px dashed rgba(255,255,255,0.15)" : "1px dashed rgba(0,0,0,0.15)",
+              mt: 2,
+            }}
+          >
+            <Typography variant="h6" sx={{ color: isDarkMode ? "rgba(255,255,255,0.7)" : "text.secondary", mb: 1, fontWeight: 600 }}>
+              No batch profiles available
+            </Typography>
+            <Typography variant="body2" sx={{ color: isDarkMode ? "rgba(255,255,255,0.5)" : "text.secondary" }}>
+              Batch showcase data is currently unavailable. Please check back later.
+            </Typography>
+          </Box>
+        ) : (
+          <Grid container spacing={4} alignItems="center" justifyContent="center" sx={{ marginTop: "1rem" }}>
+            {/* Left Section - Clean picture with no thick frame */}
+            <Grid item xs={12} sm={6} sx={{ textAlign: "center" }}>
+              <Box
+                onClick={() => setSelectedImageModal(currentBatch)}
+                sx={{
                   width: "100%",
-                  height: "auto",
-                  display: "block",
                   borderRadius: "16px",
-                  objectFit: "contain",
+                  overflow: "hidden",
+                  cursor: "pointer",
+                  transition: "transform 0.3s ease",
+                  "&:hover": {
+                    transform: "scale(1.015)",
+                  }
                 }}
-              />
-            </Box>
-          </Grid>
-
-          {/* Right Section */}
-          <Grid item xs={12} sm={6}>
-            <Typography
-              variant="h4"
-              sx={{
-                fontWeight: "bold",
-                marginBottom: "1rem",
-                color: isDarkMode ? "white" : theme.palette.text.primary,
-                fontSize: { xs: "1.2rem", sm: "1.5rem" }
-              }}
-            >
-              {currentBatch.title}
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                color: isDarkMode ? "rgba(255,255,255,0.7)" : theme.palette.text.secondary,
-                fontSize: { xs: "0.9rem", sm: "1.1rem" },
-                lineHeight: 1.8,
-                whiteSpace: "pre-line"
-              }}
-            >
-              {currentBatch.description}
-            </Typography>
-
-            {/* Know More Button */}
-            <Box sx={{ marginTop: "2.5rem" }}>
-              <Button
-                bgColor="#CA0019"
-                borderColor="#CA0019"
-                textColor="#fff"
-                iconColor="#CA0019"
-                color="#fff"
-                onClick={() => navigate("/batches")}
               >
-                Know More
-              </Button>
-            </Box>
+                <img
+                  src={currentBatch.image}
+                  alt={currentBatch.title}
+                  loading="lazy"
+                  decoding="async"
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    display: "block",
+                    borderRadius: "16px",
+                    objectFit: "contain",
+                  }}
+                />
+              </Box>
+            </Grid>
+
+            {/* Right Section */}
+            <Grid item xs={12} sm={6}>
+              <Typography
+                variant="h4"
+                sx={{
+                  fontWeight: "bold",
+                  marginBottom: "1rem",
+                  color: isDarkMode ? "white" : theme.palette.text.primary,
+                  fontSize: { xs: "1.2rem", sm: "1.5rem" }
+                }}
+              >
+                {currentBatch.title}
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: isDarkMode ? "rgba(255,255,255,0.7)" : theme.palette.text.secondary,
+                  fontSize: { xs: "0.9rem", sm: "1.1rem" },
+                  lineHeight: 1.8,
+                  whiteSpace: "pre-line"
+                }}
+              >
+                {currentBatch.description}
+              </Typography>
+
+              {/* Know More Button */}
+              <Box sx={{ marginTop: "2.5rem" }}>
+                <Button
+                  bgColor="#CA0019"
+                  borderColor="#CA0019"
+                  textColor="#fff"
+                  iconColor="#CA0019"
+                  color="#fff"
+                  onClick={() => navigate("/batches")}
+                >
+                  Know More
+                </Button>
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
+        )}
       </Container>
 
       {/* Fullscreen Lightbox Image Modal */}

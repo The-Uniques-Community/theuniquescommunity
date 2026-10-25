@@ -19,7 +19,10 @@ const index = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [members, setMembers] = useState([]);
   const [storedBatches, setStoredBatches] = useState(() => getStoredBatches());
-  const [selectedBatch, setSelectedBatch] = useState("The Uniques 1.0");
+  const [selectedBatch, setSelectedBatch] = useState(() => {
+    const batches = getStoredBatches();
+    return batches.length > 0 ? batches[0] : "";
+  });
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -32,13 +35,21 @@ const index = () => {
   useEffect(() => {
     // Initial fetch from backend API to get fresh coordinator updates
     fetchBatches().then((b) => {
-      if (b && Array.isArray(b)) setStoredBatches(b);
+      if (b && Array.isArray(b)) {
+        setStoredBatches(b);
+        if (b.length > 0 && (!selectedBatch || !b.includes(selectedBatch))) {
+          setSelectedBatch(b[0]);
+        }
+      }
     });
     fetchBatchProfiles();
 
     const handleBatchesUpdate = () => {
       const updated = getStoredBatches();
       setStoredBatches(updated);
+      if (updated.length > 0 && (!selectedBatch || !updated.includes(selectedBatch))) {
+        setSelectedBatch(updated[0]);
+      }
     };
     window.addEventListener("batches-updated", handleBatchesUpdate);
     window.addEventListener("batch-profiles-updated", handleBatchesUpdate);
@@ -46,29 +57,19 @@ const index = () => {
       window.removeEventListener("batches-updated", handleBatchesUpdate);
       window.removeEventListener("batch-profiles-updated", handleBatchesUpdate);
     };
-  }, []);
+  }, [selectedBatch]);
+
+  // Keep selectedBatch in sync if storedBatches change
+  useEffect(() => {
+    if (storedBatches.length > 0 && (!selectedBatch || !storedBatches.includes(selectedBatch))) {
+      setSelectedBatch(storedBatches[0]);
+    } else if (storedBatches.length === 0) {
+      setSelectedBatch("");
+    }
+  }, [storedBatches, selectedBatch]);
 
   // Define batches data dynamically with count information from API and local profiles
   const batchesData = useMemo(() => {
-    const defaultMeta = {
-      "The Uniques 1.0": {
-        icon: "🥇",
-        description: "The founding batch of The Uniques Community, established in 2021 with a vision to create a supportive learning environment for tech enthusiasts.",
-      },
-      "The Uniques 2.0": {
-        icon: "🥈",
-        description: "The second generation of The Uniques Community that continued the legacy with new innovations and community initiatives.",
-      },
-      "The Uniques 3.0": {
-        icon: "🥉",
-        description: "The newest members of The Uniques Community, bringing fresh perspectives and energy to our growing tech community.",
-      },
-      "The Uniques 4.0": {
-        icon: "🏅",
-        description: "The latest batch of The Uniques Community, driving innovation and collaboration in the tech space.",
-      },
-    };
-
     let profiles = [];
     try {
       profiles = getStoredBatchProfiles();
@@ -78,7 +79,7 @@ const index = () => {
 
     const icons = ["🥇", "🥈", "🥉", "🏅", "🚀", "🌟", "✨", "🎯", "🏆"];
 
-    return storedBatches.map((batchName, idx) => {
+    return (storedBatches || []).map((batchName, idx) => {
       const label = batchName.replace(/^The\s+/i, "");
       const profile = profiles.find(
         (p) =>
@@ -86,10 +87,9 @@ const index = () => {
           p.label?.toLowerCase() === label.toLowerCase()
       );
 
-      const icon = defaultMeta[batchName]?.icon || icons[idx] || "🎖️";
+      const icon = profile?.icon || icons[idx % icons.length] || "🎖️";
       const desc =
         profile?.description ||
-        defaultMeta[batchName]?.description ||
         `${batchName} of The Uniques Community, driving innovation, technical excellence, and collaboration.`;
 
       return {
@@ -161,6 +161,13 @@ const index = () => {
 
   // Fetch all members data
   useEffect(() => {
+    if (!selectedBatch) {
+      setMembers([]);
+      setTotalMembers(0);
+      setLoading(false);
+      return;
+    }
+
     const fetchMembers = async () => {
       try {
         setLoading(true);
@@ -209,7 +216,7 @@ const index = () => {
 
 
   const currentBatch = useMemo(() => {
-    return batchesData.find((batch) => batch.id === selectedBatch) || batchesData[0];
+    return batchesData.find((batch) => batch.id === selectedBatch) || batchesData[0] || null;
   }, [selectedBatch, batchesData]);
 
   // Achievement Card Component using MUI
@@ -243,9 +250,11 @@ const index = () => {
               <Typography variant="h6" component="h3" sx={{ fontWeight: 'medium', mb: 0.5 }}>
                 {title}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {description}
-              </Typography>
+              {description && (
+                <Typography variant="body2" color="text.secondary">
+                  {description}
+                </Typography>
+              )}
             </Box>
           </Box>
         </CardContent>
@@ -253,75 +262,65 @@ const index = () => {
     );
   };
 
-  // Using dummy achievement data
+  // Load achievements from current batch profile if available
   useEffect(() => {
-    const defaultAchievements = {
-      "All": [
-        {
-          id: "community-excellence",
-          title: "Community Excellence",
-          description: "Recognized for outstanding contributions to the tech ecosystem",
-          color: "rgb(59, 130, 246)"
-        }
-      ],
-      "The Uniques 1.0": [
-        {
-          id: "founding-milestone",
-          title: "Founding Milestone",
-          description: "Established the community and set the foundation for future growth",
-          color: "rgb(34, 197, 94)"
-        }
-      ],
-      "The Uniques 2.0": [
-        {
-          id: "community-growth",
-          title: "Community Growth",
-          description: "Expanded membership by 200% and introduced mentorship programs",
-          color: "rgb(168, 85, 247)"
-        }
-      ],
-      "The Uniques 3.0": [
-        {
-          id: "innovation-hub",
-          title: "Innovation Hub",
-          description: "Launched the innovation lab for members to collaborate on projects",
-          color: "rgb(249, 115, 22)"
-        }
-      ],
-      "The Uniques 4.0": [
-        {
-          id: "collaborative-leadership",
-          title: "Collaborative Leadership",
-          description: "Pioneered new initiatives and fostered cross-batch collaboration in 2024",
-          color: "rgb(239, 68, 68)"
-        }
-      ]
-    };
+    if (!selectedBatch) {
+      setAchievements([]);
+      return;
+    }
 
-    setAchievements(
-      defaultAchievements[selectedBatch] || [
-        {
-          id: `${selectedBatch}-milestone`,
-          title: "Technical Innovation",
-          description: `Empowering members of ${selectedBatch} with hands-on projects, advanced skills, and mentorship.`,
-          color: "rgb(202, 0, 25)",
-        },
-      ]
+    let profiles = [];
+    try {
+      profiles = getStoredBatchProfiles();
+    } catch (e) {
+      profiles = [];
+    }
+    const currentProf = profiles.find(
+      (p) =>
+        p.title?.toLowerCase() === selectedBatch?.toLowerCase() ||
+        p.label?.toLowerCase() === selectedBatch?.replace(/^The\s+/i, "").toLowerCase()
     );
-  }, [selectedBatch]);
 
-  // Function to retry both data fetches
+    if (currentProf?.achievements && Array.isArray(currentProf.achievements) && currentProf.achievements.length > 0) {
+      const mapped = currentProf.achievements.map((ach, idx) => {
+        if (typeof ach === 'string') {
+          return {
+            id: `${selectedBatch}-ach-${idx}`,
+            title: ach,
+            description: "",
+            color: currentProf.color || "#ca0019"
+          };
+        }
+        return {
+          id: ach.id || `${selectedBatch}-ach-${idx}`,
+          title: ach.title || "Achievement",
+          description: ach.description || "",
+          color: ach.color || currentProf.color || "#ca0019"
+        };
+      });
+      setAchievements(mapped);
+    } else {
+      setAchievements([]);
+    }
+  }, [selectedBatch, storedBatches]);
+
+  // Function to retry all data fetches
   const refreshData = () => {
-    // Reset state
     setMembers([]);
     setLoading(true);
     setError(null);
     setCountsLoading(true);
 
-    // Fetch both counts and members data
     const fetchAll = async () => {
       try {
-        // First fetch counts
+        const [freshBatches] = await Promise.all([
+          fetchBatches(),
+          fetchBatchProfiles()
+        ]);
+        if (freshBatches && Array.isArray(freshBatches)) {
+          setStoredBatches(freshBatches);
+        }
+
         try {
           const countsResponse = await axios.get(`${BASE_URL}/api/public/members/counts`);
           if (countsResponse.data.success) {
@@ -331,33 +330,34 @@ const index = () => {
           console.warn("Counts refresh warning:", cErr);
         }
 
-        // Then fetch members
-        let apiMembers = [];
-        try {
-          const membersResponse = await axios.get(`${BASE_URL}/api/public/members`, {
-            params: {
-              batch: selectedBatch !== "All" ? selectedBatch : undefined
+        if (selectedBatch) {
+          let apiMembers = [];
+          try {
+            const membersResponse = await axios.get(`${BASE_URL}/api/public/members`, {
+              params: {
+                batch: selectedBatch !== "All" ? selectedBatch : undefined
+              }
+            });
+            if (membersResponse.data.success) {
+              apiMembers = membersResponse.data.data || [];
             }
-          });
-          if (membersResponse.data.success) {
-            apiMembers = membersResponse.data.data || [];
+          } catch (mErr) {
+            console.warn("Members refresh warning:", mErr);
           }
-        } catch (mErr) {
-          console.warn("Members refresh warning:", mErr);
+
+          const processedMembers = apiMembers.map(member => ({
+            ...member,
+            fullName: member.fullName || member.email || "Member",
+            batch: member.batch || selectedBatch || "Unspecified Batch",
+            skills: Array.isArray(member.skills) ? member.skills : [],
+            projects: Array.isArray(member.projects) ? member.projects : [],
+            achievements: Array.isArray(member.achievements) ? member.achievements : [],
+            certifications: Array.isArray(member.certifications) ? member.certifications : []
+          }));
+
+          setMembers(processedMembers);
+          setTotalMembers(processedMembers.length);
         }
-
-        const processedMembers = apiMembers.map(member => ({
-          ...member,
-          fullName: member.fullName || member.email || "Member",
-          batch: member.batch || selectedBatch || "Unspecified Batch",
-          skills: Array.isArray(member.skills) ? member.skills : [],
-          projects: Array.isArray(member.projects) ? member.projects : [],
-          achievements: Array.isArray(member.achievements) ? member.achievements : [],
-          certifications: Array.isArray(member.certifications) ? member.certifications : []
-        }));
-
-        setMembers(processedMembers);
-        setTotalMembers(processedMembers.length);
         setError(null);
       } catch (err) {
         console.error("Error refreshing data:", err);
@@ -383,18 +383,21 @@ const index = () => {
             <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block ml-1">Select Batch</label>
             <div className="relative group min-w-[280px]">
               <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center justify-between w-full px-5 py-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl transition-all duration-300 group-hover:border-[#ca0019]/30"
+                onClick={() => batchesData.length > 0 && setIsDropdownOpen(!isDropdownOpen)}
+                disabled={batchesData.length === 0}
+                className="flex items-center justify-between w-full px-5 py-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl transition-all duration-300 group-hover:border-[#ca0019]/30 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl">{currentBatch?.icon}</span>
-                  <span className="font-semibold text-gray-900">{currentBatch?.name}</span>
+                  <span className="text-2xl">{currentBatch?.icon || "🎓"}</span>
+                  <span className="font-semibold text-gray-900">
+                    {currentBatch?.name || (countsLoading ? "Loading batches..." : "No batches available")}
+                  </span>
                 </div>
                 <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
               <AnimatePresence>
-                {isDropdownOpen && (
+                {isDropdownOpen && batchesData.length > 0 && (
                   <motion.div
                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 5, scale: 1 }}
@@ -447,7 +450,7 @@ const index = () => {
       </div>
 
       {/* Batch Information and Members */}
-      {currentBatch && (
+      {currentBatch ? (
         <motion.div
           className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 mt-16"
           initial={{ opacity: 0, y: 20 }}
@@ -494,30 +497,32 @@ const index = () => {
             </div>
 
             {/* Batch Achievements Section */}
-            <motion.div
-              className="mt-10 pt-10 border-t border-gray-100"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
-                  <Award className="w-5 h-5 text-[#ca0019]" />
+            {achievements.length > 0 && (
+              <motion.div
+                className="mt-10 pt-10 border-t border-gray-100"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+                    <Award className="w-5 h-5 text-[#ca0019]" />
+                  </div>
+                  Batch Achievements
+                </h3>
+                <div className="grid lg:grid-cols-3 grid-cols-1 gap-6">
+                  {achievements.map((achievement) => (
+                    <AchievementCard
+                      key={achievement.id}
+                      title={achievement.title}
+                      description={achievement.description}
+                      icon={<EmojiEventsIcon />}
+                      color={achievement.color}
+                    />
+                  ))}
                 </div>
-                Batch Achievements
-              </h3>
-              <div className="grid lg:grid-cols-3 grid-cols-1 gap-6">
-                {achievements.map((achievement) => (
-                  <AchievementCard
-                    key={achievement.id}
-                    title={achievement.title}
-                    description={achievement.description}
-                    icon={<EmojiEventsIcon />}
-                    color={achievement.color}
-                  />
-                ))}
-              </div>
-            </motion.div>
+              </motion.div>
+            )}
           </div>
 
           {/* Members Grid */}
@@ -554,17 +559,40 @@ const index = () => {
               </>
             ) : (
               <div className="col-span-full text-center py-12">
-                <p className="text-gray-500 text-lg">No members found matching your search.</p>
-                <button
-                  onClick={() => setSearchTerm("")}
-                  className="mt-4 px-4 py-2 bg-[#ca0019] text-white rounded-md hover:bg-[#a80015] transition-colors"
-                >
-                  Clear Search
-                </button>
+                <p className="text-gray-500 text-lg">
+                  {searchTerm ? "No members found matching your search." : `No members found for ${currentBatch.name}.`}
+                </p>
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm("")}
+                    className="mt-4 px-4 py-2 bg-[#ca0019] text-white rounded-md hover:bg-[#a80015] transition-colors"
+                  >
+                    Clear Search
+                  </button>
+                )}
               </div>
             )}
           </div>
         </motion.div>
+      ) : (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 mt-16">
+          <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-12 text-center">
+            <div className="w-16 h-16 mx-auto mb-4 bg-red-50 rounded-2xl flex items-center justify-center text-[#ca0019]">
+              <Users size={32} />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">No Batches Available</h3>
+            <p className="text-gray-500 max-w-md mx-auto mb-6">
+              Unable to load community cohorts at this time. Please check your network connection or try again later.
+            </p>
+            <button
+              onClick={refreshData}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#ca0019] text-white rounded-xl font-medium hover:bg-[#a80015] transition-colors"
+            >
+              <RefreshCw size={18} />
+              <span>Retry Loading</span>
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Call To Action */}
