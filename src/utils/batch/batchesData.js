@@ -3,14 +3,7 @@ import { BASE_URL } from "@/config";
 import { networkFirstFetch, registerCacheFetcher } from "@/utils/cache/networkFirst";
 import { setCache, getCache } from "@/utils/cache/idbStorage";
 
-export const DEFAULT_BATCHES = [
-  "The Uniques 1.0",
-  "The Uniques 2.0",
-  "The Uniques 3.0",
-  "The Uniques 4.0",
-  "The Uniques 5.0",
-  "The Uniques 6.0",
-];
+export const DEFAULT_BATCHES = [];
 
 const BATCH_CACHE_KEY = "tu_community_member_batches";
 const LEGACY_STORAGE_KEY = "tu_community_member_batches";
@@ -25,16 +18,16 @@ const sortBatchesNaturally = (list) => {
 };
 
 const mergeBatches = (rawList) => {
-  if (!Array.isArray(rawList) || rawList.length === 0) return [...DEFAULT_BATCHES];
+  if (!Array.isArray(rawList) || rawList.length === 0) return [];
   const valid = rawList.filter(
     (b) => typeof b === "string" && b.trim().length > 0 && !/-\d{10,}/.test(b)
   );
-  if (valid.length === 0) return [...DEFAULT_BATCHES];
+  if (valid.length === 0) return [];
   return sortBatchesNaturally(Array.from(new Set(valid)));
 };
 
 // In-memory runtime cache for synchronous lookups
-let inMemoryBatches = [...DEFAULT_BATCHES];
+let inMemoryBatches = [];
 
 // Asynchronously hydrate from IndexedDB on startup
 if (typeof window !== "undefined") {
@@ -53,14 +46,14 @@ export const fetchBatches = async () => {
   const result = await networkFirstFetch({
     cacheKey: BATCH_CACHE_KEY,
     legacyKey: LEGACY_STORAGE_KEY,
-    fallbackDefault: [...DEFAULT_BATCHES],
+    fallbackDefault: [],
     timeoutMs: 10000,
     fetcher: (signal) => axios.get(`${BASE_URL}/api/batches/all`, { signal }),
     transform: (data) => {
-      if (Array.isArray(data)) {
+      if (Array.isArray(data) && data.length > 0) {
         return mergeBatches(data);
       }
-      return [...DEFAULT_BATCHES];
+      return [];
     },
   });
 
@@ -69,7 +62,7 @@ export const fetchBatches = async () => {
     window.dispatchEvent(new CustomEvent("batches-updated", { detail: result.data }));
   }
 
-  return result.data;
+  return result.data || [];
 };
 
 // Register for global network retry button

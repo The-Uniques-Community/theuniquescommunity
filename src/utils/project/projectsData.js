@@ -397,7 +397,7 @@ export const normalizeProject = (p) => {
 // Helper to merge raw items with INITIAL_PROJECTS
 export const mergeWithInitialProjects = (items) => {
   if (!Array.isArray(items) || items.length === 0) {
-    return INITIAL_PROJECTS.map(normalizeProject);
+    return [];
   }
   return items.map((item) => {
     const itemTitleClean = cleanTitle(item.title);
@@ -416,7 +416,7 @@ export const mergeWithInitialProjects = (items) => {
 };
 
 // In-memory runtime cache for synchronous initial renders
-let inMemoryProjects = INITIAL_PROJECTS.map(normalizeProject);
+let inMemoryProjects = [];
 
 // Asynchronously hydrate from IndexedDB on startup
 if (typeof window !== "undefined") {
@@ -437,14 +437,14 @@ export const fetchProjects = async () => {
   const result = await networkFirstFetch({
     cacheKey: PROJECTS_CACHE_KEY,
     legacyKey: LEGACY_STORAGE_KEY,
-    fallbackDefault: INITIAL_PROJECTS.map(normalizeProject),
+    fallbackDefault: [],
     timeoutMs: 10000,
     fetcher: (signal) => axios.get(`${effectiveBaseUrl}/api/projects?limit=100`, { signal }),
     transform: (data) => {
-      if (Array.isArray(data)) {
+      if (Array.isArray(data) && data.length > 0) {
         return mergeWithInitialProjects(data);
       }
-      return INITIAL_PROJECTS.map(normalizeProject);
+      return [];
     },
   });
 
@@ -453,7 +453,7 @@ export const fetchProjects = async () => {
     window.dispatchEvent(new CustomEvent("projects-updated", { detail: result.data }));
   }
 
-  return result.data;
+  return result.data || [];
 };
 
 // Register for global network retry button

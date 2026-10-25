@@ -111,10 +111,17 @@ export default function TestimonialCarousel() {
 
     // Calculate indices for visible cards
     const getVisibleIndices = () => {
+        if (!Array.isArray(testimonials) || testimonials.length === 0) {
+            return { prevIndex: 0, activeIndex: 0, nextIndex: 0 };
+        }
         const prevIndex = (activeIndex - 1 + testimonials.length) % testimonials.length;
         const nextIndex = (activeIndex + 1) % testimonials.length;
         return { prevIndex, activeIndex, nextIndex };
     };
+
+    if (!Array.isArray(testimonials) || testimonials.length === 0) {
+        return null;
+    }
 
     const { prevIndex, nextIndex } = getVisibleIndices();
 
