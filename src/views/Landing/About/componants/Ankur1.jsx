@@ -40,7 +40,7 @@ const Modal = ({ isOpen, onClose, children }) => {
   return createPortal(
     <div
       data-lenis-prevent="true"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -50,13 +50,13 @@ const Modal = ({ isOpen, onClose, children }) => {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="bg-white rounded-2xl overflow-hidden relative w-[95%] max-w-6xl shadow-2xl"
+        className="bg-white rounded-2xl overflow-hidden relative w-[90%] max-w-6xl shadow-2xl my-auto"
       >
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 rounded-full hover:bg-gray-100 transition-colors z-50"
+          className="absolute top-4 right-4 p-2.5 rounded-full hover:bg-gray-100 transition-colors z-50 text-white md:text-gray-200 hover:text-white"
         >
-          <X className="w-5 h-5 sm:w-6 sm:h-6" />
+          <X className="w-6 h-6" />
         </button>
         {children}
       </motion.div>
@@ -68,7 +68,7 @@ const Modal = ({ isOpen, onClose, children }) => {
 const TabButton = ({ active, icon: Icon, label, onClick }) => (
   <button
     onClick={onClick}
-    className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${active
+    className={`flex items-center space-x-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${active
         ? 'bg-gradient-to-r from-red-600 to-red-800 text-white shadow-md'
         : 'text-gray-600 hover:bg-gray-100'
       }`}
@@ -107,10 +107,10 @@ const ProfileCard = ({ isOpen, onClose }) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className="flex flex-col">
         {/* Profile Header */}
-        <div className="p-5 sm:p-6 bg-gradient-to-r from-red-700 via-red-600 to-red-800 relative">
+        <div className="p-6 md:p-8 bg-gradient-to-r from-red-700 via-red-600 to-red-800 relative">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNiIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMikiIHN0cm9rZS13aWR0aD0iMiIvPjwvZz48L3N2Zz4=')] opacity-10"></div>
-          <div className="flex flex-col md:flex-row items-center gap-6 relative">
-            <div className="relative w-36 md:w-40 flex-shrink-0">
+          <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 relative">
+            <div className="relative w-40 md:w-48 flex-shrink-0">
               <motion.svg
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -157,10 +157,10 @@ const ProfileCard = ({ isOpen, onClose }) => {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
               >
-                <h2 className="text-2xl md:text-3xl font-bold mb-1 bg-clip-text text-transparent bg-gradient-to-r from-white to-red-100">Er. Ankur Gill</h2>
-                <p className="text-sm md:text-base opacity-90 mb-3 font-light">Founder - The Uniques Community</p>
+                <h2 className="text-3xl md:text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white to-red-100">Er. Ankur Gill</h2>
+                <p className="text-lg md:text-xl opacity-90 mb-4 font-light">Founder - The Uniques Community</p>
 
-                <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                <div className="flex flex-wrap gap-4 justify-center md:justify-start">
                   {[
                     { Icon: Linkedin, label: 'LinkedIn' },
                     { Icon: Twitter, label: 'Twitter' },
@@ -171,9 +171,9 @@ const ProfileCard = ({ isOpen, onClose }) => {
                       key={label}
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
-                      className="p-2 sm:p-2.5 bg-white/10 rounded-full hover:bg-white/20 transition-colors backdrop-blur-sm border border-white/20"
+                      className="p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors backdrop-blur-sm border border-white/20"
                     >
-                      <Icon className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+                      <Icon className="w-5 h-5" />
                     </motion.button>
                   ))}
                 </div>
@@ -184,7 +184,7 @@ const ProfileCard = ({ isOpen, onClose }) => {
 
         {/* Tabs */}
         <div className="border-b bg-white shadow-sm">
-          <div className="flex gap-2 px-4 py-2 sm:px-6 sm:py-2.5">
+          <div className="flex gap-3 px-6 py-3">
             <TabButton
               active={activeTab === 'overview'}
               icon={User2}
@@ -207,7 +207,7 @@ const ProfileCard = ({ isOpen, onClose }) => {
         </div>
 
         {/* Content */}
-        <div className="bg-gray-100 p-4 sm:p-5">
+        <div className="bg-gray-100 p-6 md:p-8">
           <div className="w-full">
             <AnimatePresence mode="wait">
               {activeTab === 'overview' && (
@@ -217,32 +217,48 @@ const ProfileCard = ({ isOpen, onClose }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <motion.div
-                      initial={{ opacity: 0, x: -15 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.15 }}
-                      className="bg-white p-4 sm:p-5 rounded-xl shadow hover:shadow-md transition-shadow border-t-4 border-red-600 flex flex-col justify-between"
-                    >
-                      <div>
-                        <h3 className="text-base sm:text-lg font-semibold mb-2 text-red-600">About</h3>
-                        <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+                    {/* Left Column: About and Vision */}
+                    <div className="flex flex-col gap-6 justify-between">
+                      <motion.div
+                        initial={{ opacity: 0, x: -15 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.15 }}
+                        className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border-t-4 border-red-600 flex-1 flex flex-col justify-center"
+                      >
+                        <h3 className="text-xl font-semibold mb-2.5 text-red-600">About</h3>
+                        <p className="text-gray-600 text-sm md:text-base leading-relaxed">
                           A visionary entrepreneur and community builder with over a decade of experience
                           in digital transformation and education technology. Founded The Uniques Community
                           to empower the next generation of digital leaders.
                         </p>
-                      </div>
-                    </motion.div>
+                      </motion.div>
 
+                      <motion.div
+                        initial={{ opacity: 0, x: -15 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.25 }}
+                        className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border-t-4 border-red-600 flex-1 flex flex-col justify-center"
+                      >
+                        <h3 className="text-xl font-semibold mb-2.5 text-red-600">Vision</h3>
+                        <p className="text-gray-600 text-sm md:text-base leading-relaxed">
+                          Dedicated to transforming the educational landscape through innovative digital
+                          solutions and community-driven learning experiences. Committed to empowering
+                          individuals to reach their full potential in the digital age.
+                        </p>
+                      </motion.div>
+                    </div>
+
+                    {/* Right Column: Achievements */}
                     <motion.div
-                      initial={{ opacity: 0, y: 15 }}
-                      animate={{ opacity: 1, y: 0 }}
+                      initial={{ opacity: 0, x: 15 }}
+                      animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.2 }}
-                      className="bg-white p-4 sm:p-5 rounded-xl shadow hover:shadow-md transition-shadow border-t-4 border-red-600 flex flex-col justify-between"
+                      className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border-t-4 border-red-600 flex flex-col justify-between"
                     >
                       <div>
-                        <h3 className="text-base sm:text-lg font-semibold mb-2 text-red-600">Achievements</h3>
-                        <ul className="space-y-2 text-gray-600 text-xs sm:text-sm">
+                        <h3 className="text-xl font-semibold mb-4 text-red-600">Achievements</h3>
+                        <ul className="space-y-4 text-gray-600 text-sm md:text-base">
                           {[
                             '100+ Student Mentorship Programs',
                             '3 Successful Startups',
@@ -253,30 +269,14 @@ const ProfileCard = ({ isOpen, onClose }) => {
                               key={index}
                               initial={{ opacity: 0, x: -10 }}
                               animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: 0.25 + index * 0.05 }}
-                              className="flex items-center space-x-2"
+                              transition={{ delay: 0.25 + index * 0.08 }}
+                              className="flex items-center space-x-3"
                             >
-                              <div className="w-1.5 h-1.5 rounded-full bg-red-600 flex-shrink-0"></div>
-                              <span>{achievement}</span>
+                              <div className="w-2.5 h-2.5 rounded-full bg-red-600 flex-shrink-0"></div>
+                              <span className="font-medium text-gray-700">{achievement}</span>
                             </motion.li>
                           ))}
                         </ul>
-                      </div>
-                    </motion.div>
-
-                    <motion.div
-                      initial={{ opacity: 0, x: 15 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.25 }}
-                      className="bg-white p-4 sm:p-5 rounded-xl shadow hover:shadow-md transition-shadow border-t-4 border-red-600 flex flex-col justify-between"
-                    >
-                      <div>
-                        <h3 className="text-base sm:text-lg font-semibold mb-2 text-red-600">Vision</h3>
-                        <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
-                          Dedicated to transforming the educational landscape through innovative digital
-                          solutions and community-driven learning experiences. Committed to empowering
-                          individuals to reach their full potential in the digital age.
-                        </p>
                       </div>
                     </motion.div>
                   </div>
@@ -290,39 +290,39 @@ const ProfileCard = ({ isOpen, onClose }) => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
                 >
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-center">
-                    <div className="space-y-2.5">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
+                    <div className="space-y-3.5">
                       {[
                         {
                           id: 1,
                           name: "godigitify Nexus",
                           description: "A company providing innovative digital solutions to transform businesses.",
-                          image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500"
+                          image: "https://www.theuniques.in/assets/12-4C_l7pvM.webp"
                         },
                         {
                           id: 2,
                           name: "Techlearns Academy",
                           description: "A startup dedicated to enhancing student careers through innovative learning solutions.",
-                          image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=500"
+                          image: "https://www.babushahi.com/upload/image/resized_550x410_under_150kb(20260917-101958).jpg"
                         },
                         {
                           id: 3,
                           name: "Click Master",
                           description: "A startup empowering local photographers to showcase their creativity and grow their business.",
-                          image: "https://images.unsplash.com/photo-1452830978618-d6feae7d0ffa?w=500"
+                          image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZQfMaGoE5f9m0mAd0lIt5pR4F49iRRAG6WSyBjnUVPw&s"
                         }
                       ].map((startup) => (
                         <motion.div
                           key={startup.id}
                           whileHover={{ scale: 1.01 }}
-                          className={`p-3 rounded-xl transition-all cursor-pointer ${activeStartup === startup.id
+                          className={`p-4 rounded-xl transition-all cursor-pointer ${activeStartup === startup.id
                               ? 'bg-gradient-to-r from-red-600 to-red-800 text-white shadow-md'
                               : 'bg-white hover:bg-gray-50 shadow-sm'
                             }`}
                           onClick={() => setActiveStartup(startup.id)}
                         >
-                          <h3 className="text-sm font-semibold mb-0.5">{startup.name}</h3>
-                          <p className={`text-xs ${activeStartup === startup.id ? 'text-red-100' : 'text-gray-600'}`}>
+                          <h3 className="text-base font-semibold mb-1">{startup.name}</h3>
+                          <p className={`text-sm ${activeStartup === startup.id ? 'text-red-100' : 'text-gray-600'}`}>
                             {startup.description}
                           </p>
                         </motion.div>
@@ -333,13 +333,13 @@ const ProfileCard = ({ isOpen, onClose }) => {
                       <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="rounded-xl overflow-hidden shadow-lg h-[200px]"
+                        className="rounded-xl overflow-hidden shadow-xl h-[260px] md:h-[280px]"
                       >
                         <img
                           src={[
-                            "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500",
-                            "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=500",
-                            "https://images.unsplash.com/photo-1452830978618-d6feae7d0ffa?w=500"
+                            "https://www.theuniques.in/assets/12-4C_l7pvM.webp",
+                            "https://www.babushahi.com/upload/image/resized_550x410_under_150kb(20260917-101958).jpg",
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZQfMaGoE5f9m0mAd0lIt5pR4F49iRRAG6WSyBjnUVPw&s"
                           ][activeStartup - 1]}
                           alt="Startup"
                           className="w-full h-full object-cover"
@@ -357,7 +357,7 @@ const ProfileCard = ({ isOpen, onClose }) => {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
-                  className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                  className="grid grid-cols-1 md:grid-cols-3 gap-6"
                 >
                   {books.map((book, index) => (
                     <motion.div
@@ -365,30 +365,30 @@ const ProfileCard = ({ isOpen, onClose }) => {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.08 }}
-                      className="bg-white rounded-xl overflow-hidden group hover:shadow-lg transition-all flex flex-col justify-between"
+                      className="bg-white rounded-xl overflow-hidden group hover:shadow-xl transition-all flex flex-col justify-between shadow-md"
                     >
-                      <div className="relative h-28">
+                      <div className="relative h-36 md:h-40">
                         <img
                           src={book.cover}
                           alt={book.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                        <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
-                          <h3 className="text-sm font-semibold">{book.title}</h3>
+                        <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                          <h3 className="text-base font-semibold">{book.title}</h3>
                         </div>
                       </div>
 
-                      <div className="p-3 flex flex-col justify-between flex-1">
-                        <p className="text-gray-600 text-xs mb-2 line-clamp-2">{book.description}</p>
+                      <div className="p-4 flex flex-col justify-between flex-1">
+                        <p className="text-gray-600 text-sm mb-3 line-clamp-2">{book.description}</p>
                         <motion.a
                           href={book.link}
                           whileHover={{ scale: 1.03 }}
                           whileTap={{ scale: 0.95 }}
-                          className="inline-flex items-center justify-center px-3 py-1.5 text-xs bg-gradient-to-r from-red-600 to-red-800 text-white rounded-lg hover:shadow-md transition-all self-start"
+                          className="inline-flex items-center justify-center px-4 py-2 text-sm bg-gradient-to-r from-red-600 to-red-800 text-white rounded-lg hover:shadow-md transition-all self-start"
                         >
                           Read More
-                          <svg className="w-3.5 h-3.5 ml-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <svg className="w-4 h-4 ml-1.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <path d="M5 12h14M12 5l7 7-7 7" />
                           </svg>
                         </motion.a>
