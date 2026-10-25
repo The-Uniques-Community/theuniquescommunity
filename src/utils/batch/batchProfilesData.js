@@ -154,7 +154,7 @@ export const saveStoredBatchProfiles = async (profiles) => {
       const isCustom = Boolean(
         p.image &&
         (typeof p.image === "string") &&
-        (p.image.startsWith("data:") || p.image.startsWith("http://") || p.image.startsWith("https://") || p.image.startsWith("blob:"))
+        (p.image.startsWith("data:") || p.image.startsWith("http://") || p.image.startsWith("https://"))
       );
       return {
         id: p.id,
@@ -169,7 +169,12 @@ export const saveStoredBatchProfiles = async (profiles) => {
     inMemoryProfiles = resolveProfilesWithDefaults(profiles);
     await setCache(PROFILES_CACHE_KEY, toSave);
     window.dispatchEvent(new CustomEvent("batch-profiles-updated", { detail: inMemoryProfiles }));
-    await axios.post(`${BASE_URL}/api/batches/profiles/update`, { profiles: toSave }, { withCredentials: true });
+    const response = await axios.post(`${BASE_URL}/api/batches/profiles/update`, { profiles: toSave }, { withCredentials: true });
+    if (response?.data?.data && Array.isArray(response.data.data)) {
+      inMemoryProfiles = resolveProfilesWithDefaults(response.data.data);
+      await setCache(PROFILES_CACHE_KEY, inMemoryProfiles);
+      window.dispatchEvent(new CustomEvent("batch-profiles-updated", { detail: inMemoryProfiles }));
+    }
     return true;
   } catch (err) {
     console.error("Error saving batch profiles:", err);
