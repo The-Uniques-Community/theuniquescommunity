@@ -1,13 +1,11 @@
 import axios from "axios";
-import { BASE_URL } from "@/config";
-import uniques1 from "@/assets/img/About/uniques1.webp";
-import uniques2 from "@/assets/img/About/uniques2.webp";
-import uniques3 from "@/assets/img/About/uniques3.webp";
-import uniques4 from "@/assets/img/About/uniques4.webp";
-import { getStoredBatches } from "./batchesData";
-import { networkFirstFetch, registerCacheFetcher } from "@/utils/cache/networkFirst";
-import { setCache, getCache, deleteCache } from "@/utils/cache/idbStorage";
+import { BASE_URL } from "../../config.js";
+import { getStoredBatches } from "./batchesData.js";
+import { getSafeImageUrl } from "../imageHelper.js";
+import { networkFirstFetch, registerCacheFetcher } from "../cache/networkFirst.js";
+import { setCache, getCache, deleteCache } from "../cache/idbStorage.js";
 
+export const DEFAULT_BATCH_FALLBACK_IMAGE = "/batches/default-batch.webp";
 export const DEFAULT_BATCH_PROFILES = [];
 
 const PROFILES_CACHE_KEY = "tu_community_batch_profiles";
@@ -24,13 +22,13 @@ const sortProfilesNaturally = (list) => {
   });
 };
 
-const resolveProfilesWithDefaults = (rawList) => {
+export const resolveProfilesWithDefaults = (rawList) => {
   let profiles = [];
   if (Array.isArray(rawList) && rawList.length > 0) {
     profiles = rawList.map((p) => {
       return {
         ...p,
-        image: p.image || uniques4,
+        image: getSafeImageUrl(p.image, DEFAULT_BATCH_FALLBACK_IMAGE),
       };
     });
   }
@@ -53,7 +51,7 @@ const resolveProfilesWithDefaults = (rawList) => {
         label: label,
         title: batchName,
         description: `${batchName} is actively engaged in advanced skills training, projects, and innovation within The Uniques Community.`,
-        image: uniques4,
+        image: DEFAULT_BATCH_FALLBACK_IMAGE,
         customImage: false,
       });
     }
