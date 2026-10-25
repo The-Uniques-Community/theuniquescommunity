@@ -1,7 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   AppBar,
-  Toolbar,
   Typography,
   Box,
   IconButton,
@@ -14,10 +13,11 @@ import {
   Menu as MenuIcon,
   Home as HomeIcon
 } from '@mui/icons-material';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 import { styled } from '@mui/system';
-import { successStories } from '@/views/Landing/SuccessStories/successStoriesData';
-import Sidebar from '@/utils/Sidebar/index'
+import axios from 'axios';
+import { BASE_URL } from '@/config';
+import Sidebar from '@/utils/Sidebar/index';
 import Navbar from '@/utils/NavBar/Navbar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useThemeContext } from '@/theme/ThemeProvider';
@@ -47,7 +47,41 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 const SuccessLayout = () => {
   const { isDarkMode } = useThemeContext();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const location = useLocation();
+
+  // Dynamic success stories loaded from backend API
+  const [students, setStudents] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchStories = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/success-stories?all=true`);
+        const remoteData =
+          response.data?.data ||
+          response.data?.items ||
+          (Array.isArray(response.data) ? response.data : null);
+
+        if (isMounted && remoteData) {
+          setStudents(remoteData);
+        }
+      } catch (err) {
+        console.warn("[SuccessStories] Error fetching stories from backend API:", err);
+        if (isMounted) {
+          setStudents([]);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchStories();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const activeTheme = useMemo(() => createTheme({
     palette: {
@@ -124,14 +158,16 @@ const SuccessLayout = () => {
             }}
           >
             <Sidebar
-              students={successStories}
+              students={students}
+              isLoading={isLoading}
               onDrawerToggle={handleDrawerToggle}
               isDrawerOpen={mobileOpen}
             />
           </Drawer>
         ) : (
           <Sidebar
-            students={successStories}
+            students={students}
+            isLoading={isLoading}
             isDrawerOpen={true}
           />
         )}
@@ -142,7 +178,7 @@ const SuccessLayout = () => {
           {isMobile && <MuiToolbar />}
 
           {/* This is where the child routes will render */}
-          <Outlet />
+          <Outlet context={{ students, isLoading }} />
         </ContentWrapper>
       </Box>
     </ThemeProvider>

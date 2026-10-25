@@ -69,34 +69,13 @@ export const extractDriveFileId = (source) => {
 /**
  * Returns a safe image URL that will NOT be blocked by Google's CORP / ORB policies.
  * Automatically proxies Google Drive files through the backend image proxy.
+ * Dynamically re-anchors any image-proxy URLs to the active BASE_URL so images load cleanly across dev and production.
  */
 export const getSafeImageUrl = (source, fallback = "/placeholder.svg") => {
   if (!source) return fallback;
   if (typeof source === "string" && !source.trim()) return fallback;
 
-  // 1. If it's already an absolute image proxy URL, preserve it cleanly
-  if (typeof source === "string") {
-    const trimmed = source.trim();
-    if (
-      (trimmed.startsWith("http://") || trimmed.startsWith("https://")) &&
-      trimmed.includes("/api/image-proxy/")
-    ) {
-      return trimmed;
-    }
-  }
-
-  if (typeof source === "object" && source !== null) {
-    const rawUrl = source.fileUrl || source.url || source.imageUrl || source.src || source.image;
-    if (
-      typeof rawUrl === "string" &&
-      (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) &&
-      rawUrl.includes("/api/image-proxy/")
-    ) {
-      return rawUrl.trim();
-    }
-  }
-
-  // 2. If it's a Drive file, contains a Drive ID, or is a relative image-proxy path, route through backend image proxy
+  // 1. If it's a Drive file, contains a Drive ID, or is an image-proxy path (relative or absolute)
   const fileId = extractDriveFileId(source);
   if (fileId) {
     const rawBase = BASE_URL && typeof BASE_URL === "string" ? BASE_URL.trim() : "";
@@ -104,7 +83,7 @@ export const getSafeImageUrl = (source, fallback = "/placeholder.svg") => {
     return `${prefix}/api/image-proxy/${fileId}`;
   }
 
-  // 3. If it's an object with a non-drive URL
+  // 2. If it's an object with a non-drive URL
   if (typeof source === "object" && source !== null) {
     const rawUrl = source.fileUrl || source.url || source.imageUrl || source.src;
     if (

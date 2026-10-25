@@ -60,6 +60,12 @@ describe("imageHelper seam S1", () => {
       assert.strictEqual(result, fullUrl);
     });
 
+    it("re-anchors absolute proxy URLs with different host to current BASE_URL", () => {
+      const localhostUrl = `http://localhost:5001/api/image-proxy/${sampleFileId}`;
+      const result = getSafeImageUrl(localhostUrl);
+      assert.strictEqual(result, `${normalizedBaseUrl}/api/image-proxy/${sampleFileId}`);
+    });
+
     it("verifies DEFAULT_PROXY_BASE constant is set to canonical portal domain", () => {
       assert.strictEqual(DEFAULT_PROXY_BASE, "https://the-uniques-portal.vercel.app");
     });

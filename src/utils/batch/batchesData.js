@@ -8,20 +8,29 @@ export const DEFAULT_BATCHES = [
   "The Uniques 2.0",
   "The Uniques 3.0",
   "The Uniques 4.0",
+  "The Uniques 5.0",
+  "The Uniques 6.0",
 ];
 
 const BATCH_CACHE_KEY = "tu_community_member_batches";
 const LEGACY_STORAGE_KEY = "tu_community_member_batches";
 
+const sortBatchesNaturally = (list) => {
+  return [...list].sort((a, b) => {
+    const numA = parseFloat(String(a).match(/(\d+(\.\d+)?)/)?.[1] || 9999);
+    const numB = parseFloat(String(b).match(/(\d+(\.\d+)?)/)?.[1] || 9999);
+    if (numA !== numB) return numA - numB;
+    return String(a).localeCompare(String(b));
+  });
+};
+
 const mergeBatches = (rawList) => {
   if (!Array.isArray(rawList) || rawList.length === 0) return [...DEFAULT_BATCHES];
-  const merged = [...DEFAULT_BATCHES];
-  rawList.forEach((b) => {
-    if (b && !merged.includes(b)) {
-      merged.push(b);
-    }
-  });
-  return merged;
+  const valid = rawList.filter(
+    (b) => typeof b === "string" && b.trim().length > 0 && !/-\d{10,}/.test(b)
+  );
+  if (valid.length === 0) return [...DEFAULT_BATCHES];
+  return sortBatchesNaturally(Array.from(new Set(valid)));
 };
 
 // In-memory runtime cache for synchronous lookups

@@ -8,132 +8,6 @@ import { getStoredProjects, fetchProjects } from "@/utils/project/projectsData";
 import { getStoredBatches, fetchBatches } from "@/utils/batch/batchesData";
 import { getSafeImageUrl } from "@/utils/imageHelper";
 
-export const PROJECTS_DATA = [
-  {
-    id: 1,
-    title: "UNI CARE",
-    batch: "Uniques 4.0",
-    description:
-      "A student-support system that identifies potential problem areas and flags them for timely attention and appropriate support.",
-    image: "/projects/unicare.webp",
-    technologies: ["REACT", "NODE.JS", "MONGODB", "AI"],
-    category: "Support & Mentorship",
-    link: "https://uniques-care.vercel.app/",
-    buttonColor: "#ea384c",
-  },
-  {
-    id: 2,
-    title: "Libraria",
-    batch: "Uniques 1.0",
-    description:
-      "A digital library platform that helps students discover, access, organize, and manage academic books and learning resources.",
-    image: "/projects/libraria.webp",
-    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
-    category: "Digital Library",
-    link: "https://libraria-tu.vercel.app/",
-    buttonColor: "#ea384c",
-  },
-  {
-    id: 3,
-    title: "TU Portal",
-    batch: "Uniques 1.0",
-    description:
-      "A centralized student data portal containing profiles, academic information, records, and essential data of all Uniques students.",
-    image: "/projects/tuportal.webp",
-    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
-    category: "Student Records & LMS",
-    link: "https://the-uniques-portal.vercel.app/",
-    buttonColor: "#ea384c",
-  },
-  {
-    id: 4,
-    title: "Code crusade 0.5",
-    batch: "Uniques 5.0",
-    description:
-      "A 7-day intensive workshop designed to develop industry-grade coding skills and evaluate students' knowledge through practical tests.",
-    image: "/projects/codecrusade.webp",
-    technologies: ["WORKSHOP", "CODING", "ASSESSMENT", "PYTHON"],
-    category: "Workshop & Testing",
-    link: "https://codecrusade2026.vercel.app/",
-    buttonColor: "#ea384c",
-  },
-  {
-    id: 5,
-    title: "Ideajam 2026",
-    batch: "Uniques 4.0",
-    description:
-      "An internal hackathon portal enabling student teams to pitch innovative ideas and selecting top teams to participate in the Smart India Hackathon (SIH).",
-    image: "/projects/ideajam2026.webp",
-    technologies: ["REACT", "NODE.JS", "TAILWIND", "SIH"],
-    category: "Hackathon & SIH",
-    link: "https://ideajam2026.vercel.app/",
-    buttonColor: "#ea384c",
-  },
-  {
-    id: 6,
-    title: "Eureka - National Ideathon",
-    batch: "Uniques 4.0",
-    description:
-      "A national-level ideathon platform organized across diverse universities for student innovators to pitch disruptive solutions and compete.",
-    image: "/projects/eureka.webp",
-    technologies: ["REACT", "NODE.JS", "MONGODB", "INNOVATION"],
-    category: "National Ideathon",
-    link: "https://eureka-cyan-six.vercel.app/",
-    buttonColor: "#ea384c",
-  },
-  {
-    id: 7,
-    title: "Elevate 3.0",
-    batch: "Uniques 4.0",
-    description:
-      "An official induction and orientation web portal organized for first-year students to inspire, connect, and onboard them into the community.",
-    image: "/projects/elevate.webp",
-    technologies: ["REACT", "TAILWIND", "FRAMER", "INDUCTION"],
-    category: "Induction & Orientation",
-    link: "https://elevate-sviet.vercel.app/",
-    buttonColor: "#ea384c",
-  },
-  {
-    id: 8,
-    title: "Uniques E-Gyan",
-    batch: "Uniques 4.0",
-    description:
-      "A centralized academic platform providing students with PYQs, notes, study materials, and exam-focused resources.",
-    image:
-      "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
-    category: "Academic & Learning",
-    link: "https://github.com/theuniquesofflicial",
-    buttonColor: "#ea384c",
-  },
-  {
-    id: 9,
-    title: "Uniques Assess",
-    batch: "Uniques 4.0",
-    description:
-      "An online assessment platform for conducting college examinations, managing tests, evaluating students, and tracking performance.",
-    image:
-      "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
-    category: "Assessment & Exams",
-    link: "https://github.com/theuniquesofflicial",
-    buttonColor: "#ea384c",
-  },
-  {
-    id: 10,
-    title: "Uniques 360",
-    batch: "Uniques 1.0",
-    description:
-      "An all-in-one student platform providing a complete view of academics, activities, performance, and community engagement.",
-    image:
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
-    category: "Analytics & Activities",
-    link: "https://github.com/theuniquesofflicial",
-    buttonColor: "#ea384c",
-  },
-];
-
 const Projects = () => {
   const navigate = useNavigate();
   const [projectsList, setProjectsList] = useState(() => getStoredProjects());
@@ -200,15 +74,26 @@ const Projects = () => {
   const filteredProjects = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
     return projectsList.filter((project) => {
+      if (!project) return false;
+      const projectBatch = (project.batch || "").trim();
+      const cleanProjectBatch = projectBatch.replace(/^The\s+/i, "");
+      const cleanSelectedBatch = String(selectedBatch || "").trim().replace(/^The\s+/i, "");
+
       const matchesBatch =
-        selectedBatch === "all" ||
-        project.batch === selectedBatch ||
-        project.batch.replace("The ", "") === selectedBatch.replace("The ", "");
+        cleanSelectedBatch === "all" ||
+        projectBatch === selectedBatch ||
+        cleanProjectBatch === cleanSelectedBatch;
+
+      const title = (project.title || "").toLowerCase();
+      const description = (project.description || "").toLowerCase();
+      const technologies = Array.isArray(project.technologies) ? project.technologies : [];
+
       const matchesSearch =
         !q ||
-        project.title.toLowerCase().includes(q) ||
-        project.description.toLowerCase().includes(q) ||
-        project.technologies.some((tag) => tag.toLowerCase().includes(q));
+        title.includes(q) ||
+        description.includes(q) ||
+        technologies.some((tag) => String(tag).toLowerCase().includes(q));
+
       return matchesBatch && matchesSearch;
     });
   }, [projectsList, selectedBatch, searchQuery]);
