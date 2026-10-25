@@ -248,14 +248,14 @@ export const INITIAL_PROJECTS = [
   },
   {
     id: 8,
-    title: "Uniques E-Gyan",
+    title: "Uniques eGyan",
     batch: "Uniques 4.0",
     description:
       "A centralized academic platform providing students with PYQs, notes, study materials, and exam-focused resources.",
     overview:
       "A comprehensive academic knowledge portal curated by top-performing seniors to help students excel in university examinations and competitive tests.",
     detailedDescription:
-      "Uniques E-Gyan is a comprehensive academic knowledge portal developed to democratize high-quality study materials across all engineering disciplines. Curated by top scorers and academic coordinators, the platform organizes handwritten notes, syllabus blueprints, and previous year examination solutions into an easily searchable archive.",
+      "UNIQUE eGYAN is a centralized, free academic resource platform designed exclusively for members of The Uniques Community. Acting as a one-stop destination for student success, the website provides 24/7 access to over 100 curated study materials covering all eight academic semesters.",
     problemStatement:
       "Exam study materials, previous year question papers (PYQs), and handwritten notes are typically scattered across drives, making last-minute exam preparation chaotic.",
     solution:
@@ -271,12 +271,11 @@ export const INITIAL_PROJECTS = [
       { name: "The Uniques 4.0", role: "Academic Cell Leads", initials: "TU" },
     ],
     status: "Active",
-    image:
-      "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=1200&q=80",
-    technologies: ["REACT", "NODE.JS", "MONGODB", "TAILWIND"],
+    image: "/api/image-proxy/1ZN0H9bjTww8QHT2TY1eGACWyq7KxS4V9",
+    technologies: ["REACT", "NODE.JS", "MONGODB"],
     category: "Academic & Learning",
-    link: "https://github.com/theuniquesofflicial",
-    liveUrl: null,
+    link: "https://uniques-egyan.theuniques.in/",
+    liveUrl: "https://uniques-egyan.theuniques.in/",
     githubUrl: "https://github.com/theuniquesofflicial",
     buttonColor: "#ea384c",
     createdAt: "2026-03-10",
@@ -440,7 +439,7 @@ export const fetchProjects = async () => {
     legacyKey: LEGACY_STORAGE_KEY,
     fallbackDefault: INITIAL_PROJECTS.map(normalizeProject),
     timeoutMs: 10000,
-    fetcher: (signal) => axios.get(`${effectiveBaseUrl}/api/projects`, { signal }),
+    fetcher: (signal) => axios.get(`${effectiveBaseUrl}/api/projects?limit=100`, { signal }),
     transform: (data) => {
       if (Array.isArray(data)) {
         return mergeWithInitialProjects(data);

@@ -46,6 +46,17 @@ export const DEFAULT_BATCH_PROFILES = [
 const PROFILES_CACHE_KEY = "tu_community_batch_profiles";
 const LEGACY_STORAGE_KEY = "tu_community_batch_profiles";
 
+const sortProfilesNaturally = (list) => {
+  return [...list].sort((a, b) => {
+    const nameA = a.label || a.title || "";
+    const nameB = b.label || b.title || "";
+    const numA = parseFloat(String(nameA).match(/(\d+(\.\d+)?)/)?.[1] || 9999);
+    const numB = parseFloat(String(nameB).match(/(\d+(\.\d+)?)/)?.[1] || 9999);
+    if (numA !== numB) return numA - numB;
+    return String(nameA).localeCompare(String(nameB));
+  });
+};
+
 const resolveProfilesWithDefaults = (rawList) => {
   let profiles = [];
   if (Array.isArray(rawList) && rawList.length > 0) {
@@ -62,11 +73,13 @@ const resolveProfilesWithDefaults = (rawList) => {
     profiles = [...DEFAULT_BATCH_PROFILES];
   }
 
-  const memberBatches = getStoredBatches();
+  const memberBatches = getStoredBatches().filter(
+    (b) => typeof b === "string" && b.trim().length > 0 && !/-\d{10,}/.test(b)
+  );
   memberBatches.forEach((batchName) => {
     const label = batchName.replace(/^The\s+/i, "");
     const exists = profiles.some(
-      (p) => p.label.toLowerCase() === label.toLowerCase() || p.title.toLowerCase() === batchName.toLowerCase()
+      (p) => p.label?.toLowerCase() === label.toLowerCase() || p.title?.toLowerCase() === batchName.toLowerCase()
     );
     if (!exists) {
       profiles.push({
@@ -80,7 +93,11 @@ const resolveProfilesWithDefaults = (rawList) => {
     }
   });
 
-  return profiles;
+  const validProfiles = profiles.filter(
+    (p) => !/-\d{10,}/.test(p.title || "") && !/-\d{10,}/.test(p.label || "")
+  );
+
+  return sortProfilesNaturally(validProfiles);
 };
 
 // In-memory runtime cache for synchronous UI reads

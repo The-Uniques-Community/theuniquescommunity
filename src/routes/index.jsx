@@ -1,12 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import lazyWithRetry from "@/utils/lazyWithRetry";
 import Loader from "@/utils/Loader";
-import AdminRoutes from "@/routes/Admin/AdminRoutes";
-import CommunityRoutes from "@/routes/Community/CommunityRoutes";
-import CoordinatorRoutes from "@/routes/Uniques/CoordinatorRoute";
-import MemberRoutes from "@/routes/Uniques/MemberRoutes";
 import LandingLayout from "@/layout/Landing/index";
-import Auth from "@/routes/Authentication/Auth";
 import SuccessStoriesRoutes from "./successStories";
 import { RouteErrorBoundaryView } from "@/components/RouteErrorBoundary";
 
@@ -96,11 +91,6 @@ const LandingRoutes = {
 
 const router = createBrowserRouter([
   LandingRoutes,
-  AdminRoutes,
-  CommunityRoutes,
-  CoordinatorRoutes,
-  MemberRoutes,
-  Auth,
   SuccessStoriesRoutes
 ]);
 

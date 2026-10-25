@@ -24,7 +24,7 @@ import loginImage from "@/assets/img/login/login.svg";
 import { useNavigate } from "react-router-dom";
 import bg from "@/assets/img/login/bg.png";
 import axios from "axios";
-import { BASE_URL } from "@/config";
+import { BASE_URL, PORTAL_URL } from "@/config";
 
 const Login = () => {
   const theme = useTheme();
@@ -34,9 +34,9 @@ const Login = () => {
   const handleClickShowPassword = () => setShowPassword((prev) => !prev);
   const handleMouseDownPassword = (event) => event.preventDefault();
 
-  // Redirect to the new portal login
+  // Redirect to the configured portal
   useEffect(() => {
-    window.location.replace("https://the-uniques-portal.vercel.app/");
+    window.location.replace(PORTAL_URL);
   }, []);
 
   // Listen for the message from the popup.

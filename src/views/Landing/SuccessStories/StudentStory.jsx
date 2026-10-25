@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import PropTypes from 'prop-types';
 import {
   Box,
   Typography,
   Paper,
   Chip,
-  ListItem,
   Button,
   useMediaQuery,
   useTheme,
   Tabs,
-  Tab
+  Tab,
+  Skeleton
 } from '@mui/material';
 import {
   School as SchoolIcon,
@@ -17,9 +18,10 @@ import {
   PlayCircleOutline as VideoIcon
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useOutletContext } from 'react-router-dom';
 import { styled } from '@mui/system';
-import { successStories } from './successStoriesData';
+import axios from 'axios';
+import { BASE_URL } from '@/config';
 import ProfileInformation from './ProfileInformation';
 import SuccessTimeline from './SuccessTimeline';
 import VideoMessage from './VideoMessage';
@@ -84,12 +86,7 @@ const ContentWrapper = styled(Box)(({ theme }) => ({
   }
 }));
 
-const AchievementListItem = styled(ListItem)({
-  paddingLeft: 0,
-  paddingRight: 0,
-});
-
-const SectionHeading = styled(Typography)(({ theme }) => ({
+const SectionHeading = styled(Typography)({
   position: 'relative',
   marginBottom: '20px',
   '&:after': {
@@ -101,7 +98,7 @@ const SectionHeading = styled(Typography)(({ theme }) => ({
     height: '4px',
     backgroundColor: '#ca0019',
   }
-}));
+});
 
 const DetailCard = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -134,6 +131,12 @@ function TabPanel(props) {
   );
 }
 
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  value: PropTypes.number.isRequired,
+  index: PropTypes.number.isRequired,
+};
+
 // Styled Tabs
 const StyledTabs = styled(Tabs)(({ theme }) => ({
   '& .MuiTabs-indicator': {
@@ -155,72 +158,6 @@ const StyledTab = styled(Tab)(({ theme }) => ({
   },
 }));
 
-// New Timeline Components
-const TimelineContainer = styled(Box)(({ theme }) => ({
-  position: 'relative',
-  paddingTop: '40px',
-  paddingBottom: '60px',
-  marginTop: '20px',
-  marginBottom: '40px',
-}));
-
-const TimelineLine = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  width: '100%',
-  height: '5px',
-  backgroundColor: '#ca0019',
-  top: '50px',
-  left: 0,
-  zIndex: 0,
-}));
-
-const TimelinePoint = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  width: '24px',
-  height: '24px',
-  backgroundColor: '#ca0019',
-  borderRadius: '50%',
-  top: '40px',
-  zIndex: 1,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  boxShadow: '0 0 0 4px #fff',
-}));
-
-const TimelineEvent = styled(Paper)(({ theme, position }) => ({
-  position: 'absolute',
-  width: '280px',
-  padding: theme.spacing(2),
-  borderRadius: theme.spacing(1),
-  backgroundColor: '#fff',
-  boxShadow: theme.shadows[3],
-  top: position === 'top' ? '-180px' : '80px',
-  transform: 'translateX(-50%)',
-  zIndex: 2,
-  '&:after': {
-    content: '""',
-    position: 'absolute',
-    width: '20px',
-    height: '20px',
-    backgroundColor: 'inherit',
-    boxShadow: 'inherit',
-    transform: 'rotate(45deg)',
-    top: position === 'top' ? '100%' : '-10px',
-    left: '50%',
-    marginLeft: '-10px',
-  }
-}));
-
-const TimelineYear = styled(Typography)(({ theme }) => ({
-  position: 'absolute',
-  fontWeight: 'bold',
-  fontSize: '24px',
-  color: '#000',
-  transform: 'translateX(-50%)',
-  top: '15px',
-}));
-
 const StudentStory = () => {
   const { isDarkMode } = useThemeContext();
   const { studentId } = useParams();
@@ -238,14 +175,89 @@ const StudentStory = () => {
     setDetailTabValue(newValue);
   };
 
-  // Find the student with the matching ID
-  const student = successStories.find(s => s.id === studentId);
+  const outletCtx = useOutletContext();
+  const rawContextStudents = outletCtx?.students;
+  const contextStudents = useMemo(() => rawContextStudents || [], [rawContextStudents]);
 
-  // If no matching student is found, show a message or redirect
+  // Initial candidate resolution from dynamic context if already loaded
+  const initialStudent = useMemo(() => {
+    return contextStudents.find((s) => s.id === studentId || s._id === studentId) || null;
+  }, [contextStudents, studentId]);
+
+  const [student, setStudent] = useState(initialStudent);
+  const [isLoading, setIsLoading] = useState(!initialStudent);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    // Check if initial student is already available in context
+    const existing = contextStudents.find((s) => s.id === studentId || s._id === studentId);
+
+    if (existing) {
+      setStudent(existing);
+      setIsLoading(false);
+      return;
+    }
+
+    const fetchStudentById = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/success-stories/${studentId}`);
+        if (isMounted && response.data?.data) {
+          setStudent(response.data.data);
+          setError(null);
+        }
+      } catch (err) {
+        console.warn("[StudentStory] Failed to fetch story by ID from API:", err);
+        if (isMounted) {
+          setStudent(null);
+          setError("Student story not found");
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchStudentById();
+    return () => {
+      isMounted = false;
+    };
+  }, [studentId, contextStudents]);
+
+  // Loading state placeholder with sleek skeletons
+  if (isLoading) {
+    return (
+      <Box sx={{ width: "100%", pb: 8 }}>
+        <Box
+          sx={{
+            height: "45vh",
+            bgcolor: "rgba(0,0,0,0.85)",
+            p: 4,
+            display: "flex",
+            alignItems: "flex-end",
+          }}
+        >
+          <Box sx={{ maxWidth: 800, width: "100%", ml: { xs: 0, md: "190px" } }}>
+            <Skeleton variant="text" width="60%" height={56} sx={{ bgcolor: "rgba(255,255,255,0.2)" }} />
+            <Skeleton variant="text" width="40%" height={32} sx={{ bgcolor: "rgba(255,255,255,0.2)", my: 1 }} />
+            <Skeleton variant="rounded" width={110} height={32} sx={{ bgcolor: "rgba(255,255,255,0.2)" }} />
+          </Box>
+        </Box>
+        <Box sx={{ p: { xs: 2, md: 5 }, pt: 12 }}>
+          <Skeleton variant="rounded" width="100%" height={260} sx={{ borderRadius: 3, mb: 4 }} />
+          <Skeleton variant="rounded" width="100%" height={300} sx={{ borderRadius: 3 }} />
+        </Box>
+      </Box>
+    );
+  }
+
+  // If no matching student is found after query finishes
   if (!student) {
     return (
       <Box sx={{ p: 4, textAlign: 'center' }}>
-        <Typography variant="h5" gutterBottom>Student not found</Typography>
+        <Typography variant="h5" gutterBottom>{error || "Student not found"}</Typography>
         <Button
           variant="contained"
           color="primary"
@@ -269,11 +281,6 @@ const StudentStory = () => {
         staggerChildren: 0.1
       }
     }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
   };
 
   return (

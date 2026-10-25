@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Box,
   Typography,
@@ -9,7 +9,8 @@ import {
   Avatar,
   Divider,
   IconButton,
-  Tooltip
+  Tooltip,
+  Skeleton
 } from '@mui/material';
 import {
   LinkedIn as LinkedInIcon,
@@ -46,7 +47,7 @@ const SidebarContainer = styled(Box)(({ theme }) => ({
   }
 }));
 
-const ListContainer = styled(List)(({ theme }) => ({
+const ListContainer = styled(List)(() => ({
   flexGrow: 1,
   overflowY: 'auto',
   paddingBottom: '16px',
@@ -122,7 +123,7 @@ const SocialIcon = styled(IconButton)(({ theme }) => ({
   }
 }));
 
-const Sidebar = ({ students, onDrawerToggle, isDrawerOpen }) => {
+const Sidebar = ({ students = [], onDrawerToggle, isDrawerOpen, isLoading = false }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname.split('/').pop();
@@ -165,39 +166,63 @@ const Sidebar = ({ students, onDrawerToggle, isDrawerOpen }) => {
       <Divider sx={{ opacity: theme => theme.palette.mode === 'dark' ? 0.1 : 0.08 }} />
 
       <ListContainer data-lenis-prevent>
-        {students.map((student) => (
-          <StyledListItem
-            key={student.id}
-            component={Link}
-            to={`/success-stories/${student.id}`}
-            active={currentPath === student.id ? 1 : 0}
-            onClick={() => onDrawerToggle && onDrawerToggle()}
-          >
-            <ListItemAvatar>
-              <Avatar src={student.image} alt={student.name} />
-            </ListItemAvatar>
-            <ListItemText
-              primary={
-                <Typography 
-                  variant="body1" 
-                  sx={{ 
-                    fontWeight: currentPath === student.id ? 700 : 500,
-                    color: currentPath === student.id ? '#ca0019' : 'text.primary',
-                    transition: 'color 0.2s ease',
-                    fontSize: '0.95rem'
-                  }}
-                >
-                  {student.name}
-                </Typography>
-              }
-              secondary={
-                <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8rem', mt: 0.5 }}>
-                  {student.batch} • {student.role}
-                </Typography>
-              }
-            />
-          </StyledListItem>
-        ))}
+        {isLoading && (!students || students.length === 0) ? (
+          <Box sx={{ p: 1.5, display: "flex", flexDirection: "column", gap: 1.5 }}>
+            {[1, 2, 3, 4, 5, 6].map((idx) => (
+              <Box key={idx} sx={{ display: "flex", alignItems: "center", gap: 1.5, px: 1, py: 0.8 }}>
+                <Skeleton variant="circular" width={40} height={40} sx={{ flexShrink: 0 }} />
+                <Box sx={{ flex: 1 }}>
+                  <Skeleton variant="text" width="70%" height={20} />
+                  <Skeleton variant="text" width="45%" height={16} />
+                </Box>
+              </Box>
+            ))}
+          </Box>
+        ) : !students || students.length === 0 ? (
+          <Box sx={{ p: 3, textAlign: "center" }}>
+            <Typography variant="body2" sx={{ color: "text.secondary", fontSize: "0.85rem" }}>
+              No stories available yet.
+            </Typography>
+          </Box>
+        ) : (
+          students.map((student) => {
+            const studentKey = student.id || student._id;
+            const isSelected = currentPath === student.id || currentPath === student._id;
+            return (
+              <StyledListItem
+                key={studentKey}
+                component={Link}
+                to={`/success-stories/${student.id || student._id}`}
+                active={isSelected ? 1 : 0}
+                onClick={() => onDrawerToggle && onDrawerToggle()}
+              >
+                <ListItemAvatar>
+                  <Avatar src={student.image} alt={student.name} />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={
+                    <Typography 
+                      variant="body1" 
+                      sx={{ 
+                        fontWeight: isSelected ? 700 : 500,
+                        color: isSelected ? '#ca0019' : 'text.primary',
+                        transition: 'color 0.2s ease',
+                        fontSize: '0.95rem'
+                      }}
+                    >
+                      {student.name}
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8rem', mt: 0.5 }}>
+                      {student.batch} • {student.role}
+                    </Typography>
+                  }
+                />
+              </StyledListItem>
+            );
+          })
+        )}
       </ListContainer>
 
       <SocialSection>
@@ -221,6 +246,13 @@ const Sidebar = ({ students, onDrawerToggle, isDrawerOpen }) => {
       </SocialSection>
     </SidebarContainer>
   );
+};
+
+Sidebar.propTypes = {
+  students: PropTypes.array,
+  onDrawerToggle: PropTypes.func,
+  isDrawerOpen: PropTypes.bool,
+  isLoading: PropTypes.bool,
 };
 
 export default Sidebar;
