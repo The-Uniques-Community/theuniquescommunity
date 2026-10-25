@@ -10,6 +10,7 @@ import uniques4 from "../../../../assets/img/About/uniques4.webp";
 
 import { useNavigate } from "react-router-dom";
 import { useThemeContext } from "../../../../theme/ThemeProvider";
+import { getSafeImageUrl } from "@/utils/imageHelper";
 import { getStoredBatchProfiles, fetchBatchProfiles } from "@/utils/batch/batchProfilesData";
 import { fetchBatches } from "@/utils/batch/batchesData";
 
@@ -174,10 +175,15 @@ const BatchProfile = () => {
                 }}
               >
                 <img
-                  src={currentBatch.image}
+                  src={getSafeImageUrl(currentBatch.image, uniques4)}
                   alt={currentBatch.title}
                   loading="lazy"
                   decoding="async"
+                  onError={(e) => {
+                    if (e.currentTarget.src !== uniques4) {
+                      e.currentTarget.src = uniques4;
+                    }
+                  }}
                   style={{
                     width: "100%",
                     height: "auto",
@@ -293,8 +299,13 @@ const BatchProfile = () => {
                 {selectedImageModal.title}
               </Typography>
               <img
-                src={selectedImageModal.image}
+                src={getSafeImageUrl(selectedImageModal.image, uniques4)}
                 alt={selectedImageModal.title}
+                onError={(e) => {
+                  if (e.currentTarget.src !== uniques4) {
+                    e.currentTarget.src = uniques4;
+                  }
+                }}
                 style={{
                   maxWidth: "88vw",
                   maxHeight: "80vh",

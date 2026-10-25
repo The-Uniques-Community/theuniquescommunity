@@ -1,7 +1,7 @@
 import axios from "axios";
-import { BASE_URL } from "@/config";
-import { networkFirstFetch, registerCacheFetcher } from "@/utils/cache/networkFirst";
-import { setCache, getCache } from "@/utils/cache/idbStorage";
+import { BASE_URL } from "../../config.js";
+import { networkFirstFetch, registerCacheFetcher } from "../cache/networkFirst.js";
+import { setCache, getCache } from "../cache/idbStorage.js";
 
 export const DEFAULT_BATCHES = [];
 
