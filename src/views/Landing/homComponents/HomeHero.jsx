@@ -1,4 +1,11 @@
 
+/**
+ * @file HomeHero.jsx
+ * @description Primary landing hero banner featuring community introduction, headline typography, WhatsApp invitation, and an infinite event photo marquee.
+ * @architecture Topmost presentation block of the landing view (`Landing.jsx`), routing to `/events` and linking to external WhatsApp onboarding.
+ * @agent_note Employs `useInView` to halt the `react-fast-marquee` animation when scrolled away, saving GPU and CPU cycles.
+ */
+
 import { ArrowForward } from '@mui/icons-material';
 import Button from "@/utils/Buttons/Button";
 import Marquee from 'react-fast-marquee';
@@ -18,6 +25,13 @@ const images = [
   'https://kmz0l2g36g.ufs.sh/f/szSqTLNNPY1rQYCb4jAIOoVhWP9E5DamsTHKt6ZeSc3LAJly'
 ];
 
+/**
+ * @component Landing
+ * @description Renders the community hero banner, branding mark, call-to-action button, community role pills, and a looping photographic marquee.
+ * @param {Object} props - Component properties (empty)
+ * @state None
+ * @api None (Direct link to WhatsApp community group)
+ */
 export default function Landing() {
   const marqueeRef = useRef(null);
   const isMarqueeInView = useInView(marqueeRef, { margin: "100px 0px" });

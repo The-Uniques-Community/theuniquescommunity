@@ -1,3 +1,19 @@
+/**
+ * @file TrainingTimeLine.jsx
+ * @description Parallax scroll-linked timeline component for community milestones.
+ * Tracks viewport scroll progress via Framer Motion (`useScroll`, `useTransform`) to render
+ * an animated luminescent vertical beam connecting historical cohort achievements, client
+ * projects, and hiring partner logos.
+ *
+ * @architecture
+ * - Part of the Training Model view cluster (`views/Landing/Training-model/components/`).
+ * - Employs container bounding rect measurement (`getBoundingClientRect`) to scale beam height.
+ * - Dynamic randomized partner logo sampling per year section.
+ *
+ * @agent_note
+ * Consumes `data` array of `{ title: string, content: ReactNode }` milestone nodes.
+ */
+
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { useScroll, useTransform, motion } from "framer-motion";
@@ -26,6 +42,14 @@ const getRandomLogos = () => {
   return shuffled.slice(0, 4);
 };
 
+/**
+ * Timeline Component
+ *
+ * @component
+ * @param {Object} props
+ * @param {Array<{ title: string, content: React.ReactNode }>} props.data - Array of chronological milestone objects.
+ * @returns {JSX.Element} Scroll-animated timeline interface.
+ */
 export const Timeline = ({ data }) => {
   const ref = useRef(null);
   const containerRef = useRef(null);

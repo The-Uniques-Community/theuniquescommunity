@@ -1,3 +1,10 @@
+/**
+ * @file index.jsx
+ * @description Fixed success stories sidebar featuring student member roster, active story highlighting, and social media connectivity.
+ * @architecture Layout sidebar component in src/utils/Sidebar/ rendered alongside success story profiles. Interacts with React Router.
+ * @agent_note Displays loading skeletons when `isLoading` is true. Responsive: becomes relative full-width drawer on smaller screens (`down('md')`).
+ */
+
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -123,6 +130,17 @@ const SocialIcon = styled(IconButton)(({ theme }) => ({
   }
 }));
 
+/**
+ * @component Sidebar
+ * @description Success stories navigation sidebar displaying student avatars, batch details, and active story selection state.
+ * @param {Object} props - Component properties
+ * @param {Array<Object>} [props.students=[]] - List of student alumni profile objects
+ * @param {Function} [props.onDrawerToggle] - Callback to close mobile drawer on story selection
+ * @param {boolean} [props.isDrawerOpen] - Drawer visibility state for mobile viewports
+ * @param {boolean} [props.isLoading=false] - Loading indicator triggering skeleton placeholders
+ * @state None
+ * @api Navigates to `/success-stories/:id` and `/`
+ */
 const Sidebar = ({ students = [], onDrawerToggle, isDrawerOpen, isLoading = false }) => {
   const location = useLocation();
   const navigate = useNavigate();

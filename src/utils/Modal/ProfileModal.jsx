@@ -1,3 +1,10 @@
+/**
+ * @file ProfileModal.jsx
+ * @description Comprehensive administrative member profile inspection modal featuring academic stats, achievements, certifications, projects, internships, event tracking, fine imposition, and account suspension controls.
+ * @architecture Admin modal component in src/utils/Modal/ rendering full member dossiers with tabbed MUI panels. Communicates directly with backend admin endpoints.
+ * @agent_note Integrates administrative actions: block/unblock member via `PATCH /api/admin/member/:id/block` and impose fine via `POST /api/admin/member/:id/fine`. Handles Google Drive embed preview transformations for certification PDFs and images.
+ */
+
 import * as React from "react";
 import {
   Button,
@@ -57,6 +64,17 @@ import ErrorIcon from "@mui/icons-material/Error";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import userIcon from "@/assets/img/user-icon.webp"
+
+/**
+ * @component CustomTabPanel
+ * @description Tab panel wrapper component that displays children when active tab index matches panel index.
+ * @param {Object} props - Component properties
+ * @param {React.ReactNode} [props.children] - Panel content
+ * @param {number} props.index - Tab index associated with this panel
+ * @param {number} props.value - Currently selected tab index
+ * @state None
+ * @api None
+ */
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
   return (
@@ -78,6 +96,11 @@ CustomTabPanel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
+/**
+ * @desc Generates accessibility attributes (id, aria-controls) for MUI Tab elements
+ * @param {number} index - Numerical tab position
+ * @returns {Object} Accessible attributes object `{ id, 'aria-controls' }`
+ */
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
@@ -85,6 +108,24 @@ function a11yProps(index) {
   };
 }
 
+/**
+ * @component ProfileModal
+ * @description Fullscreen dossier modal showcasing member demographics, social channels, academics, portfolio, and admin moderation controls.
+ * @param {Object} props - Component properties
+ * @param {boolean} props.open - Modal visibility boolean
+ * @param {Function} props.handleClose - Modal dismissal callback
+ * @param {Object} props.user - Comprehensive member profile data object
+ * @param {Function} [props.refreshData] - Callback to trigger parent view refetch after admin state mutations
+ * @state {boolean} blockLoading - Loading state during block/unblock PATCH requests
+ * @state {number} value - Active tab index (0 to 5)
+ * @state {boolean} fineModalOpen - Controls visibility of fine imposition dialog
+ * @state {string} fineAmount - Fine amount value input by admin
+ * @state {string} fineReason - Justification input by admin for fine
+ * @state {boolean} loading - Network loading state for fine submission
+ * @state {string|null} error - Error message displayed in fine dialog
+ * @state {Object} alert - Toast alert feedback state `{ open, message, severity }`
+ * @api Calls PATCH `${BASE_URL}/api/admin/member/${user._id}/block` and POST `${BASE_URL}/api/admin/member/${user._id}/fine`
+ */
 const ProfileModal = ({ open, handleClose, user, refreshData }) => {
   const [blockLoading, setBlockLoading] = React.useState(false);
   const [value, setValue] = React.useState(0);

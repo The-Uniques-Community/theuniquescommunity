@@ -1,8 +1,22 @@
+/**
+ * @file CustomLoader.jsx
+ * @description Fullscreen branded loading overlay rendered via React Portal with Framer Motion animations.
+ * @architecture Global loading screen component in src/utils/Loader/ used across initial loads, route suspensions, and async fallbacks.
+ * @agent_note Portals directly into `document.body` with fixed `z-[9999]`. Utilizes Framer Motion for logo pulse and dot-wave indicators.
+ */
+
 import React from "react";
 import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import logo from "../../assets/logos/theuniquesCommunity.png";
 
+/**
+ * @component CustomLoader
+ * @description Renders a branded fullscreen portal loader featuring community logo, luminescent pulsing ring, and animated progress dots.
+ * @param {Object} [props] - Component properties
+ * @state None
+ * @api None
+ */
 const CustomLoader = () => {
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white">

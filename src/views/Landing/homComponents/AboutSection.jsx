@@ -1,3 +1,10 @@
+/**
+ * @file AboutSection.jsx
+ * @description Landing page section presenting the community's mission, values, and focus areas with interactive GSAP parallax and scroll-triggered animations.
+ * @architecture Child component of the Landing view (`Landing.jsx`), rendering an H-shaped layout on desktop and a responsive grid on mobile screens.
+ * @agent_note Relies on GSAP ScrollTrigger (`gsap.context`). Ensure all DOM elements referenced by refs exist before animation binds, and verify `ctx.revert()` cleanup on unmount.
+ */
+
 import React, { useLayoutEffect, useRef } from "react";
 import { Groups, VolunteerActivism, Diversity3, Handshake, TipsAndUpdates } from "@mui/icons-material";
 import { gsap } from "gsap";
@@ -33,6 +40,22 @@ const features = [
   }
 ];
 
+/**
+ * @component FeatureCard
+ * @description Renders an individual feature card with numbering badge, custom icon, hovering elevations, and directional alignment.
+ * @param {Object} props - Component properties
+ * @param {Object} props.feature - Feature data object containing icon, title, and description
+ * @param {React.ReactNode} props.feature.icon - Material-UI icon element
+ * @param {string} props.feature.title - Title of the focus area
+ * @param {string} props.feature.description - Detailed explanation of the initiative
+ * @param {number} props.index - Index number displayed in ghost and badge labels
+ * @param {'left'|'right'|'center'} [props.align='center'] - Content alignment layout
+ * @param {string} [props.className=''] - Additional CSS classes
+ * @param {React.Ref} [props.cardRef] - Ref callback or object for GSAP animation targeting
+ * @param {boolean} [props.isPrimary=false] - Whether this card uses primary highlighted red styling
+ * @state None
+ * @api None (Static UI)
+ */
 const FeatureCard = ({ feature, index, align = "center", className = "", cardRef, isPrimary = false }) => {
   const isRight = align === "right";
   const isLeft = align === "left";
@@ -81,6 +104,13 @@ const FeatureCard = ({ feature, index, align = "center", className = "", cardRef
   );
 };
 
+/**
+ * @component AboutSection
+ * @description Main community showcase section rendering header statements, animated background watermarks, and a responsive H-shape card matrix.
+ * @param {Object} props - Component properties (empty)
+ * @state None (GSAP ref-driven animations managed via useLayoutEffect)
+ * @api None (Static UI presentation)
+ */
 const AboutSection = () => {
   const sectionRef = useRef(null);
   const leftTextRef = useRef(null);

@@ -1,9 +1,17 @@
+/**
+ * @file LandingStats.jsx
+ * @description Marketing metrics banner showcasing completed projects, client reach, monthly visitors, and subscriber counts alongside hero imagery.
+ * @architecture Presentation subview within landing sections, utilizing Material-UI styling hooks and custom Button component.
+ * @agent_note Displays static showcase performance statistics. Uses MUI `useTheme` for button color tokens.
+ */
+
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import { ViewList, Language, Group, Email } from "@mui/icons-material";
 import project from "@/assets/img/project.webp";
 import { useTheme } from "@mui/material/styles";
 import Button from "@/utils/Buttons/Button";
+
 const stats = [
   { icon: <ViewList fontSize="large" />, number: "1,394", label: "Successful Projects" },
   { icon: <Language fontSize="large" />, number: "477", label: "Happy Clients" },
@@ -11,6 +19,13 @@ const stats = [
   { icon: <Email fontSize="large" />, number: "3k", label: "Email Subscribers" },
 ];
 
+/**
+ * @component LandingStats
+ * @description Renders a 2-column split section containing a curved project photograph, 4 dark-themed metric cards, and a call-to-action button.
+ * @param {Object} props - Component properties (empty)
+ * @state None (Reads MUI theme via `useTheme`)
+ * @api None (Static metrics presentation)
+ */
 const LandingStats = () => {
     const theme = useTheme();
   return (

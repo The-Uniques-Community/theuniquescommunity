@@ -1,6 +1,20 @@
+/**
+ * @file CallToAction.jsx
+ * @description Conversion banner encouraging visitors to join The Uniques community by navigating to the `/register` registration page.
+ * @architecture Sub-component loaded into the "How It Started" flow. Uses `ContainerFull` layout wrapper and primary theme `Button`.
+ * @agent_note The background banner graphic uses a custom CSS clip-path class (`cta-clip`). The register CTA routes the user to `/register`.
+ */
+
 import Button from '@/utils/Buttons/Button'
 import ContainerFull from '@/utils/Container/ContainerFull'
 
+/**
+ * @component CallToAction
+ * @description Promotional call-to-action banner rendering registration headline and direct action button.
+ * @returns {JSX.Element} The rendered registration CTA section.
+ * @state None.
+ * @api None.
+ */
 const CallToAction = () => {
     return (
 

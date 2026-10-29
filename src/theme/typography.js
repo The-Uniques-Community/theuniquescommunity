@@ -1,3 +1,14 @@
+/**
+ * @file typography.js
+ * @description Typography and font configuration tokens for Material-UI themes.
+ * @architecture Exported to `src/theme/themes.js` to establish global typography scales and font styling for MUI components.
+ * @agent_note Configures custom display font `"Absans"` with fallback to `"Roboto"` and `"Arial"`. Explicitly disables uppercase transformation on buttons.
+ */
+
+/**
+ * @desc Material-UI typography variant and scale rules.
+ * @type {Object}
+ */
 export const typography = {
 	fontFamily: '"Absans", "Roboto", "Arial", sans-serif',
 	h1: {
@@ -16,4 +27,5 @@ export const typography = {
 	  textTransform: 'none', // Disable uppercase for buttons
 	},
   };
+
   

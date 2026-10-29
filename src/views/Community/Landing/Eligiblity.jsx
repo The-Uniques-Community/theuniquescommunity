@@ -1,3 +1,18 @@
+/**
+ * @file Eligiblity.jsx
+ * @description Community perks, member benefits, and eligibility advantages grid.
+ * Displays key perks (Exclusive Events, Networking, Skill Development, Recognition, Merchandise)
+ * wrapped in cursor-interactive `SpotlightCard` components with ambient radial lighting.
+ *
+ * @architecture
+ * - Part of the Community Landing feature cluster (`views/Community/Landing/`).
+ * - Employs Framer Motion `motion.div` with viewport-triggered reveal animations.
+ * - Integrates with `src/utils/Card/SpotLightCard.jsx`.
+ *
+ * @agent_note
+ * Light and dark theme palettes adjust spotlight color density (`rgba(202, 0, 25, 0.2)` vs `0.1`).
+ */
+
 import React from 'react';
 import SpotlightCard from '@/utils/Card/SpotLightCard';
 import { useThemeContext } from "@/theme/ThemeProvider";
@@ -31,6 +46,15 @@ const perksData = [
   },
 ];
 
+/**
+ * PerkCard Component
+ *
+ * @component
+ * @param {Object} props
+ * @param {Object} props.perk - Perk data item.
+ * @param {boolean} props.isDarkMode - Theme indicator.
+ * @returns {JSX.Element} Spotlight-enhanced benefit card.
+ */
 const PerkCard = ({ perk, isDarkMode }) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.9 }}

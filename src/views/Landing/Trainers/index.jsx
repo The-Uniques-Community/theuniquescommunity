@@ -1,3 +1,20 @@
+/**
+ * @file index.jsx
+ * @description Master catalog view for community mentors and faculty trainers.
+ * Fetches trainer directories from `GET ${BASE_URL}/api/admin/trainers/all-trainers`,
+ * provides cohort version filtering (`The Uniques 1.0` through `5.0`), real-time search,
+ * and renders interactive profile cards with Framer Motion entry animations.
+ *
+ * @architecture
+ * - Part of the Landing Trainers view cluster (`views/Landing/Trainers/`).
+ * - Uses `ThemeProvider` context for dark/light theme switching.
+ * - Displays `CustomLoader` during network resolution.
+ * - Renders grid of `TrainerCard` child components.
+ *
+ * @agent_note
+ * Backend trainer data is managed via `The-Uniques-Portal/server/controller/admin/trainerController.js`.
+ */
+
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Container, Stack, Chip } from "@mui/material";
 import axios from "axios";
@@ -18,6 +35,12 @@ const batchTabs = [
     { label: "The Uniques 5.0", version: "5.0" },
 ];
 
+/**
+ * Trainers Catalog Component
+ *
+ * @component
+ * @returns {JSX.Element} The rendered trainers and mentors catalog page.
+ */
 const Trainers = () => {
     const [trainers, setTrainers] = useState([]);
     const [loading, setLoading] = useState(true);

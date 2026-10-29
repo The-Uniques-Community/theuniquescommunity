@@ -1,7 +1,19 @@
+/**
+ * @file index.jsx
+ * @description Standard 404 Not Found error view displaying backdrop artwork, user guidance, and a return-to-home navigation button.
+ * @architecture Mounted as wildcard fallback route (`*`) across the application client-side router.
+ * @agent_note Dynamically calculates window height on resize to prevent viewport clipping on mobile browsers with collapsible address bars.
+ */
+
 import { Button } from "@mui/material";
 import bg from "@/assets/img/404bg.webp";
 import { useEffect, useState } from "react";
 
+/**
+ * @component NotFound
+ * @description Full-screen 404 error page with backdrop overlay and quick navigation action.
+ * @state {string} windowHeight - Computed pixel height string for mobile viewport safety
+ */
 const NotFound = () => {
   const [windowHeight, setWindowHeight] = useState("100vh");
 

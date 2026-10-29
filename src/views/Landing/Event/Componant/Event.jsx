@@ -1,3 +1,17 @@
+/**
+ * @file Event.jsx
+ * @description Interactive event detail modal dialog presenting complete event schedule, organizers, gallery, sponsors, guest lists, and dynamic registration form workflow.
+ * @architecture Invoked from parent components (`Index.jsx` or community cards). Integrates with multiple backend event endpoints managed by `The-Uniques-Portal/server/controller/events/eventController.js`.
+ * @agent_note Operational endpoints:
+ * - `GET ${BASE_URL}/api/events/${eventId}/members`: Retrieves team members grouped by contribution teams (`getEventWithMembers` in `server/controller/events/eventController.js`).
+ * - `POST ${BASE_URL}/api/events/${event._id}/register`: Registers authenticated/guest attendee (`registerForEvent` in `server/controller/events/eventController.js`).
+ * - `POST ${BASE_URL}/api/events/${event._id}/form-response`: Submits custom dynamic form response payload (`submitFormResponse` in `server/controller/events/eventController.js`).
+ *   - Request Payload: `{ responses: { [fieldName]: string|string[] }, respondentInfo: { name: string, email: string, phone: string } }`
+ * - `GET ${BASE_URL}/api/events/${eventId}`: Fetches sub-event detail data (`getEventById` in `server/controller/events/eventController.js`).
+ * - `GET ${BASE_URL}/api/events/${event._id}/gallery`: Retrieves gallery images (`getEventGallery` in `server/controller/events/eventController.js`).
+ * - `GET ${BASE_URL}/api/events`: Loads related events for tab browsing (`getAllEvents` in `server/controller/events/eventController.js`).
+ */
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '@/config';
@@ -89,6 +103,33 @@ const COMMUNITY_PARTNERS = [
     }
   ];
 
+/**
+ * @component Eventmodel
+ * @description Full-screen modal overlay presenting event details, registration forms, gallery previews, guest list, and organizer team rosters.
+ * @param {Object} props - Component properties
+ * @param {Object} props.event - The event object to inspect
+ * @param {boolean} [props.isOpen] - Flag indicating modal visibility
+ * @param {Function} props.onClose - Dismissal callback invoked on overlay click or close button
+ * @state {string} activeTab - Selected tab value ("about" | "gallery" | "guests" | "sponsors" | "organizers" | "partners")
+ * @state {Array<Object>} allEvents - Catalog of all events used for cross-referencing related events
+ * @state {Array<Object>} filteredEvents - Sub-array of related events filtered by category
+ * @state {Array<string>} eventTypes - Unique event types available
+ * @state {Array<Object>} eventLeaders - Organizer batch leader representations
+ * @state {Object|null} selectedDetailEvent - Event detail object shown in nested popups
+ * @state {boolean} registrationModalOpen - Controls visibility of the dynamic registration dialog
+ * @state {Array<Object>} formFields - Dynamic form field definitions extracted from `event.eventForm`
+ * @state {Object} formValues - Controlled key-value state for registration inputs
+ * @state {Object} formErrors - Validation error mapping for form inputs
+ * @state {boolean} registrationLoading - In-flight indicator for registration network requests
+ * @state {boolean} registrationSuccess - Toggles success alert upon successful registration
+ * @state {boolean} useIframeFallback - Activates Google Drive preview iframe if direct image fails
+ * @state {Array<Object>} teamMembers - List of organizing team members mapped from `eventMembers`
+ * @state {boolean} teamsLoading - Loading spinner state while fetching organizer team members
+ * @api GET ${BASE_URL}/api/events/${eventId}/members - Handled by `getEventWithMembers` in `server/controller/events/eventController.js`
+ * @api POST ${BASE_URL}/api/events/${event._id}/register - Handled by `registerForEvent` in `server/controller/events/eventController.js`
+ * @api POST ${BASE_URL}/api/events/${event._id}/form-response - Handled by `submitFormResponse` in `server/controller/events/eventController.js`
+ * @api GET ${BASE_URL}/api/events/${eventId} - Handled by `getEventById` in `server/controller/events/eventController.js`
+ */
 export default function Eventmodel({ event, isOpen, onClose }) {
     const [activeTab, setActiveTab] = useState("about");
     const [allEvents, setAllEvents] = useState([]);

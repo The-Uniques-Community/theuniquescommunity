@@ -1,3 +1,10 @@
+/**
+ * @file Infrastructure.jsx
+ * @description Campus and laboratory infrastructure showcase featuring category filtering, interactive slider controls, and mobile touch gestures for workspaces, R&D labs, and tech lounges.
+ * @architecture Sub-component loaded into the About page (`src/views/Landing/About/index.jsx`). Uses `useThemeContext` for light/dark mode adaptation and Lucide icons for architectural categorization.
+ * @agent_note Supports touch-swipe gestures (`touchstart` and `touchend`) for mobile pagination, keyboard accessibility, and dynamic filtering by category ('Workspaces', 'R&D Labs', 'Eco-Campus', 'Collaborative', 'Tech Lounges').
+ */
+
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import {
   Building2,
@@ -84,6 +91,14 @@ const infraData = [
 
 const categories = ["All", "Workspaces", "R&D Labs", "Eco-Campus", "Collaborative", "Tech Lounges"];
 
+/**
+ * @component Infrastructure
+ * @description Gallery and carousel showcase of high-performance campus computing facilities and workspaces.
+ * @returns {JSX.Element} The rendered infrastructure section.
+ * @state {string} selectedCategory - Currently active filter category ("All" or specific facility category)
+ * @state {number} activeIndex - Index of currently focused slide card in the active filter set
+ * @api None.
+ */
 const Infrastructure = () => {
   const { isDarkMode } = useThemeContext();
   const [selectedCategory, setSelectedCategory] = useState("All");

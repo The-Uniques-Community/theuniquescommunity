@@ -1,9 +1,23 @@
+/**
+ * @file AutoSlider.jsx
+ * @description Automatic carousel slider showcasing community article highlights using react-slick and Material-UI cards.
+ * @architecture Reusable carousel component embedded within landing subviews, rendering responsive 3-column, 2-column, or single-column cards.
+ * @agent_note Relies on react-slick styles (`slick-carousel/slick/slick.css` and `slick-theme.css`). Autoplays with a 3-second cycle.
+ */
+
 import React from "react";
 import Slider from "react-slick";
 import { Box, Card, CardMedia, CardContent, Typography } from "@mui/material";
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 
+/**
+ * @component AutoSlider
+ * @description Renders an auto-advancing carousel displaying cards with thumbnail images, titles, descriptions, and category tags.
+ * @param {Object} props - Component properties (empty)
+ * @state None (react-slick manages internal carousel index)
+ * @api None (Uses hardcoded showcase card data)
+ */
 const AutoSlider = () => {
   const sliderSettings = {
     dots: true,

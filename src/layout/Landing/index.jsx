@@ -1,3 +1,12 @@
+/**
+ * @file index.jsx
+ * @description Primary master layout wrapper for landing and public-facing routes.
+ * @architecture Hosts persistent top navigation (`Navbar`), dynamically renders nested sub-routes via `<Outlet />`,
+ * manages page-change scroll resets, provides lazy-loaded chatbot support (`ChatBot`), and creates a fixed reveal footer effect.
+ * @agent_note The footer uses a sticky reveal effect: the content section calculates `marginBottom` from `footerHeight`
+ * via dynamic DOM measurements on resize, allowing the fixed footer to become visible as the user scrolls past main content.
+ */
+
 import { Suspense, useEffect, useRef, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -9,8 +18,16 @@ import RouteErrorBoundary from "@/components/RouteErrorBoundary";
 
 const ChatBot = lazyWithRetry(() => import("@/components/ChatBot"));
 
+/**
+ * @component LandingLayout
+ * @description Structural container managing navigation headers, route transition animations, and reveal footers.
+ * @state {number} footerHeight - Dynamic height in pixels of the fixed bottom footer, measured for content margin offset.
+ * @state {string} pathname - Current URL path from `useLocation` triggering scroll reset and route fade animation.
+ * @returns {JSX.Element} The rendered layout structure surrounding routed outlets.
+ */
 const LandingLayout = () => {
   const { pathname } = useLocation();
+
   const footerRef = useRef(null);
   const [footerHeight, setFooterHeight] = useState(0);
 

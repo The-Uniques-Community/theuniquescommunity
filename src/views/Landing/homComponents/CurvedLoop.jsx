@@ -1,7 +1,28 @@
+/**
+ * @file CurvedLoop.jsx
+ * @description Interactive animated logo loop positioning logos along a mathematical quadratic Bezier curve with rotation tangents and drag interaction.
+ * @architecture Presentation component used for showcasing sponsor/partner logos across curved paths, integrating with framer-motion `useInView`.
+ * @agent_note Calculates Quadratic Bezier coordinates: B(t) = (1-t)^2 P0 + 2(1-t)t P1 + t^2 P2, computing tangent angles via atan2(dY, dX) for smooth directional alignment. Pauses requestAnimationFrame when out of viewport.
+ */
+
 import { useRef, useEffect, useState } from 'react';
 import { useInView } from 'framer-motion';
 import './CurvedLoop.css';
 
+/**
+ * @component CurvedLoop
+ * @description Renders logos along an SVG arc with continuous automated scrolling, momentum drag interactions, and dark mode responsiveness.
+ * @param {Object} props - Component properties
+ * @param {Array<Object>} [props.logos=[]] - Array of logo objects containing `name` and `logo` image URL
+ * @param {number} [props.speed=1] - Base movement speed in pixels per frame
+ * @param {number} [props.curveAmount=100] - Curvature displacement height for the quadratic curve control point
+ * @param {'left'|'right'} [props.direction='left'] - Initial scrolling direction
+ * @param {boolean} [props.interactive=true] - Allows user touch/mouse drag manipulation
+ * @param {boolean} [props.isDarkMode=false] - Inverts logo styles and curve stroke for dark themes
+ * @state {number} width - Measured pixel width of the container element
+ * @state {number} offset - Cumulative scroll offset driving logo positions along the curve
+ * @api None (Purely mathematical animation and rendering)
+ */
 const CurvedLoop = ({
   logos = [],
   speed = 1,

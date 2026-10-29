@@ -1,3 +1,10 @@
+/**
+ * @file TraningModel.jsx
+ * @description Tabbed curriculum navigator displaying the 5 distinct rounds of The Uniques training program: Inception (Round 1), Web Development (Round 2), MERN Stack (Round 3), Android/Flutter (Round 4), and GenAI/Cloud (Round 5).
+ * @architecture Sub-component of the About page (`src/views/Landing/About/index.jsx`). Organizes specialized tab components (`InceptionTab`, `WebDevTab`, `MernTab`, `AndroidTab`, `GenAiTab`) under an accessible MUI Tabs control.
+ * @agent_note Implements responsive tab scrolling (`variant="scrollable"`) on screens <= 1024px. Employs `useThemeContext` for dark/light styling and provides full WAI-ARIA tabpanel bindings via `a11yProps`.
+ */
+
 import * as React from "react";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
@@ -13,6 +20,15 @@ import AndroidTab from "../../homComponents/AndroidTab";
 import GenAiTab from "../../homComponents/GenAiTab";
 import { useThemeContext } from "../../../../theme/ThemeProvider";
 
+/**
+ * @component TabPanel
+ * @description Accessible wrapper component conditionally rendering active tab panel content.
+ * @param {Object} props - Component properties
+ * @param {React.ReactNode} [props.children] - Panel content elements
+ * @param {number} props.index - Tab panel sequence index
+ * @param {number} props.value - Currently selected tab index
+ * @returns {JSX.Element} Rendered tab panel container
+ */
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -39,6 +55,11 @@ TabPanel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
+/**
+ * @desc Generates accessibility properties for tab headers matching ARIA tab panel identifiers.
+ * @param {number} index - Index of the tab
+ * @returns {Object} ARIA attribute object containing `id` and `aria-controls`
+ */
 function a11yProps(index) {
   return {
     id: `tab-${index}`,
@@ -46,6 +67,13 @@ function a11yProps(index) {
   };
 }
 
+/**
+ * @component TrainingTabs
+ * @description Interactive curriculum tab bar switching between five specialized technical training rounds.
+ * @returns {JSX.Element} The rendered curriculum tabs section.
+ * @state {number} value - Index of the actively selected training round
+ * @api None.
+ */
 export default function TrainingTabs() {
   const [value, setValue] = React.useState(0);
   const isSmallScreen = useMediaQuery("(max-width: 1024px)");

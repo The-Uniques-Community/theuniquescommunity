@@ -1,6 +1,23 @@
+/**
+ * @file BlogCard2.jsx
+ * @description Material UI based blog card alternative featuring category tags, publish date, and action arrow.
+ * @architecture Presentation card in src/utils/Card/ styled with MUI (Card, CardContent, CardMedia, Typography, Box) and Tailwind.
+ * @agent_note Relies on Material UI components and @mui/icons-material ArrowOutward. Ensure MUI ThemeProvider context is available.
+ */
+
 import { ArrowOutward } from "@mui/icons-material";
 import { Card, CardContent, CardMedia, Typography, Box } from "@mui/material";
 
+/**
+ * @component BlogCard2
+ * @description Displays a blog article preview card using MUI layout elements and action buttons.
+ * @param {Object} props - Component properties
+ * @param {string} props.title - Article title
+ * @param {string} props.subtitle - Brief description or subtitle
+ * @param {string} [props.imgSrc] - Optional image URL for card media
+ * @state None
+ * @api None
+ */
 export default function BlogCard2({ title, subtitle, imgSrc }) {
   return (
     <Card className="!bg-transparent !shadow-none text-white">

@@ -1,3 +1,13 @@
+/**
+ * @file MemberProfile.jsx
+ * @description Comprehensive individual member portfolio page showcasing student profile, batch badge, contact links, skill tags, credentials, and projects.
+ * @architecture Mounted at `/profile/:id` in landing routes. Fetches members data from `${BASE_URL}/api/public/members` handled by `The-Uniques-Portal/server/controller/landing/memberController.js`.
+ * @agent_note Operational endpoints:
+ * - `GET ${BASE_URL}/api/public/members`: Handled by `getPublicMembers` in `server/controller/landing/memberController.js`. Returns `{ success: true, data: Array<Member> }`.
+ * - Deep links by route parameter `id`. Redirects back to `/batches` if member is not found.
+ * - Embeds Google Drive preview iframes for certificate credentials via `certificate.fileId`.
+ */
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
@@ -19,7 +29,11 @@ import { BASE_URL } from "@/config";
 import { toast } from "react-toastify";
 import { getSafeImageUrl, getAvatarFallback } from "@/utils/imageHelper";
 
-// Helper function for formatting dates
+/**
+ * @desc Formats an ISO date string into a localized short date format.
+ * @param {string} dateString - Date string to parse
+ * @returns {string} Formatted date (e.g., "Jan 15, 2026") or empty string
+ */
 const formatDate = (dateString) => {
   if (!dateString) return "";
   const date = new Date(dateString);
@@ -30,6 +44,16 @@ const formatDate = (dateString) => {
   });
 };
 
+/**
+ * @component MemberProfile
+ * @description Interactive member portfolio view presenting bio, skills, batch info, social channels, certificate proofs, and software projects.
+ * @state {Object|null} member - Current member profile document loaded from API
+ * @state {boolean} loading - Network in-flight state indicator
+ * @state {string} activeTab - Tab index key ("about" | "certificates" | "projects")
+ * @state {boolean} shareMenuOpen - Controls visibility of social sharing dropdown
+ * @state {boolean} copied - Temporary flag indicating URL copied to clipboard
+ * @api GET ${BASE_URL}/api/public/members - Handled by `getPublicMembers` in `The-Uniques-Portal/server/controller/landing/memberController.js`
+ */
 const MemberProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();

@@ -1,9 +1,24 @@
+/**
+ * @file projectsData.js
+ * @description Comprehensive project portfolio service with initial seed registry, MongoDB CRUD operations, and IndexedDB network-first caching.
+ * @architecture Primary data provider in src/utils/project/ feeding project galleries, detail viewpages, batch associations, and portfolio filters.
+ * @agent_note Communicates with backend endpoints:
+ *   - GET `${BASE_URL}/api/projects?limit=100` (handled by backend project controller `getAllProjects`)
+ *   - POST `${BASE_URL}/api/projects` (handled by backend project controller `createProject`, payload: project data object)
+ *   - PUT `${BASE_URL}/api/projects/:id` (handled by backend project controller `updateProject`, payload: updated project fields)
+ *   - DELETE `${BASE_URL}/api/projects/:id` (handled by backend project controller `deleteProject`)
+ * Caching strategy: Network-first via `networkFirstFetch` with IndexedDB key "tu_community_projects", legacy localStorage key "tu_community_projects", synchronous `inMemoryProjects`, and DOM event "projects-updated".
+ */
+
 import axios from "axios";
 import { BASE_URL } from "../../config.js";
 import { networkFirstFetch, registerCacheFetcher } from "../cache/networkFirst.js";
 import { setCache, getCache } from "../cache/idbStorage.js";
 import { getSafeImageUrl } from "../imageHelper.js";
 
+/**
+ * @desc Baseline seeded registry of 10 flagship community projects with complete problem statements, features, and team credits
+ */
 export const INITIAL_PROJECTS = [
   {
     id: 1,
@@ -352,6 +367,9 @@ export const INITIAL_PROJECTS = [
   },
 ];
 
+/**
+ * @desc Canonical batch associations for community projects
+ */
 export const PROJECT_BATCHES = [
   "Uniques 1.0",
   "Uniques 2.0",
@@ -360,6 +378,9 @@ export const PROJECT_BATCHES = [
   "Uniques 5.0",
 ];
 
+/**
+ * @desc Domain taxonomy categories for project classification
+ */
 export const PROJECT_CATEGORIES = [
   "Support & Mentorship",
   "Digital Library",
@@ -380,10 +401,19 @@ export const PROJECT_CATEGORIES = [
 const PROJECTS_CACHE_KEY = "tu_community_projects";
 const LEGACY_STORAGE_KEY = "tu_community_projects";
 
+/**
+ * @desc Strips whitespace and special characters from title for fuzzy matching
+ * @param {string} str - Project title string
+ * @returns {string} Sanitized alphanumeric lowercase string
+ */
 const cleanTitle = (str) =>
   (str || "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
-// Normalizes project objects so both id and _id work seamlessly and images are safe
+/**
+ * @desc Normalizes project object ensuring unified `id` and `_id` identity and safe image resolution
+ * @param {Object} p - Raw project record
+ * @returns {Object} Normalized project with safe image URL
+ */
 export const normalizeProject = (p) => {
   if (!p || typeof p !== "object") return p;
   return {
@@ -394,7 +424,11 @@ export const normalizeProject = (p) => {
   };
 };
 
-// Helper to merge raw items with INITIAL_PROJECTS
+/**
+ * @desc Merges remote project records with local seed registry to ensure rich descriptions and metadata
+ * @param {Array<Object>} items - Raw fetched project items
+ * @returns {Array<Object>} Unified project collection
+ */
 export const mergeWithInitialProjects = (items) => {
   if (!Array.isArray(items) || items.length === 0) {
     return [];
@@ -427,11 +461,19 @@ if (typeof window !== "undefined") {
   }).catch(() => {});
 }
 
+/**
+ * @desc Synchronously returns in-memory cached projects
+ * @returns {Array<Object>} Project records array
+ */
 export const getStoredProjects = () => {
   return [...inMemoryProjects];
 };
 
-// Fetch latest projects from MongoDB backend API via Network-First approach
+/**
+ * @desc Fetches latest projects from MongoDB backend API via Network-First approach
+ * @api GET `${BASE_URL}/api/projects?limit=100` handled by backend `getAllProjects` controller
+ * @returns {Promise<Array<Object>>} Resolved array of normalized projects
+ */
 export const fetchProjects = async () => {
   const effectiveBaseUrl = BASE_URL ? BASE_URL.replace(/\/+$/, "") : "https://the-uniques-portal.vercel.app";
   const result = await networkFirstFetch({
@@ -461,7 +503,12 @@ if (typeof window !== "undefined") {
   registerCacheFetcher(PROJECTS_CACHE_KEY, fetchProjects);
 }
 
-// Add new project - calls MongoDB Backend API + persists to IndexedDB
+/**
+ * @desc Adds a new project via MongoDB Backend API and persists to IndexedDB cache
+ * @api POST `${BASE_URL}/api/projects` handled by backend `createProject` controller
+ * @param {Object} projectData - Project payload object
+ * @returns {Promise<Object>} Persisted project record
+ */
 export const addProject = async (projectData) => {
   try {
     const response = await axios.post(`${BASE_URL}/api/projects`, projectData, { withCredentials: true });
@@ -496,7 +543,13 @@ export const addProject = async (projectData) => {
   return newProject;
 };
 
-// Update existing project in MongoDB Backend API
+/**
+ * @desc Updates an existing project in MongoDB backend and updates IndexedDB cache
+ * @api PUT `${BASE_URL}/api/projects/:id` handled by backend `updateProject` controller
+ * @param {string|number} id - Project ID
+ * @param {Object} projectData - Partial or complete project update payload
+ * @returns {Promise<Object>} Updated project record
+ */
 export const updateProject = async (id, projectData) => {
   try {
     const response = await axios.put(`${BASE_URL}/api/projects/${id}`, projectData, { withCredentials: true });
@@ -527,7 +580,12 @@ export const updateProject = async (id, projectData) => {
   return updated.find((p) => String(p.id) === String(id));
 };
 
-// Delete project in MongoDB Backend API
+/**
+ * @desc Deletes a project by ID from MongoDB backend and removes from IndexedDB cache
+ * @api DELETE `${BASE_URL}/api/projects/:id` handled by backend `deleteProject` controller
+ * @param {string|number} id - Project ID to delete
+ * @returns {Promise<Array<Object>>} Remaining projects list
+ */
 export const deleteProject = async (id) => {
   try {
     await axios.delete(`${BASE_URL}/api/projects/${id}`, { withCredentials: true });
@@ -547,7 +605,11 @@ export const deleteProject = async (id) => {
   return updated;
 };
 
-// Find single project by numeric id, mongo _id, "project-1", or slug
+/**
+ * @desc Locates a single project by numeric id, mongo _id, "project-1" slug, or title slug
+ * @param {string|number} id - Identifier or title slug
+ * @returns {Object|null} Matching project object or null
+ */
 export const getProjectById = (id) => {
   if (!id) return null;
   const existing = getStoredProjects();

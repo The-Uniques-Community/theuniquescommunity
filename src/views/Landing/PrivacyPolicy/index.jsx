@@ -1,3 +1,10 @@
+/**
+ * @file index.jsx
+ * @description Official Privacy Policy disclosure outlining user data collection protocols, analytics telemetry, third-party gateways, and student privacy rights.
+ * @architecture Mounted at `/privacy-policy` in the public landing router hierarchy.
+ * @agent_note Implements IntersectionObserver-driven scrollspy in the sticky sidebar navigation for real-time section tracking.
+ */
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import CelebrationComponent from "@/utils/Header";
@@ -21,6 +28,11 @@ import {
   ChevronRight
 } from "lucide-react";
 
+/**
+ * @component PrivacyPolicy
+ * @description Responsive policy document layout with sticky table-of-contents navigation, structured data collection disclosures, and contact points.
+ * @state {string} activeSection - Identifies the currently visible policy section for scrollspy highlights
+ */
 const PrivacyPolicy = () => {
   const [activeSection, setActiveSection] = useState("introduction");
 

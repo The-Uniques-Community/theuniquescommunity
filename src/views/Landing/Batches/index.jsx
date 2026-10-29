@@ -1,3 +1,14 @@
+/**
+ * @file index.jsx
+ * @description Community batches catalog page celebrating alumni and active cohorts, featuring batch statistics, cohort achievements, and member directories.
+ * @architecture Mounted at `/batches` in landing routes. Interacts with public member endpoints and community batch endpoints.
+ * @agent_note Operational endpoints:
+ * - `GET ${BASE_URL}/api/public/members/counts`: Handled by `getMemberCounts` in `server/controller/landing/memberController.js`. Returns member counts aggregated per batch.
+ * - `GET ${BASE_URL}/api/public/members?batch={selectedBatch}`: Handled by `getPublicMembers` in `server/controller/landing/memberController.js`. Returns `{ success: true, data: Array<Member> }`.
+ * - `GET ${BASE_URL}/api/batches`: Handled by `getAllBatches` in `server/controller/Community/batchController.js`.
+ * - `GET ${BASE_URL}/api/batches/profiles`: Handled by `getBatchProfiles` in `server/controller/Community/batchController.js`.
+ */
+
 import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Search, Award, RefreshCw, Users, ChevronDown, Check } from "lucide-react";
@@ -14,6 +25,24 @@ import CallToAction from "@/views/Landing/homComponents/CallToAction";
 import { getStoredBatches, fetchBatches } from "@/utils/batch/batchesData";
 import { getStoredBatchProfiles, fetchBatchProfiles } from "@/utils/batch/batchProfilesData";
 
+/**
+ * @component BatchesPage
+ * @description Master view for exploring community batches, viewing cohort-specific achievements and metrics, and discovering member profiles through search and filters.
+ * @state {boolean} isDropdownOpen - Visibility toggle for custom batch selection dropdown
+ * @state {Array<Object>} members - Sanitized list of member records fetched for the current batch
+ * @state {Array<string>} storedBatches - List of batch cohort names from cache or API
+ * @state {string} selectedBatch - Currently selected batch identifier
+ * @state {string} searchTerm - Client-side search filter string across member names, bios, courses, and skills
+ * @state {boolean} loading - Network loading state for batch members
+ * @state {string|null} error - Error message string on fetch failure
+ * @state {Object} batchCounts - Dictionary mapping batch names to their total member count
+ * @state {Array<Object>} achievements - Formatted achievement items associated with the active batch
+ * @state {number} totalMembers - Total number of processed members in the active batch
+ * @state {boolean} countsLoading - Loading state for batch count metrics
+ * @api GET ${BASE_URL}/api/public/members/counts - Handled by `getMemberCounts` in `The-Uniques-Portal/server/controller/landing/memberController.js`
+ * @api GET ${BASE_URL}/api/public/members - Handled by `getPublicMembers` in `The-Uniques-Portal/server/controller/landing/memberController.js`
+ * @api GET ${BASE_URL}/api/batches - Handled by `getAllBatches` in `The-Uniques-Portal/server/controller/Community/batchController.js`
+ */
 const index = () => {
   // State management
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

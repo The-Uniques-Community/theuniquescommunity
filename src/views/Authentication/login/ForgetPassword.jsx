@@ -1,3 +1,23 @@
+/**
+ * @file ForgetPassword.jsx
+ * @description Multi-step self-service password recovery wizard for community members.
+ * Guides the user through a 3-step verification workflow:
+ *  1. Request OTP to registered email address (`POST ${BASE_URL}/auth/password-reset/send-otp`)
+ *  2. Verify 6-digit OTP code (`POST ${BASE_URL}/auth/password-reset/verify-otp`)
+ *  3. Set and confirm new password (`POST ${BASE_URL}/auth/password-reset/reset-password`)
+ *
+ * @architecture
+ * - Part of the Community Authentication feature cluster (`views/Authentication/login/`).
+ * - Form state, validation, and submission managed via Formik and Yup validation schemas.
+ * - Material-UI Stepper component controls visual step progression.
+ * - Network requests target the companion backend authentication controllers in `The-Uniques-Portal/server`.
+ * - Redirects back to `PORTAL_URL` upon completion or cancellation.
+ *
+ * @agent_note
+ * When modifying endpoint contracts or validation rules, ensure matching logic in
+ * `The-Uniques-Portal/server/controller/Authentication/passwordReset.controller.js`.
+ */
+
 import { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import {
@@ -33,6 +53,12 @@ import { BASE_URL, PORTAL_URL } from "@/config";
 import logo from "@/assets/logos/theuniquesCommunity.png";
 import bg from "@/assets/img/login/bg.png";
 
+/**
+ * ForgetPassword Component
+ *
+ * @component
+ * @returns {JSX.Element} The rendered multi-step password recovery UI.
+ */
 const ForgetPassword = () => {
   const theme = useTheme();
   const navigate = useNavigate();

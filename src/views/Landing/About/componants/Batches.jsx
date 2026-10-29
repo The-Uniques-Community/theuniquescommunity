@@ -1,3 +1,10 @@
+/**
+ * @file Batches.jsx
+ * @description Interactive batch profiles explorer allowing users to inspect distinct community cohorts (Uniques 1.0 through 4.0/5.0), their statistics, focus areas, and gallery showcases.
+ * @architecture Child component of About page (`src/views/Landing/About/index.jsx`). Subscribes to custom window events `batch-profiles-updated` and `batches-updated` to synchronize local storage state with remote API fetches via `fetchBatchProfiles` and `fetchBatches`.
+ * @agent_note Relies on `getStoredBatchProfiles()` and `fetchBatchProfiles()` in `src/utils/batch/batchProfilesData.js`. If a batch image fails to load, `getSafeImageUrl` and `onError` fallback gracefully to `uniques4`. Modal preview supports high-resolution viewing of cohort gallery images.
+ */
+
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Grid, Card, Stack, Container, Select, MenuItem, FormControl, Modal, IconButton } from "@mui/material";
 import { X } from "lucide-react";
@@ -14,6 +21,15 @@ import { getSafeImageUrl } from "@/utils/imageHelper";
 import { getStoredBatchProfiles, fetchBatchProfiles } from "@/utils/batch/batchProfilesData";
 import { fetchBatches } from "@/utils/batch/batchesData";
 
+/**
+ * @component BatchProfile
+ * @description Renders a dropdown cohort selector and displays the selected batch's mission, member counts, technology pillars, and visual memory grid.
+ * @returns {JSX.Element} The rendered batch profile showcase.
+ * @state {number} value - Index of the currently selected batch in `batchData`
+ * @state {Object|null} selectedImageModal - Modal state for full-screen inspection of cohort photography `{ title, image }`
+ * @state {Array<Object>} batchData - Cohort profiles sourced from local cache and updated via `fetchBatchProfiles`
+ * @api Dispatches batch profile fetch and listens to `batch-profiles-updated` and `batches-updated` events.
+ */
 const BatchProfile = () => {
   const { isDarkMode } = useThemeContext();
   const [value, setValue] = useState(0);

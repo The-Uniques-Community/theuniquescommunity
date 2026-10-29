@@ -1,5 +1,19 @@
+/**
+ * @file Fifth.jsx
+ * @description Educational working model section depicting the community's three-step cycle: industry mentorship, peer collaboration, and practical project execution.
+ * @architecture Sub-component loaded into the About page (`src/views/Landing/About/index.jsx`). Pure presentational component with custom curved connecting SVG paths on desktop.
+ * @agent_note The connecting SVG is hidden on mobile/tablet viewports and rendered from `md` breakpoint upwards. The step cards use clean semantic HTML and tailwind utility classes.
+ */
+
 import React from 'react';
 
+/**
+ * @component Fifth
+ * @description Three-step process flow visualization representing the foundational methodology of The Uniques Community.
+ * @returns {JSX.Element} The rendered working model section.
+ * @state None.
+ * @api None.
+ */
 const Fifth = () => {
   return (
     <section className="py-10 bg-white sm:py-16 lg:py-24">

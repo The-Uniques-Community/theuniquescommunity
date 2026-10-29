@@ -1,5 +1,23 @@
+/**
+ * @file Community.jsx
+ * @description General-purpose backdrop overlay modal dialog component with title and close dismissal button.
+ * @architecture Reusable modal primitive in src/utils/Modal/ providing container layout for community dialogs and prompts.
+ * @agent_note Conditionally returns null when `isOpen` is falsy. Backdrop click does not automatically close; close is triggered by close button.
+ */
+
 import React from 'react';
 
+/**
+ * @component Modal
+ * @description Renders a centered modal dialog box with header title, close SVG icon button, and child content.
+ * @param {Object} props - Component properties
+ * @param {boolean} props.isOpen - Controls visibility of the modal
+ * @param {Function} props.onClose - Callback triggered when the close button is clicked
+ * @param {string} props.title - Modal title text
+ * @param {React.ReactNode} props.content - Body content or components rendered within modal
+ * @state None
+ * @api None
+ */
 const Modal = ({ isOpen, onClose, title, content }) => {
     if (!isOpen) return null;
 

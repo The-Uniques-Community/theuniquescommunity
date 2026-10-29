@@ -1,7 +1,21 @@
+/**
+ * @file AndroidTab.jsx
+ * @description Training track tab view presenting the Data Structures & Algorithms (DSA) training syllabus and core modules.
+ * @architecture Rendered dynamically as a panel within `TrainingTabs.jsx` on the landing page.
+ * @agent_note Despite the legacy filename `AndroidTab`, this component represents the Data Structures & Algorithms track (arrays, trees, DP, Big-O complexity).
+ */
+
 import { AccountTree, Sort, Memory, Speed } from "@mui/icons-material";
 
 const img = "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5Y6o9N9kdqrAaPiXWyjJwRgVxh49pENQmO51K";
 
+/**
+ * @component AndroidTab
+ * @description Renders a 2-column track curriculum layout featuring a track illustration alongside a 4-card grid detailing DSA competencies.
+ * @param {Object} props - Component properties (empty)
+ * @state None
+ * @api None (Static UI presentation)
+ */
 const AndroidTab = () => {
   const features = [
     {

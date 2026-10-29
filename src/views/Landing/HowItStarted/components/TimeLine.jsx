@@ -1,3 +1,10 @@
+/**
+ * @file TimeLine.jsx
+ * @description Comprehensive chronological timeline detailing The Uniques community trajectory from initial inception (Uniques 1.0) through subsequent cohorts, hackathons, industry visits, and anniversary celebrations.
+ * @architecture Sub-component loaded into the "How It Started" page (`src/views/Landing/HowItStarted/index.jsx`). Uses Framer Motion for scroll-driven animations and alternating left-right milestone entries.
+ * @agent_note Contains rich photographic arrays (48 historical assets) documenting workshops, guest lectures, hackathons, and cohort milestones. Uses Framer Motion's `whileInView` for reveal animations.
+ */
+
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { useScroll, useTransform, motion } from "framer-motion";
@@ -52,10 +59,24 @@ import FORTYSIX from "@/assets/img/HowItStarted/46.webp";
 import FORTYSEVEN from "@/assets/img/HowItStarted/47.webp";
 import FORTYEIGHT from "@/assets/img/HowItStarted/48.webp";
 
+/**
+ * @desc Utility for conditionally combining and merging Tailwind CSS classes.
+ * @param {...any} inputs - Class names or conditions
+ * @returns {string} Merged class name string
+ */
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * @component Timeline
+ * @description Alternating timeline layout rendering vertical milestone connectors and content cards.
+ * @param {Object} props - Component properties
+ * @param {Array<Object>} props.data - Array of milestone event objects
+ * @param {string} [props.title] - Section heading title
+ * @param {string} [props.description] - Descriptive subtitle
+ * @returns {JSX.Element} The rendered timeline layout.
+ */
 export const Timeline = ({ data, title, description }) => {
   const containerRef = useRef(null);
   const { isDarkMode } = useThemeContext();
@@ -518,6 +539,13 @@ const timelineData = [
 
 ];
 
+/**
+ * @component TimelineView
+ * @description Default container component rendering the community journey timeline with predefined historical data.
+ * @returns {JSX.Element} The rendered full timeline view.
+ * @state None.
+ * @api None.
+ */
 export default function TimelineView() {
   return (
     <Timeline

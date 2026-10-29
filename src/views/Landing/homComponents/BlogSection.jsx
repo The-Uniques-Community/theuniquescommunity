@@ -1,3 +1,12 @@
+/**
+ * @file BlogSection.jsx
+ * @description Landing page section displaying recent community articles and tutorials with image cards and direct links to the full blog portal.
+ * @architecture Child section on the landing view (`Landing.jsx`), routing out to `/blogs`. Consumes articles from the portal blog API.
+ * @agent_note Interacts with backend blog endpoint:
+ * - `GET ${BASE_URL}/api/blogs?limit=3` (handled by `getAllBlogs` in `The-Uniques-Portal/server/controller/member/blogController.js`)
+ * Maps backend payload `description` and `subContents[0].paragraph` as subtitle fallbacks, ensuring robust rendering even if images are missing.
+ */
+
 import React, { useState, useEffect } from "react";
 import { Container, Typography, Grid, Box, Button } from "@mui/material";
 import { Link } from "react-router-dom";
@@ -5,6 +14,15 @@ import axios from "axios";
 import { BASE_URL } from "@/config";
 import BlogCard2 from "@/utils/Card/BlogCard2";
 
+/**
+ * @component BlogSection
+ * @description Fetches and presents a 3-column grid of recent blog posts using `BlogCard2` components with loading, error, and empty states.
+ * @param {Object} props - Component properties (empty)
+ * @state {Array<Object>} blogPosts - Collection of parsed article summaries for display
+ * @state {boolean} loading - Boolean flag indicating active HTTP fetch request
+ * @state {string|null} error - Error message string if request fails
+ * @api `GET ${BASE_URL}/api/blogs?limit=3` - Fetches the top 3 latest published community articles
+ */
 const BlogSection = () => {
   const [blogPosts, setBlogPosts] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -1,3 +1,10 @@
+/**
+ * @file Footer.jsx
+ * @description Global website footer displaying brand overview, navigation directories, resource links, and social channel links.
+ * @architecture Layout footer component in src/utils/Footer/ mounted at root layout level across public application pages.
+ * @agent_note Links out to `PORTAL_URL` from `@/config` for member portal login. Supports responsive column collapsing and dark mode styling.
+ */
+
 import { useTheme } from "@mui/material";
 import { FaLinkedinIn, FaTwitter, FaInstagram, FaGithub, FaWhatsapp } from "react-icons/fa";
 import logo from '../../assets/logos/theuniquesCommunity.png'
@@ -5,6 +12,13 @@ import { Link } from "react-router";
 import { WhatsApp } from "@mui/icons-material";
 import { PORTAL_URL } from "@/config";
 
+/**
+ * @component Footer
+ * @description Global multi-column navigation footer with copyright details and interactive social media iconography.
+ * @param {Object} [props] - Component properties
+ * @state None
+ * @api Links to external `PORTAL_URL` and community social profiles
+ */
 const Footer = () => {
     const theme = useTheme();
   return (

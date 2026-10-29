@@ -1,6 +1,20 @@
+/**
+ * @file CorporateCultureSection.jsx
+ * @description Landing page section presenting corporate work culture values and atmosphere through an asymmetric photo collage and shaped feature cards.
+ * @architecture Child section on the landing view, utilizing `ShapedCard` and mock culture records from `@/assets/dummyData/corporateModel`.
+ * @agent_note Displays static curated workplace culture highlights and images. Does not connect to live backend endpoints.
+ */
+
 import ShapedCard from "@/utils/Card/ShapedCard";
 import { data } from "@/assets/dummyData/corporateModel";
 
+/**
+ * @component CorporateCultureSection
+ * @description Renders a heading section, a 6-image asymmetric photo collage mosaic, and a 4-column grid of `ShapedCard` items.
+ * @param {Object} props - Component properties (empty)
+ * @state None
+ * @api None (Static content)
+ */
 const CorporateCultureSection = () => {
   return (
     <div className="lg:px-12 px-5 py-12">

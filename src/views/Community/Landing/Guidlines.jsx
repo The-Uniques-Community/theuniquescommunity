@@ -1,3 +1,18 @@
+/**
+ * @file Guidlines.jsx
+ * @description Community Lead activity guidelines and core responsibilities matrix.
+ * Outlines student lead responsibilities across Innovation Challenges, Product Evangelism,
+ * Startup Pitching, and Event Leadership with colorful custom SVG iconography.
+ *
+ * @architecture
+ * - Part of the Community Landing feature cluster (`views/Community/Landing/`).
+ * - Responsive 3-column grid of role activity cards.
+ * - Dark mode compliant via Tailwind CSS classes (`dark:bg-[#111111]`).
+ *
+ * @agent_note
+ * Visual cards contain inline SVGs with tailored background tint pills (`iconBg`).
+ */
+
 import React, { useState } from 'react';
 import Effect from "@/assets/img/Community/effect.webp";
 // import Modal from "@/utils/Modal/Community"

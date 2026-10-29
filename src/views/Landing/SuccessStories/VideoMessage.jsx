@@ -1,8 +1,29 @@
+/**
+ * @file VideoMessage.jsx
+ * @description Embedded video testimonial player and quote showcase featuring recorded reflections, advice, and inspiring words from alumni achievers.
+ * @architecture Sub-component loaded into `StudentStory.jsx` (`src/views/Landing/SuccessStories/StudentStory.jsx`). Renders video player and quote highlights from the candidate record.
+ * @agent_note Relies on `student.videoUrl` (or YouTube embed link) and `student.quote` provided by `The-Uniques-Portal/server/models/community/successStoryModel.js` and returned from `GET ${BASE_URL}/api/success-stories/:id`. Supports in-place play preview toggle (`isPlaying`).
+ */
+
 import React, { useState } from 'react';
 import { Box, Typography, Paper, Chip, Fade } from '@mui/material';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
 
+/**
+ * @component VideoMessage
+ * @description Personal video interview and inspirational quote presentation card.
+ * @param {Object} props - Component properties
+ * @param {Object} props.student - Candidate data record
+ * @param {string} props.student.name - Student's full name
+ * @param {string} [props.student.videoUrl] - Video stream or YouTube embed URL
+ * @param {string} [props.student.quote] - Inspiring quote or takeaway
+ * @param {React.ComponentType} props.SectionHeading - Custom typography heading component
+ * @param {boolean} props.isDarkMode - Theme dark mode indicator
+ * @returns {JSX.Element} The rendered video interview message card.
+ * @state {boolean} isPlaying - Toggle state controlling custom video playback overlay
+ * @api Sourced from `GET /api/success-stories/:id`.
+ */
 const VideoMessage = ({ student, SectionHeading, isDarkMode }) => {
   const [isPlaying, setIsPlaying] = useState(false);
 

@@ -1,7 +1,19 @@
+/**
+ * @file BlogCard.jsx
+ * @description Interactive blog post summary card featuring dark mode support, category icons, fallback graphics, and reading time indicator.
+ * @architecture Presentation card component located in src/utils/Card/ used within blog lists and editorial showcases. Consumes ThemeProvider.
+ * @agent_note Accepts title, description, category, readTime, image, and onClick callback. Handles image loading errors gracefully with category-specific icon fallbacks.
+ */
+
 import React, { useState } from "react";
 import { useThemeContext } from "@/theme/ThemeProvider";
 import { Code, Calendar, Database, BookOpen } from "lucide-react";
 
+/**
+ * @desc Resolves category Lucide icon based on category keyword matching
+ * @param {string} [category=""] - Blog post category name
+ * @returns {JSX.Element} Lucide icon component with standard styling
+ */
 const getCategoryIcon = (category = "") => {
   const cat = category.toLowerCase();
   if (cat.includes("react") || cat.includes("frontend") || cat.includes("code")) {
@@ -16,6 +28,19 @@ const getCategoryIcon = (category = "") => {
   return <BookOpen className="w-10 h-10 text-[#CA0019]" />;
 };
 
+/**
+ * @component BlogCard
+ * @description Renders a blog preview card with thumbnail image, category badge, excerpt, and reading metadata.
+ * @param {Object} props - Component properties
+ * @param {string} props.title - Article headline or title
+ * @param {string} props.description - Short summary or markdown excerpt of the article
+ * @param {string} props.category - Article taxonomy or subject category
+ * @param {number|string} [props.readTime] - Estimated read time in minutes
+ * @param {string} props.image - URL of the article banner image
+ * @param {Function} [props.onClick] - Click handler triggered on card selection
+ * @state {boolean} imgError - Tracks whether the hero image failed to load, triggering fallback
+ * @api None
+ */
 const BlogCard = ({ title, description, category, readTime, image, onClick }) => {
   const { isDarkMode } = useThemeContext() || {};
   const [imgError, setImgError] = useState(false);

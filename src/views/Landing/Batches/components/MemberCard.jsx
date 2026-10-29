@@ -1,3 +1,12 @@
+/**
+ * @file MemberCard.jsx
+ * @description Lanyard badge-styled interactive member card featuring profile image fallbacks, floating social action icons, and smooth profile page navigation.
+ * @architecture Used in `src/views/Landing/Batches/index.jsx` to render member lists. Links to `/profile/:id` on click.
+ * @agent_note Operational endpoints:
+ * - Image streaming: `GET ${BASE_URL}/api/image-proxy/:fileId` handled directly in `The-Uniques-Portal/server/index.js` via `googleDriveService.js`.
+ * - Member profile navigation targets `/profile/${_id}`.
+ */
+
 import React, { useState } from "react";
 import {
   ArrowUpRight,
@@ -12,6 +21,21 @@ import { BASE_URL } from "@/config";
 import { motion } from "framer-motion";
 import { getSafeImageUrl, getAvatarFallback } from "@/utils/imageHelper";
 
+/**
+ * @component MemberCard
+ * @description Individual member badge card rendering student details, batch tags, social handles, and click-through navigation to their full profile.
+ * @param {Object} props - Component properties
+ * @param {Object} props.member - Member data model
+ * @param {string} props.member._id - Unique member identifier
+ * @param {string} props.member.fullName - Full name of the member
+ * @param {string} props.member.batch - Cohort batch designation (e.g., "The Uniques 3.0")
+ * @param {string} [props.member.course] - Academic program or specialty course
+ * @param {Array<string|Object>} [props.member.skills] - Technical skills array
+ * @param {Array<Object>} [props.member.achievements] - Recognitions or competition wins
+ * @param {Array<Object>} [props.member.projects] - Associated projects list
+ * @param {string|Object} [props.member.profilePic] - Avatar image URL or Google Drive file object
+ * @param {boolean} [props.member.isPlaced] - Placement indicator flag
+ */
 const MemberCard = ({ member }) => {
   const navigate = useNavigate();
 
@@ -175,6 +199,13 @@ const MemberCard = ({ member }) => {
   );
 };
 
+/**
+ * @component SocialIcon
+ * @description Floating circular social channel link icon with hover highlights.
+ * @param {Object} props - Properties
+ * @param {string} props.href - Social destination URL
+ * @param {React.ReactNode} props.icon - Icon SVG element
+ */
 const SocialIcon = ({ href, icon }) => (
     <a
     href={href}

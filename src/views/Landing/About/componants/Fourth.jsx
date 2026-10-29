@@ -1,5 +1,21 @@
+/**
+ * @file Fourth.jsx
+ * @description Features grid section displaying modular capability cards with icon badges, heading copy, and hover animation interactions.
+ * @architecture Standalone feature showcase component designed for marketing and landing modules. Composed of `FeaturesSection` and its child `FeatureCard`.
+ * @agent_note The component uses interactive Tailwind CSS group hover styles with an animated translation vector arrow on hover. Currently holds template copy suitable for capability highlights or technology services.
+ */
+
 import React from "react";
 
+/**
+ * @component FeatureCard
+ * @description Individual feature card rendering an icon, headline, narrative description, and interactive action link.
+ * @param {Object} props - Component properties
+ * @param {string} props.image - URL or asset path to the feature icon
+ * @param {string} props.title - Card title heading
+ * @param {string} props.description - Explanatory description
+ * @returns {JSX.Element} Rendered feature card.
+ */
 const FeatureCard = ({ image, title, description }) => {
   return (
     <div className="group relative bg-white transition hover:z-[1] hover:shadow-lg hover:shadow-gray-300">
@@ -31,6 +47,13 @@ const FeatureCard = ({ image, title, description }) => {
   ); 
 };
 
+/**
+ * @component FeaturesSection
+ * @description Container grid displaying a 4-column responsive layout of feature cards.
+ * @returns {JSX.Element} The rendered features section.
+ * @state None.
+ * @api None.
+ */
 const FeaturesSection = () => {
   const features = [
     {

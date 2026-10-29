@@ -1,6 +1,24 @@
+/**
+ * @file ConfirmationModal.jsx
+ * @description React Portal based confirmation dialog for destructive or critical actions (e.g., deletion, state toggling).
+ * @architecture Reusable utility dialog in src/utils/Modal/ rendering via `createPortal` into `document.body` with ultra-high z-index (`z-[10000000]`).
+ * @agent_note Portals to `document.body`. Ensures modal escapes any stacking context or overflow clipping in ancestor elements.
+ */
+
 import React from "react";
 import { createPortal } from "react-dom";
 
+/**
+ * @component ConfirmationModal
+ * @description Renders a modal dialog confirming an action with Cancel and Confirm buttons.
+ * @param {Object} props - Component properties
+ * @param {boolean} props.isOpen - Whether the confirmation dialog is currently visible
+ * @param {Function} props.onClose - Callback triggered on dismissal or 'Cancel'
+ * @param {Function} props.onConfirm - Callback executed when user affirms action via 'Confirm'
+ * @param {string} props.message - Descriptive text prompt explaining the action requiring confirmation
+ * @state None
+ * @api None
+ */
 const ConfirmationModal = ({ isOpen, onClose, onConfirm, message }) => {
   if (!isOpen) return null;
 

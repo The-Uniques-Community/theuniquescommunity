@@ -1,3 +1,10 @@
+/**
+ * @file Placements.jsx
+ * @description Landing page section displaying hiring partner brand logos along an interactive curved loop path.
+ * @architecture Child section on the landing view, feeding placement partner records into the mathematical `CurvedLoop` component.
+ * @agent_note Displays companies where community students have secured employment, supporting dark mode theming via `useThemeContext`.
+ */
+
 import React from "react";
 import CurvedLoop from "./CurvedLoop";
 import { useThemeContext } from "@/theme/ThemeProvider";
@@ -38,6 +45,13 @@ const companies = [
   },
 ];
 
+/**
+ * @component Placements
+ * @description Renders the placement section header, red accent bar, and interactive curved logo trajectory.
+ * @param {Object} props - Component properties (empty)
+ * @state None (Theme state consumed via `useThemeContext`)
+ * @api None (Static recruitment partner data)
+ */
 const Placements = () => {
   const { isDarkMode } = useThemeContext();
 

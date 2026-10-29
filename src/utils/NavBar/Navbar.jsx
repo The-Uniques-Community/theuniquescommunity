@@ -1,3 +1,10 @@
+/**
+ * @file Navbar.jsx
+ * @description Main application sticky navigation bar supporting responsive desktop links, slide-out drawer, theme switching, and portal redirection.
+ * @architecture Layout navigation component in src/utils/NavBar/ mounted globally at page top. Consumes ThemeProvider context and React Router.
+ * @agent_note Manages mobile drawer toggle (`isDrawerOpen`), active link matching via `useLocation().pathname`, and theme toggle via `useThemeContext()`.
+ */
+
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../assets/logos/theuniquesCommunity.png";
@@ -31,6 +38,14 @@ import { PORTAL_URL } from "@/config";
 import { motion, AnimatePresence } from "framer-motion";
 import { useThemeContext } from "../../theme/ThemeProvider";
 
+/**
+ * @component Navbar
+ * @description Sticky header navbar featuring logo, desktop menu routes, dark/light mode toggle, and mobile navigation drawer.
+ * @param {Object} [props] - Component properties
+ * @state {boolean} isDrawerOpen - Controls mobile slide-out drawer open/close
+ * @state {string} activeLink - Stores currently highlighted nav link label
+ * @api Routes internally via React Router and links externally to `PORTAL_URL`
+ */
 const Navbar = () => {
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
   const [activeLink, setActiveLink] = React.useState("");

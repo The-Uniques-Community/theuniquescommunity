@@ -1,3 +1,14 @@
+/**
+ * @file index.jsx
+ * @description Dedicated layout container and data coordinator for the Success Stories section.
+ * @architecture Encapsulates `/success-stories` subroutes. Queries backend success story records via
+ * `GET ${BASE_URL}/api/success-stories?all=true` and supplies the fetched data collection and loading states
+ * to child routes via React Router `<Outlet context={{ students, isLoading }} />` and `<Sidebar />`.
+ * @agent_note Connects directly to `The-Uniques-Portal/server` controller for success stories. Normalizes response
+ * schemas across `data.data`, `data.items`, or direct arrays. Provides fallback empty state `[]` upon network failure.
+ * Adapts between permanent desktop sidebar and temporary mobile drawer based on breakpoint queries.
+ */
+
 import { useState, useMemo, useEffect } from 'react';
 import {
   AppBar,
@@ -44,8 +55,18 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   },
 }));
 
+/**
+ * @component SuccessLayout
+ * @description Layout frame providing responsive drawer/sidebar navigation and API state distribution for alumni success stories.
+ * @state {boolean} mobileOpen - Controls visibility of the temporary navigation drawer on mobile viewports.
+ * @state {Array<Object>} students - Success stories fetched from the backend API.
+ * @state {boolean} isLoading - Loading indicator active during initial API fetch.
+ * @api GET `${BASE_URL}/api/success-stories?all=true` - Fetches all verified student alumni success stories.
+ * @returns {JSX.Element} The rendered success stories layout with sidebar and routed outlet.
+ */
 const SuccessLayout = () => {
   const { isDarkMode } = useThemeContext();
+
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // Dynamic success stories loaded from backend API

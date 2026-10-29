@@ -1,3 +1,13 @@
+/**
+ * @file index.jsx
+ * @description Community innovation and project showcase gallery presenting portfolio projects segmented by student cohort batches and searchable by tags and keywords.
+ * @architecture Mounted at `/projects` route. Fetches data via `@/utils/project/projectsData` and `@/utils/batch/batchesData`, which interface with the backend project & batch endpoints.
+ * @agent_note Operational endpoints:
+ * - `GET ${BASE_URL}/api/projects?limit=100`: Handled by `getAllProjects` in `server/controller/Community/projectController.js`. Returns `{ success: true, data: Array<Project> }` or project array.
+ * - `GET ${BASE_URL}/api/batches`: Handled by `getAllBatches` in `server/controller/Community/batchController.js`. Returns array of batch strings.
+ * - Listens for window custom events `projects-updated` and `batches-updated` to synchronize changes across memory, IndexedDB, and UI.
+ */
+
 import { useState, useMemo, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import CelebrationComponent from "@/utils/Header";
@@ -8,6 +18,17 @@ import { getStoredProjects, fetchProjects } from "@/utils/project/projectsData";
 import { getStoredBatches, fetchBatches } from "@/utils/batch/batchesData";
 import { getSafeImageUrl } from "@/utils/imageHelper";
 
+/**
+ * @component Projects
+ * @description Renders the projects portfolio grid with batch filtering dropdown, live search bar, responsive 2-column card layouts, and deep link navigation.
+ * @state {Array<Object>} projectsList - Complete set of loaded community project records
+ * @state {Array<string>} storedBatches - Array of batch identifiers loaded from API/cache
+ * @state {string} selectedBatch - Active batch filter key ("all" or cleaned batch name)
+ * @state {boolean} isDropdownOpen - Open/closed state of the custom batch selection popup
+ * @state {string} searchQuery - Search query string matched across project title, description, and technologies
+ * @api GET ${BASE_URL}/api/projects - Handled by `getAllProjects` in `The-Uniques-Portal/server/controller/Community/projectController.js`
+ * @api GET ${BASE_URL}/api/batches - Handled by `getAllBatches` in `The-Uniques-Portal/server/controller/Community/batchController.js`
+ */
 const Projects = () => {
   const navigate = useNavigate();
   const [projectsList, setProjectsList] = useState(() => getStoredProjects());

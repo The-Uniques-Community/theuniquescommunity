@@ -1,3 +1,18 @@
+/**
+ * @file Sliding.jsx
+ * @description Vertical sliding accordion showcase for community ambassador benefits.
+ * Features keyboard-accessible expandable cards with upward/downward navigation,
+ * pagination pills, and responsive light/dark styling.
+ *
+ * @architecture
+ * - Part of the Community Landing feature cluster (`views/Community/Landing/`).
+ * - Encapsulates `BenefitCard` item component and main `Sliding` orchestrator.
+ * - Styled via Tailwind CSS and `premium_sliding.css`.
+ *
+ * @agent_note
+ * Cards maintain active state highlight with brand border `#ca0019`.
+ */
+
 import React, { useState, useEffect, useRef } from "react"
 import { ChevronUp, ChevronDown } from "lucide-react"
 import tu_red from "@/assets/logos/tu-red.png"

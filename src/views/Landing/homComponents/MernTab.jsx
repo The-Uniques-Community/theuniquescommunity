@@ -1,7 +1,21 @@
+/**
+ * @file MernTab.jsx
+ * @description Training track tab view presenting the MERN full-stack web development curriculum and syllabus.
+ * @architecture Rendered dynamically as a panel within `TrainingTabs.jsx` on the landing page.
+ * @agent_note Details the Full-Stack Engineering track: React, Node.js, Express, MongoDB, JWT auth, and Git team workflows.
+ */
+
 import { Code, Storage, People, GitHub } from "@mui/icons-material";
 
 const mernImage = "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5tFVFnkEyKp7vbuh4aZnGcCs8ARDxHFO2LY0S";
 
+/**
+ * @component MernTab
+ * @description Renders a 2-column curriculum view consisting of a development artwork banner and 4 feature cards covering full-stack web technologies.
+ * @param {Object} props - Component properties (empty)
+ * @state None
+ * @api None (Static curriculum layout)
+ */
 const MernTab = () => {
   const features = [
     {

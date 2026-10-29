@@ -1,5 +1,21 @@
+/**
+ * @file ShapedCard.jsx
+ * @description Clipped graphic banner card featuring textured background imagery and centered headline/copy.
+ * @architecture UI presentational component in src/utils/Card/ styled with custom CSS clipping (corporate-clip).
+ * @agent_note Relies on imported slate texture asset `bg-slate.webp` and CSS clip-path class `corporate-clip`.
+ */
+
 import bgImg from '@/assets/img/bg-slate.webp'
 
+/**
+ * @component ShapedCard
+ * @description Renders a stylized graphic banner card with a clipped backdrop image and centered headline and content text.
+ * @param {Object} props - Component properties
+ * @param {string} props.heading - Card header title
+ * @param {string} props.content - Supporting description or subtitle
+ * @state None
+ * @api None
+ */
 const ShapedCard = ({heading, content}) => {
   return (
     <div className='relative w-full h-full'>

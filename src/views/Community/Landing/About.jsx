@@ -1,7 +1,29 @@
+/**
+ * @file About.jsx
+ * @description Ambassador eligibility criteria section for the Community program.
+ * Highlights prerequisite requirements (graduation timeline, enrollment status, passion for community building)
+ * accompanied by an intricate SVG silhouette cutout graphic (`#aboutClip`).
+ *
+ * @architecture
+ * - Part of the Community Landing feature cluster (`views/Community/Landing/`).
+ * - Responsive two-column layout (graphic on left, structured requirements on right).
+ * - Reacts to global theme via `useThemeContext`.
+ *
+ * @agent_note
+ * The SVG uses inline `<clipPath id="aboutClip">` which clips the external WebP asset.
+ */
+
 import * as React from "react";
 import { useThemeContext } from "@/theme/ThemeProvider";
 import ambassadorCriteriaImg from "@/assets/img/Community/ambassador-criteria.webp";
 
+/**
+ * About Criteria Component
+ *
+ * @component
+ * @param {Object} props - SVG pass-through props.
+ * @returns {JSX.Element} Ambassador criteria information section.
+ */
 const About = (props) => {
     const { isDarkMode } = useThemeContext();
     return (

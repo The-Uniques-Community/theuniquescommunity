@@ -1,7 +1,21 @@
+/**
+ * @file WebDevTab.jsx
+ * @description Training track tab view presenting the Advanced Python Programming curriculum and modules.
+ * @architecture Rendered dynamically as a panel within `TrainingTabs.jsx` on the landing page.
+ * @agent_note Despite the legacy filename `WebDevTab`, this component specifically details the Python programming track (decorators, asyncio, NumPy, Pandas, and Flask).
+ */
+
 import { Code, Memory, DataObject, Science } from "@mui/icons-material";
 
 const img = "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5t7JDNfEyKp7vbuh4aZnGcCs8ARDxHFO2LY0S";
 
+/**
+ * @component WebDevTab
+ * @description Renders a 2-column curriculum view consisting of a track artwork banner and 4 feature cards detailing core Python skills.
+ * @param {Object} props - Component properties (empty)
+ * @state None
+ * @api None (Static curriculum layout)
+ */
 const WebDevTab = () => {
   const features = [
     {

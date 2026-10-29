@@ -1,3 +1,10 @@
+/**
+ * @file index.jsx
+ * @description Master landing view for the Campus Ambassador and Community program. Orchestrates above-the-fold content (Hero, About) with viewport-deferred, lazy-loaded sections (Guidelines, CTA, SlideCard, Sliding, Eligibility, and Global CallToAction).
+ * @architecture Mounted at `/community` route within the main application router. Child components are lazy loaded via `lazyWithRetry` and wrapped inside `LazyViewport` and `Suspense` with fallback `SectionSkeleton` components to optimize Core Web Vitals and initial page load speed.
+ * @agent_note When modifying or reordering sections, ensure `LazyViewport` `minHeight` props accurately estimate rendered section heights to avoid layout shifts (CLS). Child subviews interact with the Campus Ambassador application endpoint (`/api/campus-ambassador/apply`).
+ */
+
 import { Suspense } from 'react';
 import Hero from './Landing/Hero';
 import About from './Landing/About';
@@ -12,6 +19,13 @@ const Sliding = lazyWithRetry(() => import("./Landing/Sliding"));
 const Eligiblity = lazyWithRetry(() => import('./Landing/Eligiblity'));
 const CallToAction = lazyWithRetry(() => import('../Landing/homComponents/CallToAction'));
 
+/**
+ * @component CommunityLandingPage
+ * @description Main container component assembling the Campus Ambassador recruitment and Community landing experience.
+ * @returns {JSX.Element} The composite community landing page layout.
+ * @state None - Pure layout composition container.
+ * @api None directly; child components (e.g. CallToAction modal, Hero modal) interact with backend API services.
+ */
 const CommunityLandingPage = () => {
 	return (
 		<div>

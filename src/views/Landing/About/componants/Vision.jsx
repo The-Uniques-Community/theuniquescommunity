@@ -1,8 +1,22 @@
+/**
+ * @file Vision.jsx
+ * @description Philosophical manifesto and mission/vision declaration showcasing community pillars, entrepreneurial objectives, and long-term tech industry aspirations.
+ * @architecture Sub-component loaded into the About page (`src/views/Landing/About/index.jsx`). Renders list items styled with hover animations and theme context adaptation.
+ * @agent_note Displays dual data tracks (`MissionData` and `VisionData`) mapped into interactive numbered lists with Lucide icons. Adapts dynamic light and dark theme borders and text styling via `useThemeContext`.
+ */
+
 import React from 'react';
 import visionImage from '/src/assets/img/About/VISION.webp'; 
 import { useThemeContext } from "@/theme/ThemeProvider";
 import { ShieldCheck, Rocket, Zap, Users, Target, Globe, BookOpen, Lightbulb, ArrowRight } from 'lucide-react';
 
+/**
+ * @component MissionVission
+ * @description Renders the community philosophy, core mission objectives, and futuristic vision statements.
+ * @returns {JSX.Element} The rendered mission and vision layout.
+ * @state None.
+ * @api None.
+ */
 const MissionVission = () => {
   const { isDarkMode } = useThemeContext();
 

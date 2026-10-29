@@ -1,7 +1,33 @@
+/**
+ * @file ReviewCard.jsx
+ * @description Testimonial card component displaying reviewer identity, company role, quote, date, and 5-star rating.
+ * @architecture Testimonial presentation component in src/utils/Card/ used within testimonial carousels and landing feedback grids.
+ * @agent_note Star ratings compute whole and half stars via react-icons/fa FaStar, FaStarHalfAlt, FaRegStar based on a 1-5 scale.
+ */
+
 import React from 'react';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 
+/**
+ * @component ReviewCard
+ * @description Displays user endorsement card with author portrait, name, position/company, narrative text, date, and star rating.
+ * @param {Object} props - Component properties
+ * @param {string} props.name - Reviewer's full name
+ * @param {string} props.title - Job designation or position
+ * @param {string} props.company - Associated company or organization
+ * @param {string} props.image - Avatar or profile image URL
+ * @param {string} props.review - Testimonial quote or endorsement text
+ * @param {number} props.rating - Rating score out of 5
+ * @param {string} props.date - Submission or publication date string
+ * @state None
+ * @api None
+ */
 const ReviewCard = ({ name, title, company, image, review, rating, date }) => {
+  /**
+   * @desc Dynamically constructs an array of 5 star icons representing full, half, or empty rating
+   * @param {number} rating - Numeric rating between 1 and 5
+   * @returns {JSX.Element[]} Array of star icon components
+   */
   const renderStars = (rating) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {

@@ -1,7 +1,21 @@
+/**
+ * @file CallToAction.jsx
+ * @description Call-to-action banner section encouraging visitors to join the community and open the companion web portal.
+ * @architecture Child component of the landing page view, linking out to `PORTAL_URL` defined in configuration.
+ * @agent_note Directs traffic to external/portal authentication flow via `PORTAL_URL`.
+ */
+
 import Button from '@/utils/Buttons/Button'
 import ContainerFull from '@/utils/Container/ContainerFull'
 import { PORTAL_URL } from '@/config'
 
+/**
+ * @component CallToAction
+ * @description Displays a stylized clipped background image overlay with call-to-action headline, invitation copy, and an action button redirecting to the portal.
+ * @param {Object} props - Component properties (empty)
+ * @state None
+ * @api None (Direct navigation link to PORTAL_URL)
+ */
 const CallToAction = () => {
   return (
     <div className='relative w-full mx-auto my-2 sm:my-4'>

@@ -1,3 +1,10 @@
+/**
+ * @file SuccessTimeline.jsx
+ * @description Horizontal and vertical career progression timeline visualizing candidate learning phases, professional transitions, and milestone accomplishments.
+ * @architecture Sub-component loaded into `StudentStory.jsx` (`src/views/Landing/SuccessStories/StudentStory.jsx`). Renders chronological milestones from `student.timeline`.
+ * @agent_note Displays timeline data populated by `The-Uniques-Portal/server/models/community/successStoryModel.js` and returned via `GET ${BASE_URL}/api/success-stories/:id`. Includes scrollable horizontal track (`data-lenis-prevent`) to prevent Lenis smooth scroll conflict with horizontal track navigation.
+ */
+
 import React from 'react';
 import {
   Box,
@@ -10,6 +17,19 @@ import {
   Button
 } from '@mui/material';
 
+/**
+ * @component SuccessTimeline
+ * @description Visual milestone path component illustrating candidate achievements, education landmarks, and career evolution.
+ * @param {Object} props - Component properties
+ * @param {Object} props.student - Candidate data record containing the `timeline` array
+ * @param {Array<Object>} props.student.timeline - Array of milestone entities `{ year, title, description, milestone }`
+ * @param {number} [props.timelineMinWidth=1000] - Minimum width for the horizontal scrollable timeline track
+ * @param {React.ComponentType} props.SectionHeading - Styled section heading component
+ * @param {boolean} props.isDarkMode - Theme dark mode indicator
+ * @returns {JSX.Element} The rendered success journey timeline.
+ * @state None.
+ * @api Sourced from `GET /api/success-stories/:id`.
+ */
 const SuccessTimeline = ({ student, timelineMinWidth, SectionHeading, isDarkMode }) => (
   <Box sx={{ position: 'relative', minHeight: '600px' }}>
     <Paper

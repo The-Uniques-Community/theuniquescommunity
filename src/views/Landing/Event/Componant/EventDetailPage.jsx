@@ -1,3 +1,16 @@
+/**
+ * @file EventDetailPage.jsx
+ * @description Dedicated standalone event details page featuring multi-channel social sharing, deep-linked event retrieval, organizer rosters, and dynamic registration modal form processing.
+ * @architecture Routed at `/events/:id` via React Router. Integrates directly with backend event endpoints managed by `The-Uniques-Portal/server/controller/events/eventController.js`.
+ * @agent_note Operational endpoints:
+ * - `GET ${BASE_URL}/api/events/${id}`: Loads event document (`getEventById` in `server/controller/events/eventController.js`).
+ * - `GET ${BASE_URL}/api/events/${eventId}/members`: Loads organizing teams (`getEventWithMembers` in `server/controller/events/eventController.js`).
+ * - `POST ${BASE_URL}/api/events/${id}/register`: Fast unauthenticated/authenticated event registration (`registerForEvent` in `server/controller/events/eventController.js`).
+ * - `POST ${BASE_URL}/api/events/${event._id}/form-response`: Submits dynamic event registration form (`submitFormResponse` in `server/controller/events/eventController.js`).
+ *   - Request Payload: `{ responses: { [fieldName]: string|string[] }, respondentInfo: { name: string, email: string, phone: string } }`
+ * - Deep-link page that consumes URL param `id`. Safely extracts Google Drive banner images and supports fallback iframe previews.
+ */
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -130,6 +143,31 @@ const VALID_TEAM_TYPES = [
   "guest-management"
 ];
 
+/**
+ * @component EventDetailPage
+ * @description Standalone full-page view displaying comprehensive event information, tabbed content sections (about, gallery, guests, sponsors, organizers, community partners), and interactive dialogs for social sharing and registration.
+ * @state {Object|null} event - Current event data entity loaded by route parameter
+ * @state {boolean} loading - Loading spinner state during initial event data fetch
+ * @state {string|null} error - Error description if loading fails or event is not found
+ * @state {string} activeTab - Currently active tab key ("about" | "gallery" | "guests" | "sponsors" | "organizers" | "partners")
+ * @state {Array<Object>} eventLeaders - Formatted organizer batch lead information
+ * @state {Array<Object>} teamMembers - List of team members fetched from the event's member endpoint
+ * @state {boolean} teamsLoading - Spinner state during team member network fetch
+ * @state {boolean} shareModalOpen - Flag controlling visibility of social media share dialog
+ * @state {string} customMessage - User-editable custom text used for social media sharing
+ * @state {boolean} copied - Temporary state tracking clipboard copy feedback
+ * @state {boolean} registrationModalOpen - Flag controlling visibility of registration modal
+ * @state {Array<Object>} formFields - Dynamic form fields configuration from `event.eventForm`
+ * @state {Object} formValues - Key-value pair state storing responses for registration fields
+ * @state {Object} formErrors - Object tracking validation errors per form field
+ * @state {boolean} registrationLoading - Pending flag for registration submission
+ * @state {boolean} registrationSuccess - Toggles success UI upon successful submission
+ * @state {boolean} useIframeFallback - Activates iframe fallback for banner rendering
+ * @api GET ${BASE_URL}/api/events/:id - Handled by `getEventById` in `server/controller/events/eventController.js`
+ * @api GET ${BASE_URL}/api/events/:id/members - Handled by `getEventWithMembers` in `server/controller/events/eventController.js`
+ * @api POST ${BASE_URL}/api/events/:id/register - Handled by `registerForEvent` in `server/controller/events/eventController.js`
+ * @api POST ${BASE_URL}/api/events/:id/form-response - Handled by `submitFormResponse` in `server/controller/events/eventController.js`
+ */
 const EventDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
