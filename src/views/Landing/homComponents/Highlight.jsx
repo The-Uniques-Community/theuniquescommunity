@@ -1,3 +1,12 @@
+/**
+ * @file Highlight.jsx
+ * @description Featured event showcase section featuring an interactive dual-carousel with thumbnail track, multi-tab metadata breakdown, and popup detail modal.
+ * @architecture Child section on the landing view, consuming completed event records from the backend events API and opening `Eventmodel`.
+ * @agent_note Interacts with backend events endpoint:
+ * - `GET ${BASE_URL}/api/events?status=completed&limit=10` (handled by `getAllEvents` in `The-Uniques-Portal/server/controller/events/eventController.js`)
+ * Normalizes event attributes via `transformEventToDestination`, synthesizing fallback highlights, key takeaways, and guest credentials.
+ */
+
 import { useState, useEffect, useCallback } from "react"
 import axios from 'axios'
 import { BASE_URL } from '@/config';
@@ -9,7 +18,11 @@ import Autoplay from "embla-carousel-autoplay"
 import { Calendar as CalendarIcon, MapPin as MapPinIcon } from 'lucide-react'
 import Eventmodel from '../Event/Componant/Event'
 
-// Update the transformEventToDestination function
+/**
+ * @desc Transforms raw backend event document into a structured destination/showcase model with formatted tab content.
+ * @param {Object} event - Raw backend event document
+ * @returns {Object} Normalized showcase object containing tab content (Highlights, KeyTakaway, Guests) and media links
+ */
 const transformEventToDestination = (event) => {
   const shortenedDescription = event.eventDescription?.slice(0, 150) + "..."
   const formattedDate = new Date(event.eventDate).toLocaleDateString('en-US', {
@@ -63,6 +76,19 @@ const transformEventToDestination = (event) => {
   }
 }
 
+/**
+ * @component Highlight
+ * @description Renders a synchronized split-pane showcase featuring a large hero carousel, thumbnail selector, dynamic tabbed details, and modal inspection.
+ * @param {Object} props - Component properties (empty)
+ * @state {'Highlights'|'KeyTakaway'|'Guests'} activeTab - Currently selected information tab
+ * @state {Object|null} activeDestination - Currently displayed event showcase model
+ * @state {number} selectedIndex - Active index of the main carousel
+ * @state {Array<Object>} destinations - Transformed array of completed event items
+ * @state {boolean} loading - Loading indicator for event API fetch
+ * @state {boolean} isModalOpen - Controls visibility of the `Eventmodel` modal
+ * @state {Object|null} selectedEvent - Original event object provided to `Eventmodel`
+ * @api `GET ${BASE_URL}/api/events?status=completed&limit=10` - Fetches completed community events
+ */
 export default function Highlight() {
   const [activeTab, setActiveTab] = useState("Highlights")
   const [activeDestination, setActiveDestination] = useState(null)

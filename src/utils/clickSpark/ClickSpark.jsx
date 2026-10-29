@@ -1,5 +1,27 @@
+/**
+ * @file ClickSpark.jsx
+ * @description HTML5 Canvas interactive particle emitter generating radial spark bursts upon user mouse clicks.
+ * @architecture Micro-interaction wrapper component in src/utils/clickSpark/ enclosing interactive cards or buttons to provide tactile feedback.
+ * @agent_note Canvas overlay is pointer-events-none, listening to parent click events and animating sparks using requestAnimationFrame and custom easing.
+ */
+
 import { useRef, useEffect, useCallback } from "react";
 
+/**
+ * @component ClickSpark
+ * @description Wraps child elements with a canvas layer that emits colorful spark burst particles at the click coordinate.
+ * @param {Object} props - Component properties
+ * @param {string} [props.sparkColor="#fff"] - Hex or CSS stroke color for spark line segments
+ * @param {number} [props.sparkSize=10] - Initial length of each particle trace
+ * @param {number} [props.sparkRadius=15] - Maximum radial projection distance from click origin
+ * @param {number} [props.sparkCount=8] - Number of radial sparks spawned per click
+ * @param {number} [props.duration=400] - Lifespan of particle explosion in milliseconds
+ * @param {string} [props.easing="ease-out"] - Interpolation curve ('linear', 'ease-in', 'ease-in-out', or 'ease-out')
+ * @param {number} [props.extraScale=1.0] - Dimension multiplier for explosion spread
+ * @param {React.ReactNode} props.children - Enclosed interactive child elements
+ * @state None (maintains refs for canvas context, active sparks pool, and requestAnimationFrame id)
+ * @api None
+ */
 const ClickSpark = ({
     sparkColor = "#fff",
     sparkSize = 10,

@@ -1,8 +1,26 @@
+/**
+ * @file ChatbotLink.jsx
+ * @description Floating interactive AI chatbot trigger and modal dialog embedded within individual student success profiles.
+ * @architecture Sub-component loaded into `StudentStory.jsx` (`src/views/Landing/SuccessStories/StudentStory.jsx`). Conditionally renders an interactive floating action button and iframe modal when `student.chatbotUrl` is present on the fetched story record.
+ * @agent_note Relies on `student.chatbotUrl` populated by `The-Uniques-Portal/server/models/community/successStoryModel.js` and returned via `GET ${BASE_URL}/api/success-stories/:id`. If `chatbotUrl` is empty or undefined, this component safely renders null without breaking layout flow.
+ */
+
 import React, { useState } from 'react';
 import { Box, Typography, Dialog, IconButton, Button } from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 
+/**
+ * @component ChatbotLink
+ * @description Renders a floating avatar/chat trigger button that opens an embedded iframe modal with the student's personal conversational agent.
+ * @param {Object} props - Component properties
+ * @param {Object} props.student - Candidate data record
+ * @param {string} props.student.name - Student's full name
+ * @param {string} [props.student.chatbotUrl] - Hosted URL of the candidate's interactive portfolio chatbot
+ * @returns {JSX.Element|null} The floating chatbot trigger button and dialog modal.
+ * @state {boolean} open - Controls visibility of the chatbot iframe modal dialog
+ * @api Interacts with external chatbot endpoint loaded within iframe.
+ */
 const ChatbotLink = ({ student }) => {
   const [open, setOpen] = useState(false);
 

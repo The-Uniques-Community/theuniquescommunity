@@ -1,9 +1,27 @@
+/**
+ * @file index.jsx
+ * @description Hero celebration header banner with animated badge chip, large typography, and curved SVG underline.
+ * @architecture Header presentation component in src/utils/Header/ utilized across landing pages and section introductory headers.
+ * @agent_note Consumes `useThemeContext` for dynamic SVG dot-pattern background and text color shifts between light/dark themes.
+ */
+
 import React from "react";
 import Person2OutlinedIcon from "@mui/icons-material/Person2Outlined";
 import { Box, Container, Stack, Typography } from "@mui/material";
 import { useThemeContext } from "@/theme/ThemeProvider";
 import { motion } from "framer-motion";
 
+/**
+ * @component CelebrationComponent
+ * @description Renders a themed section banner with motion-animated chips, main headline, and undulating SVG flourish.
+ * @param {Object} props - Component properties
+ * @param {string} [props.title="More Than a Community → The Uniques ✦"] - Main hero headline text
+ * @param {string} [props.subtitle="Over 200+"] - Badge chip counter or introductory text
+ * @param {string} [props.chipLabel="Design Blocks"] - Badge chip categorical tag
+ * @param {string} [props.highlightColor="#ca0019"] - Brand highlight accent color
+ * @state None (consumes ThemeContext)
+ * @api None
+ */
 const CelebrationComponent = ({
     title = "More Than a Community → The Uniques ✦",
     subtitle = "Over 200+",

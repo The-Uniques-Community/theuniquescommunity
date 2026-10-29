@@ -1,6 +1,20 @@
+/**
+ * @file memberData.js
+ * @description Mock community member directory dataset mirroring the backend User model schema.
+ * @architecture Used in `@/views/Landing/Profile` and member search views as fallback seed data.
+ * Faithfully represents the MongoDB User document structure used in `The-Uniques-Portal/server`.
+ * @agent_note Captures comprehensive student profiles with nested arrays for `certifications`, `projects`,
+ * and `socialMediaLinks` (e.g. GitHub, LinkedIn, Twitter, Portfolio).
+ */
+
+/**
+ * @desc Simulated directory of registered community members.
+ * @type {Array<Object>}
+ */
 export const members = [
     {
       fullName: "John Doe",
+
       admno: "2021BTCS101",
       email: "johndoe@example.com",
       password: "hashedpassword123",

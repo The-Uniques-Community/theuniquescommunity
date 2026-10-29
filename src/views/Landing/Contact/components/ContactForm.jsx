@@ -1,3 +1,13 @@
+/**
+ * @file ContactForm.jsx
+ * @description Contact inquiry form interface featuring animated floating-label inputs, interest area multi-selection, organization info, and embedded Google Maps.
+ * @architecture Child component of `src/views/Landing/Contact/index.jsx`. Posts inquiry requests to `${BASE_URL}/api/contact`.
+ * @agent_note Operational endpoints:
+ * - `POST ${BASE_URL}/api/contact`: Handled by `submitContactForm` in `The-Uniques-Portal/server/controller/admin/enquiryController.js` (routed via `server/routes/landing/publicRoute.js`).
+ * - Payload structure: `{ firstName: string, lastName: string, email: string, phone: string, message: string, services: string[] }`.
+ * - Validates first name, last name, valid email regex, and message content prior to network dispatch.
+ */
+
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { CircularProgress, Snackbar, Alert } from "@mui/material";
@@ -14,6 +24,20 @@ import axios from "axios";
 import { BASE_URL } from "@/config";
 import { useThemeContext } from "@/theme/ThemeProvider";
 
+/**
+ * @component CustomInput
+ * @description Floating-label form input and textarea supporting dark/light theme switching and error state displays.
+ * @param {Object} props - Component properties
+ * @param {string} props.label - Floating label text
+ * @param {string} props.name - HTML name attribute of input
+ * @param {string} [props.type="text"] - HTML input type
+ * @param {string} props.value - Controlled string value
+ * @param {Function} props.onChange - Input change callback handler
+ * @param {string} [props.error] - Field error message string
+ * @param {boolean} [props.required] - Requires input indicator
+ * @param {boolean} [props.multiline] - Renders textarea when true
+ * @param {number} [props.rows=4] - Number of textarea rows
+ */
 const CustomInput = ({ label, name, type = "text", value, onChange, error, required, multiline, rows }) => {
   const { isDarkMode } = useThemeContext();
   const [isFocused, setIsFocused] = useState(false);
@@ -75,6 +99,15 @@ CustomInput.propTypes = {
   rows: PropTypes.number,
 };
 
+/**
+ * @component ContactForm
+ * @description Contact inquiry interface containing brand assets, social community channels, dynamic service checkboxes, and submission feedback.
+ * @state {Object} formData - Form input values for firstName, lastName, email, phone, message, and services
+ * @state {boolean} loading - Network in-flight state during inquiry dispatch
+ * @state {Object} alert - Toast feedback state containing open flag, message string, and severity
+ * @state {Object} errors - Field-level error messages
+ * @api POST ${BASE_URL}/api/contact - Handled by `submitContactForm` in `The-Uniques-Portal/server/controller/admin/enquiryController.js`
+ */
 const ContactForm = () => {
   const { isDarkMode } = useThemeContext();
   const [formData, setFormData] = useState({

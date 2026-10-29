@@ -1,13 +1,19 @@
+/**
+ * @file lazyWithRetry.js
+ * @description Resilient dynamic module import utility with exponential backoff and automatic cache-busting reloads on deployment chunk mismatches.
+ * @architecture Core routing and bundle loading utility in src/utils/ wrapping React.lazy across application code-split entrypoints.
+ * @agent_note Intercepts 'ChunkLoadError' and network fetch rejections. Stores reload timestamp in sessionStorage (tu_chunk_reload_timestamp) to debounce refresh loops.
+ */
+
 import { lazy } from "react";
 
 const RELOAD_STORAGE_KEY = "tu_chunk_reload_timestamp";
 const DEFAULT_RELOAD_DELAY_MS = 20000;
 
 /**
- * Determines whether an error is caused by a missing chunk / dynamic import failure.
- *
- * @param {unknown} error
- * @returns {boolean}
+ * @desc Determines whether an error is caused by a missing chunk / dynamic import failure.
+ * @param {unknown} error - Error object or error string to inspect
+ * @returns {boolean} True if error indicates a chunk load failure or network fetch error
  */
 export const isChunkLoadError = (error) => {
   if (!error) return false;
@@ -25,8 +31,7 @@ export const isChunkLoadError = (error) => {
 };
 
 /**
- * Retries a dynamic module import with backoff and automatic page refresh on stale chunks.
- *
+ * @desc Retries a dynamic module import with backoff and automatic page refresh on stale chunks.
  * @template T
  * @param {() => Promise<T>} componentImport - Factory function returning dynamic import() promise
  * @param {object} [options]
@@ -90,8 +95,7 @@ export const retryImport = (
 };
 
 /**
- * Enhanced React.lazy wrapper with automatic retry and stale-chunk auto-refresh.
- *
+ * @desc Enhanced React.lazy wrapper with automatic retry and stale-chunk auto-refresh.
  * @template T
  * @param {() => Promise<{ default: T }>} componentImport
  * @param {object} [options]

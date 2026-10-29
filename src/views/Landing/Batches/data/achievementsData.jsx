@@ -1,5 +1,16 @@
+/**
+ * @file achievementsData.jsx
+ * @description Static milestone and achievement records linked to legacy Uniques cohort batches.
+ * @architecture Used as fallback and baseline dataset for batch milestones within `src/views/Landing/Batches/`.
+ * @agent_note Provides default achievement metadata (id, title, description, Lucide icon, color class, batchId) mapped to batches 1 through 4.
+ */
+
 import { Trophy, Star, Heart, Lightbulb, Code, Rocket, Users, Zap } from "lucide-react"
 
+/**
+ * @desc Baseline collection of achievements categorized by cohort batch.
+ * @type {Array<{id: string, title: string, description: string, icon: React.ReactNode, color: string, batchId: string}>}
+ */
 export const achievementsData = [
   {
     id: "community-building",

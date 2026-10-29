@@ -1,3 +1,10 @@
+/**
+ * @file Third.jsx
+ * @description Values and culture section ("Culture of Innovation") highlighting community pillars including teamwork, inclusivity, and personal growth.
+ * @architecture Sub-component loaded into the About layout. Implemented with Material UI containers and FontAwesome icon representations.
+ * @agent_note Static informational section. Utilizes responsive MUI Grid columns and custom Button component.
+ */
+
 import React from "react";
 import {
   Container,
@@ -12,6 +19,13 @@ import { faUsers, faStar } from "@fortawesome/free-solid-svg-icons";
 import Button from "@/utils/Buttons/Button";
 import { useTheme } from "@mui/material";
 
+/**
+ * @component CultureOfInnovation
+ * @description Renders core institutional values covering teamwork, diversity, and continuous professional growth.
+ * @returns {JSX.Element} The rendered culture section.
+ * @state None.
+ * @api None.
+ */
 const CultureOfInnovation = () => {
   const theme = useTheme();
 

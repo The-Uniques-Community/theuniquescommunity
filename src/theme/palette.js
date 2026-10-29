@@ -1,3 +1,15 @@
+/**
+ * @file palette.js
+ * @description Color palette token definitions for Material-UI themes.
+ * @architecture Defines color design tokens imported by `src/theme/themes.js` to construct MUI light and dark theme configurations.
+ * @agent_note Primary signature accent color is brand crimson (`#ca0019`). When adding tokens, ensure semantic keys exist
+ * across both `lightPalette` and `darkPalette` to prevent undefined style reference bugs.
+ */
+
+/**
+ * @desc Material-UI palette configuration for light mode display.
+ * @type {Object}
+ */
 export const lightPalette = {
   mode: "light",
   primary: {
@@ -27,6 +39,10 @@ export const lightPalette = {
   },
 };
 
+/**
+ * @desc Material-UI palette configuration for dark mode display.
+ * @type {Object}
+ */
 export const darkPalette = {
   mode: "dark",
   primary: {
@@ -55,3 +71,4 @@ export const darkPalette = {
     focus: "#661111", // Focused component highlight
   },
 };
+

@@ -1,6 +1,17 @@
+/**
+ * @file batchesData.jsx
+ * @description Static definitions and descriptions for default community cohorts ("The Uniques 1.0" through "4.0").
+ * @architecture Fallback dataset used across Batches landing pages when offline or when backend cohorts are hydrating.
+ * @agent_note Static fallback; live cohorts are dynamically retrieved from `${BASE_URL}/api/batches` handled by `getAllBatches` in `The-Uniques-Portal/server/controller/Community/batchController.js`.
+ */
+
 // import type { Batch } from "../types"
 import { Users, Sparkles, Zap, Rocket } from "lucide-react"
 
+/**
+ * @desc Baseline cohort batch metadata including icons, descriptive intros, and achievement IDs.
+ * @type {Array<{id: string, name: string, description: string, icon: React.ReactNode, memberCount: number, achievements: Array<string>}>}
+ */
 export const batchesData= [
   {
     id: "batch1",

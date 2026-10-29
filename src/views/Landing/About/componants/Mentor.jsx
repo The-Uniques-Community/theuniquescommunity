@@ -1,3 +1,10 @@
+/**
+ * @file Mentor.jsx
+ * @description Founder and chief mentor showcase section honoring Dr. Ankur Kumar Rastogi (Director of Operations), providing background narrative and triggering the comprehensive `ProfileCard` dialog.
+ * @architecture Sub-component loaded into the About page (`src/views/Landing/About/index.jsx`). Renders social networking links and controls open/close state for the modal dialog imported from `Ankur1.jsx`.
+ * @agent_note Clicking the "Learn More" button activates `modalOpen = true`, which opens the `ProfileCard` portal with smooth scroll locking.
+ */
+
 import { useState } from "react";
 import { FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 import ankursir from "../../../../assets/img/About/ankursir.webp";
@@ -5,6 +12,13 @@ import Button from "../../../../utils/Buttons/HoverButton";
 import ProfileCard from "./Ankur1";
 import { useThemeContext } from "../../../../theme/ThemeProvider";
 
+/**
+ * @component MentorSection
+ * @description Displays founder leadership bio, photo, social links, and interactive modal trigger.
+ * @returns {JSX.Element} The rendered mentor section.
+ * @state {boolean} modalOpen - Controls visibility of the `ProfileCard` modal dialog
+ * @api None.
+ */
 export default function MentorSection() {
   const [modalOpen, setModalOpen] = useState(false);
   const { isDarkMode } = useThemeContext();

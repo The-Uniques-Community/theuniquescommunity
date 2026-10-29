@@ -1,3 +1,12 @@
+/**
+ * @file RouteErrorBoundary.jsx
+ * @description Comprehensive React Error Boundary and route error presentation fallback.
+ * @architecture Used in `src/App.jsx` and throughout route tree definitions (`src/routes/index.jsx`) as both a class-based
+ * React error boundary and a React Router `errorElement` adapter (`RouteErrorBoundaryView`).
+ * @agent_note Distinguishes between standard runtime Javascript exceptions and Vite deployment chunk loading mismatches
+ * via `isChunkLoadError`. Offers auto-recovery options ("Refresh Now", "Try Again", "Back to Home").
+ */
+
 import { Component } from "react";
 import PropTypes from "prop-types";
 import { useRouteError } from "react-router-dom";
@@ -5,9 +14,15 @@ import { RefreshCw, Home, AlertTriangle } from "lucide-react";
 import { isChunkLoadError } from "@/utils/lazyWithRetry";
 
 /**
- * Visual presentation card for route loading and runtime errors.
+ * @component RouteErrorFallback
+ * @description Visual card presentation displayed when a lazy component or route fails to render or load.
+ * @param {Object} props - Component properties.
+ * @param {Error|any} props.error - The error object or reason caught by the boundary.
+ * @param {Function} [props.onRetry] - Optional custom retry callback; defaults to `window.location.reload()`.
+ * @returns {JSX.Element} Rendered error presentation card with action buttons.
  */
 export function RouteErrorFallback({ error, onRetry }) {
+
   const isChunkError = isChunkLoadError(error);
 
   const handleRefresh = () => {
@@ -80,8 +95,10 @@ RouteErrorFallback.propTypes = {
 };
 
 /**
- * Functional component for React Router `errorElement`.
- * Uses `useRouteError()` to capture routing failures.
+ * @component RouteErrorBoundaryView
+ * @description Functional route error handler designed as the React Router `errorElement`.
+ * Uses `useRouteError()` to capture routing failures and delegating visual rendering to `RouteErrorFallback`.
+ * @returns {JSX.Element} Rendered fallback view.
  */
 export function RouteErrorBoundaryView() {
   const error = useRouteError();
@@ -89,7 +106,14 @@ export function RouteErrorBoundaryView() {
 }
 
 /**
- * React Error Boundary class that can wrap components and lazy loaders.
+ * @component RouteErrorBoundary
+ * @description React Error Boundary class that catches JavaScript errors anywhere in its child component tree,
+ * logs them, and displays fallback UI instead of crashing the whole application.
+ * @param {Object} props - Component properties.
+ * @param {React.ReactNode} [props.children] - Protected child component tree.
+ * @param {React.ReactNode} [props.fallback] - Custom fallback node override.
+ * @state {boolean} hasError - Tracks if an unhandled error was caught in child components.
+ * @state {Error|null} error - The caught error instance.
  */
 export class RouteErrorBoundary extends Component {
   constructor(props) {

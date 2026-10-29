@@ -1,6 +1,20 @@
+/**
+ * @file Orbit.jsx
+ * @description Concentric planetary orbit animation component showcasing member photos orbiting around a central hub.
+ * @architecture Micro-interaction graphic component in src/utils/Orbit/ used on landing and community showcase sections.
+ * @agent_note Dynamically recalculates orbit radii and image diameters across window resize breakpoints (260px to 640px). Employs CSS keyframe rotations.
+ */
+
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
 
+/**
+ * @component Orbit
+ * @description Displays a multi-ring orbital solar system visual with rotating member avatars and central anchor portrait.
+ * @param {Object} [props] - Component properties
+ * @state {number} containerSize - Responsive dimension in pixels determined by window viewport width
+ * @api None
+ */
 const Orbit = () => {
   const orbitImages = {
     orbit1: [

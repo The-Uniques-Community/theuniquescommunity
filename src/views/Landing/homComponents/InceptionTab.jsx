@@ -1,7 +1,21 @@
+/**
+ * @file InceptionTab.jsx
+ * @description Training track tab view presenting the Foundation of Design & Video Editing curriculum.
+ * @architecture Rendered dynamically as a panel within `TrainingTabs.jsx` on the landing page.
+ * @agent_note Details the creative media track: Photoshop, Illustrator, Canva, After Effects, and freelancing client work.
+ */
+
 import { Brush, Movie, Campaign, Work } from "@mui/icons-material";
 
 const inception = "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5Qhy4o0aUA0Cpb4ysi61TzJLRaW735foPjv8G";
 
+/**
+ * @component InceptionTab
+ * @description Renders a 2-column curriculum view consisting of a design artwork banner and 4 feature cards covering design, video, and marketing fundamentals.
+ * @param {Object} props - Component properties (empty)
+ * @state None
+ * @api None (Static curriculum layout)
+ */
 const InceptionTab = () => {
   const features = [
     {

@@ -1,3 +1,10 @@
+/**
+ * @file index.jsx
+ * @description Primary landing page orchestrator that lazily loads below-the-fold sections within viewport-aware suspense containers to ensure optimal initial render and Core Web Vitals (LCP).
+ * @architecture Entry point for route `/` mounted under LandingLayout (`src/layout/Landing/index.jsx`). Renders above-the-fold `HomeHero` eagerly, while wrapping all subsequent sections (`Counts`, `AboutSection`, `WhyUs`, `CommunityPartners`, `Startups`, `Gallery`, `Event`, `YoutubeSection`, `Testimonials`, `CallToAction`) in `LazyViewport` and `SectionSkeleton`.
+ * @agent_note When modifying or adding sections to the landing page, preserve the eager loading of `HomeHero` to protect Largest Contentful Paint (LCP) benchmarks. Below-the-fold imports must use `lazyWithRetry` and define explicit skeleton heights inside `LazyViewport` to prevent cumulative layout shift (CLS).
+ */
+
 import { Suspense } from "react";
 import HomeHero from "./homComponents/HomeHero";
 import LazyViewport from "@/components/LazyViewport";
@@ -16,6 +23,13 @@ const YoutubeSection = lazyWithRetry(() => import("./homComponents/YoutubeSectio
 const Testimonials = lazyWithRetry(() => import("./homComponents/TestimonialCard"));
 const CallToAction = lazyWithRetry(() => import("./homComponents/CallToAction"));
 
+/**
+ * @component LandingPage
+ * @description Top-level public landing page component assembling community statistics, philosophy, startup showcases, media galleries, events, testimonials, and registration triggers.
+ * @returns {JSX.Element} The rendered landing page hierarchy.
+ * @state None (delegated to child sections).
+ * @api None directly; child components independently communicate with relevant backend endpoints.
+ */
 const LandingPage = () => {
   return (
     <div>

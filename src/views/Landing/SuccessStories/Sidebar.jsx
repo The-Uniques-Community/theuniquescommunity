@@ -1,4 +1,14 @@
-// Sidebar.jsx
+/**
+ * @file Sidebar.jsx
+ * @description Fixed side-navigation drawer for the Success Stories section, listing available alumni stories with avatar previews and social community links.
+ * @architecture Navigation drawer component used in `SuccessStoriesLayout` (`src/layout/Landing/successStories/index.jsx`). Receives array of stories fetched from the portal backend.
+ * @agent_note Explicit backend API connection:
+ * - Sourced from `GET ${BASE_URL}/api/success-stories?all=true`
+ * - Backend controller: `The-Uniques-Portal/server/controller/Community/successStories.controller.js` (`getAllSuccessStories`)
+ * - Response data schema: `{ success: true, count: number, data: Array<{ id: string, name: string, role: string, company: string, image: string, ... }> }`
+ * - Automatically detects active route via `useLocation()` and highlights corresponding student entry.
+ */
+
 import React from 'react';
 import { 
   Box, 
@@ -75,6 +85,17 @@ const SocialIcon = styled(IconButton)({
   }
 });
 
+/**
+ * @component Sidebar
+ * @description Renders the community brand logo, quick navigation list of success story profiles, and social footer.
+ * @param {Object} props - Component properties
+ * @param {Array<Object>} props.students - List of student story records
+ * @param {Function} [props.onDrawerToggle] - Callback to toggle mobile drawer visibility
+ * @param {boolean} [props.isDrawerOpen] - Mobile drawer expansion state
+ * @returns {JSX.Element} The rendered success stories sidebar drawer.
+ * @state None (controlled by parent layout).
+ * @api Sourced from `GET /api/success-stories?all=true`.
+ */
 const Sidebar = ({ students, onDrawerToggle, isDrawerOpen }) => {
   const location = useLocation();
   const currentPath = location.pathname.split('/').pop();

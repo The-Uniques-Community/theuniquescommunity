@@ -1,5 +1,19 @@
+/**
+ * @file GridBackground.jsx
+ * @description Interactive canvas-based grid background component with mouse proximity lighting effects (currently dormant).
+ * @architecture Visual background utility in src/utils/GridBackground.jsx/ intended for page-level ambient graphic textures.
+ * @agent_note The canvas rendering loop is commented out and component returns null by default to preserve rendering budget. Contains full implementation in comments.
+ */
+
 import { useEffect, useRef } from 'react';
 
+/**
+ * @component GridBackground
+ * @description Ambient background grid renderer that tracks cursor movements to illuminate grid vertices within proximity.
+ * @param {Object} [props] - Component properties
+ * @state None
+ * @api None
+ */
 const GridBackground = () => {
   const canvasRef = useRef(null);
   const mouseRef = useRef({ x: 0, y: 0 });

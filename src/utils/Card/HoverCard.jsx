@@ -1,5 +1,19 @@
+/**
+ * @file HoverCard.jsx
+ * @description Interactive multi-panel accordion hover card with CSS transition effects and rotating typography.
+ * @architecture Micro-interaction UI component in src/utils/Card/ used in landing page visual showcases.
+ * @agent_note Uses Tailwind flex expansion (`hover:flex-[4]`) and text rotation transitions. Fixed dimensions 210px by 254px.
+ */
+
 import React from "react";
 
+/**
+ * @component HoverCard
+ * @description Renders a 3-column accordion element where hovered panels expand horizontally while rotating text labels.
+ * @param {Object} [props] - Component properties
+ * @state None
+ * @api None
+ */
 const HoverCard = () => {
   return (
     <div className="flex gap-1.5 p-1.5 w-[210px] h-[254px] rounded-md bg-[#212121]">

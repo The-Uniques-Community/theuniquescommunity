@@ -1,3 +1,10 @@
+/**
+ * @file Flight.jsx
+ * @description Progression cards section ("Our Flight to Excellence") featuring GSAP ScrollTrigger animations showcasing the community support network across Mentors, Alumni, and Students.
+ * @architecture Sub-component loaded into the "How It Started" page (`src/views/Landing/HowItStarted/index.jsx`). Leverages GSAP and ScrollTrigger for viewport scroll-driven entrance reveals.
+ * @agent_note GSAP animations are initialized inside a scoped `gsap.context()` tied to `containerRef` and cleaned up with `ctx.revert()` on unmount to prevent memory leaks and duplicate triggers.
+ */
+
 "use client"
 
 import { useEffect, useRef } from "react"
@@ -33,6 +40,13 @@ const sections = [
     },
 ]
 
+/**
+ * @component FlightPathAnimation
+ * @description Animated card grid illustrating the three pillars of guidance: Mentors, Alumni, and Peer Students.
+ * @returns {JSX.Element} The rendered animated flight journey cards.
+ * @state None.
+ * @api None.
+ */
 const FlightPathAnimation = () => {
     const containerRef = useRef(null);
 

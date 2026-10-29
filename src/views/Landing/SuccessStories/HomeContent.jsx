@@ -1,3 +1,19 @@
+/**
+ * @file HomeContent.jsx
+ * @description Main dashboard view for Community Success Stories, highlighting key placement KPIs (total stories, unique companies, active batches, verified placement rate) and dynamic candidate journey cards.
+ * @architecture Rendered by `SuccessStories/index.jsx` within route `/success-stories`. Retrieves loaded student stories via `useOutletContext()` provided by `SuccessStoriesLayout` (`src/layout/Landing/successStories/index.jsx`).
+ * @agent_note Explicit backend API integrations:
+ * 1. `GET ${BASE_URL}/api/success-stories/stats`
+ *    - Handled by: `The-Uniques-Portal/server/controller/Community/successStories.controller.js` (`getSuccessStoryStats`)
+ *    - Request: No query parameters required.
+ *    - Response schema: `{ success: true, stats: { totalStories: number, uniqueCompanies: number, activeBatches: number, verifiedPlacementRate: number } }`
+ *    - Fallback: Calculates in-memory metrics across `students` context if remote stats endpoint fails.
+ * 2. Context data source:
+ *    - Sourced from `SuccessStoriesLayout` via `GET ${BASE_URL}/api/success-stories?all=true`
+ *    - Handled by: `The-Uniques-Portal/server/controller/Community/successStories.controller.js` (`getAllSuccessStories`)
+ *    - Response schema: `{ success: true, count: number, data: Array<SuccessStory> }`
+ */
+
 import { useState, useEffect, useMemo } from 'react';
 import CelebrationComponent from '@/utils/Header';
 import { 
@@ -23,6 +39,14 @@ import SchoolIcon from '@mui/icons-material/School';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
+/**
+ * @component HomeContent
+ * @description Renders community placement KPI summary stat cards followed by a responsive grid of student success profiles.
+ * @returns {JSX.Element} The rendered success stories dashboard.
+ * @state {Object} stats - KPI metrics `{ totalStories, uniqueCompanies, activeBatches, verifiedPlacementRate }`
+ * @state {boolean} isStatsLoading - Loading state for the stats API query
+ * @api `GET /api/success-stories/stats` - Fetches live placement statistics from backend
+ */
 const HomeContent = () => {
   const { isDarkMode } = useThemeContext();
   const outletCtx = useOutletContext();

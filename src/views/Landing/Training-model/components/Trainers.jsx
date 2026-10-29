@@ -1,3 +1,20 @@
+/**
+ * @file Trainers.jsx
+ * @description Training model trainer roster and interactive modal dossier.
+ * Features a high-fidelity modal portal (`createPortal`), cohort filter dropdown,
+ * real-time API sync (`GET ${BASE_URL}/api/admin/trainers/all-trainers`), and safe
+ * media resolution through `getSafeImageUrl`.
+ *
+ * @architecture
+ * - Part of the Training Model view cluster (`views/Landing/Training-model/components/`).
+ * - Integrates with `src/utils/batch/batchesData.js` (`getStoredBatches`, `fetchBatches`)
+ *   for dynamic cohort list population.
+ * - Full modal accessibility with Escape key dismiss and body scroll locking.
+ *
+ * @agent_note
+ * Uses React Portal to inject modals above all view elements (`z-[99999]`).
+ */
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,6 +25,17 @@ import { BASE_URL } from '@/config';
 import { getSafeImageUrl } from '@/utils/imageHelper';
 import { getStoredBatches, fetchBatches } from '@/utils/batch/batchesData';
 
+/**
+ * TrainerModal Component
+ *
+ * @component
+ * @param {Object} props
+ * @param {Object} props.trainer - Trainer data record.
+ * @param {boolean} props.isOpen - Visibility flag.
+ * @param {Function} props.onClose - Dismiss callback.
+ * @param {boolean} props.isDarkMode - Dark mode indicator.
+ * @returns {JSX.Element|null} React portal modal dialog.
+ */
 const TrainerModal = ({ trainer, isOpen, onClose, isDarkMode }) => {
   const [mounted, setMounted] = useState(false);
 

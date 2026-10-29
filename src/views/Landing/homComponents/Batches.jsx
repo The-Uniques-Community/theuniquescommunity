@@ -1,3 +1,13 @@
+/**
+ * @file Batches.jsx
+ * @description Landing page section showcasing community cohorts ("Batches"), displaying batch statistics, cohort profiles, search filtering, and member cards.
+ * @architecture Child section on the landing view, routing to `/batches` for full cohort rosters. Connects to backend public member APIs.
+ * @agent_note Interacts with backend member services:
+ * - `GET ${BASE_URL}/api/public/members/counts` (handled by `getMemberCounts` in `The-Uniques-Portal/server/controller/landing/memberController.js`)
+ * - `GET ${BASE_URL}/api/public/members?batch=${batch}` (handled by `getPublicMembers` in `The-Uniques-Portal/server/controller/landing/memberController.js`)
+ * Also listens for local CustomEvents `batches-updated` and `batch-profiles-updated` to reload dynamic batch rosters.
+ */
+
 import React, { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Search, Award, Users } from "lucide-react";
@@ -10,6 +20,21 @@ import { Link } from "react-router-dom";
 import { getStoredBatches, fetchBatches } from "@/utils/batch/batchesData";
 import { getStoredBatchProfiles, fetchBatchProfiles } from "@/utils/batch/batchProfilesData";
 
+/**
+ * @component Batches
+ * @description Renders batch filter pills with live member tallies, batch metadata descriptions, search input, and a 4-card preview grid of cohort members.
+ * @param {Object} props - Component properties (empty)
+ * @state {Array<Object>} members - Filtered/loaded list of up to 4 public members for the active batch
+ * @state {Array<string>} storedBatches - List of batch identifiers from local cache and remote API
+ * @state {string} selectedBatch - Currently selected batch filter (e.g., "All", "The Uniques 1.0")
+ * @state {string} searchTerm - User input for searching members by name, skill, course, or bio
+ * @state {boolean} loading - Status indicator for member fetch request
+ * @state {string|null} error - Error message if member query fails
+ * @state {Object.<string, number>} batchCounts - Mapping of batch names to their total member count
+ * @state {boolean} countsLoading - Status indicator for batch counts API request
+ * @api `GET ${BASE_URL}/api/public/members/counts` - Fetches aggregated member totals per cohort
+ * @api `GET ${BASE_URL}/api/public/members` - Fetches member profiles filtered by batch query parameter
+ */
 const Batches = () => {
   // State management
   const [members, setMembers] = useState([]);

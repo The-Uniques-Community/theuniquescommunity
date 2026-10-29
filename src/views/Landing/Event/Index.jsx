@@ -1,3 +1,15 @@
+/**
+ * @file Index.jsx
+ * @description Main community events catalog page featuring multi-attribute search and filtering, category-based segmentation (ongoing, upcoming, completed), and event preview modals.
+ * @architecture Mounted at `/events` within the public landing routes hierarchy. Directly queries the events API endpoint handled by `The-Uniques-Portal/server/controller/events/eventController.js`.
+ * @agent_note When interacting with this file:
+ * - API Endpoint: `GET ${BASE_URL}/api/events?limit=100&type={eventType}`
+ * - Backend Controller: `getAllEvents` in `server/controller/events/eventController.js`
+ * - Request Query Params: `limit` (number), `type` (optional string)
+ * - Response Shape: `{ events: Array<Event>, total: number, totalOngoing: number, totalUpcoming: number, totalCompleted: number, totalPages: number }`
+ * - Client-side state performs additional text matching on `eventName`, date filtering on month (1-12) and year, and status/date-based tier categorization.
+ */
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { BASE_URL } from '@/config';
@@ -21,6 +33,30 @@ import {
 } from '@mui/material';
 import { LocalActivityOutlined, CalendarMonth, EventAvailable } from '@mui/icons-material';
 
+/**
+ * @component Index
+ * @description Main view for browsing all public community events with search bar, category dropdowns, status metrics chip indicators, and responsive event card grids.
+ * @state {Array<Object>} events - Master list of fetched event items from the backend
+ * @state {Array<Object>} filteredEvents - Filtered events based on search keyword, selected month, and selected year
+ * @state {boolean} loading - Network fetch spinner state
+ * @state {string|null} error - Error string displayed in MUI Alert if fetch fails
+ * @state {boolean} showEvent - Flag controlling modal visibility for `selectedEvent`
+ * @state {Object|null} selectedEvent - Selected event instance passed to `Event` modal
+ * @state {string} searchTerm - Case-insensitive string query matched against `event.eventName`
+ * @state {string} eventType - Category filter value passed directly to the API query
+ * @state {string} month - Numeric month string (1-12) filter applied client-side
+ * @state {string} year - Numerical year string filter applied client-side
+ * @state {Array<string>} eventTypes - Unique event category types populated dynamically
+ * @state {Array<number>} years - Unique years derived from loaded event start dates
+ * @state {number} page - Current pagination page index (1-based)
+ * @state {number} totalPages - Total pages returned or computed for current listing
+ * @state {number} limit - Number of event cards rendered per pagination page (default 12)
+ * @state {Array<Object>} ongoingEvents - Events currently active today
+ * @state {Array<Object>} upcomingEvents - Future scheduled events
+ * @state {Array<Object>} completedEvents - Past or cancelled events
+ * @state {Object} eventStats - Aggregate counters for total, ongoing, upcoming, and completed events
+ * @api GET ${BASE_URL}/api/events - Handled by `getAllEvents` in `server/controller/events/eventController.js`
+ */
 const Index = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));

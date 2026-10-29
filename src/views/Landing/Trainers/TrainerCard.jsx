@@ -1,3 +1,20 @@
+/**
+ * @file TrainerCard.jsx
+ * @description Mentor and trainer showcase card component.
+ * Displays trainer portrait, name, designation, and social links (GitHub, LinkedIn, Instagram, X).
+ * Features an integrated Material-UI modal revealing detailed achievements and career experience.
+ *
+ * @architecture
+ * - Part of the Landing Trainers view cluster (`views/Landing/Trainers/`).
+ * - Employs `getSafeImageUrl` and `getAvatarFallback` from `src/utils/imageHelper.js` to securely stream
+ *   Google Drive media via `${BASE_URL}/api/image-proxy/:fileId` without CORS/ORB blocks.
+ * - Social handles link externally in separate tabs.
+ *
+ * @agent_note
+ * Expected `user` shape includes `fullName`, `profilePic`, `designation`, `githubProfile`,
+ * `linkedinProfile`, `instagramProfile`, `twitterProfile`, `achievements`, and `experience`.
+ */
+
 import React, { useState } from "react";
 import { BASE_URL } from "@/config";
 import { getSafeImageUrl, getAvatarFallback } from "@/utils/imageHelper";
@@ -21,6 +38,14 @@ const style = {
     outline: "none",
 };
 
+/**
+ * TrainerCard Component
+ *
+ * @component
+ * @param {Object} props
+ * @param {Object} props.user - Trainer or mentor profile data object.
+ * @returns {JSX.Element} Interactive trainer profile card.
+ */
 export const TrainerCard = ({ user }) => {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);

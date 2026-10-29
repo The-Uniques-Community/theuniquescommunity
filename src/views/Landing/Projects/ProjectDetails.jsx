@@ -1,3 +1,12 @@
+/**
+ * @file ProjectDetails.jsx
+ * @description Comprehensive single project detail showcase displaying problem statements, engineered solutions, feature lists, tech stack pills, and demo/source links.
+ * @architecture Routed at `/projects/:projectId` or `/projects/:id`. Synchronizes project data via `projectsData.js`, fetching from `${BASE_URL}/api/projects` backed by `The-Uniques-Portal/server/controller/Community/projectController.js`.
+ * @agent_note Operational endpoints:
+ * - `GET ${BASE_URL}/api/projects`: Handled by `getAllProjects` in `server/controller/Community/projectController.js`.
+ * - Consumes `projectId` or `id` URL parameter. If project is not immediately in memory, triggers `fetchProjects()` and re-evaluates `getProjectById(currentId)`.
+ */
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -20,6 +29,11 @@ import CallToAction from "../homComponents/CallToAction";
 import { getProjectById, fetchProjects } from "@/utils/project/projectsData";
 import { getSafeImageUrl } from "@/utils/imageHelper";
 
+/**
+ * @desc Extracts 2-character uppercase initials from person or team name.
+ * @param {string} name - Full name or entity name string
+ * @returns {string} Uppercase 2-letter initials
+ */
 const getNameInitials = (name) => {
   if (!name) return "TU";
   const names = name.trim().split(" ");
@@ -29,6 +43,14 @@ const getNameInitials = (name) => {
   return (names[0].charAt(0) + names[1].charAt(0)).toUpperCase();
 };
 
+/**
+ * @component ProjectDetails
+ * @description Renders deep project profile including image banner, problem/solution cards, key features grid, tech stack badges, and sidebar project metadata.
+ * @state {Object|null} project - Loaded project object matching current route ID
+ * @state {boolean} loading - Loading indicator while retrieving project from cache or API
+ * @state {boolean} copied - Feedback indicator for clipboard copy action
+ * @api GET ${BASE_URL}/api/projects - Handled by `getAllProjects` in `The-Uniques-Portal/server/controller/Community/projectController.js`
+ */
 const ProjectDetails = () => {
   const { projectId, id } = useParams();
   const currentId = projectId || id;

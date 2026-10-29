@@ -1,6 +1,19 @@
+/**
+ * @file reviewData.js
+ * @description Testimonial and community review dataset for landing page marquees.
+ * @architecture Exported to `@/views/Landing` components to render social proof carousels,
+ * rating stars, and member recommendations.
+ * @agent_note Reviews contain numerical ratings out of 5 and avatar references formatted for testimonial card layouts.
+ */
+
+/**
+ * @desc Collection of student and alumni reviews and testimonials.
+ * @type {Array<{ name: string, title: string, company: string, image: string, review: string, rating: number, date: string }>}
+ */
 export const reviews = [
     {
       name: 'Alice Johnson',
+
       title: 'Frontend Developer',
       company: 'TechSphere',
       image: 'https://avatar.iran.liara.run/public/boy?username=Ash',

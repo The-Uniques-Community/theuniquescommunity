@@ -1,3 +1,10 @@
+/**
+ * @file TrainingTabs.jsx
+ * @description Training modules syllabus browser orchestrating 5 cohort rounds (Designing, Python, Web Dev, DSA, Salesforce) across responsive vertical/horizontal tabs.
+ * @architecture Hub component for community training curricula, dynamically mounting subtabs (`InceptionTab`, `WebDevTab`, `MernTab`, `AndroidTab`, `GenAiTab`).
+ * @agent_note Automatically swaps tab orientation between vertical (desktop) and horizontal scrollable (mobile/tablet < 1024px) using MUI `useMediaQuery`.
+ */
+
 import * as React from "react";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
@@ -13,6 +20,16 @@ import AndroidTab from "./AndroidTab";
 import GenAiTab from "./GenAiTab";
 import { useThemeContext } from "@/theme/ThemeProvider";
 
+/**
+ * @component TabPanel
+ * @description Accessible tab panel container rendering active child curriculum views based on the selected tab index.
+ * @param {Object} props - Component properties
+ * @param {React.ReactNode} [props.children] - Panel child content
+ * @param {number} props.value - Active tab index value
+ * @param {number} props.index - Index assigned to this specific panel
+ * @state None
+ * @api None
+ */
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -39,6 +56,11 @@ TabPanel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
+/**
+ * @desc Generates accessibility attributes (id and aria-controls) for Material-UI Tab items.
+ * @param {number} index - Index of the tab
+ * @returns {{ id: string, 'aria-controls': string }} Accessibility attribute mapping
+ */
 function a11yProps(index) {
   return {
     id: `vertical-tab-${index}`,
@@ -46,6 +68,13 @@ function a11yProps(index) {
   };
 }
 
+/**
+ * @component TrainingTabs
+ * @description Main syllabus browser rendering interactive tab navigation and corresponding curriculum panels with dark mode theme integration.
+ * @param {Object} props - Component properties (empty)
+ * @state {number} value - Currently active tab index (0 to 4)
+ * @api None (Composes client-side curriculum tab modules)
+ */
 export default function TrainingTabs() {
   const [value, setValue] = React.useState(0);
   const isSmallScreen = useMediaQuery("(max-width: 1024px)");

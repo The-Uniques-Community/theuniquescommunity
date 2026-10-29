@@ -1,5 +1,24 @@
+/**
+ * @file SpotLightCard.jsx
+ * @description Interactive wrapper card that renders a dynamic radial spotlight beam following mouse movement.
+ * @architecture Micro-interaction wrapper component in src/utils/Card/ enclosing interactive feature blocks and cards.
+ * @agent_note Calculates cursor coordinates relative to bounding client rect; updates radial gradient origin on mouse move.
+ */
+
 import { useRef, useState } from "react";
 
+/**
+ * @component SpotlightCard
+ * @description Card container rendering an animated radial spotlight gradient tracking mouse hover and keyboard focus.
+ * @param {Object} props - Component properties
+ * @param {React.ReactNode} props.children - Child elements rendered inside the card
+ * @param {string} [props.className=""] - Additional CSS class names
+ * @param {string} [props.spotlightColor="rgb(255,190,190,0.25)"] - RGBA / CSS color for the radial gradient spotlight
+ * @state {boolean} isFocused - Indicates keyboard focus state
+ * @state {Object} position - Cursor coordinates `{ x: number, y: number }` relative to card container
+ * @state {number} opacity - Spotlight overlay opacity (0 to 0.6)
+ * @api None
+ */
 const SpotlightCard = ({ children, className = "", spotlightColor = "rgb(255,190,190,0.25)" }) => {
     const divRef = useRef(null);
     const [isFocused, setIsFocused] = useState(false);

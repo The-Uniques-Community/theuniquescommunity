@@ -1,3 +1,10 @@
+/**
+ * @file Gallery.jsx
+ * @description Community achievement photo gallery section displaying hackathon wins, summits, and workshops via DomeGallery.
+ * @architecture Child section on the landing view, feeding curated achievement records into `DomeGallery` with theme awareness.
+ * @agent_note Supplies high-resolution achievement images and tags (`Award`, `Hackathon`, `Community`, etc.) to the dual-marquee dome renderer.
+ */
+
 import React from "react";
 import { useThemeContext } from "../../../theme/ThemeProvider";
 import DomeGallery from "./DomeGallery";
@@ -75,6 +82,13 @@ const ACHIEVEMENT_IMAGES = [
   }
 ];
 
+/**
+ * @component Gallery
+ * @description Renders section branding, celebratory headlines, and a responsive container wrapping the interactive `DomeGallery` marquee.
+ * @param {Object} props - Component properties (empty)
+ * @state None (Consumes `isDarkMode` from `useThemeContext`)
+ * @api None (Static curated achievements dataset)
+ */
 const Gallery = () => {
   const { isDarkMode } = useThemeContext();
 

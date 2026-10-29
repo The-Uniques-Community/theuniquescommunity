@@ -1,3 +1,13 @@
+/**
+ * @file batchesData.js
+ * @description Master cohort data service managing community batch nomenclature, validation, natural sorting, status resolution, and backend synchronization.
+ * @architecture Batch data foundation utility in src/utils/batch/ consumed by filter controls, registration forms, student rosters, and batch profile resolvers.
+ * @agent_note Communicates with backend endpoints:
+ *   - GET `${BASE_URL}/api/batches/all` (handled by backend batch controller `getAllBatches`)
+ *   - POST `${BASE_URL}/api/batches/add` (handled by backend batch controller `addBatch`, payload: `{ name: string }`)
+ * Caching strategy: Network-first via `networkFirstFetch` with IndexedDB key "tu_community_member_batches", legacy localStorage key "tu_community_member_batches", in-memory cache `inMemoryBatches`, and DOM event "batches-updated".
+ */
+
 import axios from "axios";
 import { BASE_URL } from "../../config.js";
 import { networkFirstFetch, registerCacheFetcher } from "../cache/networkFirst.js";
@@ -8,6 +18,11 @@ export const DEFAULT_BATCHES = [];
 const BATCH_CACHE_KEY = "tu_community_member_batches";
 const LEGACY_STORAGE_KEY = "tu_community_member_batches";
 
+/**
+ * @desc Sorts batch names in natural numerical order according to batch version numbers
+ * @param {Array<string>} list - Array of batch name strings
+ * @returns {Array<string>} Naturally sorted batch names
+ */
 const sortBatchesNaturally = (list) => {
   return [...list].sort((a, b) => {
     const numA = parseFloat(String(a).match(/(\d+(\.\d+)?)/)?.[1] || 9999);
@@ -17,6 +32,11 @@ const sortBatchesNaturally = (list) => {
   });
 };
 
+/**
+ * @desc Validates, deduplicates, and filters out malformed or timestamp-corrupted batch names
+ * @param {Array<string>} rawList - Raw batch identifiers
+ * @returns {Array<string>} Clean, deduplicated, sorted batch list
+ */
 const mergeBatches = (rawList) => {
   if (!Array.isArray(rawList) || rawList.length === 0) return [];
   const valid = rawList.filter(
@@ -38,10 +58,19 @@ if (typeof window !== "undefined") {
   }).catch(() => {});
 }
 
+/**
+ * @desc Synchronously returns all stored batch names from the in-memory cache
+ * @returns {Array<string>} Snapshot list of active batch names
+ */
 export const getStoredBatches = () => {
   return [...inMemoryBatches];
 };
 
+/**
+ * @desc Fetches all registered batches via network-first strategy, updating IndexedDB cache
+ * @api GET `${BASE_URL}/api/batches/all` handled by backend `getAllBatches` controller
+ * @returns {Promise<Array<string>>} Resolved list of batch names
+ */
 export const fetchBatches = async () => {
   const result = await networkFirstFetch({
     cacheKey: BATCH_CACHE_KEY,
@@ -70,6 +99,11 @@ if (typeof window !== "undefined") {
   registerCacheFetcher(BATCH_CACHE_KEY, fetchBatches);
 }
 
+/**
+ * @desc Calculates the next sequential batch name based on the highest existing batch version
+ * @param {Array<string>} [existingBatches=getStoredBatches()] - Existing batch names
+ * @returns {string} Suggested next batch title (e.g. "The Uniques 5.0")
+ */
 export const suggestNextBatch = (existingBatches = getStoredBatches()) => {
   let maxNum = 4.0;
   existingBatches.forEach((b) => {
@@ -85,6 +119,12 @@ export const suggestNextBatch = (existingBatches = getStoredBatches()) => {
   return `The Uniques ${nextNum}`;
 };
 
+/**
+ * @desc Appends a newly created batch name, saving to MongoDB and updating IndexedDB cache
+ * @api POST `${BASE_URL}/api/batches/add` handled by backend `addBatch` controller (payload: `{ name: formatted }`)
+ * @param {string} batchName - Proposed batch name
+ * @returns {Promise<string|null>} Formatted batch name, or null if invalid
+ */
 export const addStoredBatch = async (batchName) => {
   if (!batchName || !batchName.trim()) return null;
   let formatted = batchName.trim();
@@ -119,10 +159,12 @@ export const addStoredBatch = async (batchName) => {
 };
 
 /**
- * Returns active/inactive status based on batch cohort:
+ * @desc Returns active/inactive status based on batch cohort:
  * - Batches 1.0, 2.0, 3.0 -> "inactive"
  * - Batch 4.0 (and 5.0+) -> "active"
  * - Honors suspended / blocked states if user object is provided
+ * @param {string|Object} batchOrUser - Batch name string or user profile object
+ * @returns {string} Batch status ("active", "inactive", "suspended", "blocked")
  */
 export const getBatchStatus = (batchOrUser) => {
   if (!batchOrUser) return "inactive";

@@ -1,3 +1,10 @@
+/**
+ * @file CommunityPartners.jsx
+ * @description Landing page section showcasing community and corporate partner logos in dual bi-directional continuous marquees.
+ * @architecture Child section on the landing page view, using `react-fast-marquee`, `framer-motion` viewport detection, and `useThemeContext`.
+ * @agent_note Optimizes rendering by pausing marquees when scrolled out of view via `useInView`. Logos include theme brightness adjustments for dark mode.
+ */
+
 import { useRef } from "react";
 import Marquee from "react-fast-marquee";
 import { useInView } from "framer-motion";
@@ -54,6 +61,17 @@ const partners = [
   },
 ];
 
+/**
+ * @component PartnerLogo
+ * @description Renders an individual partner logo with hover transitions, dark-mode inversion, and image error fallback.
+ * @param {Object} props - Component properties
+ * @param {Object} props.partner - Partner data item containing brand name and svg/png logo URL
+ * @param {string} props.partner.name - Company or organization name
+ * @param {string} props.partner.logo - Web image asset URL
+ * @param {boolean} props.isDarkMode - Theme dark mode active flag
+ * @state None
+ * @api None (Static asset presentation)
+ */
 const PartnerLogo = ({ partner, isDarkMode }) => (
   <div className="flex items-center justify-center mx-10 group">
     <img
@@ -70,6 +88,13 @@ const PartnerLogo = ({ partner, isDarkMode }) => (
   </div>
 );
 
+/**
+ * @component CommunityPartners
+ * @description Renders the community partnerships section with partner count statistics and two opposing infinite scroll marquees.
+ * @param {Object} props - Component properties (empty)
+ * @state None (Theme state consumed via `useThemeContext`)
+ * @api None (Static partner catalog)
+ */
 const CommunityPartners = () => {
   const { isDarkMode } = useThemeContext();
   const sectionRef = useRef(null);

@@ -1,3 +1,12 @@
+/**
+ * @file index.jsx
+ * @description Community blogs portal providing technical and career articles with faceted category filters, keyword search, and an immersive article reader modal.
+ * @architecture Mounted at `/blogs` in the landing routes. Interfaces with `${BASE_URL}/api/blogs` handled by `The-Uniques-Portal/server/controller/member/blogController.js`.
+ * @agent_note Operational endpoints:
+ * - `GET ${BASE_URL}/api/blogs`: Handled by `getAllBlogs` in `server/controller/member/blogController.js`. Returns `{ success: true, data: Array<Blog> }`.
+ * - Merges API blog objects with static fallback `blogData` using a set of unique IDs to ensure uninterrupted reading experience even if backend is offline.
+ */
+
 import React, { useState, useEffect } from "react";
 import { 
   Modal, 
@@ -29,6 +38,16 @@ import { BookOpen } from "lucide-react";
 import axios from "axios";
 import { BASE_URL } from "@/config";
 
+/**
+ * @component BlogPage
+ * @description Catalog view displaying article cards with responsive desktop sidebar and mobile drawer filtering, category multiselect, and reader modal.
+ * @state {Array<Object>} blogsList - Array of blog records loaded from API merged with local assets
+ * @state {Object|null} selectedBlog - Target article entity opened in reader modal
+ * @state {string} searchQuery - Search query string matched across blog titles, content, and tags
+ * @state {Array<string>} selectedCategories - Array of category filter strings selected by user
+ * @state {boolean} mobileFilterOpen - Drawer open/close state for mobile screens
+ * @api GET ${BASE_URL}/api/blogs - Handled by `getAllBlogs` in `The-Uniques-Portal/server/controller/member/blogController.js`
+ */
 const BlogPage = () => {
   const [blogsList, setBlogsList] = useState(blogData);
   const [selectedBlog, setSelectedBlog] = useState(null);

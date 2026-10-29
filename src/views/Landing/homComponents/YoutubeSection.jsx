@@ -1,7 +1,21 @@
+/**
+ * @file YoutubeSection.jsx
+ * @description Official YouTube channel showcase featuring lazy thumbnail video embed, channel identity card, and subscription call-to-action.
+ * @architecture Child section on the landing view (`Landing.jsx`), rendering an on-demand YouTube iframe player and social engagement cards.
+ * @agent_note Defers YouTube iframe mounting until the user triggers the play button (`isPlaying`), saving initial network bandwidth and page load time.
+ */
+
 import React, { useState } from "react";
 import { Play, Youtube, ExternalLink, Video, Lightbulb, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 
+/**
+ * @component YoutubeSection
+ * @description Renders a 5-column responsive layout with lazy-loaded YouTube iframe player, channel identity badge, feature cards, and channel link.
+ * @param {Object} props - Component properties (empty)
+ * @state {boolean} isPlaying - Toggle replacing static thumbnail with interactive autoplay YouTube iframe
+ * @api None (External YouTube embedded media and link)
+ */
 const YoutubeSection = () => {
   const [isPlaying, setIsPlaying] = useState(false);
 

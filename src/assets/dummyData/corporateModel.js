@@ -1,6 +1,19 @@
+/**
+ * @file corporateModel.js
+ * @description Static feature dataset outlining the community's corporate training and readiness model.
+ * @architecture Exported to `@/views/Landing/Training-model` components to render cards describing the
+ * pathway bridging collegiate education with corporate readiness and industry innovation.
+ * @agent_note Items supply paired `{ heading, content }` strings used in highlight grids or timeline steps.
+ */
+
+/**
+ * @desc Corporate model feature pillars.
+ * @type {Array<{ heading: string, content: string }>}
+ */
 export const data = [
     {
       heading: "Bridging College to Corporate",
+
       content:
         "We equip students with an essential skillset, upskilling them to thrive in the corporate world while fostering an adaptive mindset.",
     },

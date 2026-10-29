@@ -1,7 +1,26 @@
+/**
+ * @file Counts.jsx
+ * @description Community metrics and achievement statistics counter component with quintic ease-out count-up animation triggered via IntersectionObserver.
+ * @architecture Embedded in the landing page view, consuming metrics from `@/utils/stats/statsData` which bridges to the backend stats service.
+ * @agent_note Interacts with backend metrics service:
+ * - `GET ${BASE_URL}/api/stats` (handled by `getStats` in `The-Uniques-Portal/server/controller/Community/statsController.js`)
+ * Listens for the `stats-updated` CustomEvent on `window` to dynamically sync newly updated figures.
+ */
+
 import React, { useEffect, useRef, useState } from 'react';
 import { Users, Lightbulb, BarChart, Calendar } from 'lucide-react';
 import { getStoredStats, fetchStats } from '@/utils/stats/statsData';
 
+/**
+ * @component Counts
+ * @description Renders a 4-card statistics showcase (Revenue Generated, Tech Partners, Projects Delivered, Community Events) with smooth number ramping on viewport entrance.
+ * @param {Object} props - Component properties (empty)
+ * @state {boolean} statsVisible - Whether the section has entered the viewport via IntersectionObserver
+ * @state {Object} targetValues - Target numeric values for stats loaded from cache/API
+ * @state {Object} counters - Incrementally animated numeric values rendered in the DOM
+ * @state {boolean} animationComplete - Flag indicating whether the 2.5s ease-out animation sequence finished
+ * @api `GET ${BASE_URL}/api/stats` (invoked via `fetchStats()`) - Fetches live aggregated community numbers
+ */
 const Counts = () => {
   const sectionRef = useRef(null);
   const [statsVisible, setStatsVisible] = useState(false);

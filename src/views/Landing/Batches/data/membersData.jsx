@@ -1,6 +1,17 @@
+/**
+ * @file membersData.jsx
+ * @description Mock and fallback member profiles data used for development and offline testing of the Batches showcase views.
+ * @architecture Fallback dataset. Production data is loaded dynamically from `${BASE_URL}/api/public/members` handled by `getPublicMembers` in `The-Uniques-Portal/server/controller/landing/memberController.js`.
+ * @agent_note Static fixture array containing sample developer, designer, and student profiles complete with skills, social links, achievements, certificates, and projects.
+ */
+
 // import type { Member } from "../types"
 import { Lightbulb, Trophy, Star, Heart } from "lucide-react"
 
+/**
+ * @desc Collection of sample member profiles illustrating data schema for community members.
+ * @type {Array<Object>}
+ */
 export const membersData = [
   {
     id: "member1",

@@ -1,6 +1,20 @@
+/**
+ * @file eventsData.js
+ * @description Mock event schedule and detail dataset mirroring the backend Event schema.
+ * @architecture Used in `@/views/Landing/Event` components as fallback data for hackathons, workshops, and seminars.
+ * Conforms to the MongoDB Event document structure defined in `The-Uniques-Portal/server` models.
+ * @agent_note Fields include `eventDate` (`Date` objects), `eventStatus` ("upcoming", "completed"), and nested array schemas
+ * for `eventMembers` and `eventGuests` (with LinkedIn and company links).
+ */
+
+/**
+ * @desc Collection of simulated community event records.
+ * @type {Array<Object>}
+ */
 export const events = [
     {
       eventName: "AI & ML Workshop",
+
       eventDescription: "A hands-on workshop on Artificial Intelligence and Machine Learning fundamentals.",
       eventBanner: "https://media.licdn.com/dms/image/v2/D4E12AQFXNU2J6yhfAQ/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1688139013803?e=2147483647&v=beta&t=RWgeL5xUPNp_ebXtK_uBEEIir-IS_m6kb4JfDWuEsAk",
       eventDate: new Date("2025-04-15"),

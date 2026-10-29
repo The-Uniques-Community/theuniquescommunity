@@ -1,3 +1,13 @@
+/**
+ * @file main.jsx
+ * @description Application client root bootstrap script for The Uniques Community.
+ * @architecture Entry point for Vite rendering the React virtual DOM into `#root`. Mounts global providers
+ * including Redux Provider (`@/redux/store`), Material-UI ThemeProvider (`@/theme/ThemeProvider`), ToastContainer (`react-toastify`),
+ * and interactive spark effects (`ClickSpark`) surrounding the root `App` component.
+ * @agent_note Initializes Lenis smooth scrolling with auto-RAF and handles `vite:preloadError` events to safely auto-refresh
+ * browser sessions when encountering stale deployment chunks without entering infinite reload loops.
+ */
+
 // import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
@@ -53,3 +63,4 @@ createRoot(document.getElementById("root")).render(
     </ThemeProvider>
   </Provider>
 );
+

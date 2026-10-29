@@ -1,8 +1,24 @@
+/**
+ * @file Ankur1.jsx
+ * @description Comprehensive modal dialog component profiling community founder Dr. Ankur Kumar Rastogi, featuring biographical overview, professional timeline/ventures, and published authored works.
+ * @architecture Rendered as a portal modal mounted directly into `document.body`, invoked from `src/views/Landing/About/componants/Mentor.jsx`. Handles window scroll lock and integration with Lenis smooth scroll (`window.lenis`).
+ * @agent_note Manages global document scrolling by locking body/HTML overflow and pausing Lenis smooth scrolling when open. Uses Framer Motion for backdrop and content transitions. All tabs ('overview', 'experience', 'books') maintain static biographical and bibliographic data.
+ */
+
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Book, Briefcase, User2, Linkedin, Twitter, Mail, Instagram } from 'lucide-react';
 
+/**
+ * @component Modal
+ * @description Fullscreen accessible portal overlay with background blur and Lenis scroll prevention.
+ * @param {Object} props - Component properties
+ * @param {boolean} props.isOpen - Controls visibility of the modal
+ * @param {Function} props.onClose - Callback triggered to dismiss the modal
+ * @param {React.ReactNode} props.children - Modal content nodes
+ * @returns {React.ReactPortal|null} Rendered portal or null if closed
+ */
 const Modal = ({ isOpen, onClose, children }) => {
   React.useEffect(() => {
     if (!isOpen) return;
@@ -65,6 +81,16 @@ const Modal = ({ isOpen, onClose, children }) => {
   );
 };
 
+/**
+ * @component TabButton
+ * @description Navigation button used within the profile modal tab strip.
+ * @param {Object} props - Component properties
+ * @param {boolean} props.active - Indicates if the tab is currently selected
+ * @param {React.ElementType} props.icon - Lucide icon component
+ * @param {string} props.label - Display title for the tab
+ * @param {Function} props.onClick - Click handler callback
+ * @returns {JSX.Element} Rendered tab button
+ */
 const TabButton = ({ active, icon: Icon, label, onClick }) => (
   <button
     onClick={onClick}
@@ -78,6 +104,16 @@ const TabButton = ({ active, icon: Icon, label, onClick }) => (
   </button>
 );
 
+/**
+ * @component ProfileCard
+ * @description Detailed profile dialog presenting founder credentials, academic roles, startup initiatives, and published books.
+ * @param {Object} props - Component properties
+ * @param {boolean} props.isOpen - Modal open state passed down from MentorSection
+ * @param {Function} props.onClose - Modal close handler
+ * @returns {JSX.Element} Rendered profile modal dialog
+ * @state {string} activeTab - Selected tab ('overview' | 'experience' | 'books')
+ * @state {number} activeStartup - Index of currently focused venture card
+ */
 const ProfileCard = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [activeStartup, setActiveStartup] = useState(2);

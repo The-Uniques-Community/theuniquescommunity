@@ -1,10 +1,43 @@
+/**
+ * @file ScrollStack.jsx
+ * @description High-performance stacking card scroller that dynamically scales, rotates, and pins cards as they scroll into view.
+ * @architecture Complex scroll-driven presentation engine in src/utils/ScrollStack/ used for feature stories and milestone presentations.
+ * @agent_note Computes scroll position via window or container scroller, caching transforms in `lastTransformsRef` to prevent unnecessary DOM style mutations. Uses `requestAnimationFrame`.
+ */
+
 import { useLayoutEffect, useRef, useCallback } from 'react';
 import './ScrollStack.css';
 
+/**
+ * @component ScrollStackItem
+ * @description Card item wrapper required for individual stacked elements inside ScrollStack.
+ * @param {Object} props - Component properties
+ * @param {React.ReactNode} props.children - Inner card content
+ * @param {string} [props.itemClassName=''] - Additional CSS classes
+ * @state None
+ * @api None
+ */
 export const ScrollStackItem = ({ children, itemClassName = '' }) => (
   <div className={`scroll-stack-card ${itemClassName}`.trim()}>{children}</div>
 );
 
+/**
+ * @component ScrollStack
+ * @description Card scroller container that stacks, pins, scales, and subtly rotates child cards sequentially on scroll.
+ * @param {Object} props - Component properties
+ * @param {React.ReactNode} props.children - ScrollStackItem elements to be stacked
+ * @param {string} [props.className=''] - Container class name
+ * @param {number} [props.itemDistance=100] - Vertical margin distance between cards in px
+ * @param {number} [props.itemScale=0.03] - Scale increment applied per stacked card layer
+ * @param {number} [props.itemStackDistance=30] - Visual offset between stacked card tops in px
+ * @param {string|number} [props.stackPosition='15%'] - Scroll trigger start position threshold
+ * @param {string|number} [props.scaleEndPosition='5%'] - Scroll trigger finish position threshold
+ * @param {number} [props.baseScale=0.92] - Initial scale factor for the deepest stacked card
+ * @param {number} [props.rotationAmount=0.2] - Slight rotational angle applied per card during stack
+ * @param {boolean} [props.useWindowScroll=true] - Whether to bind to window scroll or local element scroll
+ * @state None (utilizes mutable refs and rAF animation loop)
+ * @api None
+ */
 const ScrollStack = ({
   children,
   className = '',

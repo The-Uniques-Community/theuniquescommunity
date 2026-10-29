@@ -1,3 +1,17 @@
+/**
+ * @file ProfileInformation.jsx
+ * @description Comprehensive biographical and career dossier view component rendering candidate overview cards, technical skill tags, key achievements, portfolio projects, and leadership roles.
+ * @architecture Sub-component loaded into `StudentStory.jsx` (`src/views/Landing/SuccessStories/StudentStory.jsx`). Receives the full `SuccessStory` data model and styled MUI wrappers.
+ * @agent_note Displays data populated by `The-Uniques-Portal/server/models/community/successStoryModel.js` and served by `The-Uniques-Portal/server/controller/Community/successStories.controller.js` (`getSuccessStoryById`):
+ * - `student.summary` (string)
+ * - `student.role` and `student.company` (string)
+ * - `student.education` ({ degree, institution, year } or string)
+ * - `student.skills` ({ core: string[], technologies: string[], softSkills: string[] })
+ * - `student.achievements` (string[])
+ * - `student.projects` (Array<{ title: string, description: string, technologies: string[], link: string }>)
+ * - `student.leadership` (Array<{ role: string, description: string }>)
+ */
+
 import React from 'react';
 import {
   Box,
@@ -21,6 +35,23 @@ import {
   Group as LeadershipIcon
 } from '@mui/icons-material';
 
+/**
+ * @component ProfileInformation
+ * @description Detailed profile layout rendering candidate biography, current role, education, technical stack, accomplishments, and project portfolio.
+ * @param {Object} props - Component properties
+ * @param {Object} props.student - The complete candidate data object
+ * @param {number} props.detailTabValue - Active sub-tab index (0: All, 1: Skills, 2: Achievements, 3: Projects)
+ * @param {Function} props.onDetailTabChange - Tab change handler callback
+ * @param {boolean} props.isMobile - True if viewport matches mobile breakpoint
+ * @param {React.ComponentType} props.StyledTabs - Custom themed Tabs wrapper
+ * @param {React.ComponentType} props.StyledTab - Custom themed Tab wrapper
+ * @param {React.ComponentType} props.SectionHeading - Custom typography heading component
+ * @param {React.ComponentType} props.DetailCard - Custom Paper wrapper component
+ * @param {boolean} props.isDarkMode - True if dark mode theme is active
+ * @returns {JSX.Element} The rendered candidate profile dossier.
+ * @state None (controlled by parent `StudentStory`).
+ * @api None directly.
+ */
 const ProfileInformation = ({
   student,
   detailTabValue,

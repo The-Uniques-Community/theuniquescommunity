@@ -1,3 +1,10 @@
+/**
+ * @file Faq.jsx
+ * @description Frequently Asked Questions component providing collapsible accordions on community eligibility, curriculum structure, real-world project assignments, and cost.
+ * @architecture Sub-component loaded into the About page (`src/views/Landing/About/index.jsx`). Static data driven with independent toggle states per accordion item.
+ * @agent_note The component uses FontAwesome chevron icons to indicate expand/collapse status. To update questions or answers, edit the local `faqList` array or connect to an administrative CMS endpoint if one is created in the future.
+ */
+
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
@@ -36,6 +43,17 @@ const faqList = [
 ];
 
 
+/**
+ * @component FaqItem
+ * @description Collapsible accordion item displaying a question button and expandable answer panel.
+ * @param {Object} props - Component properties
+ * @param {Object} props.faq - The FAQ entity
+ * @param {string} props.faq.question - Question text
+ * @param {string} props.faq.answer - Answer explanation
+ * @param {boolean} [props.faq.isActive] - Default initial open state
+ * @returns {JSX.Element} The rendered accordion item.
+ * @state {boolean} isOpen - Tracks expanded or collapsed state of this specific item
+ */
 const FaqItem = ({ faq }) => {
 	const [isOpen, setIsOpen] = useState(faq.isActive || false);
 
@@ -60,6 +78,13 @@ const FaqItem = ({ faq }) => {
 	);
 };
 
+/**
+ * @component Faq8
+ * @description Two-column FAQ section container with heading, introduction, and accordion list.
+ * @returns {JSX.Element} The rendered FAQ section.
+ * @state None.
+ * @api None.
+ */
 const Faq8 = () => {
 	return (
 		<section className="ezy__faq8 light py-6 md:py-10 bg-white text-zinc-900">

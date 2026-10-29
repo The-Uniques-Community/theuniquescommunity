@@ -1,3 +1,20 @@
+/**
+ * @file index.jsx
+ * @description Member login interface for The Uniques Community.
+ * Provides credentials login via email/password (`POST ${BASE_URL}/auth/emaillogin`)
+ * and Google OAuth SSO popup integration. Handles token storage in localStorage
+ * and role-based redirect routing (`member`, `coordinator`, `communityadmin`, `admin`).
+ *
+ * @architecture
+ * - Part of the Community Authentication feature cluster (`views/Authentication/login/`).
+ * - Form state and input validation powered by Formik and Yup schemas.
+ * - Integrates with `window.addEventListener("message")` for receiving OAuth callback tokens from popups.
+ * - Redirects by default to the unified portal application via `PORTAL_URL`.
+ *
+ * @agent_note
+ * Backend auth handlers reside in `The-Uniques-Portal/server/controller/Authentication/auth.controller.js`.
+ */
+
 import { useState, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
 import GoogleIcon from "@mui/icons-material/Google";
@@ -26,6 +43,12 @@ import bg from "@/assets/img/login/bg.png";
 import axios from "axios";
 import { BASE_URL, PORTAL_URL } from "@/config";
 
+/**
+ * Login Component
+ *
+ * @component
+ * @returns {JSX.Element} The rendered login form interface.
+ */
 const Login = () => {
   const theme = useTheme();
   const navigate = useNavigate();

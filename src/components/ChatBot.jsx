@@ -1,8 +1,25 @@
+/**
+ * @file ChatBot.jsx
+ * @description Floating interactive AI assistant chatbot widget for community inquiries.
+ * @architecture Mounted globally in layout trees (e.g., `src/layout/Landing/index.jsx`). Renders a fixed floating
+ * launcher button with framer-motion animations that expands into an embedded Botpress Cloud Webchat iframe modal.
+ * @agent_note The outer wrapper container uses `pointerEvents: "none"` to avoid obstructing underlying UI clicks,
+ * while interactive modal elements and launcher controls selectively activate `pointerEvents: "auto"`.
+ */
+
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+/**
+ * @component ChatBot
+ * @description Renders a floating expandable chat bubble embedding the cloud-hosted Botpress support chat interface.
+ * @state {boolean} isOpen - Determines whether the chat dialog iframe modal is expanded or collapsed.
+ * @state {boolean} isHovered - Tracks hover state on the circular floating trigger button.
+ * @api External iframe integration with Botpress Cloud Webchat (`https://cdn.botpress.cloud/webchat/v3.6/shareable.html`).
+ */
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
+
   const [isHovered, setIsHovered] = useState(false);
 
   const toggleChat = (e) => {

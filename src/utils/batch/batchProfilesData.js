@@ -1,3 +1,13 @@
+/**
+ * @file batchProfilesData.js
+ * @description Data service and caching layer for community batch profiles, handling remote syncing, IndexedDB offline persistence, natural sorting, and member batch merging.
+ * @architecture Data provider utility in src/utils/batch/ supplying batch metadata, portraits, and narratives to batch directories and cards.
+ * @agent_note Communicates with backend endpoints:
+ *   - GET `${BASE_URL}/api/batches/profiles` (handled by backend batch controller `getBatchProfiles`)
+ *   - POST `${BASE_URL}/api/batches/profiles/update` (handled by backend batch controller `updateBatchProfiles`, payload: `{ profiles: Array<{ id, label, title, description, image, customImage }> }`)
+ * Caching strategy: Network-first via `networkFirstFetch` using IndexedDB key "tu_community_batch_profiles", legacy localStorage key "tu_community_batch_profiles", synchronous `inMemoryProfiles` buffer, and DOM events "batch-profiles-updated".
+ */
+
 import axios from "axios";
 import { BASE_URL } from "../../config.js";
 import { getStoredBatches } from "./batchesData.js";
@@ -11,6 +21,11 @@ export const DEFAULT_BATCH_PROFILES = [];
 const PROFILES_CACHE_KEY = "tu_community_batch_profiles";
 const LEGACY_STORAGE_KEY = "tu_community_batch_profiles";
 
+/**
+ * @desc Sorts batch profile records naturally based on numeric version tags parsed from names
+ * @param {Array<Object>} list - Raw batch profile items
+ * @returns {Array<Object>} Numerically ordered batch profile items
+ */
 const sortProfilesNaturally = (list) => {
   return [...list].sort((a, b) => {
     const nameA = a.label || a.title || "";
@@ -22,6 +37,11 @@ const sortProfilesNaturally = (list) => {
   });
 };
 
+/**
+ * @desc Transforms raw batch profile data, ensuring safe image URLs, synthesizing placeholders for registered member batches, and sorting
+ * @param {Array<Object>} rawList - Raw profile items fetched from server or storage
+ * @returns {Array<Object>} Normalized and enriched batch profiles
+ */
 export const resolveProfilesWithDefaults = (rawList) => {
   let profiles = [];
   if (Array.isArray(rawList) && rawList.length > 0) {
@@ -80,10 +100,19 @@ if (typeof window !== "undefined") {
   });
 }
 
+/**
+ * @desc Synchronously retrieves current batch profiles from the in-memory runtime cache
+ * @returns {Array<Object>} Snapshot array of normalized batch profiles
+ */
 export const getStoredBatchProfiles = () => {
   return [...inMemoryProfiles];
 };
 
+/**
+ * @desc Fetches batch profiles using network-first strategy, writing to IndexedDB and broadcasting updates
+ * @api GET `${BASE_URL}/api/batches/profiles` handled by backend `getBatchProfiles` controller
+ * @returns {Promise<Array<Object>>} Resolved batch profile array
+ */
 export const fetchBatchProfiles = async () => {
   const result = await networkFirstFetch({
     cacheKey: PROFILES_CACHE_KEY,
@@ -112,6 +141,12 @@ if (typeof window !== "undefined") {
   registerCacheFetcher(PROFILES_CACHE_KEY, fetchBatchProfiles);
 }
 
+/**
+ * @desc Persists updated batch profiles list to IndexedDB and remote MongoDB backend
+ * @api POST `${BASE_URL}/api/batches/profiles/update` handled by backend `updateBatchProfiles` controller
+ * @param {Array<Object>} profiles - Full collection of batch profile items to save
+ * @returns {Promise<boolean>} True if update succeeded
+ */
 export const saveStoredBatchProfiles = async (profiles) => {
   try {
     const toSave = profiles.map((p) => {
@@ -146,6 +181,11 @@ export const saveStoredBatchProfiles = async (profiles) => {
   }
 };
 
+/**
+ * @desc Upserts a single batch profile into the stored collection and syncs with backend
+ * @param {Object} updatedProfile - Batch profile data to modify or insert
+ * @returns {Promise<Array<Object>>} Updated list of all batch profiles
+ */
 export const updateSingleBatchProfile = async (updatedProfile) => {
   const current = getStoredBatchProfiles();
   const index = current.findIndex(
@@ -164,6 +204,10 @@ export const updateSingleBatchProfile = async (updatedProfile) => {
   return updatedList;
 };
 
+/**
+ * @desc Deletes stored batch profiles from IndexedDB cache and resets in-memory store
+ * @returns {Promise<Array>} Empty array on successful reset
+ */
 export const resetStoredBatchProfiles = async () => {
   try {
     await deleteCache(PROFILES_CACHE_KEY);

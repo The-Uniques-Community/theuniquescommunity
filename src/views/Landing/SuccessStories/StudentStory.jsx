@@ -1,3 +1,35 @@
+/**
+ * @file StudentStory.jsx
+ * @description Detailed profile page for an individual success story candidate, rendering hero banner, career milestone tabs, timeline view, and video interview.
+ * @architecture Dynamic route component mounted at `/success-stories/:studentId` in `SuccessStoriesRoutes` (`src/routes/successStories/index.jsx`). Resolves candidate data from parent outlet context or fetches directly from the server.
+ * @agent_note Explicit backend API interaction:
+ * - Direct endpoint: `GET ${BASE_URL}/api/success-stories/:id`
+ * - Handled by: `The-Uniques-Portal/server/controller/Community/successStories.controller.js` (`getSuccessStoryById`)
+ * - Request parameters: `studentId` URL parameter mapped to `:id`
+ * - Response schema:
+ *   ```json
+ *   {
+ *     "success": true,
+ *     "data": {
+ *       "_id": "673...",
+ *       "name": "Jane Doe",
+ *       "role": "Software Engineer",
+ *       "company": "Amazon",
+ *       "batch": "Uniques 2.0",
+ *       "summary": "...",
+ *       "image": "https://...",
+ *       "skills": { "core": [], "technologies": [], "softSkills": [] },
+ *       "achievements": [],
+ *       "projects": [],
+ *       "timeline": [],
+ *       "videoUrl": "https://...",
+ *       "chatbotUrl": "https://..."
+ *     }
+ *   }
+ *   ```
+ * - Optimistic resolution: If the candidate already exists in `outletCtx.students` (fetched via `GET /api/success-stories?all=true`), network fetch is skipped for instant rendering.
+ */
+
 import { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -110,7 +142,15 @@ const DetailCard = styled(Paper)(({ theme }) => ({
   }
 }));
 
-// Tab Panel component
+/**
+ * @component TabPanel
+ * @description Accessible tab container conditionally mounting child content when its index matches the selected tab.
+ * @param {Object} props - Component properties
+ * @param {React.ReactNode} [props.children] - Panel content elements
+ * @param {number} props.index - Tab index
+ * @param {number} props.value - Active tab value
+ * @returns {JSX.Element} The rendered tab panel container.
+ */
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -158,6 +198,17 @@ const StyledTab = styled(Tab)(({ theme }) => ({
   },
 }));
 
+/**
+ * @component StudentStory
+ * @description Candidate profile view organizing biography, career roadmap, timeline milestones, and personal message into interactive tabs.
+ * @returns {JSX.Element} The rendered student profile page.
+ * @state {Object|null} student - Active candidate record
+ * @state {boolean} isLoading - Loading indicator state for record resolution
+ * @state {string|null} error - Error message if candidate not found
+ * @state {number} mainTabValue - Selected top-level tab (0: Profile, 1: Timeline, 2: Video Message)
+ * @state {number} detailTabValue - Selected detail sub-tab in ProfileInformation
+ * @api `GET /api/success-stories/:id` - Fetches detailed candidate record by ID if not cached in context
+ */
 const StudentStory = () => {
   const { isDarkMode } = useThemeContext();
   const { studentId } = useParams();

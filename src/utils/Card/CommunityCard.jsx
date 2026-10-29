@@ -1,3 +1,10 @@
+/**
+ * @file CommunityCard.jsx
+ * @description Event showcase card with custom responsive SVG clip-path cutout, venue/schedule details, and navigation actions.
+ * @architecture Presentation card in src/utils/Card/ used within event listings, landing pages, and community dashboards. Integrates with React Router navigate.
+ * @agent_note Features custom SVG clip-path `#card-cutout-clip` and SVG stroke border. Uses image fallback to community logo and safely parses Google Drive file IDs.
+ */
+
 import { useNavigate } from "react-router-dom";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import ScheduleOutlinedIcon from "@mui/icons-material/ScheduleOutlined";
@@ -5,10 +12,33 @@ import "./communitycard.css";
 import logo from "@/assets/logos/theuniquesCommunity.png";
 import { getSafeImageUrl } from "@/utils/imageHelper";
 
+/**
+ * @component CommunityCard
+ * @description Displays event details including date, title, venue, schedule, badge tags, and direct detail routing.
+ * @param {Object} props - Component properties
+ * @param {Object} props.event - Event data object
+ * @param {string} [props.event._id] - Unique event MongoDB ID
+ * @param {string} [props.event.eventName] - Title of the event
+ * @param {string} [props.event.eventDate] - Date string or timestamp
+ * @param {string} [props.event.eventStatus] - Status indicator (e.g. active, upcoming, past)
+ * @param {string} [props.event.eventVenue] - Physical or virtual location of event
+ * @param {string} [props.event.eventTime] - Time slot of event
+ * @param {string} [props.event.eventType] - Categorization of event
+ * @param {string|Object} [props.event.eventBanner] - Image URL, Google Drive ID, or banner object
+ * @param {string} [props.event.eventLink] - External link for registration or more info
+ * @param {Function} [props.onCardClick] - Optional callback triggered on whole card click
+ * @param {Function} [props.onKnowMoreClick] - Optional callback triggered on 'Know More' action
+ * @state None
+ * @api Routes to `/events/${eventId}` via React Router or opens external `eventLink`
+ */
 const CommunityCard = ({ event, onCardClick, onKnowMoreClick }) => {
   const navigate = useNavigate();
 
-  // Extract Google Drive file ID from object, URL, or string
+  /**
+   * @desc Extract Google Drive file ID from object, URL, or string
+   * @param {string|Object} bannerData - Drive URL, file ID, or image meta object
+   * @returns {string|null} Extracted file ID or null if unresolvable
+   */
   const extractFileId = (bannerData) => {
     if (!bannerData) return null;
     if (typeof bannerData === "object") {
@@ -30,12 +60,19 @@ const CommunityCard = ({ event, onCardClick, onKnowMoreClick }) => {
     return null;
   };
 
-  // Safe proxied image URL
+  /**
+   * @desc Resolves safe proxied image URL with placeholder fallback
+   * @param {string|Object} bannerData - Banner URL or Drive reference
+   * @returns {string} Sanitized banner image URL
+   */
   const getBannerUrl = (bannerData) => {
     return getSafeImageUrl(bannerData, "https://placehold.co/600x400?text=Event");
   };
 
-  // Get the correct event ID
+  /**
+   * @desc Resolves the event unique identifier from multiple potential ID properties
+   * @returns {string|null} Resolved event ID or null
+   */
   const getEventId = () => {
     if (!event) return null;
     const possibleIds = [
@@ -50,7 +87,10 @@ const CommunityCard = ({ event, onCardClick, onKnowMoreClick }) => {
     return null;
   };
 
-  // Handle card click (static by default, only triggers if onCardClick is passed)
+  /**
+   * @desc Handles outer card click event unless user clicked the action button
+   * @param {React.MouseEvent} e - Click event
+   */
   const handleCardClick = (e) => {
     if (e.target.closest(".know-more-button")) {
       return;
@@ -61,7 +101,10 @@ const CommunityCard = ({ event, onCardClick, onKnowMoreClick }) => {
     }
   };
 
-  // Handle "Know More" button click
+  /**
+   * @desc Handles 'Know More' CTA button click, prioritizing custom handler, route navigate, or external link
+   * @param {React.MouseEvent} e - Click event
+   */
   const handleKnowMoreClick = (e) => {
     e.preventDefault();
     e.stopPropagation();

@@ -1,3 +1,10 @@
+/**
+ * @file TestimonialCard.jsx
+ * @description Community testimonial showcase with category switching (students, faculty, professionals), animated transitions, and fallback avatars.
+ * @architecture Presentation component on the landing page (`Landing.jsx`), rendering animated testimonial cards and category selection pills.
+ * @agent_note Implements Framer Motion directional slide variants for smooth category transitions. Provides `AvatarImage` with automatic initials generation upon image loading errors.
+ */
+
 "use client"
 import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -127,7 +134,16 @@ const testimonialData = {
   ]
 };
 
-// Fallback avatar component with initials and brand styling to prevent broken image icons
+/**
+ * @component AvatarImage
+ * @description Displays a user avatar image with lazy loading, no-referrer policy, and automatic fallback to initials badge on load error.
+ * @param {Object} props - Component properties
+ * @param {string} props.src - Image URL
+ * @param {string} props.name - Person's full name used to generate fallback initials
+ * @state {string} imgSrc - Current active image URL
+ * @state {boolean} hasError - Image loading failure flag
+ * @api None
+ */
 const AvatarImage = ({ src, name }) => {
   const [imgSrc, setImgSrc] = useState(src);
   const [hasError, setHasError] = useState(false);
@@ -189,6 +205,20 @@ const slideVariants = {
   })
 };
 
+/**
+ * @component TestimonialCard
+ * @description Renders a single testimonial card with quote mark icon, highlight badge, star ratings, quote body, and author information.
+ * @param {Object} props - Component properties
+ * @param {string} props.image - Author profile avatar URL
+ * @param {string} props.name - Author's full name
+ * @param {string} props.role - Professional title or job position
+ * @param {string} props.testimonial - Quote content
+ * @param {number} [props.rating=5] - Numerical star rating (1-5)
+ * @param {string} [props.highlight] - Pill tag highlighting key skill or track (e.g. "MERN Stack")
+ * @param {number} [props.delay=0] - Entrance animation delay in seconds
+ * @state None
+ * @api None
+ */
 const TestimonialCard = ({ image, name, role, testimonial, rating = 5, highlight, delay = 0 }) => {
   return (
     <motion.div
@@ -258,6 +288,14 @@ const TestimonialCard = ({ image, name, role, testimonial, rating = 5, highlight
   );
 };
 
+/**
+ * @component Testimonials
+ * @description Main testimonial section managing category state (Students, Faculty, Professionals) with animated slide transitions and pagination dots.
+ * @param {Object} props - Component properties (empty)
+ * @state {Array<number>} page - Tuple storing active category page index and direction delta
+ * @state {boolean} isAnimating - Lock preventing rapid category switching during animation
+ * @api None (Uses curated testimonial data)
+ */
 const Testimonials = () => {
   const [[page, direction], setPage] = useState([0, 0]);
   const [isAnimating, setIsAnimating] = useState(false);

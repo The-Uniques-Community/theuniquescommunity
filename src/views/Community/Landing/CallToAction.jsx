@@ -1,9 +1,35 @@
+/**
+ * @file CallToAction.jsx
+ * @description Concluding Call-to-Action banner for the Community Ambassador program.
+ * Features primary action triggers to open the dynamic `ApplicationForm` modal portal
+ * or explore detailed program benefits in a modal dialog.
+ *
+ * @architecture
+ * - Part of the Community Landing feature cluster (`views/Community/Landing/`).
+ * - Mounts React Portals directly into `document.body` with `z-[999999]`.
+ * - Theme-aware styling adapting backgrounds and text contrasts via `useThemeContext`.
+ *
+ * @agent_note
+ * Application flow triggers `ApplicationForm` which posts to backend `/api/community/apply`.
+ */
+
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import DoubleQuotes from '@/assets/img/Community/Sample1.webp';
 import ApplicationForm from '@/components/ApplicationForm';
 import { useThemeContext } from '@/theme/ThemeProvider';
 
+/**
+ * Modal Portal Primitive
+ *
+ * @component
+ * @param {Object} props
+ * @param {boolean} props.isOpen - Whether modal is visible.
+ * @param {Function} props.onClose - Modal close handler.
+ * @param {string} props.title - Modal title heading.
+ * @param {React.ReactNode} props.children - Contained dialog content.
+ * @returns {JSX.Element|null} The mounted portal modal.
+ */
 const Modal = ({ isOpen, onClose, title, children }) => {
     if (!isOpen) return null;
 
@@ -25,6 +51,12 @@ const Modal = ({ isOpen, onClose, title, children }) => {
     );
 };
 
+/**
+ * CallToAction Section Component
+ *
+ * @component
+ * @returns {JSX.Element} The rendered Call to Action banner section.
+ */
 export default function Example() {
     const { isDarkMode } = useThemeContext();
     const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);

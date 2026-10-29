@@ -1,9 +1,30 @@
+/**
+ * @file ApplicationForm.jsx
+ * @description Campus Ambassador cohort application form modal component.
+ * @architecture Dispatched from community and ambassador promotion sections; posts application payloads to the backend API
+ * endpoint `POST /api/campus-ambassador/apply` via configured Axios instance and `BASE_URL`.
+ * @agent_note Form validation is managed through standard HTML5 constraints (e.g. minLength 50 for whyJoin, regex pattern for graduationYear).
+ * On successful submission, displays an acknowledgement panel and triggers the `onClose` callback after a 3000ms timeout.
+ */
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import { BASE_URL } from "@/config";
 
+/**
+ * @component ApplicationForm
+ * @description Renders a multi-field application form for prospective Campus Ambassadors, capturing personal, educational, and motivational data.
+ * @param {Object} props - Component properties.
+ * @param {Function} props.onClose - Dismissal callback triggered upon manual cancel or successful submission completion.
+ * @state {Object} formData - Current values of input fields (fullName, email, phone, college, course, graduationYear, linkedinProfile, whyJoin, heardFrom).
+ * @state {boolean} isSubmitting - Submission loading indicator disabling submission triggers.
+ * @state {string|null} error - Error message string returned from the backend or network failure.
+ * @state {boolean} success - Toggle for presenting the post-submission confirmation alert.
+ * @api POST `${BASE_URL}/api/campus-ambassador/apply` - Submits ambassador registration payload to The-Uniques-Portal backend server.
+ */
 const ApplicationForm = ({ onClose }) => {
     const [formData, setFormData] = useState({
+
         fullName: '',
         email: '',
         phone: '',

@@ -1,3 +1,20 @@
+/**
+ * @file Trainingculture.jsx
+ * @description Training culture and peer-learning philosophy showcase.
+ * Illustrates the multi-generational student mentorship ladder:
+ *  - Professional Trainer (Mentor Lead)
+ *  - Uniques 1.0 (The Pioneers)
+ *  - Uniques 2.0 (The Bridge)
+ *  - Uniques 3.0+ (The Future Leaders)
+ *
+ * @architecture
+ * - Part of the Training Model view cluster (`views/Landing/Training-model/components/`).
+ * - Employs `useThemeContext` for dynamic light/dark surface rendering.
+ *
+ * @agent_note
+ * Visual cards use Material-UI icons with hover transitions.
+ */
+
 import React from "react";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import SchoolIcon from "@mui/icons-material/School";
@@ -5,6 +22,17 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import { useThemeContext } from "@/theme/ThemeProvider";
 
+/**
+ * FeatureCard Component
+ *
+ * @component
+ * @param {Object} props
+ * @param {React.ReactNode} props.image - Icon node.
+ * @param {string} props.title - Culture pillar heading.
+ * @param {string} props.description - Detailed narrative.
+ * @param {boolean} props.isDarkMode - Theme flag.
+ * @returns {JSX.Element} Pillar card.
+ */
 const FeatureCard = ({ image, title, description, isDarkMode }) => {
   return (
     <div className={`group relative transition hover:z-[1] hover:shadow-lg transition-all duration-300 ${isDarkMode ? 'bg-[#424D53]/20 hover:shadow-white/5 border border-white/5' : 'bg-white hover:shadow-gray-300 border-gray-100'}`}>

@@ -1,4 +1,11 @@
 
+/**
+ * @file index.jsx
+ * @description Community Notice Board and announcement dashboard organizing academic workshops, corporate initiatives, maintenance schedules, and deadlines.
+ * @architecture Mounted at `/notices` route. Standalone notice dashboard supporting card/compact views, local bookmarks, and faceted filtering.
+ * @agent_note Features self-contained design system components (Badge, Card, Tabs, Select, Tooltip, Switch, Progress) and handles local bookmark persistence.
+ */
+
 import  React from "react"
 import { useState, useEffect } from "react"
 import {
@@ -24,6 +31,21 @@ import {
   List,
 } from "lucide-react"
 
+/**
+ * @component NoticeBoard
+ * @description Comprehensive notice board view with keyword search, priority badges, category filters, progress indicators, and deadline tracking.
+ * @state {string} searchTerm - Search query matched across notice title and text content
+ * @state {string} selectedCategory - Category filter value ("all" | "technical" | "corporate" | "events" | "maintenance" | "policy" | "updates")
+ * @state {string} selectedPriority - Priority filter value ("all" | "high" | "medium" | "low")
+ * @state {number|null} expandedNotice - ID of the currently expanded notice card
+ * @state {Array<number>} savedNotices - Array of notice IDs bookmarked by the user
+ * @state {string} activeTab - Tab filter selection ("all" | "saved" | "new")
+ * @state {boolean} isFilterOpen - Toggle state for filter options
+ * @state {string} viewMode - Display layout format ("card" | "compact")
+ * @state {boolean} darkMode - Local dark mode state
+ * @state {boolean} categoryDropdownOpen - Open state for custom category select
+ * @state {boolean} priorityDropdownOpen - Open state for custom priority select
+ */
 const index = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")

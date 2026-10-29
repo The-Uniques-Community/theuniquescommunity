@@ -1,6 +1,23 @@
+/**
+ * @file SectionSkeleton.jsx
+ * @description Generalized animated placeholder skeleton for loading sections.
+ * @architecture Used primarily as the `fallback` prop inside `LazyViewport` containers and React Suspense boundaries
+ * across the landing page (`src/layout/Landing/index.jsx`) to stabilize layout geometry before components mount.
+ * @agent_note Provides customizable height and styling to approximate the target section dimensions and prevent layout shifts.
+ */
+
 import PropTypes from "prop-types";
 
+/**
+ * @component SectionSkeleton
+ * @description Renders pulsing placeholder blocks simulating section titles, captions, and card rows.
+ * @param {Object} props - Component properties.
+ * @param {string|number} [props.height="350px"] - Minimum height reserved for the skeleton container.
+ * @param {string} [props.className=""] - Additional custom Tailwind CSS classes.
+ * @returns {JSX.Element} Pulse-animated skeleton UI.
+ */
 export default function SectionSkeleton({ height = "350px", className = "" }) {
+
   return (
     <div
       className={`w-full flex items-center justify-center py-12 px-4 ${className}`}

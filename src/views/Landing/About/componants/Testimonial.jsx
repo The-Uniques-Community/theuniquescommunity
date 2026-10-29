@@ -1,3 +1,10 @@
+/**
+ * @file Testimonial.jsx
+ * @description Executive leadership messages section ("From the Desk of Management") featuring addresses and visions from SVGOI directors and executive trustees.
+ * @architecture Sub-component loaded into the About page (`src/views/Landing/About/index.jsx`). Uses Framer Motion for cross-fading active executive statements alongside a selector sidebar of board members.
+ * @agent_note Displays leadership profiles (Chairman, President, Director Secretarial, Managing Director, Director Placements). The active member changes state via `activeIndex` upon clicking cards in the selector grid.
+ */
+
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -58,6 +65,13 @@ const desk = [
   },
 ];
 
+/**
+ * @component Testimonial
+ * @description Interactive executive management showcase presenting full statements and social links for institutional leadership.
+ * @returns {JSX.Element} The rendered management testimonials section.
+ * @state {number} activeIndex - Index of currently focused leadership profile in the `desk` list
+ * @api None.
+ */
 export default function Testimonial() {
   const { isDarkMode } = useThemeContext();
   const [activeIndex, setActiveIndex] = useState(0);

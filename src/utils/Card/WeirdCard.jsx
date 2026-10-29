@@ -1,7 +1,21 @@
+/**
+ * @file WeirdCard.jsx
+ * @description Asymmetrically clipped card component with branded red logo icon, hover underline transition, and action badge.
+ * @architecture Presentation card in src/utils/Card/ styled via `weirdcard.css` with diagonal corners and hover micro-animations.
+ * @agent_note Dependent on `weirdcard.css` for custom shaped border-radius and clipping effects.
+ */
+
 import "./weirdcard.css";
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import tu_red from '@/assets/logos/tu-red.png'
 
+/**
+ * @component WeirdCard
+ * @description Renders a uniquely contoured card showcasing community branding, heading underline growth on hover, and directional arrow.
+ * @param {Object} [props] - Component properties
+ * @state None
+ * @api None
+ */
 const WeirdCard = () => {
   return (
     <div className="card group hover:cursor-pointer z-10 duration-100">

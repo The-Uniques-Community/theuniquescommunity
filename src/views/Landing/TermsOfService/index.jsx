@@ -1,9 +1,22 @@
+/**
+ * @file index.jsx
+ * @description Official Terms of Service agreement outlining membership rules, student code of conduct, training expectations, and intellectual property terms.
+ * @architecture Mounted at `/terms-of-service` within the landing routing hierarchy.
+ * @agent_note Implements scroll-contained clause review container with consent verification checkboxes and automated navigation upon acceptance.
+ */
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileText, Check } from "lucide-react";
 import { useThemeContext } from "@/theme/ThemeProvider";
 import CallToAction from "../homComponents/CallToAction";
 
+/**
+ * @component TermsOfService
+ * @description Interactive terms acceptance view with scrollable agreement clauses, interactive agreement toggle, and navigation callbacks.
+ * @state {boolean} agreeTerms - Controlled boolean tracking user agreement checkbox
+ * @state {boolean} acceptedMessage - Feedback flag indicating temporary acceptance badge before redirect
+ */
 const TermsOfService = () => {
   const { isDarkMode } = useThemeContext();
   const navigate = useNavigate();

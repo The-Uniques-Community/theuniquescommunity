@@ -1,13 +1,27 @@
+/**
+ * @file LazyViewport.jsx
+ * @description Viewport-aware lazy mounting wrapper using IntersectionObserver.
+ * @architecture Used across landing sections and heavy component trees (`src/layout/Landing/index.jsx`) to delay mounting
+ * below-the-fold content until the user scrolls near the element, conserving initial bundle execution and memory.
+ * @agent_note Sticky visibility is intentional: once rendered, `shouldRender` remains true so child components do not
+ * unmount or re-execute data fetch lifecycles when scrolled out of view. Supports `content-visibility: auto` styling.
+ */
+
 import { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 
 /**
- * LazyViewport component defers mounting its children until the container
- * approaches within `rootMargin` of the viewport.
- * 
- * Once rendered, `shouldRender` remains true (sticky visibility) to prevent
- * unmounting and re-fetching on scroll, and applies `content-visibility: auto`
- * for optimal browser paint performance.
+ * @component LazyViewport
+ * @description Defers mounting child components until the element scrolls within specified margin of the visible viewport.
+ * @param {Object} props - Component properties.
+ * @param {React.ReactNode} props.children - Lazy-rendered DOM or component nodes.
+ * @param {React.ReactNode} [props.fallback=null] - Placeholder or skeleton rendered before entry into viewport.
+ * @param {string|number} [props.minHeight="350px"] - Placeholder reservation height preventing cumulative layout shifts (CLS).
+ * @param {string} [props.rootMargin="300px 0px"] - IntersectionObserver root margin threshold for early pre-loading.
+ * @param {string} [props.className=""] - Additional CSS class names.
+ * @param {boolean} [props.contentVisibility=true] - Toggle for applying CSS `content-visibility: auto` after mount.
+ * @state {boolean} shouldRender - Tracks whether the element has intersected with the threshold.
+ * @sideeffects Registers and disconnects an `IntersectionObserver` instance on the container DOM node.
  */
 export default function LazyViewport({
   children,
@@ -17,6 +31,7 @@ export default function LazyViewport({
   className = "",
   contentVisibility = true,
 }) {
+
   const [shouldRender, setShouldRender] = useState(false);
   const containerRef = useRef(null);
 

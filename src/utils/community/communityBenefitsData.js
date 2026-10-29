@@ -1,3 +1,13 @@
+/**
+ * @file communityBenefitsData.js
+ * @description Data service for community benefit testimonials and cards, providing network-first caching, IndexedDB persistence, and backend synchronization.
+ * @architecture Data provider utility in src/utils/community/ supplying benefit cards and leadership testimonials to the community showcase.
+ * @agent_note Communicates with backend endpoints:
+ *   - GET `${BASE_URL}/api/community-benefits` (handled by backend controller `getCommunityBenefits`)
+ *   - POST `${BASE_URL}/api/community-benefits/update` (handled by backend controller `updateCommunityBenefits`, payload: `{ cards: Array<{ id, cardId, name, title, quote, avatar, customAvatar }> }`)
+ * Caching strategy: Network-first via `networkFirstFetch` with IndexedDB key "tu_community_benefits_cards", legacy localStorage key "tu_community_benefits_cards", in-memory cache `inMemoryBenefits`, and DOM event "community-benefits-updated".
+ */
+
 import axios from "axios";
 import { BASE_URL } from "@/config";
 import communityOrganizerImg from "@/assets/img/Community/testimonials/community-organizer.webp";
@@ -13,6 +23,11 @@ export const DEFAULT_BENEFITS_CARDS = [];
 const BENEFITS_CACHE_KEY = "tu_community_benefits_cards";
 const LEGACY_STORAGE_KEY = "tu_community_benefits_cards";
 
+/**
+ * @desc Sanitizes and normalizes community benefit card entries with default values
+ * @param {Array<Object>} parsed - Raw card items from storage or server
+ * @returns {Array<Object>} Cleaned benefit card objects
+ */
 const resolveBenefitsWithDefaults = (parsed) => {
   if (!Array.isArray(parsed) || parsed.length === 0) {
     return [];
@@ -39,10 +54,19 @@ if (typeof window !== "undefined") {
   }).catch(() => {});
 }
 
+/**
+ * @desc Synchronously retrieves community benefit cards from in-memory cache
+ * @returns {Array<Object>} Snapshot array of benefit cards
+ */
 export const getStoredBenefitsCards = () => {
   return [...inMemoryBenefits];
 };
 
+/**
+ * @desc Fetches community benefit cards using network-first strategy and caches to IndexedDB
+ * @api GET `${BASE_URL}/api/community-benefits` handled by backend `getCommunityBenefits` controller
+ * @returns {Promise<Array<Object>>} Resolved array of benefit cards
+ */
 export const fetchBenefitsCards = async () => {
   const result = await networkFirstFetch({
     cacheKey: BENEFITS_CACHE_KEY,
@@ -71,6 +95,12 @@ if (typeof window !== "undefined") {
   registerCacheFetcher(BENEFITS_CACHE_KEY, fetchBenefitsCards);
 }
 
+/**
+ * @desc Saves community benefit cards to IndexedDB cache and updates the MongoDB backend
+ * @api POST `${BASE_URL}/api/community-benefits/update` handled by backend `updateCommunityBenefits` controller
+ * @param {Array<Object>} cards - Benefit cards collection to persist
+ * @returns {Promise<boolean>} True if update succeeded
+ */
 export const saveStoredBenefitsCards = async (cards) => {
   try {
     const toSave = cards.slice(0, 5).map((card, idx) => {
@@ -108,6 +138,10 @@ export const saveStoredBenefitsCards = async (cards) => {
   }
 };
 
+/**
+ * @desc Clears stored community benefit cards from IndexedDB cache and resets in-memory store
+ * @returns {Promise<Array>} Empty array on successful reset
+ */
 export const resetStoredBenefitsCards = async () => {
   try {
     await deleteCache(BENEFITS_CACHE_KEY);

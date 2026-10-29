@@ -1,3 +1,18 @@
+/**
+ * @file Hero.jsx
+ * @description Hero banner section for the Community Lead invitation program.
+ * Features an asymmetrical custom SVG clip-path backdrop (`#heroClip`), motivational callout,
+ * and a modal portal rendering the dynamic `ApplicationForm` modal (`z-[999999]`).
+ *
+ * @architecture
+ * - Part of the Community Landing feature cluster (`views/Community/Landing/`).
+ * - Renders `<ApplicationForm />` within a React Portal affixed to `document.body`.
+ * - Responsive layout switching between stacked column (mobile) and dual-column row (desktop).
+ *
+ * @agent_note
+ * Application submissions from the modal connect to `POST ${BASE_URL}/api/community/apply`.
+ */
+
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import "./style.css";
@@ -6,6 +21,17 @@ import Button from "@/utils/Buttons/Button";
 import DoubleQuotes from "@/assets/img/Community/Double.webp";
 import ApplicationForm from '@/components/ApplicationForm';
 
+/**
+ * Modal Portal Primitive
+ *
+ * @component
+ * @param {Object} props
+ * @param {boolean} props.isOpen - Whether modal is visible.
+ * @param {Function} props.onClose - Modal close handler.
+ * @param {string} props.title - Modal title heading.
+ * @param {React.ReactNode} props.children - Contained dialog content.
+ * @returns {JSX.Element|null} The mounted portal modal.
+ */
 const Modal = ({ isOpen, onClose, title, children }) => {
     if (!isOpen) return null;
 
@@ -26,8 +52,13 @@ const Modal = ({ isOpen, onClose, title, children }) => {
         document.body
     );
 };
-// comment
 
+/**
+ * Hero Section Component
+ *
+ * @component
+ * @returns {JSX.Element} The rendered Hero banner section.
+ */
 const Hero = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     

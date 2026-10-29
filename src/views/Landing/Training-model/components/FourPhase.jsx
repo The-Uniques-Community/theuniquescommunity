@@ -1,3 +1,21 @@
+/**
+ * @file FourPhase.jsx
+ * @description Four-Phase Training Pedagogy showcase component.
+ * Illustrates the community curriculum pipeline across 4 progressive development stages:
+ *  1. Phase 1: Foundation & Problem Solving (C++, Python, DSA)
+ *  2. Phase 2: Full-Stack Engineering (MERN, Cloud, DevOps)
+ *  3. Phase 3: Project Incubation (Production-grade hackathons and open source)
+ *  4. Phase 4: Corporate Readiness & Placement Acceleration
+ *
+ * @architecture
+ * - Part of the Training Model view cluster (`views/Landing/Training-model/components/`).
+ * - Features dynamic Framer Motion orbiting tech stack badges (`OrbitIcon`, `IconRenderer`).
+ * - Responsive to light/dark themes via `useThemeContext`.
+ *
+ * @agent_note
+ * Icon SVGs are loaded dynamically from `skillicons.dev` with local SVG fallbacks.
+ */
+
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useThemeContext } from "@/theme/ThemeProvider";

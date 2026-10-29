@@ -1,9 +1,19 @@
+/**
+ * @file imageHelper.js
+ * @description Image sanitization and Google Drive reverse-proxy URL resolver mitigating CORP/ORB cross-origin blocking policies.
+ * @architecture Core media utility in src/utils/ leveraged across cards, modals, member profiles, and banner renderers.
+ * @agent_note Extracts Drive IDs across query parameters (?id=, /d/, /preview) and routes them through ${BASE_URL}/api/image-proxy/:fileId. Generates UI Avatars fallbacks.
+ */
+
 import { BASE_URL } from "../config.js";
 
+/**
+ * @desc Default proxy endpoint fallback when BASE_URL is unavailable
+ */
 export const DEFAULT_PROXY_BASE = "https://the-uniques-portal.vercel.app";
 
 /**
- * Extracts a Google Drive file ID from an object, URL, or raw ID string.
+ * @desc Extracts a Google Drive file ID from an object, URL, or raw ID string.
  * Supports:
  * - Object: { fileId: "..." }, { fileUrl: "..." }, { url: "..." }, { imageUrl: "..." }
  * - Direct UC URLs: https://drive.google.com/uc?id=XYZ&export=download
@@ -13,6 +23,8 @@ export const DEFAULT_PROXY_BASE = "https://the-uniques-portal.vercel.app";
  * - Googleusercontent: https://lh3.googleusercontent.com/d/XYZ
  * - Proxy URLs/paths: /api/image-proxy/XYZ or https://domain/api/image-proxy/XYZ
  * - Raw Google Drive file IDs (alphanumeric string of length >= 20 without / or ?)
+ * @param {string|Object} source - File URL, image object, or raw Google Drive alphanumeric ID
+ * @returns {string|null} Extracted Google Drive file ID, or null if unresolvable
  */
 export const extractDriveFileId = (source) => {
   if (!source) return null;
@@ -67,9 +79,12 @@ export const extractDriveFileId = (source) => {
 };
 
 /**
- * Returns a safe image URL that will NOT be blocked by Google's CORP / ORB policies.
+ * @desc Returns a safe image URL that will NOT be blocked by Google's CORP / ORB policies.
  * Automatically proxies Google Drive files through the backend image proxy.
  * Dynamically re-anchors any image-proxy URLs to the active BASE_URL so images load cleanly across dev and production.
+ * @param {string|Object} source - Image source URL, Drive link, or image metadata object
+ * @param {string} [fallback="/placeholder.svg"] - Fallback image URL if source is missing or invalid
+ * @returns {string} Safe image URL routed through backend proxy or valid external URL
  */
 export const getSafeImageUrl = (source, fallback = "/placeholder.svg") => {
   if (!source) return fallback;
@@ -121,7 +136,9 @@ export const getSafeImageUrl = (source, fallback = "/placeholder.svg") => {
 };
 
 /**
- * Returns a fallback avatar URL using initials.
+ * @desc Returns a fallback avatar URL using initials.
+ * @param {string} [fullName="Member"] - Member's full name to generate initials
+ * @returns {string} UI Avatars endpoint URL with branded background styling
  */
 export const getAvatarFallback = (fullName = "Member") => {
   const safeName = (fullName && typeof fullName === "string" ? fullName : "Member").trim();

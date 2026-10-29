@@ -1,3 +1,13 @@
+/**
+ * @file index.jsx
+ * @description Central routing configuration and route manifest for The Uniques Community.
+ * @architecture Builds the root React Router v6 browser router (`createBrowserRouter`), aggregating the top-level
+ * landing layout routes (`LandingRoutes`) and the modular success stories route sub-tree (`SuccessStoriesRoutes`).
+ * Connects directly to `src/App.jsx` where it is passed to `<RouterProvider>`.
+ * @agent_note All top-level page components are dynamically loaded via `lazyWithRetry` and wrapped with `Loader`
+ * to protect against network transit errors and chunk version mismatches after new production deployments.
+ */
+
 import { createBrowserRouter } from "react-router-dom";
 import lazyWithRetry from "@/utils/lazyWithRetry";
 import Loader from "@/utils/Loader";
@@ -28,6 +38,10 @@ const Projects = Loader(lazyWithRetry(() => import("@/views/Landing/Projects/ind
 const ProjectDetails = Loader(lazyWithRetry(() => import("@/views/Landing/Projects/ProjectDetails")));
 const Timeline = Loader(lazyWithRetry(() => import("@/utils/Timeline/Timeline")));
 
+/**
+ * @desc Test timeline milestones data for demonstration and prototyping.
+ * @type {Array<Object>}
+ */
 const timelineData = [
   {
     year: "1919",
@@ -55,6 +69,10 @@ const timelineData = [
   }
 ];
 
+/**
+ * @desc Route configuration tree for primary public landing sections nested under `LandingLayout`.
+ * @type {import('react-router-dom').RouteObject}
+ */
 const LandingRoutes = {
   path: "/",
   element: <LandingLayout />,
@@ -89,9 +107,14 @@ const LandingRoutes = {
   ],
 };
 
+/**
+ * @desc Main React Router browser instance combining Landing and SuccessStories hierarchies.
+ * @type {import('react-router-dom').Router}
+ */
 const router = createBrowserRouter([
   LandingRoutes,
   SuccessStoriesRoutes
 ]);
 
 export default router;
+

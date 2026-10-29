@@ -1,6 +1,19 @@
+/**
+ * @file blogData.js
+ * @description Static placeholder and fallback dataset for community blog articles.
+ * @architecture Exported to `@/views/Landing/Blog` views to populate technical and non-technical article cards,
+ * tag filters, and reading previews when dynamic backend records are offline or in development.
+ * @agent_note Each article object conforms to `{ title, description, category, readTime, image, subContents: Array<{ heading, paragraph }>, tags }`.
+ */
+
+/**
+ * @desc Collection of sample blog articles with sub-headings and category tags.
+ * @type {Array<Object>}
+ */
 export const blogData = [
   {
     title: "Getting Started with React: A Beginner's Guide",
+
     description:
       "Learn the basics of React, including components, state management, and hooks, to build powerful web applications.",
     category: "React",

@@ -1,8 +1,24 @@
+/**
+ * @file DomeGallery.jsx
+ * @description Dual-marquee visual showcase featuring opposing continuous scroll tracks with interactive image zoom and React Portal lightbox modal.
+ * @architecture Used in highlight and achievement galleries, utilizing `createPortal` for dead-center viewport modal rendering and `framer-motion` for in-view animation pausing.
+ * @agent_note Pauses CSS keyframe animations when scrolled out of view. Portal locks `document.body.style.overflow` to prevent scroll chaining during lightbox preview.
+ */
+
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useInView } from 'framer-motion';
 import './DomeGallery.css';
 
+/**
+ * @component DomeGallery
+ * @description Renders two opposing horizontal marquee rows of event/achievement cards, opening an enlarged view with metadata in a portal modal upon click.
+ * @param {Object} props - Component properties
+ * @param {Array<Object>} [props.images=[]] - Array of image objects containing `src`, `title`, `alt`, and `category`
+ * @param {boolean} [props.grayscale=false] - Applies full grayscale CSS filter when enabled
+ * @state {Object|null} activeImage - Currently selected image object for lightbox modal preview
+ * @api None (Pure presentation and lightbox modal)
+ */
 export default function DomeGallery({
   images = [],
   grayscale = false

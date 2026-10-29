@@ -1,3 +1,10 @@
+/**
+ * @file WhyUs.jsx
+ * @description Value proposition section detailing community benefits including global networking, practical workshops, startup acceleration, and idea showcases.
+ * @architecture Child section on the landing view (`Landing.jsx`), rendering an asymmetric 3-column Bento-style card layout.
+ * @agent_note Static presentation component highlighting core value drivers using FontAwesome icons and image cards.
+ */
+
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -6,6 +13,13 @@ import {
   faLaptop,
 } from "@fortawesome/free-solid-svg-icons";
 
+/**
+ * @component WhyUs
+ * @description Renders section headlines and an asymmetric 4-card grid demonstrating why developers and entrepreneurs should join the community.
+ * @param {Object} props - Component properties (empty)
+ * @state None
+ * @api None (Static content)
+ */
 const WhyUs = () => {
   return (
     <section className="ezy__portfolio10 w-full light pt-6 sm:pt-10 lg:pt-14 pb-8 sm:pb-12 lg:pb-16 bg-white text-black">

@@ -1,5 +1,19 @@
+/**
+ * @file Startups.jsx
+ * @description Community startup incubator showcase featuring an interactive step selector with live embedded iframes for ventures founded by members.
+ * @architecture Child section on the landing view (`Landing.jsx`), providing interactive preview embeds of member venture sites.
+ * @agent_note Embeds third-party web domains (godigitify.com, techlearns.in, wirely.in) in iframes. Step state changes trigger on mouse hover, click, or touch.
+ */
+
 import { useState } from "react";
 
+/**
+ * @component Startups
+ * @description Renders a 3-step vertical timeline detailing community-born startup ventures alongside a responsive live iframe site preview.
+ * @param {Object} props - Component properties (empty)
+ * @state {number} activeStep - Currently active startup step index (1: Godigitify, 2: Techlearns Academy, 3: Wirely)
+ * @api None (Static venture profiles and third-party iframe embeds)
+ */
 function Startups() {
   // Default to step 2 (Copy The Snippet) if desired
   const [activeStep, setActiveStep] = useState(2);

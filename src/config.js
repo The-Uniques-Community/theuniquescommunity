@@ -1,9 +1,22 @@
+/**
+ * @file config.js
+ * @description Global networking and client configuration module for The Uniques Community portal.
+ * @architecture Configures the global Axios instance defaults, request interceptors for JWT injection,
+ * and exports resolved URL endpoints (`BASE_URL` and `PORTAL_URL`) consumed across API calls, routing,
+ * and service integrations targeting the backend Express server (`The-Uniques-Portal/server`).
+ * @agent_note All outgoing Axios network requests inherit `withCredentials = true` and automatic `Authorization: Bearer <token>`
+ * header injection if `localStorage.getItem("token")` is present. When modifying base URLs or adding endpoints, verify environment variable
+ * naming conventions (`VITE_API_BASE_URL`, `VITE_PORTAL_URL`, `VITE_PORTAL_FRONTEND_URL`) and avoid trailing slashes.
+ */
+
 import axios from "axios";
 
 /**
  * Resolved Backend API Base URL.
  * Directly targets the configured VITE_API_BASE_URL if set and non-empty.
  * Otherwise defaults to the canonical hosted backend URL.
+ * @desc Resolves the root HTTP/HTTPS address for all backend API interactions with The-Uniques-Portal server.
+ * @type {string}
  */
 export const BASE_URL =
   import.meta.env?.VITE_API_BASE_URL && String(import.meta.env.VITE_API_BASE_URL).trim() !== ""
@@ -14,6 +27,8 @@ export const BASE_URL =
  * Resolved Portal Frontend URL.
  * Directly targets the configured VITE_PORTAL_URL or VITE_PORTAL_FRONTEND_URL if set.
  * Otherwise defaults to the canonical hosted portal frontend URL.
+ * @desc Resolves the base web address for external deep-links and redirects to the authenticated member portal.
+ * @type {string}
  */
 export const PORTAL_URL =
   (import.meta.env?.VITE_PORTAL_URL && String(import.meta.env.VITE_PORTAL_URL).trim() !== ""
@@ -53,3 +68,4 @@ axios.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+

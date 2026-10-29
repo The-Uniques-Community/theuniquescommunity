@@ -1,7 +1,21 @@
+/**
+ * @file GenAiTab.jsx
+ * @description Training track tab view presenting the Salesforce CRM and Platform development curriculum.
+ * @architecture Rendered dynamically as a panel within `TrainingTabs.jsx` on the landing page.
+ * @agent_note Despite the legacy filename `GenAiTab`, this component specifically details the Salesforce CRM track (App Builder, Flows, and Admin/Dev certification preparation).
+ */
+
 import { Cloud, Business, Sync, TrendingUp } from "@mui/icons-material";
 
 const img = "https://1kga789wdc.ufs.sh/f/lJZn16SaUVX5hyCPAUNdx4bWp0UlI1ZKuzEFvVsLw7JfMokX";
 
+/**
+ * @component GenAiTab
+ * @description Renders a 2-column curriculum view consisting of a track hero banner and 4 feature cards detailing Salesforce platform skills.
+ * @param {Object} props - Component properties (empty)
+ * @state None
+ * @api None (Static curriculum layout)
+ */
 const GenAiTab = () => {
   const features = [
     {

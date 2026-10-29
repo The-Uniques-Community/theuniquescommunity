@@ -1,3 +1,19 @@
+/**
+ * @file SlideCard.jsx
+ * @description Ambassador testimonial and community benefit review carousel.
+ * Renders auto-advancing review cards with author avatars, quotes, and role tags.
+ * Synchronizes with local IndexedDB cache and backend API via `communityBenefitsData.js`.
+ *
+ * @architecture
+ * - Part of the Community Landing feature cluster (`views/Community/Landing/`).
+ * - Integrates with `getStoredBenefitsCards` and `fetchBenefitsCards` from `src/utils/community/communityBenefitsData.js`.
+ * - Backend endpoint: `GET ${BASE_URL}/api/community-benefits`.
+ * - Employs `useInView` to suspend auto-slide animations when scrolled out of viewport.
+ *
+ * @agent_note
+ * Includes custom `AvatarImage` error boundary fallback generating gradient initials to prevent broken image icons.
+ */
+
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useInView } from "framer-motion";

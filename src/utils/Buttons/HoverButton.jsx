@@ -1,5 +1,20 @@
+/**
+ * @file HoverButton.jsx
+ * @description Morphing CTA button component that expands a circular indicator into a full-width branded backdrop on mouse hover.
+ * @architecture Micro-interaction button in src/utils/Buttons/ designed for landing page and hero section CTAs.
+ * @agent_note Toggles `hovered` state on mouse enter/leave, altering shape from a circle to a full-width pill and inverting label color.
+ */
+
 import { useState } from "react";
 
+/**
+ * @component LearnMoreButton
+ * @description Interactive 'Learn More' CTA button featuring animated pill expansion and chevron indicator.
+ * @param {Object} props - Component properties
+ * @param {Function} [props.onClick] - Click handler triggered on button click
+ * @state {boolean} hovered - Tracks mouse hover state to trigger morph animation
+ * @api None
+ */
 export default function LearnMoreButton({onClick}) {
   const [hovered, setHovered] = useState(false);
 

@@ -1,6 +1,29 @@
+/**
+ * @file Button.jsx
+ * @description Configurable interactive button component supporting internal navigation, external links, hover shine effects, and customizable palette colors.
+ * @architecture Reusable atomic button component in src/utils/Buttons/ utilized across pages and cards. Conditionally wraps React Router Link or standard anchor tag.
+ * @agent_note Accepts `path` which triggers Link routing if internal or `<a>` with `target="_blank"` if starting with `http`. Supports custom background, border, text, and icon colors.
+ */
+
 import { Link } from 'react-router';
 import { GoArrowUpRight } from "react-icons/go";
 
+/**
+ * @component Button
+ * @description Renders a pill-shaped action button with diagonal sheen animation on hover and directional arrow icon.
+ * @param {Object} props - Component properties
+ * @param {React.ReactNode} props.children - Label or content rendered inside the button
+ * @param {string} [props.path] - Route or external URL. Renders standard button if omitted
+ * @param {string} [props.bgColor] - CSS background color
+ * @param {string} [props.color] - Text and accent badge color
+ * @param {string} [props.iconColor] - Fill color for the directional arrow icon
+ * @param {number|string} [props.border] - Border width in pixels or CSS value
+ * @param {string} [props.borderColor] - Border color or Tailwind border class
+ * @param {Function} [props.onClick] - Click handler function
+ * @param {string} [props.className] - Additional CSS class names
+ * @state None
+ * @api None
+ */
 const Button = ({children, path, bgColor, color, iconColor, border, borderColor, onClick, className}) => {
   const content = (
     <button 

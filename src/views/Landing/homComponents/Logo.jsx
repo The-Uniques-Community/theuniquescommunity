@@ -1,7 +1,21 @@
+/**
+ * @file Logo.jsx
+ * @description Infinite scrolling corporate partner and brand showcase implemented with styled-components, CSS keyframes, and alpha gradient masks.
+ * @architecture Presentation subview on the landing page rendering dual counter-directional marquees of corporate collaborator logos.
+ * @agent_note Uses styled-components keyframes (`scrollX`) with gradient edge masks (`mask-image: linear-gradient(...)`) for infinite wrapping.
+ */
+
 "use client";
 import React from "react";
 import styled, { keyframes, css } from "styled-components";
 
+/**
+ * @component Logo
+ * @description Displays headline copy, mission note, and two opposing infinite scroll rows of partner brand badges.
+ * @param {Object} props - Component properties (empty)
+ * @state None
+ * @api None (Static logo images)
+ */
 function Logo() {
   const row1 = [
     "https://utfs.io/f/08e113ca-9cd3-4f3c-a891-75e0fdaea010-nlisdm.webp",
